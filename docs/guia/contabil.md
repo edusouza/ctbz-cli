@@ -209,6 +209,22 @@ ID                Classificação                                Tipo         Ex
 - No extrato, entradas aceitam classificações `RECEITA` e saídas, `DESPESA`. As marcadas em
   "Exige sócio" pedem `--socio`.
 
+## Cadastrar e editar contas bancárias
+
+```sh
+ctbz contas-bancarias bancos                      # bancos aceitos (id e código)
+ctbz contas-bancarias adicionar --banco 341 --agencia 1234 --conta 12345-6 \
+  --abertura 2024-01-10 --declaro-conta-pj
+ctbz contas-bancarias editar 1000000000000001 --abertura 2024-02-01
+```
+
+- `--declaro-conta-pj` é obrigatório, como o checkbox do painel: a conta é PJ e movimenta só
+  este CNPJ.
+- A data de abertura define desde quando a Contabilizei vai pedir os extratos da conta.
+- A conta é digitada com dígito (`12345-6`); a CLI envia sem o hífen, como o painel.
+- O painel pode bloquear a edição (por exemplo, com extratos já classificados); a CLI mostra
+  o motivo.
+
 ## Plano de contas (classificações)
 
 ```sh

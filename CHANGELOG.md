@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Added
+
+- `ctbz contas-bancarias bancos`, `adicionar` e `editar`: bancos aceitos, cadastro de conta PJ
+  (com a declaração do painel) e correção dos dados de uma conta.
+
 ## [1.4.0] - 2026-10-04
 
 Pendências: ler e aceitar termos, declarar a procuração do e-CAC, resolver a conciliação fiscal

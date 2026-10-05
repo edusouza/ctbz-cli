@@ -60,7 +60,7 @@ func extratosList(es []api.Extrato, ano int) *output.List {
 }
 
 func newContasBancariasCmd() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "contas-bancarias",
 		Short: "Lista as contas bancárias cadastradas da empresa",
 		Long: `Lista as contas bancárias cadastradas na Contabilizei: banco, código do banco, agência,
@@ -97,4 +97,6 @@ da Contabilizei).`,
 			return output.Write(s.out, f, l)
 		},
 	}
+	cmd.AddCommand(newContasBancariasBancosCmd(), newContasBancariasAdicionarCmd(), newContasBancariasEditarCmd())
+	return cmd
 }

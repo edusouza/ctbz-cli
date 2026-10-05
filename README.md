@@ -143,6 +143,7 @@ ctbz extratos classificar ID --conta-bancaria ID --competencia 2026-09 --conta I
 ctbz extratos desmembrar ID ... --parte "Aluguel:1000:ID" --parte "Condomínio:200:ID"
 ctbz extratos desfazer-desmembramento ID --conta-bancaria ID --competencia 2026-09
 ctbz extratos --ano 2026 | ctbz contas-bancarias  # extratos por mês e contas cadastradas
+ctbz contas-bancarias adicionar|editar ...     # cadastra ou corrige conta PJ (bancos lista os bancos)
 ctbz contas --busca alug                       # plano de contas usado nas classificações
 ctbz documentos [--tipo TIPO]                  # central de documentos: tipos e arquivos enviados
 ctbz certificado                               # certificado digital: validade e renovação

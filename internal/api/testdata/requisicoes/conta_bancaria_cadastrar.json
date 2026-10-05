@@ -1,0 +1,14 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/contabancaria/salvar",
+    "content_type": "application/json",
+    "corpo": {
+      "agencia": "1234",
+      "bancoId": 33,
+      "contaCorrente": "123456",
+      "dataSaldoInicial": "2024-01-10",
+      "vlrSaldoInicial": 0
+    }
+  }
+]

@@ -18,6 +18,9 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz chamados`](ctbz_chamados.md) | Lista os chamados de atendimento (em andamento ou finalizados) |
 | [`ctbz contas`](ctbz_contas.md) | Lista o plano de contas usado para classificar os lançamentos |
 | [`ctbz contas-bancarias`](ctbz_contas-bancarias.md) | Lista as contas bancárias cadastradas da empresa |
+| [`ctbz contas-bancarias adicionar`](ctbz_contas-bancarias_adicionar.md) | Cadastra uma conta bancária PJ |
+| [`ctbz contas-bancarias bancos`](ctbz_contas-bancarias_bancos.md) | Lista os bancos aceitos no cadastro de contas bancárias |
+| [`ctbz contas-bancarias editar`](ctbz_contas-bancarias_editar.md) | Corrige os dados de uma conta bancária cadastrada |
 | [`ctbz documentos`](ctbz_documentos.md) | Lista os tipos de documento aceitos e os documentos enviados |
 | [`ctbz empresa`](ctbz_empresa.md) | Mostra os dados da empresa selecionada |
 | [`ctbz empresa atividades`](ctbz_empresa_atividades.md) | Lista os CNAEs da empresa e os anexos do Simples Nacional |
