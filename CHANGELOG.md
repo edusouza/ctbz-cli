@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-04
+
+Pendências: ler e aceitar termos, declarar a procuração do e-CAC, resolver a conciliação fiscal
+e concluir os primeiros passos.
+
 ### Added
 
 - `ctbz pendencias termos` e `ctbz pendencias termo CHAVE`: termos e cartas com aceite pendente
@@ -231,7 +236,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/edusouza/ctbz-cli/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/edusouza/ctbz-cli/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/edusouza/ctbz-cli/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/edusouza/ctbz-cli/compare/v1.0.0...v1.1.0

@@ -36,7 +36,7 @@ escritas, `risco: baixo|médio|alto`.
 | **v1.1** | Fundação da escrita | [#173](https://github.com/edusouza/ctbz-cli/issues/173) | 6 | concluída |
 | **v1.2** | Caixa e classificação de lançamentos | [#180](https://github.com/edusouza/ctbz-cli/issues/180) | 7 | concluída |
 | **v1.3** | Impostos: confirmar pagamento, recálculo e parcelamento | [#188](https://github.com/edusouza/ctbz-cli/issues/188) | 4 | concluída |
-| **v1.4** | Pendências, termos e conciliação | [#193](https://github.com/edusouza/ctbz-cli/issues/193) | 5 | planejada |
+| **v1.4** | Pendências, termos e conciliação | [#193](https://github.com/edusouza/ctbz-cli/issues/193) | 5 | concluída |
 | **v1.5** | Extratos, contas bancárias e documentos | [#199](https://github.com/edusouza/ctbz-cli/issues/199) | 6 | planejada |
 | **v1.6** | Notas fiscais: tomadores e notas de entrada | [#206](https://github.com/edusouza/ctbz-cli/issues/206) | 4 | planejada |
 | **v1.7** | Pró-labore, distribuição de lucros e informe de rendimentos | [#211](https://github.com/edusouza/ctbz-cli/issues/211) | 6 | planejada |
@@ -243,11 +243,11 @@ Resolver o que a Central de Rotinas aponta: ler e aceitar termos, declarar a pro
 
 | | Issue | Funcionalidade | Tipo | Risco |
 |---|---|---|---|---|
-| ⬜ | [#194](https://github.com/edusouza/ctbz-cli/issues/194) | Ler termos e cartas pendentes da Central de Rotinas | funcionalidade | baixo |
-| ⬜ | [#195](https://github.com/edusouza/ctbz-cli/issues/195) | Aceitar carta de responsabilidade e termos | funcionalidade | alto |
-| ⬜ | [#196](https://github.com/edusouza/ctbz-cli/issues/196) | Declarar procuração do e-CAC criada | funcionalidade | médio |
-| ⬜ | [#197](https://github.com/edusouza/ctbz-cli/issues/197) | Resolver pendência de conciliação fiscal | funcionalidade | alto |
-| ⬜ | [#198](https://github.com/edusouza/ctbz-cli/issues/198) | Primeiros passos: listar, concluir tarefa, dispensar e reativar | funcionalidade | baixo |
+| ✅ | [#194](https://github.com/edusouza/ctbz-cli/issues/194) | Ler termos e cartas pendentes da Central de Rotinas | funcionalidade | baixo |
+| ✅ | [#195](https://github.com/edusouza/ctbz-cli/issues/195) | Aceitar carta de responsabilidade e termos | funcionalidade | alto |
+| ✅ | [#196](https://github.com/edusouza/ctbz-cli/issues/196) | Declarar procuração do e-CAC criada | funcionalidade | médio |
+| ✅ | [#197](https://github.com/edusouza/ctbz-cli/issues/197) | Resolver pendência de conciliação fiscal | funcionalidade | alto |
+| ✅ | [#198](https://github.com/edusouza/ctbz-cli/issues/198) | Primeiros passos: listar, concluir tarefa, dispensar e reativar | funcionalidade | baixo |
 
 Fora de escopo: Abrir ou responder chamados (não há API: o atendimento é no Zendesk); aceites do informe de rendimentos (v1.7).
 
