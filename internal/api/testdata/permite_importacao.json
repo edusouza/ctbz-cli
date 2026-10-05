@@ -1,0 +1,4 @@
+{"periodosDeImportacao": [
+  {"ano": 2026, "mes": 8, "mensagem": "Importe o extrato de agosto antes", "temLancamentoPendente": false, "teveLancamento": true},
+  {"ano": 2026, "mes": 9, "mensagem": null, "temLancamentoPendente": true, "teveLancamento": false}
+]}

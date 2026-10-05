@@ -44,3 +44,13 @@ func TestWriteErrorTruncates(t *testing.T) {
 		t.Errorf("Error() = %q", got)
 	}
 }
+
+func TestWriteErrorIdentificador(t *testing.T) {
+	err := NewWriteError("POST", "x", &Response{Status: 400, Body: []byte(`{"detalhes":[{"identificador":"exception/movimentacao-financeira-901","detalhe":"Só OFX"}]}`)})
+	if err.Identificador != "exception/movimentacao-financeira-901" || err.Message != "requisição recusada: Só OFX" {
+		t.Errorf("erro = %+v", err)
+	}
+	if NewWriteError("POST", "x", &Response{Status: 400, Body: []byte("texto")}).Identificador != "" {
+		t.Error("texto puro não tem identificador")
+	}
+}

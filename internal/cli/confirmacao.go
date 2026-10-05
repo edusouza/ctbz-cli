@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
 	"strings"
@@ -90,15 +89,42 @@ func confirmar(s streams, op operacao, yes bool) error {
 	} else {
 		fmt.Fprint(s.err, "Confirma? [s/N] ")
 	}
-	line, _ := bufio.NewReader(s.in).ReadString('\n')
-	resp := strings.ToLower(strings.TrimSpace(line))
+	resp := lerResposta(s)
 	if op.Risco == riscoAlto && resp == palavraConfirmo {
 		return nil
 	}
-	if op.Risco != riscoAlto && (resp == "s" || resp == "sim" || resp == "y" || resp == "yes") {
+	if op.Risco != riscoAlto && respostaSim(resp) {
 		return nil
 	}
 	return errCancelada
+}
+
+// lerResposta lê uma linha byte a byte, sem buffer, para que perguntas seguidas na mesma
+// entrada não percam as respostas seguintes.
+func lerResposta(s streams) string {
+	var b strings.Builder
+	buf := make([]byte, 1)
+	for {
+		n, err := s.in.Read(buf)
+		if n == 1 {
+			if buf[0] == '\n' {
+				break
+			}
+			b.WriteByte(buf[0])
+		}
+		if err != nil {
+			break
+		}
+	}
+	return strings.ToLower(strings.TrimSpace(b.String()))
+}
+
+func respostaSim(r string) bool { return r == "s" || r == "sim" || r == "y" || r == "yes" }
+
+// perguntar faz uma pergunta de sim ou não no terminal (no meio de uma escrita em etapas).
+func perguntar(s streams, pergunta string) bool {
+	fmt.Fprintf(s.err, "%s [s/N] ", pergunta)
+	return respostaSim(lerResposta(s))
 }
 
 // resultadoEscrita começa o registro de saída de uma escrita com as chaves estáveis do

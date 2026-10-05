@@ -35,7 +35,7 @@ conciliação: meses sem extrato aparecem nas rotinas como "Importar extrato ban
 	}
 	cmd.Flags().IntVar(&ano, "ano", 0, "só os meses deste ano")
 	cmd.AddCommand(newExtratosContasCmd(), newExtratosLancamentosCmd(), newExtratosClassificarCmd(),
-		newExtratosDesmembrarCmd(), newExtratosDesfazerCmd())
+		newExtratosDesmembrarCmd(), newExtratosDesfazerCmd(), newExtratosImportarCmd())
 	return cmd
 }
 

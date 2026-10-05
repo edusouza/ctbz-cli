@@ -232,6 +232,15 @@ func Escritas() []Escrita {
 		{Name: "conta_bancaria_excluir", Exemplo: func(ctx context.Context, s Sender) error {
 			return ExcluirContaBancaria(ctx, s, 1000000000000001)
 		}},
+		{Name: "extrato_enviar_arquivo", Exemplo: func(ctx context.Context, s Sender) error {
+			return EnviarExtrato(ctx, s, ArquivoExtrato{NomeArquivo: NomeArquivoExtrato("00000000000191", 2026, 9, "123456", 1789700400000, "ofx"),
+				Ano: 2026, Mes: 9, IDConta: 7, Arquivo: "extrato.ofx", Conteudo: []byte("OFXHEADER:100")})
+		}},
+		{Name: "extrato_concluir_importacao", Exemplo: func(ctx context.Context, s Sender) error {
+			return ConcluirImportacaoExtrato(ctx, s, EventoUploadExtrato{Ano: 2026, Mes: 9, CNPJ: "00000000000191", IDContaBancaria: 7,
+				NomeArquivoStorage: "00000000000191_2026_9_123456_1789700400000.ofx",
+				Respostas:          []RespostaSaldo{{Tipo: "SALDO_ULTIMO_MES", Data: "2026-10-04T12:00:00.000Z", Valor: 1234.56}}})
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

@@ -15,6 +15,9 @@ type WriteError struct {
 	Path    string
 	Status  int
 	Message string
+	// Identificador é o código do erro de negócio (detalhes[0].identificador, ex.:
+	// "exception/movimentacao-financeira-901"), quando a resposta traz.
+	Identificador string
 }
 
 func (e *WriteError) Error() string {
@@ -27,7 +30,19 @@ func NewWriteError(method, path string, resp *Response) *WriteError {
 	if detalhe := errorDetail(resp.Status, resp.Body); detalhe != "" {
 		msg += ": " + detalhe
 	}
-	return &WriteError{Method: method, Path: path, Status: resp.Status, Message: msg}
+	return &WriteError{Method: method, Path: path, Status: resp.Status, Message: msg, Identificador: identificador(resp.Body)}
+}
+
+func identificador(body []byte) string {
+	var v struct {
+		Detalhes []struct {
+			Identificador string `json:"identificador"`
+		} `json:"detalhes"`
+	}
+	if json.Unmarshal(body, &v) != nil || len(v.Detalhes) == 0 {
+		return ""
+	}
+	return v.Detalhes[0].Identificador
 }
 
 func statusText(status int) string {

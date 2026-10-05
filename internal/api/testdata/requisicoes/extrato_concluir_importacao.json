@@ -1,0 +1,21 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/movimentacao-financeira/eventoUploadExtrato",
+    "content_type": "application/json",
+    "corpo": {
+      "ano": 2026,
+      "cnpj": "00000000000191",
+      "idContaBancaria": 7,
+      "mes": 9,
+      "nomeArquivoStorage": "00000000000191_2026_9_123456_1789700400000.ofx",
+      "respostas": [
+        {
+          "data": "2026-10-04T12:00:00.000Z",
+          "tipo": "SALDO_ULTIMO_MES",
+          "valor": 1234.56
+        }
+      ]
+    }
+  }
+]

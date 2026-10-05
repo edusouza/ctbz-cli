@@ -90,8 +90,30 @@ Competência  Banco                  Agência  Conta      Situação  Integraç�
   Contabilizei. Mês sem extrato vira a rotina "Importar extrato bancário" (`ctbz rotinas`).
 - `contas-bancarias` mostra banco, agência, conta, saldo inicial e a integração com o banco
   (ex.: `INTEGRADA` na conta PJ da Contabilizei, que dispensa importar extrato).
-- Importar um extrato continua sendo feito pelo painel (`info-extrato` só existe depois de um
-  upload).
+
+### Importar um extrato
+
+```sh
+ctbz extratos importar extrato-setembro.ofx --conta-bancaria 1000000000000001 --competencia 2026-09
+```
+
+```text
+Importar o extrato extrato-setembro.ofx (OFX, 48 KB) da conta 1000000000000001 em 09/2026 (risco médio)
+Confirma? [s/N] s
+Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato? [s/N] s
+```
+
+- Antes de enviar, a CLI confere a extensão (`.ofx` ou `.pdf`), o tamanho (até 30 MB), os
+  formatos aceitos pelo banco e se há um período anterior com importação pendente. Contas
+  integradas não precisam de importação.
+- No OFX, a Contabilizei lê o saldo do último dia do arquivo e a CLI pede para conferir. Em
+  scripts, `--saldo-final 1.234,56` compara com o valor esperado: se for diferente, a importação
+  para.
+- Se a importação parar depois do envio (saldo recusado, extrato de outra competência), o
+  arquivo fica enviado mas o extrato não é efetivado; corrija e rode de novo.
+- Erros conhecidos viram mensagens claras: extrato de outro banco, outra conta ou agência, conta
+  não cadastrada (cadastre com `ctbz contas-bancarias adicionar`).
+- Para desfazer, use `ctbz extratos excluir` (próxima seção).
 
 ## Lançar no caixa
 

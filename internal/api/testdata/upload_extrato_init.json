@@ -1,0 +1,4 @@
+{"bancos": [
+  {"id": 33, "codigo": "341", "formatosDisponiveisUpload": ["OFX", "PDF"], "contasBancarias": [{"id": 7, "statusIntegracao": "NAO_INTEGRADA"}]},
+  {"id": 44, "codigo": "301", "formatosDisponiveisUpload": ["OFX"], "contasBancarias": [{"id": 8, "statusIntegracao": "INTEGRADA"}, {"id": 9, "statusIntegracao": "NAO_INTEGRADA"}]}
+], "primeiraCompetencia": {"mes": 1, "ano": 2024}}

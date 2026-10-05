@@ -12,6 +12,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz contas-bancarias bancos`, `adicionar` e `editar`: bancos aceitos, cadastro de conta PJ
   (com a declaração do painel) e correção dos dados de uma conta.
 - `ctbz contas-bancarias remover`: exclui uma conta bancária (risco alto), quando o painel permite.
+- `ctbz extratos importar`: importa o extrato do mês (OFX ou PDF) com as validações do painel e
+  a confirmação do saldo do último dia (ou `--saldo-final`).
 
 ## [1.4.0] - 2026-10-04
 

@@ -91,8 +91,11 @@ func Endpoints() []Endpoint {
 		{Name: "contas_usuario", LivePath: PathContasUsuario, Type: []ContaUsuario{}},
 		{Name: "contas_usuario_competencia", LivePath: PathContasUsuarioCompetencia(2026, 9, OrigemExtrato), Type: []ContaUsuarioCompetencia{}}, // sintética (ADR-0021)
 		{Name: "extratos", LivePath: PathExtratos, Type: []Extrato{}},
-		{Name: "lancamentos_extrato", Type: PaginaLancamentosExtrato{}}, // sintética (ADR-0021); a conta vem de extratos
-		{Name: "extrato_info", Type: ExtratoInfo{}},                     // sintética (ADR-0021); a conta vem de extratos
+		{Name: "lancamentos_extrato", Type: PaginaLancamentosExtrato{}},                           // sintética (ADR-0021); a conta vem de extratos
+		{Name: "permite_importacao", Type: PermiteImportacao{}},                                   // sintética (ADR-0021); a conta vem de extratos
+		{Name: "upload_extrato_init", LivePath: PathUploadExtratoInit, Type: UploadExtratoInit{}}, // sintética (ADR-0021)
+		{Name: "info_extrato", Type: InfoExtrato{}},                                               // sintética (ADR-0021); só existe depois de um upload
+		{Name: "extrato_info", Type: ExtratoInfo{}},                                               // sintética (ADR-0021); a conta vem de extratos
 		{Name: "contas_bancarias", LivePath: PathContasBancarias, Type: ContasBancarias{}},
 		{Name: "detalhe_conta_bancaria", Type: DetalheContaBancaria{}}, // sintética (ADR-0021); o ID vem de contas_bancarias
 		{Name: "documentos_tipos", LivePath: PathTiposDocumento(AreaDocumentosContabeis), Type: []TipoDocumento{}},

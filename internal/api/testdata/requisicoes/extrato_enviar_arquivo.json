@@ -1,0 +1,31 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/upload-documentos/extrato/enviar/bucket",
+    "content_type": "multipart/form-data",
+    "campos": [
+      {
+        "nome": "nomeArquivo",
+        "valor": "00000000000191_2026_9_123456_1789700400000.ofx"
+      },
+      {
+        "nome": "ano",
+        "valor": "2026"
+      },
+      {
+        "nome": "mes",
+        "valor": "9"
+      },
+      {
+        "nome": "documento",
+        "arquivo": "extrato.ofx",
+        "tipo": "application/octet-stream",
+        "tamanho": 13
+      },
+      {
+        "nome": "idConta",
+        "valor": "7"
+      }
+    ]
+  }
+]
