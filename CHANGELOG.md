@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-04
+
+Primeiras escritas: caixa e classificação de lançamentos do extrato, com confirmação,
+`--dry-run` e releitura do resultado.
+
 ### Added
 
 - `ctbz caixa` mostra o id de cada lançamento (coluna `id`, no fim).
@@ -192,7 +197,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/edusouza/ctbz-cli/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/edusouza/ctbz-cli/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/edusouza/ctbz-cli/compare/v0.8.0...v1.0.0
 [0.8.0]: https://github.com/edusouza/ctbz-cli/compare/v0.7.0...v0.8.0

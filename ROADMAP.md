@@ -34,7 +34,7 @@ escritas, `risco: baixo|médio|alto`.
 | **v0.8** | Documentos e certificado digital | [#47](https://github.com/edusouza/ctbz-cli/issues/47) | 2 | concluída |
 | **v1.0** | Estabilidade e distribuição | [#50](https://github.com/edusouza/ctbz-cli/issues/50) | 3 | concluída |
 | **v1.1** | Fundação da escrita | [#173](https://github.com/edusouza/ctbz-cli/issues/173) | 6 | concluída |
-| **v1.2** | Caixa e classificação de lançamentos | [#180](https://github.com/edusouza/ctbz-cli/issues/180) | 7 | planejada |
+| **v1.2** | Caixa e classificação de lançamentos | [#180](https://github.com/edusouza/ctbz-cli/issues/180) | 7 | concluída |
 | **v1.3** | Impostos: confirmar pagamento, recálculo e parcelamento | [#188](https://github.com/edusouza/ctbz-cli/issues/188) | 4 | planejada |
 | **v1.4** | Pendências, termos e conciliação | [#193](https://github.com/edusouza/ctbz-cli/issues/193) | 5 | planejada |
 | **v1.5** | Extratos, contas bancárias e documentos | [#199](https://github.com/edusouza/ctbz-cli/issues/199) | 6 | planejada |
@@ -210,13 +210,13 @@ Primeiro contexto de escrita: lançamentos do caixa e classificação dos lança
 
 | | Issue | Funcionalidade | Tipo | Risco |
 |---|---|---|---|---|
-| ⬜ | [#181](https://github.com/edusouza/ctbz-cli/issues/181) | Classificações disponíveis para lançamentos do caixa e do extrato | funcionalidade | baixo |
-| ⬜ | [#182](https://github.com/edusouza/ctbz-cli/issues/182) | Adicionar lançamento no caixa | funcionalidade | médio |
-| ⬜ | [#183](https://github.com/edusouza/ctbz-cli/issues/183) | Editar lançamento do caixa | funcionalidade | médio |
-| ⬜ | [#184](https://github.com/edusouza/ctbz-cli/issues/184) | Remover lançamento do caixa | funcionalidade | médio |
-| ⬜ | [#185](https://github.com/edusouza/ctbz-cli/issues/185) | Listar e classificar lançamentos do extrato | funcionalidade | médio |
-| ⬜ | [#186](https://github.com/edusouza/ctbz-cli/issues/186) | Desmembrar lançamento do extrato e desfazer o desmembramento | funcionalidade | médio |
-| ⬜ | [#187](https://github.com/edusouza/ctbz-cli/issues/187) | Reclassificar lançamento pendente e concluir a rotina | funcionalidade | médio |
+| ✅ | [#181](https://github.com/edusouza/ctbz-cli/issues/181) | Classificações disponíveis para lançamentos do caixa e do extrato | funcionalidade | baixo |
+| ✅ | [#182](https://github.com/edusouza/ctbz-cli/issues/182) | Adicionar lançamento no caixa | funcionalidade | médio |
+| ✅ | [#183](https://github.com/edusouza/ctbz-cli/issues/183) | Editar lançamento do caixa | funcionalidade | médio |
+| ✅ | [#184](https://github.com/edusouza/ctbz-cli/issues/184) | Remover lançamento do caixa | funcionalidade | médio |
+| ✅ | [#185](https://github.com/edusouza/ctbz-cli/issues/185) | Listar e classificar lançamentos do extrato | funcionalidade | médio |
+| ✅ | [#186](https://github.com/edusouza/ctbz-cli/issues/186) | Desmembrar lançamento do extrato e desfazer o desmembramento | funcionalidade | médio |
+| ✅ | [#187](https://github.com/edusouza/ctbz-cli/issues/187) | Reclassificar lançamento pendente e concluir a rotina | funcionalidade | médio |
 
 Fora de escopo: Importar ou excluir extrato (v1.5); reabrir balanço (v1.7).
 
