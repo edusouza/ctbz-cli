@@ -132,6 +132,17 @@ ctbz caixa editar 1000000000000002 --competencia 2026-09 --valor 900 --descricao
 - Lançamentos feitos pelo sistema (coluna "Automático") não podem ser editados, como no painel.
 - Trocar a classificação exige informar de novo o vínculo, quando a nova conta pede um.
 
+Para excluir um lançamento manual:
+
+```sh
+ctbz caixa remover 1000000000000002 --competencia 2026-09
+# Excluir permanentemente o lançamento 1000000000000002 do caixa de 09/2026: "Venda à vista" de 18/09/2026 no valor de R$ 1.000,00 (risco médio)
+# Confirma? [s/N]
+```
+
+A API não tem "desfazer". Depois de remover, a CLI mostra os dados do lançamento e, no stderr,
+o `ctbz caixa adicionar` que o recria.
+
 ## Classificações aceitas numa competência
 
 Antes de lançar no caixa ou classificar um lançamento do extrato, veja quais classificações

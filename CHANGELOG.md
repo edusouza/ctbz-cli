@@ -17,6 +17,7 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   com as validações do painel, confirmação e `--dry-run`.
 - `ctbz caixa editar`: altera data, valor, tipo, classificação, vínculo ou descrição de um
   lançamento manual do caixa, mostrando o antes e o depois.
+- `ctbz caixa remover`: exclui um lançamento manual do caixa e mostra como recriá-lo.
 
 ## [1.1.0] - 2026-10-04
 

@@ -145,5 +145,8 @@ func Escritas() []Escrita {
 				IDContaUsuario: 1000000000000011, Valor: 900,
 			}})
 		}},
+		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
+			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
+		}},
 	}
 }

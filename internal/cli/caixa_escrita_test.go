@@ -15,9 +15,10 @@ import (
 // caixaFake simula o caixa de 09/2026: lista os lançamentos (mais os criados por escrita),
 // as classificações e grava as escritas recebidas.
 type caixaFake struct {
-	mu     sync.Mutex
-	lancs  []map[string]any
-	writes []string // "MÉTODO caminho corpo"
+	mu       sync.Mutex
+	lancs    []map[string]any
+	writes   []string // "MÉTODO caminho corpo"
+	onDelete func()
 }
 
 func newCaixaFake(t *testing.T) *caixaFake {
@@ -50,6 +51,9 @@ func newCaixaFake(t *testing.T) *caixaFake {
 		default:
 			body, _ := io.ReadAll(r.Body)
 			f.writes = append(f.writes, r.Method+" "+r.URL.Path+" "+string(body))
+			if r.Method == "DELETE" && f.onDelete != nil {
+				f.onDelete()
+			}
 			if r.URL.Path == "/api/plataforma/caixa/lancamentousuario/novo/" {
 				var req struct {
 					LancamentoUsuario struct {
@@ -210,5 +214,43 @@ func TestCaixaEditarDryRunMostraAntesEDepois(t *testing.T) {
 	out, stderr, code := execCLI(t, "", "caixa", "editar", "2", "--competencia", "2026-09", "--valor", "1,50", "--dry-run")
 	if code != ExitOK || len(f.writes) != 0 || !strings.Contains(stderr, "valor R$ 1.000,00 → R$ 1,50") || !strings.Contains(out, `"id": 2`) {
 		t.Errorf("código %d\nstdout:\n%s\nstderr:\n%s", code, out, stderr)
+	}
+}
+
+func TestCaixaRemover(t *testing.T) {
+	f := newCaixaFake(t)
+	out, stderr, code := execCLI(t, "", "caixa", "remover", "2", "--competencia", "2026-09", "--dry-run")
+	if code != ExitOK || len(f.writes) != 0 || !strings.Contains(out, "DELETE /api/plataforma/caixa/lancamentousuario/remover/2026/9/2") ||
+		!strings.Contains(stderr, `Excluir permanentemente o lançamento 2 do caixa de 09/2026: "Venda à vista" de 18/09/2026 no valor de R$ 1.000,00 (risco médio)`) {
+		t.Fatalf("--dry-run: código %d\n%s\n%s", code, out, stderr)
+	}
+	out, stderr, code = execCLI(t, "", "caixa", "remover", "2", "--competencia", "2026-09", "--yes", "-o", "json")
+	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != "DELETE /api/plataforma/caixa/lancamentousuario/remover/2026/9/2 " {
+		t.Fatalf("código %d, escritas %q\n%s", code, f.writes, stderr)
+	}
+	// O fake mantém o lançamento: a CLI avisa que ele ainda aparece.
+	if !strings.Contains(out, `"situacao": "enviado"`) || !strings.Contains(stderr, "ainda aparece") {
+		t.Errorf("saída:\n%s\n%s", out, stderr)
+	}
+	if !strings.Contains(stderr, `Para recriar: ctbz caixa adicionar --competencia 2026-09 --data 2026-09-18 --recebimento --valor 1.000,00 --conta 1000000000000011 --descricao "Venda à vista"`) {
+		t.Errorf("comando para recriar: %s", stderr)
+	}
+	for _, want := range []string{`"acao": "remover"`, `"id": 2`, `"id_conta": 1000000000000011`, `"valor": 1000.00`, `"data": "2026-09-18"`} {
+		if !strings.Contains(out, want) {
+			t.Errorf("saída sem %s:\n%s", want, out)
+		}
+	}
+}
+
+func TestCaixaRemoverRemovido(t *testing.T) {
+	f := newCaixaFake(t)
+	f.onDelete = func() { f.lancs = f.lancs[:1] }
+	out, _, code := execCLI(t, "", "caixa", "remover", "2", "--competencia", "2026-09", "--yes", "-o", "json")
+	if code != ExitOK || !strings.Contains(out, `"situacao": "removido"`) {
+		t.Errorf("código %d:\n%s", code, out)
+	}
+	_, stderr, code := execCLI(t, "", "caixa", "remover", "1", "--competencia", "2026-09", "--yes")
+	if code != ExitError || !strings.Contains(stderr, "feito pelo sistema") || len(f.writes) != 1 {
+		t.Errorf("lançamento do sistema: código %d, %s", code, stderr)
 	}
 }

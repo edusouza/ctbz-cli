@@ -109,3 +109,14 @@ func DiaEmBrasilia(t time.Time) time.Time {
 	t = t.In(brasilia)
 	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
 }
+
+// PathRemoverLancamentoCaixa exclui um lançamento manual do caixa (DELETE, sem corpo).
+// Ver docs/api/escrita/contabilidade-e-documentos.md, seção 1.2.
+func PathRemoverLancamentoCaixa(ano, mes int, id int64) string {
+	return fmt.Sprintf("caixa/lancamentousuario/remover/%d/%d/%d", ano, mes, id)
+}
+
+// RemoverLancamento exclui um lançamento do caixa. Não há como desfazer pela API.
+func RemoverLancamento(ctx context.Context, s Sender, ano, mes int, id int64) error {
+	return s.Send(ctx, "DELETE", PathRemoverLancamentoCaixa(ano, mes, id), nil, nil)
+}

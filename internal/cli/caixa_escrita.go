@@ -475,3 +475,78 @@ func aplicarEdicao(cc *caixaCompetencia, atual *api.LancamentoCaixa, f lancament
 	}}
 	return req, conta.Descricao, resumo, nil
 }
+
+func newCaixaRemoverCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "remover ID",
+		Short: "Exclui permanentemente um lançamento manual do caixa",
+		Long: `Exclui um lançamento manual do caixa da competência (risco médio). A API não tem como
+desfazer: para voltar atrás, é preciso recriar o lançamento. Por isso o resumo mostra
+descrição, data e valor antes da confirmação, e a saída traz os dados do lançamento removido
+e, no stderr, o comando ctbz caixa adicionar que o recria.
+
+Lançamentos feitos pelo sistema não podem ser removidos, como no painel.
+Pede confirmação (--yes em scripts) e aceita --dry-run.`,
+		Example: `  ctbz caixa remover 1000000000000002 --competencia 2026-09
+  ctbz caixa remover 1000000000000002 --competencia 2026-09 --yes -o json`,
+		Args: exactArgs(1, "o ID do lançamento"),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			mes, err := competenciaFlag(cmd)
+			if err != nil {
+				return err
+			}
+			formato, err := outputFormat(cmd, "")
+			if err != nil {
+				return err
+			}
+			s := streamsOf(cmd)
+			ctx := cmd.Context()
+			g := sessionGetter{s}
+			l, err := lancamentoDoCaixa(ctx, g, mes, args[0])
+			if err != nil {
+				return err
+			}
+			dia := api.DiaEmBrasilia(time.UnixMilli(l.Data))
+			valor := int64(0)
+			if l.Valor != nil {
+				valor = centavos(*l.Valor)
+			}
+			op := operacao{Risco: riscoMedio, ID: args[0], Resumo: fmt.Sprintf("Excluir permanentemente o lançamento %d do caixa de %s: %q de %s no valor de %s",
+				l.ID, mes.Format("01/2006"), l.Descricao, dia.Format("02/01/2006"), formatarCentavos(valor))}
+			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
+				return api.RemoverLancamento(ctx, snd, mes.Year(), int(mes.Month()), l.ID)
+			})
+			if err != nil || !enviado {
+				return err
+			}
+			situacao := "removido"
+			if ainda, err := releLancamento(ctx, g, mes, func(lc api.LancamentoCaixa) bool { return lc.ID == l.ID }); err != nil {
+				fmt.Fprintln(s.err, "aviso: lançamento removido, mas não foi possível reler o caixa:", err)
+				situacao = "enviado"
+			} else if ainda != nil {
+				fmt.Fprintln(s.err, "aviso: o lançamento ainda aparece no caixa; confira com ctbz caixa", mes.Format("2006-01"))
+				situacao = "enviado"
+			}
+			var idConta any
+			if l.IDContaUsuario != nil {
+				idConta = *l.IDContaUsuario
+				lado := "recebimento"
+				if valor < 0 {
+					lado = "pagamento"
+				}
+				fmt.Fprintf(s.err, "Para recriar: ctbz caixa adicionar --competencia %s --data %s --%s --valor %s --conta %d --descricao %q\n",
+					mes.Format("2006-01"), dia.Format("2006-01-02"), lado, strings.TrimPrefix(formatarCentavos(abs(valor)), "R$ "), *l.IDContaUsuario, l.Descricao)
+			}
+			d, _ := output.ParseDate(dia.Format("2006-01-02"))
+			rec := resultadoEscrita("remover", situacao, l.ID).
+				Add("data", "Data", d).
+				Add("descricao", "Descrição", l.Descricao).
+				Add("id_conta", "ID da conta", idConta).
+				Add("valor", "Valor", output.Money(reais(valor)))
+			return output.Write(s.out, formato, rec)
+		},
+	}
+	addCompetenciaFlag(cmd)
+	addWriteFlags(cmd)
+	return cmd
+}
