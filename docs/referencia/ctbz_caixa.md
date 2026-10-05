@@ -21,6 +21,10 @@ ctbz caixa AAAA-MM
   ctbz caixa 2026-09 -o csv > caixa-2026-09.csv
 ```
 
+## Subcomandos
+
+- [`ctbz caixa contas`](ctbz_caixa_contas.md): Lista as classificações aceitas nos lançamentos do caixa de uma competência
+
 ## Flags globais
 
 ```

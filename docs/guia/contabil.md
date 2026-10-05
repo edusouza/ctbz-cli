@@ -93,6 +93,28 @@ Competência  Banco                  Agência  Conta      Situação  Integraç�
 - Importar um extrato continua sendo feito pelo painel (`info-extrato` só existe depois de um
   upload).
 
+## Classificações aceitas numa competência
+
+Antes de lançar no caixa ou classificar um lançamento do extrato, veja quais classificações
+a competência aceita (o mesmo filtro do painel):
+
+```sh
+ctbz caixa contas --competencia 2026-09 [--recebimento|--pagamento]
+ctbz caixa contas --competencia 2026-09 --vinculos     # guias e sócios aceitos como vínculo
+ctbz extratos contas --competencia 2026-09 [--receita|--despesa]
+```
+
+```text
+ID                Classificação                                Tipo         Exige
+1000000000000013  Impostos - Simples Nacional                  pagamento    guia
+1000000000000014  Sócios - Distribuição de Lucros Antecipados  pagamento    sócio
+```
+
+- No caixa, "Exige" aponta as classificações que pedem um vínculo: uma guia de imposto
+  (contas "Impostos - …", ou `0` para SEM GUIA) ou um sócio. Os ids vêm de `--vinculos`.
+- No extrato, entradas aceitam classificações `RECEITA` e saídas, `DESPESA`. As marcadas em
+  "Exige sócio" pedem `--socio`.
+
 ## Plano de contas (classificações)
 
 ```sh

@@ -21,6 +21,10 @@ ctbz extratos [flags]
   ctbz extratos --ano 2026 -o csv
 ```
 
+## Subcomandos
+
+- [`ctbz extratos contas`](ctbz_extratos_contas.md): Lista as classificações aceitas nos lançamentos do extrato de uma competência
+
 ## Flags
 
 ```

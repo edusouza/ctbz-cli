@@ -10,7 +10,7 @@ import (
 )
 
 func newCaixaCmd() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "caixa AAAA-MM",
 		Short: "Lista os lançamentos do caixa de um mês",
 		Long: `Lista os lançamentos do caixa do mês (entradas e saídas classificadas): data, descrição,
@@ -53,6 +53,8 @@ O painel pede até 1000 lançamentos por mês; se houver mais, a CLI avisa no st
 			return nil
 		},
 	}
+	cmd.AddCommand(newCaixaContasCmd())
+	return cmd
 }
 
 func caixaList(ls []api.LancamentoCaixa, contas []api.ContaUsuario) (*output.List, float64) {

@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Added
+
+- `ctbz caixa contas` e `ctbz extratos contas`: classificações aceitas numa competência, com o
+  filtro do painel e o vínculo exigido (guia de imposto ou sócio); `--vinculos` lista as guias
+  e os sócios do caixa.
+
 ## [1.1.0] - 2026-10-04
 
 Fundação das ações que alteram dados na Contabilizei

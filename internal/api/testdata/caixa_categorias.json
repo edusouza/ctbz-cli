@@ -1,0 +1,14 @@
+{
+  "serializedList": {
+    "categoriasVinculoDTO": [
+      {"id": 1000000000000011, "descricao": "Receita de Serviços", "tipo": "CONTA_USUARIO", "entrada": true},
+      {"id": 1000000000000012, "descricao": "Pagamento de Fornecedores", "tipo": "CONTA_USUARIO", "entrada": false},
+      {"id": 5981343255101440, "descricao": "Pagamento Contabilizei", "tipo": "CONTA_USUARIO", "entrada": false},
+      {"id": 1000000000000013, "descricao": "Impostos - Simples Nacional", "tipo": "CONTA_USUARIO", "entrada": false},
+      {"id": 1000000000000014, "descricao": "Sócios - Distribuição de Lucros Antecipados", "tipo": "CONTA_USUARIO", "entrada": false},
+      {"id": 1000000000000015, "descricao": "Despesa Oculta", "tipo": "CONTA_USUARIO", "entrada": false},
+      {"id": "1000000000000021", "descricao": "Simples Nacional 08/2026", "tipo": "GUIA_IMPOSTO"},
+      {"id": 1000000000000031, "descricao": "FULANO DE TAL", "tipo": "SOCIO"}
+    ]
+  }
+}

@@ -94,6 +94,17 @@ da CLI (`api.EncodeBody`/`EncodeMultipart` e `ctbz.Client`), e compara com
 3. `go test ./internal/api -run Requisicoes -update`, conferir o golden contra
    `docs/api/escrita/` e rodar `go test ./...`.
 
+## Fixtures sintéticas
+
+Endpoints que ainda não foram capturados de uma conta real têm tipo e fixture escritos a
+partir de [docs/api/escrita](api/escrita/README.md), marcados com `// sintética (ADR-0021)`
+em `Endpoints()` ([ADR-0021](adr/0021-tipos-e-fixtures-sinteticos.md)). Para trocar pela real:
+
+```sh
+grep -n "sintética" internal/api/api.go     # pendentes
+go run ./tools/capture NOME                 # captura, poda e anonimiza; revise e tire o comentário
+```
+
 ## Monitoramento
 
 Os contratos ao vivo rodam toda semana no job de monitoramento, que abre uma issue quando

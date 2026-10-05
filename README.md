@@ -123,6 +123,8 @@ ctbz balancete 2026-08                         # balancete do mês (árvore de c
 ctbz balanco 2025                              # balanço patrimonial do exercício
 ctbz razao --conta 1.01 --de 2026-01           # lançamentos do razão por conta
 ctbz caixa 2026-09                             # lançamentos do caixa do mês, com total
+ctbz caixa contas --competencia 2026-09        # classificações aceitas no caixa (e vínculos)
+ctbz extratos contas --competencia 2026-09     # classificações aceitas no extrato
 ctbz extratos --ano 2026 | ctbz contas-bancarias  # extratos por mês e contas cadastradas
 ctbz contas --busca alug                       # plano de contas usado nas classificações
 ctbz documentos [--tipo TIPO]                  # central de documentos: tipos e arquivos enviados

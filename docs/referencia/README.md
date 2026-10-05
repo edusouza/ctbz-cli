@@ -10,6 +10,7 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz balancete`](ctbz_balancete.md) | Mostra o balancete de verificação de um mês |
 | [`ctbz balanco`](ctbz_balanco.md) | Mostra o balanço patrimonial (ativo, passivo e patrimônio líquido) |
 | [`ctbz caixa`](ctbz_caixa.md) | Lista os lançamentos do caixa de um mês |
+| [`ctbz caixa contas`](ctbz_caixa_contas.md) | Lista as classificações aceitas nos lançamentos do caixa de uma competência |
 | [`ctbz certificado`](ctbz_certificado.md) | Mostra a situação do certificado digital da empresa e da renovação |
 | [`ctbz chamados`](ctbz_chamados.md) | Lista os chamados de atendimento (em andamento ou finalizados) |
 | [`ctbz contas`](ctbz_contas.md) | Lista o plano de contas usado para classificar os lançamentos |
@@ -22,6 +23,7 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz empresa usar`](ctbz_empresa_usar.md) | Troca a empresa da sessão |
 | [`ctbz empresas`](ctbz_empresas.md) | Lista as empresas do usuário, marcando a atual |
 | [`ctbz extratos`](ctbz_extratos.md) | Lista a situação dos extratos bancários por mês e conta |
+| [`ctbz extratos contas`](ctbz_extratos_contas.md) | Lista as classificações aceitas nos lançamentos do extrato de uma competência |
 | [`ctbz impostos`](ctbz_impostos.md) | Lista as guias de impostos a pagar (em atraso, do mês e do próximo mês) |
 | [`ctbz impostos baixar`](ctbz_impostos_baixar.md) | Baixa o PDF de guias de imposto |
 | [`ctbz impostos calculo`](ctbz_impostos_calculo.md) | Mostra como o imposto do mês foi calculado |
