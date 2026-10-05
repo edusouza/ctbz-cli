@@ -1,0 +1,15 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/conciliacao-fiscal/conciliar/resolver-pendencia",
+    "content_type": "application/json",
+    "corpo": {
+      "contraparte": [],
+      "idPendencia": [
+        123
+      ],
+      "idVinculo": 55,
+      "tipoResolucaoPendencia": "EMPRESTIMO_DO_SOCIO_A_EMPRESA"
+    }
+  }
+]

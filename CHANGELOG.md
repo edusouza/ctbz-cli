@@ -15,6 +15,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   termo do TotalPass, mostrando o texto completo antes da confirmação de risco alto.
 - `ctbz pendencias procuracao [--ja-criei]`: situação da procuração do e-CAC (CNPJ a outorgar e
   link) e a declaração de que ela foi criada.
+- `ctbz pendencias conciliacao resolver`: concilia pendências vinculando notas ou recebimentos,
+  ou justificando com um motivo (com `motivos`, `candidatos` e `detalhes` para preparar).
 
 ### Fixed
 

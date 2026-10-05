@@ -204,6 +204,19 @@ func Escritas() []Escrita {
 		{Name: "procuracao_checklist", Exemplo: func(ctx context.Context, s Sender) error {
 			return DeclararProcuracao(ctx, s, PathCompartilharProcuracao)
 		}},
+		{Name: "conciliacao_vincular", Exemplo: func(ctx context.Context, s Sender) error {
+			return ResolverConciliacao(ctx, s, ResolucaoConciliacao{IDPendencia: []int64{123, 124},
+				Contraparte: []Contraparte{{Origem: OrigemNotaFiscal, ID: 987}}})
+		}},
+		{Name: "conciliacao_motivo", Exemplo: func(ctx context.Context, s Sender) error {
+			motivo, socio := "EMPRESTIMO_DO_SOCIO_A_EMPRESA", int64(55)
+			return ResolverConciliacao(ctx, s, ResolucaoConciliacao{IDPendencia: []int64{123}, TipoResolucaoPendencia: &motivo, IDVinculo: &socio})
+		}},
+		{Name: "conciliacao_vincular_com_motivo", Exemplo: func(ctx context.Context, s Sender) error {
+			motivo := "DESCONTO_CONCEDIDO"
+			return ResolverConciliacao(ctx, s, ResolucaoConciliacao{IDPendencia: []int64{123},
+				Contraparte: []Contraparte{{Origem: OrigemMovimentacao, ID: 456}}, TipoResolucaoPendencia: &motivo, NumeroNotaAtivacaoContabil: "1234"})
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

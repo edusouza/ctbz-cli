@@ -64,6 +64,10 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz pendencias`](ctbz_pendencias.md) | Lista as pendências da empresa (tipo, detalhe, prazo e situação) |
 | [`ctbz pendencias aceitar`](ctbz_pendencias_aceitar.md) | Aceita um termo ou carta pendente da Central de Rotinas |
 | [`ctbz pendencias conciliacao`](ctbz_pendencias_conciliacao.md) | Mostra as pendências de conciliação fiscal (notas e recebimentos) |
+| [`ctbz pendencias conciliacao candidatos`](ctbz_pendencias_conciliacao_candidatos.md) | Lista as notas ou os recebimentos que podem ser vinculados numa conciliação |
+| [`ctbz pendencias conciliacao detalhes`](ctbz_pendencias_conciliacao_detalhes.md) | Mostra os detalhes de uma pendência ou conciliação (justificativa, vínculos) |
+| [`ctbz pendencias conciliacao motivos`](ctbz_pendencias_conciliacao_motivos.md) | Lista os motivos aceitos para justificar uma pendência de conciliação |
+| [`ctbz pendencias conciliacao resolver`](ctbz_pendencias_conciliacao_resolver.md) | Concilia ou justifica pendências de conciliação fiscal |
 | [`ctbz pendencias procuracao`](ctbz_pendencias_procuracao.md) | Mostra a pendência de procuração do e-CAC ou declara que ela foi criada |
 | [`ctbz pendencias termo`](ctbz_pendencias_termo.md) | Mostra o texto completo de um termo ou carta da Central de Rotinas |
 | [`ctbz pendencias termos`](ctbz_pendencias_termos.md) | Lista os termos e cartas com aceite pendente na Central de Rotinas |

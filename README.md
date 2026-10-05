@@ -108,6 +108,7 @@ ctbz impostos debitos                          # débitos federais em aberto?
 ctbz impostos recorrente [historico]           # pagamento recorrente (débito automático) de impostos
 ctbz pendencias                                # pendências abertas, com alerta de prazo
 ctbz pendencias conciliacao                    # notas e recebimentos a conciliar
+ctbz pendencias conciliacao resolver ID --vincular NOTAFISCAL:ID | --motivo M   # concilia (risco alto)
 ctbz pendencias termos | termo CHAVE           # termos e cartas para aceitar; texto completo
 ctbz pendencias aceitar CHAVE                  # aceita (risco alto: declaração sem revogação)
 ctbz pendencias procuracao [--ja-criei]        # procuração do e-CAC: situação ou declaração

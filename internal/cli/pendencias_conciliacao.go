@@ -82,6 +82,7 @@ Com --fail-on-pendencias, o comando termina com código 4 quando há algo a conc
 	}
 	cmd.Flags().StringVar(&listar, "listar", "", "lista os itens pendentes: notas ou recebimentos")
 	cmd.Flags().BoolVar(&failOnPendencias, "fail-on-pendencias", false, "termina com código 4 se houver algo a conciliar")
+	cmd.AddCommand(newConciliacaoMotivosCmd(), newConciliacaoCandidatosCmd(), newConciliacaoDetalhesCmd(), newConciliacaoResolverCmd())
 	return cmd
 }
 

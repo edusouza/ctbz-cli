@@ -1,0 +1,20 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/conciliacao-fiscal/conciliar/resolver-pendencia",
+    "content_type": "application/json",
+    "corpo": {
+      "contraparte": [
+        {
+          "id": 456,
+          "origem": "MOVIMENTACAO"
+        }
+      ],
+      "idPendencia": [
+        123
+      ],
+      "numeroNotaAtivacaoContabil": "1234",
+      "tipoResolucaoPendencia": "DESCONTO_CONCEDIDO"
+    }
+  }
+]

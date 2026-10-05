@@ -150,6 +150,32 @@ Conciliações automáticas no mês:  0
   pendências), por isso os campos saem como a API os devolve.
 - `--fail-on-pendencias` termina com código 4 quando há algo a conciliar.
 
+### Resolver pendências de conciliação
+
+Uma pendência se resolve vinculando o item ao seu par (a nota ao recebimento, ou o contrário)
+ou justificando com um motivo:
+
+```sh
+ctbz pendencias conciliacao candidatos --notas                 # notas para vincular a recebimentos
+ctbz pendencias conciliacao resolver 123 --vincular NOTAFISCAL:987
+ctbz pendencias conciliacao motivos                            # motivos aceitos
+ctbz pendencias conciliacao resolver 123 --motivo CAIXA_OU_PESSOA_FISICA
+ctbz pendencias conciliacao detalhes --recebimento 123         # como uma pendência foi resolvida
+```
+
+- **Risco alto:** a resolução define a natureza fiscal do recebimento (receita tributável,
+  empréstimo, capital…). Ela pode ser refeita depois, mas não apagada. No terminal, a CLI pede
+  para digitar `confirmo`.
+- `--vincular ORIGEM:ID` aceita `NOTAFISCAL` (para pendências de recebimento) e `MOVIMENTACAO`
+  (para pendências de nota). Com `--vincular` e `--motivo` juntos, a conciliação fica com a
+  diferença justificada.
+- Motivos que envolvem sócio (AFAC, empréstimo do sócio, integralização de capital, devolução
+  de lucros antecipados) exigem `--socio ID`. Essa lista foi deduzida do painel e pode mudar.
+- No painel, algumas opções só valem para itens abaixo de R$ 1.000,00. A CLI não conhece a lista
+  exata, e a Contabilizei recusa o pedido quando a regra não é atendida.
+- `candidatos` e `detalhes` mostram os campos como a API devolve: o formato ainda não foi
+  verificado com pendências reais. `detalhes` usa POST, mas é só leitura.
+
 ## Rotinas e obrigações do mês
 
 ```sh

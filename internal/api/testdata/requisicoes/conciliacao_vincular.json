@@ -1,0 +1,20 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/conciliacao-fiscal/conciliar/resolver-pendencia",
+    "content_type": "application/json",
+    "corpo": {
+      "contraparte": [
+        {
+          "id": 987,
+          "origem": "NOTAFISCAL"
+        }
+      ],
+      "idPendencia": [
+        123,
+        124
+      ],
+      "tipoResolucaoPendencia": null
+    }
+  }
+]

@@ -25,6 +25,13 @@ ctbz pendencias conciliacao [flags]
   ctbz pendencias conciliacao --fail-on-pendencias
 ```
 
+## Subcomandos
+
+- [`ctbz pendencias conciliacao candidatos`](ctbz_pendencias_conciliacao_candidatos.md): Lista as notas ou os recebimentos que podem ser vinculados numa conciliação
+- [`ctbz pendencias conciliacao detalhes`](ctbz_pendencias_conciliacao_detalhes.md): Mostra os detalhes de uma pendência ou conciliação (justificativa, vínculos)
+- [`ctbz pendencias conciliacao motivos`](ctbz_pendencias_conciliacao_motivos.md): Lista os motivos aceitos para justificar uma pendência de conciliação
+- [`ctbz pendencias conciliacao resolver`](ctbz_pendencias_conciliacao_resolver.md): Concilia ou justifica pendências de conciliação fiscal
+
 ## Flags
 
 ```
