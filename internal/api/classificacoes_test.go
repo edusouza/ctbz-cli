@@ -41,3 +41,11 @@ func TestDatasBrasilia(t *testing.T) {
 		}
 	}
 }
+
+func TestVersaoConfirmacao(t *testing.T) {
+	for rollout, want := range map[string]string{"v5": "v5", "v4": "v3", "v3": "v3", "": "v3"} {
+		if got := VersaoConfirmacao(rollout); got != want {
+			t.Errorf("VersaoConfirmacao(%q) = %s, quero %s", rollout, got, want)
+		}
+	}
+}

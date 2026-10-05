@@ -50,7 +50,7 @@ scripts e alertas).`,
 	}
 	cmd.Flags().BoolVar(&soAtrasadas, "atrasadas", false, "mostra só as guias em atraso")
 	cmd.Flags().BoolVar(&failOnAtraso, "fail-on-atraso", false, "termina com código 4 se houver guias em atraso")
-	cmd.AddCommand(newImpostosGuiaCmd(), newImpostosCalculoCmd(), newImpostosTabelaIRRFCmd(), newImpostosBaixarCmd(), newImpostosHistoricoCmd(), newImpostosFaturamentoCmd(),
+	cmd.AddCommand(newImpostosConfirmarCmd(), newImpostosDesmarcarCmd(), newImpostosGuiaCmd(), newImpostosCalculoCmd(), newImpostosTabelaIRRFCmd(), newImpostosBaixarCmd(), newImpostosHistoricoCmd(), newImpostosFaturamentoCmd(),
 		newImpostosParcelamentosCmd(), newImpostosParcelamentoCmd(), newImpostosDebitosCmd(), newImpostosRecorrenteCmd())
 	return cmd
 }

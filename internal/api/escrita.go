@@ -165,6 +165,14 @@ func Escritas() []Escrita {
 				{IDPendencia: json.RawMessage(`"1000000000000501"`), IDClassificacao: 1000000000000042, IDSocio: &socio, IDLancamento: 1000000000000102},
 			})
 		}},
+		{Name: "impostos_confirmar_pagamento_v5", Exemplo: func(ctx context.Context, s Sender) error {
+			_, err := ConfirmarPagamento(ctx, s, "v5", 1000000000000001, ConfirmacaoPagamento{Tipo: "GUIA", Origem: OrigemGuiaPadrao, PagamentoConfirmado: true})
+			return err
+		}},
+		{Name: "impostos_negar_pagamento_v3", Exemplo: func(ctx context.Context, s Sender) error {
+			_, err := ConfirmarPagamento(ctx, s, "v3", 1000000000000001, ConfirmacaoPagamento{Tipo: "PARCELA", Origem: OrigemGuiaPadrao, PagamentoConfirmado: false})
+			return err
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

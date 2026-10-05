@@ -97,6 +97,7 @@ ctbz impostos            # guias a pagar (em atraso, do mês e do próximo mês)
 ctbz impostos guia ID    # detalhe de uma guia
 ctbz impostos calculo    # memória de cálculo do mês (DAS, INSS, IRRF, Fator R)
 ctbz impostos baixar --pendentes -d ~/guias   # PDFs das guias a pagar
+ctbz impostos confirmar ID [--nao-paguei]      # informa que a guia foi (ou não) paga; desmarcar desfaz
 ctbz impostos historico --ano 2026             # guias de meses anteriores
 ctbz impostos faturamento                      # faturamento, pró-labore e Fator R (12 meses)
 ctbz impostos parcelamentos                    # parcelamentos de impostos

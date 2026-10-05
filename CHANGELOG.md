@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Added
+
+- `ctbz impostos confirmar ID [--nao-paguei]` e `ctbz impostos desmarcar ID`: informam que uma
+  guia foi ou não paga (rota v5 ou v3 conforme a tela da empresa), com o aviso de auditoria do
+  painel.
+
 ## [1.2.0] - 2026-10-04
 
 Primeiras escritas: caixa e classificação de lançamentos do extrato, com confirmação,

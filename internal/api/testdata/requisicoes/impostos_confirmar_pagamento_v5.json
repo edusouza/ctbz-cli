@@ -1,0 +1,12 @@
+[
+  {
+    "metodo": "PUT",
+    "caminho": "/api/plataforma/impostos/v5/impostos-a-pagar/guia/1000000000000001/confirmar-pagamento",
+    "content_type": "application/json",
+    "corpo": {
+      "origem": "GUIAS",
+      "pagamentoConfirmado": true,
+      "tipo": "GUIA"
+    }
+  }
+]

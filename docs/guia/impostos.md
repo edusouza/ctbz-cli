@@ -63,6 +63,28 @@ ctbz impostos baixar 1000000000000001           # guias específicas
 - O PDF vem de um link temporário gerado pela Contabilizei; o download não envia os cookies
   da sessão.
 
+## Informar que uma guia foi paga (ou não)
+
+Se você já pagou uma guia e ela continua aparecendo como a pagar, marque como paga
+("Já paguei" no painel). Se ela está como "a confirmar" mas não foi paga, informe com
+`--nao-paguei`; isso também libera o recálculo.
+
+```sh
+ctbz impostos confirmar 1000000000000001                # já paguei
+ctbz impostos confirmar 1000000000000001 --nao-paguei   # não paguei
+ctbz impostos desmarcar 1000000000000001                # desfaz uma confirmação feita por engano
+```
+
+- É uma **declaração**, não um pagamento (risco médio). A confirmação não serve como
+  comprovante oficial: a Contabilizei faz auditorias periódicas e pode mudar o status com os
+  dados do governo.
+- A CLI usa a mesma rota da tela de impostos da sua empresa (v5 ou v3, conforme
+  `impostos/rollout`).
+- Pendências críticas na Central de Rotinas bloqueiam a confirmação, como no painel.
+- `ctbz impostos baixar` só baixa o PDF. No painel, baixar a guia (ou copiar o código de
+  barras) também a marca como "a confirmar" (`registrar-a-confirmar`). A CLI **não** faz isso:
+  baixar continua sendo só leitura.
+
 ## Histórico
 
 ```sh

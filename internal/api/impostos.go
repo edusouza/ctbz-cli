@@ -63,6 +63,7 @@ type Montante struct {
 type GuiaDetalhe struct {
 	ID                   int64  `json:"id"`
 	Tipo                 string `json:"tipo"`
+	Origem               string `json:"origem" contract:"optional"` // usada nas escritas; padrão GUIAS
 	IdentificadorImposto string `json:"identificadorImposto"`
 	Competencia          string `json:"competencia"`
 	Vencimento           string `json:"vencimento"` // dd/mm/aaaa

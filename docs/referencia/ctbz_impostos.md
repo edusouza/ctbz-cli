@@ -27,7 +27,9 @@ ctbz impostos [flags]
 
 - [`ctbz impostos baixar`](ctbz_impostos_baixar.md): Baixa o PDF de guias de imposto
 - [`ctbz impostos calculo`](ctbz_impostos_calculo.md): Mostra como o imposto do mês foi calculado
+- [`ctbz impostos confirmar`](ctbz_impostos_confirmar.md): Informa que uma guia foi paga (ou, com --nao-paguei, que não foi)
 - [`ctbz impostos debitos`](ctbz_impostos_debitos.md): Indica se a empresa tem débitos federais em aberto
+- [`ctbz impostos desmarcar`](ctbz_impostos_desmarcar.md): Desfaz a confirmação de pagamento de uma guia
 - [`ctbz impostos faturamento`](ctbz_impostos_faturamento.md): Mostra o faturamento, o pró-labore e os impostos pagos nos últimos 12 meses
 - [`ctbz impostos guia`](ctbz_impostos_guia.md): Mostra o detalhe de uma guia de imposto
 - [`ctbz impostos historico`](ctbz_impostos_historico.md): Lista o histórico de guias de impostos
