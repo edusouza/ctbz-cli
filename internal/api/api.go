@@ -85,6 +85,8 @@ func Endpoints() []Endpoint {
 		{Name: "contas_usuario", LivePath: PathContasUsuario, Type: []ContaUsuario{}},
 		{Name: "contas_usuario_competencia", LivePath: PathContasUsuarioCompetencia(2026, 9, OrigemExtrato), Type: []ContaUsuarioCompetencia{}}, // sintética (ADR-0021)
 		{Name: "extratos", LivePath: PathExtratos, Type: []Extrato{}},
+		{Name: "lancamentos_extrato", Type: PaginaLancamentosExtrato{}}, // sintética (ADR-0021); a conta vem de extratos
+		{Name: "extrato_info", Type: ExtratoInfo{}},                     // sintética (ADR-0021); a conta vem de extratos
 		{Name: "contas_bancarias", LivePath: PathContasBancarias, Type: ContasBancarias{}},
 		{Name: "documentos_tipos", LivePath: PathTiposDocumento(AreaDocumentosContabeis), Type: []TipoDocumento{}},
 		{Name: "documentos_enviados", LivePath: PathDocumentosEnviados("EXTRATO_BANCARIO_MOVIMENTACOES", 12, 0), Type: PaginaDocumentos{}},

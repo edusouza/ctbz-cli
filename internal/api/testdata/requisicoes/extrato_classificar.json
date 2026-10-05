@@ -1,0 +1,8 @@
+[
+  {
+    "metodo": "PUT",
+    "caminho": "/api/plataforma/movimentacao-financeira/classificar",
+    "content_type": "application/json",
+    "corpo": "{\"idLancamentoUsuario\":1000000000000102,\"idContaUsuario\":6199733752168448,\"idSocio\":1000000000000031}"
+  }
+]

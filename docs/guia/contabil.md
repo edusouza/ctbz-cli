@@ -143,6 +143,27 @@ ctbz caixa remover 1000000000000002 --competencia 2026-09
 A API não tem "desfazer". Depois de remover, a CLI mostra os dados do lançamento e, no stderr,
 o `ctbz caixa adicionar` que o recria.
 
+## Classificar lançamentos do extrato
+
+```sh
+ctbz extratos lancamentos --conta-bancaria 1000000000000001 --competencia 2026-09
+ctbz extratos classificar 1000000000000102 --conta-bancaria 1000000000000001 \
+  --competencia 2026-09 --conta "Pagamento de Fornecedores"
+```
+
+```text
+Classificar o lançamento 1000000000000102 ("PAGAMENTO BOLETO", -R$ 1.234,56): sem classificação → Pagamento de Fornecedores (risco médio)
+Confirma? [s/N]
+```
+
+- O id da conta bancária vem de `ctbz contas-bancarias` ou `ctbz extratos`.
+- `lancamentos` mostra a classificação atual e, nas partes de um lançamento desmembrado, o id
+  do original (coluna "Parte de").
+- Entradas aceitam classificações `RECEITA` e saídas, `DESPESA` (`ctbz extratos contas`).
+  Classificações de sócio exigem `--socio` (ids dos sócios do extrato).
+- Quando os contadores já fecharam o período, a classificação não pode mais ser trocada: o
+  painel mostra "Nossos contadores já classificaram…", e a CLI recusa com a mesma mensagem.
+
 ## Classificações aceitas numa competência
 
 Antes de lançar no caixa ou classificar um lançamento do extrato, veja quais classificações

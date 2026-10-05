@@ -95,6 +95,14 @@ func Check(data []byte, v any) (Report, error) {
 // como vier e mantido inteiro na poda.
 var rawJSON = reflect.TypeOf(json.RawMessage(nil))
 
+var unmarshaler = reflect.TypeOf((*json.Unmarshaler)(nil)).Elem()
+
+// opaco diz se o tipo aceita qualquer JSON: json.RawMessage ou um tipo com UnmarshalJSON
+// próprio (ex.: uma data que vem como número ou texto), que valida o formato sozinho.
+func opaco(t reflect.Type) bool {
+	return t == rawJSON || reflect.PointerTo(t).Implements(unmarshaler)
+}
+
 // maxElements limita quantos itens de cada lista são verificados.
 const maxElements = 5
 
@@ -102,8 +110,8 @@ func check(r *Report, path string, val any, t reflect.Type) {
 	for t.Kind() == reflect.Pointer {
 		t = t.Elem()
 	}
-	if val == nil || t.Kind() == reflect.Interface || t == rawJSON {
-		return // null é aceito em qualquer campo; any e json.RawMessage aceitam qualquer coisa
+	if val == nil || t.Kind() == reflect.Interface || opaco(t) {
+		return // null é aceito em qualquer campo; any e tipos opacos aceitam qualquer coisa
 	}
 	if want, got := expected(t), jsonKind(val); want != "qualquer" && want != got {
 		r.Findings = append(r.Findings, Finding{Path: label(path), Kind: TypeChanged, Expected: want, Got: got})
@@ -266,7 +274,7 @@ func prune(val any, t reflect.Type) any {
 	for t.Kind() == reflect.Pointer {
 		t = t.Elem()
 	}
-	if t == rawJSON {
+	if opaco(t) {
 		return val
 	}
 	switch t.Kind() {

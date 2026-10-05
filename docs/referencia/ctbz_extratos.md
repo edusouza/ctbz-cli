@@ -23,7 +23,9 @@ ctbz extratos [flags]
 
 ## Subcomandos
 
+- [`ctbz extratos classificar`](ctbz_extratos_classificar.md): Troca a classificação de um lançamento do extrato
 - [`ctbz extratos contas`](ctbz_extratos_contas.md): Lista as classificações aceitas nos lançamentos do extrato de uma competência
+- [`ctbz extratos lancamentos`](ctbz_extratos_lancamentos.md): Lista os lançamentos do extrato de uma conta bancária num mês
 
 ## Flags
 

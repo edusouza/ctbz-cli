@@ -1,0 +1,8 @@
+{
+  "list": [
+    {"id": 1000000000000101, "data": 1789700400000, "descricao": "PIX RECEBIDO FULANO", "valor": 1500, "idContaUsuario": 1000000000000011, "idLancamentoPai": null, "idVinculo": null},
+    {"id": 1000000000000102, "data": 1789786800000, "descricao": "PAGAMENTO BOLETO", "valor": -1234.56, "idContaUsuario": null, "idLancamentoPai": null, "idVinculo": null},
+    {"id": 1000000000000103, "data": "2026-09-20", "descricao": "Aluguel", "valor": -1200, "idContaUsuario": 1000000000000012, "idLancamentoPai": 1000000000000100, "idVinculo": null}
+  ],
+  "total": 3
+}

@@ -18,6 +18,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz caixa editar`: altera data, valor, tipo, classificação, vínculo ou descrição de um
   lançamento manual do caixa, mostrando o antes e o depois.
 - `ctbz caixa remover`: exclui um lançamento manual do caixa e mostra como recriá-lo.
+- `ctbz extratos lancamentos`: lançamentos do extrato de uma conta num mês, com a classificação
+  atual; `ctbz extratos classificar` troca a classificação de um deles.
 
 ## [1.1.0] - 2026-10-04
 

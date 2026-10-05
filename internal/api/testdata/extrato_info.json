@@ -1,0 +1,7 @@
+{
+  "permiteEditarLancamento": true,
+  "permiteExclusaoExtrato": true,
+  "socios": [
+    {"id": 1000000000000031, "nome": "FULANO DE TAL"}
+  ]
+}

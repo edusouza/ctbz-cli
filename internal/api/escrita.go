@@ -145,6 +145,10 @@ func Escritas() []Escrita {
 				IDContaUsuario: 1000000000000011, Valor: 900,
 			}})
 		}},
+		{Name: "extrato_classificar", Exemplo: func(ctx context.Context, s Sender) error {
+			socio := int64(1000000000000031)
+			return Classificar(ctx, s, ClassificarLancamento{IDLancamentoUsuario: 1000000000000102, IDContaUsuario: 6199733752168448, IDSocio: &socio})
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

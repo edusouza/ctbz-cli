@@ -150,6 +150,30 @@ func TestRawMessageNaoVerificado(t *testing.T) {
 	}
 }
 
+// dataFlex simula um tipo com UnmarshalJSON próprio (ex.: data em número ou texto).
+type dataFlex struct{ v string }
+
+func (d *dataFlex) UnmarshalJSON(b []byte) error { d.v = string(b); return nil }
+
+func TestUnmarshalerProprioNaoVerificado(t *testing.T) {
+	type item struct {
+		Data dataFlex `json:"data"`
+	}
+	in := `[{"data":1789732800000},{"data":"2026-09-18"}]`
+	r, err := Check([]byte(in), []item{})
+	if err != nil || len(r.Findings) != 0 {
+		t.Errorf("tipo com UnmarshalJSON deveria aceitar número e texto: %v %v", err, r.Findings)
+	}
+	r, _ = Check([]byte(`[{}]`), []item{})
+	if len(r.Findings) != 1 || r.Findings[0].Kind != Missing {
+		t.Errorf("campo ausente continua obrigatório: %v", r.Findings)
+	}
+	out, _ := Prune([]byte(in), []item{})
+	if !strings.Contains(string(out), "1789732800000") {
+		t.Errorf("a poda deveria manter o valor:\n%s", out)
+	}
+}
+
 func TestAnonymizeNomesConhecidos(t *testing.T) {
 	sessao := `{"nome":"Maria Clara da Silva","empresa":{"razaoSocial":"ACME SOLUCOES LTDA","status":"ATIVO"},"nomeMesX":"Julho"}`
 	nomes := Nomes([]byte(sessao))
