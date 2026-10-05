@@ -1,3 +1,4 @@
 /ctbz
 /dist/
 *.tmp
+__pycache__/

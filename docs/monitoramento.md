@@ -7,9 +7,15 @@ agendado (`.github/workflows/monitor.yml`, toda segunda-feira, ou manualmente em
 1. **Contratos ao vivo**: os mesmos testes de contrato do `go test`, mas contra a API real
    (`CTBZ_CONTRACT_LIVE=1`, só `GET`). Falham quando um campo usado pela CLI some ou muda de
    tipo.
-2. **Catálogo de endpoints**: `scripts/extrair-endpoints.py` baixa os bundles do painel e
-   regenera `docs/api/catalogo.md`; qualquer diferença com o versionado indica que o front
-   passou a chamar outros endpoints.
+2. **Catálogo de endpoints**: `scripts/extrair-endpoints.py` baixa os bundles do painel e do
+   front de notas de entrada e regenera `docs/api/catalogo.md`; qualquer diferença com o
+   versionado indica que o front passou a chamar outros endpoints. Leituras e escritas
+   entram no catálogo, inclusive as chamadas `axios({method, url})`, com sufixo concatenado
+   (`guia/{}/confirmar-pagamento`) ou com o caminho numa variável.
+3. **Escritas da CLI**: cada escrita usada pela CLI (os goldens de
+   [requisição](contratos.md#requisicoes-de-escrita)) precisa continuar no catálogo
+   regenerado. Se o front mudou o caminho ou o método, a escrita aparece no relatório antes
+   de alguém usá-la (`CTBZ_CATALOGO_ESCRITAS=1 go test ./internal/api -run EscritasNoCatalogo`).
 
 Quando algo muda, o job abre a issue **"Monitoramento: a Contabilizei mudou a API ou o
 front"** com o relatório (ou comenta nela, se já estiver aberta).
@@ -50,3 +56,6 @@ git checkout docs/api/catalogo.md  # descarta o catálogo regenerado, se não fo
   (`go run ./tools/capture NOME`, revise o arquivo) e trate a mudança no comando.
 - **Catálogo diferente**: veja os endpoints novos ou removidos, atualize
   `docs/api/catalogo.md` e, se for o caso, `docs/api/endpoints-verificados.md`.
+- **Escrita ausente do catálogo**: localize a chamada nova no front (ver
+  [metodologia](metodologia/README.md)), atualize `docs/api/escrita/`, a função em
+  `internal/api` e o golden (`go test ./internal/api -run Requisicoes -update`).

@@ -18,6 +18,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Changed
 
+- O monitoramento semanal passa a acompanhar as escritas: o catálogo de endpoints inclui
+  chamadas `axios({method, url})`, sufixos concatenados, caminhos em variáveis e o front de
+  notas de entrada, e o relatório aponta escritas usadas pela CLI que sumiram do front.
 - `ctbz api -X` com método diferente de `GET` confere a sessão antes e envia uma única vez:
   não refaz o login nem repete a chamada depois do envio, e avisa quando uma falha de
   conexão deixa o resultado incerto.

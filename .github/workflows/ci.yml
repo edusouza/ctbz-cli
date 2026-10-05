@@ -38,3 +38,5 @@ jobs:
           python-version: "3.12"
       - run: pip install -r docs/requirements.txt
       - run: mkdocs build --strict
+      - name: Testes dos scripts Python
+        run: python3 -m unittest discover -s scripts

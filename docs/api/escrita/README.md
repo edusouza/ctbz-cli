@@ -67,8 +67,11 @@ Documentados nas páginas acima, mas sem comando previsto:
 
 ## Ausentes do catálogo
 
-O [catálogo](../catalogo.md) não captura chamadas feitas com `axios({method, url})`, sufixos
-concatenados e caminhos guardados em variáveis. Entre as escritas acima, ficam de fora:
+Até a v1.0, o gerador do [catálogo](../catalogo.md) não capturava chamadas feitas com
+`axios({method, url})`, sufixos concatenados e caminhos guardados em variáveis, nem o front
+de notas de entrada. A v1.1 passou a reconhecê-las (#179); as entradas aparecem na próxima
+regeneração do catálogo (`ctbz login && scripts/extrair-endpoints.py > docs/api/catalogo.md`).
+Entre as escritas acima, as que faltavam no catálogo da v1.0 eram:
 `…/confirmar-pagamento`, `…/v2/recalcular`, `desmembrar/desfazer`, `DELETE
 movimentacao-financeira/extrato`, `documentos/envio-documento/enviar[/consolidado]`,
 `novo-emissor/clientes/salvar-cliente-*`, `novo-emissor/v2/emissao/*` e a base `/api/emissor/`.

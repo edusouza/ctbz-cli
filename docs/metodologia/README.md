@@ -66,6 +66,11 @@ for k, v in re.findall(r'localStorage.setItem\("([^"]*)","([^"]*)"\)', html):
    # → r["c"].get("relatorios-ms/gerar-balancete/".concat(ano,"/").concat(mes))
    ```
 
+Além de `X["c"].get("…")`, o script reconhece `.concat(x, "/sufixo")`, caminhos guardados em
+variáveis (`var e="…"; X["c"].post(e)`), `Object(X["c"])({method, url})` e o vue-resource do
+front de notas de entrada (`this.$http.post("/api/emissor/…")`). Os testes ficam em
+`scripts/test_extrair_endpoints.py` (`python3 -m unittest discover -s scripts`).
+
 Os passos 1 a 4 estão automatizados em
 [`scripts/extrair-endpoints.py`](https://github.com/edusouza/ctbz-cli/blob/main/scripts/extrair-endpoints.py):
 
