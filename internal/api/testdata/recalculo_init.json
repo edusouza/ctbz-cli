@@ -1,0 +1,13 @@
+{
+  "descricao": "DARF Unificado",
+  "mesCompetencia": 7,
+  "anoCompetencia": 2026,
+  "vencimento": "2026-08-20",
+  "valorOriginal": 1000,
+  "valorRecalculo": 1234.56,
+  "dataRecomendada": "2026-10-09",
+  "finalDoMes": "2026-10-30",
+  "datasIndisponiveis": ["2026-10-10", "2026-10-11", "2026-10-12"],
+  "cobrarRecalculo": true,
+  "motivoSemCobranca": null
+}

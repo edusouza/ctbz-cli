@@ -173,6 +173,10 @@ func Escritas() []Escrita {
 			_, err := ConfirmarPagamento(ctx, s, "v3", 1000000000000001, ConfirmacaoPagamento{Tipo: "PARCELA", Origem: OrigemGuiaPadrao, PagamentoConfirmado: false})
 			return err
 		}},
+		{Name: "impostos_recalcular", Exemplo: func(ctx context.Context, s Sender) error {
+			_, err := Recalcular(ctx, s, 1000000000000001, PedidoRecalculo{Tipo: "GUIA", Origem: OrigemGuiaPadrao, DataVencimento: "20/10/2026"})
+			return err
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

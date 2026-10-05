@@ -85,6 +85,24 @@ ctbz impostos desmarcar 1000000000000001                # desfaz uma confirmaç�
   barras) também a marca como "a confirmar" (`registrar-a-confirmar`). A CLI **não** faz isso:
   baixar continua sendo só leitura.
 
+## Recalcular uma guia vencida
+
+Para uma guia vencida e marcada como não paga, dá para pedir uma nova guia, com juros e
+multa, para outra data. Sem `--vencimento`, a CLI só mostra os dados do recálculo:
+
+```sh
+ctbz impostos recalcular 1000000000000001
+# Para pedir: ctbz impostos recalcular 1000000000000001 --vencimento 2026-10-09
+ctbz impostos recalcular 1000000000000001 --vencimento 2026-10-20
+```
+
+- **Risco alto:** o recálculo é um serviço adicional, em geral cobrado na próxima
+  mensalidade (a saída mostra `cobrar_recalculo`), e não dá para cancelar o pedido. No
+  terminal, a CLI pede para digitar `confirmo`.
+- A guia precisa estar marcada como não paga (`ctbz impostos confirmar ID --nao-paguei`) e o
+  painel precisa oferecer o recálculo para ela. Datas indisponíveis e passadas são recusadas.
+- A nova guia fica pronta em até 3 dias úteis; a Contabilizei avisa por e-mail.
+
 ## Histórico
 
 ```sh

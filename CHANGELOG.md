@@ -12,6 +12,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz impostos confirmar ID [--nao-paguei]` e `ctbz impostos desmarcar ID`: informam que uma
   guia foi ou não paga (rota v5 ou v3 conforme a tela da empresa), com o aviso de auditoria do
   painel.
+- `ctbz impostos recalcular ID [--vencimento AAAA-MM-DD]`: mostra os dados do recálculo de uma
+  guia vencida ou pede o recálculo (risco alto: serviço cobrado na mensalidade).
 
 ## [1.2.0] - 2026-10-04
 

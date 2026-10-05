@@ -1,0 +1,12 @@
+[
+  {
+    "metodo": "PUT",
+    "caminho": "/api/plataforma/impostos/v2/impostos-a-pagar/guia/1000000000000001/v2/recalcular",
+    "content_type": "application/json",
+    "corpo": {
+      "dataVencimento": "20/10/2026",
+      "origem": "GUIAS",
+      "tipo": "GUIA"
+    }
+  }
+]

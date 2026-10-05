@@ -47,6 +47,7 @@ func Endpoints() []Endpoint {
 		{Name: "guias_a_pagar", LivePath: PathGuiasAPagar, Type: GuiasAPagar{}},
 		{Name: "rollout", LivePath: PathRollout, Type: Rollout{}}, // escrita a partir de endpoints-verificados.md
 		{Name: "guia_detalhe", Type: GuiaDetalhe{}},               // o ID vem de guias_a_pagar
+		{Name: "recalculo_init", Type: RecalculoInit{}},           // sintética (ADR-0021); o ID vem de guias_a_pagar
 		{Name: "calculo_imposto", LivePath: PathCalculoImposto, Type: CalculoImposto{}},
 		{Name: "tabela_irrf", LivePath: PathTabelaIRRF, Type: []FaixaIRRF{}},
 		{Name: "link_guia", Type: LinkDownload{}}, // o ID vem de guias_a_pagar

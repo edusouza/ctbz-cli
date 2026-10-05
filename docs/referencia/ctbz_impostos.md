@@ -35,6 +35,7 @@ ctbz impostos [flags]
 - [`ctbz impostos historico`](ctbz_impostos_historico.md): Lista o histórico de guias de impostos
 - [`ctbz impostos parcelamento`](ctbz_impostos_parcelamento.md): Mostra o detalhe de um parcelamento de impostos
 - [`ctbz impostos parcelamentos`](ctbz_impostos_parcelamentos.md): Lista os parcelamentos de impostos (em andamento, ativos e encerrados)
+- [`ctbz impostos recalcular`](ctbz_impostos_recalcular.md): Mostra ou pede o recálculo de uma guia vencida
 - [`ctbz impostos recorrente`](ctbz_impostos_recorrente.md): Mostra a situação do pagamento recorrente (débito automático) de impostos
 - [`ctbz impostos tabela-irrf`](ctbz_impostos_tabela-irrf.md): Mostra a tabela progressiva do IRRF usada no cálculo do pró-labore
 

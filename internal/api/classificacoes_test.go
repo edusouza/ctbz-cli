@@ -49,3 +49,14 @@ func TestVersaoConfirmacao(t *testing.T) {
 		}
 	}
 }
+
+func TestRecalculo(t *testing.T) {
+	path := PathRecalculoInit(1000000000000001, "GUIAS", "GUIA")
+	if path != "impostos/v2/impostos-a-pagar/recalculo/init?idGuia=1000000000000001&origem=GUIAS&tipo=GUIA" {
+		t.Errorf("caminho = %s", path)
+	}
+	r, err := BuscarRecalculo(context.Background(), fixtureGetter{path: "recalculo_init"}, 1000000000000001, "GUIAS", "GUIA")
+	if err != nil || r.DataRecomendada != "2026-10-09" || !r.CobrarRecalculo || len(r.DatasIndisponiveis) != 3 || *r.ValorRecalculo != 1234.56 {
+		t.Errorf("recálculo = %+v, %v", r, err)
+	}
+}
