@@ -56,6 +56,7 @@ func Endpoints() []Endpoint {
 		{Name: "impostos_pagos_no_ano", Type: DadosGrafico{}}, // o ano vem do histórico de faturamento
 		{Name: "parcelamentos", LivePath: PathImpostosV3, Type: ParcelamentosV3{}},
 		{Name: "debitos_federais", LivePath: PathDebitosFederais, Type: DebitosFederais{}},
+		{Name: "simulacao_parcelamento", Type: SimulacaoParcelamento{}}, // sintética (ADR-0021); sem dívidas a API responde 560
 		{Name: "pendencias_empresa", LivePath: PathPendenciasEmpresa, Type: []PendenciaEmpresa{}},
 		{Name: "central_rotinas", LivePath: PathCentralRotinas, Type: CentralRotinas{}},
 		{Name: "reclassificar_init", Type: []PendenciaReclassificacao{}}, // sintética (ADR-0021); ids de central_rotinas

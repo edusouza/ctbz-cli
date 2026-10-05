@@ -14,6 +14,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   painel.
 - `ctbz impostos recalcular ID [--vencimento AAAA-MM-DD]`: mostra os dados do recálculo de uma
   guia vencida ou pede o recálculo (risco alto: serviço cobrado na mensalidade).
+- `ctbz impostos parcelamento simular TIPO`: opções de parcelas e custos adicionais de um
+  parcelamento de débitos (Simples, PGFN ou especializado); sem débitos, avisa e sai com 0.
 
 ## [1.2.0] - 2026-10-04
 

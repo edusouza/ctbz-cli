@@ -4,7 +4,8 @@ Lista os parcelamentos de impostos (em andamento, ativos e encerrados)
 
 Lista os parcelamentos de impostos da empresa, como a aba "Parcelamentos" do painel:
 em negociação (em_andamento), ativos e encerrados (historico). Para o detalhe de um
-parcelamento, use "ctbz impostos parcelamento ID".
+parcelamento, use "ctbz impostos parcelamento ID"; para simular um novo, "ctbz impostos
+parcelamento simular TIPO".
 
 Somente leitura: contratar um parcelamento continua sendo feito pelo painel.
 

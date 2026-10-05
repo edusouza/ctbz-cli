@@ -1,0 +1,12 @@
+{
+  "parcelas": [
+    {"quantidade": 12, "valorEntrada": 500, "valorDemaisParcelas": 250.5},
+    {"quantidade": 24, "valorEntrada": 300, "valorDemaisParcelas": 140.25}
+  ],
+  "cobrarServicoAdicional": true,
+  "valorServicoAdicional": 99.9,
+  "valorEmissaoGuia": 15,
+  "taxaReparcelamento": null,
+  "resumoParcelamento": {"quantidadeParcelas": 12, "valorEntrada": 500, "valorDemaisParcelas": 250.5},
+  "negociacao": {"impostos": [{"descricao": "Simples Nacional 01/2026", "valor": 1234.56}]}
+}

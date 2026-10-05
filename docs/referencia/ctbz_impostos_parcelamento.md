@@ -20,6 +20,10 @@ ctbz impostos parcelamento ID
   ctbz impostos parcelamento 1000000000000001
 ```
 
+## Subcomandos
+
+- [`ctbz impostos parcelamento simular`](ctbz_impostos_parcelamento_simular.md): Simula um parcelamento de débitos (opções de parcelas e custos)
+
 ## Flags globais
 
 ```

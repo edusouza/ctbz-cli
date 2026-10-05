@@ -99,6 +99,7 @@ ctbz impostos calculo    # memória de cálculo do mês (DAS, INSS, IRRF, Fator 
 ctbz impostos baixar --pendentes -d ~/guias   # PDFs das guias a pagar
 ctbz impostos confirmar ID [--nao-paguei]      # informa que a guia foi (ou não) paga; desmarcar desfaz
 ctbz impostos recalcular ID [--vencimento D]   # dados do recálculo ou pede nova guia (serviço cobrado)
+ctbz impostos parcelamento simular TIPO        # opções de parcelamento de débitos
 ctbz impostos historico --ano 2026             # guias de meses anteriores
 ctbz impostos faturamento                      # faturamento, pró-labore e Fator R (12 meses)
 ctbz impostos parcelamentos                    # parcelamentos de impostos

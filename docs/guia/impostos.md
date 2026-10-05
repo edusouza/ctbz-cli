@@ -144,8 +144,26 @@ ctbz impostos debitos                # há débitos federais em aberto?
 - O detalhe de um parcelamento é mostrado como a API devolve: o formato não pôde ser
   verificado, porque a conta usada no desenvolvimento não tinha parcelamentos.
 - `debitos --fail-on-debitos` termina com código 4 quando há débitos federais.
-- Simular ou contratar parcelamento continua sendo feito pelo painel (a CLI só lê,
-  ver [ADR-0002](../adr/0002-somente-leitura-ate-1-0.md)).
+
+### Simular um parcelamento
+
+```sh
+ctbz impostos parcelamento simular simples-nacional
+ctbz impostos parcelamento simular especializado --negociacao DIVIDA_ATIVA
+```
+
+```text
+Tipo              Parcelas  Primeira parcela  Demais parcelas  Serviço adicional  Emissão de guia
+simples-nacional  12        R$ 500,00         R$ 250,50        R$ 99,90           R$ 15,00
+```
+
+- Tipos: `simples-nacional` (parcelamento digital na Receita), `pgfn-simples-nacional`,
+  `pgfn-previdenciario`, `pgfn-nao-previdenciario` (dívida ativa) e `especializado` (feito por
+  um especialista, com `--negociacao VENCIDOS|DIVIDA_ATIVA|DIVIDA_ATIVA_E_VENCIDOS`).
+- Os custos adicionais são cobrados na mensalidade, se você contratar.
+- Sem débitos para parcelar, a CLI avisa "Nenhum débito para parcelar" e termina com código 0.
+- O formato da simulação ainda não foi conferido com uma conta com dívidas; se faltar algo,
+  `ctbz api` mostra a resposta completa.
 
 ## Pagamento recorrente (débito automático)
 
