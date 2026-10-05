@@ -1,0 +1,10 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/checklist-onboarding/aside/concluir-etapa",
+    "content_type": "application/json",
+    "corpo": {
+      "etapa": "REUNIAO_BOAS_VINDAS"
+    }
+  }
+]

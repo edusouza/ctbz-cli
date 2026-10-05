@@ -217,6 +217,11 @@ func Escritas() []Escrita {
 			return ResolverConciliacao(ctx, s, ResolucaoConciliacao{IDPendencia: []int64{123},
 				Contraparte: []Contraparte{{Origem: OrigemMovimentacao, ID: 456}}, TipoResolucaoPendencia: &motivo, NumeroNotaAtivacaoContabil: "1234"})
 		}},
+		{Name: "checklist_concluir_etapa", Exemplo: func(ctx context.Context, s Sender) error {
+			return ConcluirEtapa(ctx, s, "REUNIAO_BOAS_VINDAS")
+		}},
+		{Name: "checklist_dispensar", Exemplo: func(ctx context.Context, s Sender) error { return DispensarChecklist(ctx, s) }},
+		{Name: "checklist_reativar", Exemplo: func(ctx context.Context, s Sender) error { return ReativarChecklist(ctx, s) }},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

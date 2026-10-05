@@ -57,3 +57,25 @@ const (
 func DeclararProcuracao(ctx context.Context, s Sender, path string) error {
 	return s.Send(ctx, "POST", path, nil, nil)
 }
+
+// Escritas do checklist de primeiros passos (risco baixo).
+const (
+	PathConcluirEtapa      = "checklist-onboarding/aside/concluir-etapa"
+	PathDispensarChecklist = "checklist-onboarding/exibir-primeiros-passos/dispensar"
+	PathReativarChecklist  = "checklist-onboarding/reativar-tarefas"
+)
+
+// ConcluirEtapa marca uma etapa como concluída. Um 304 significa que ela já estava.
+func ConcluirEtapa(ctx context.Context, s Sender, etapa string) error {
+	return s.Send(ctx, "POST", PathConcluirEtapa, map[string]string{"etapa": etapa}, nil)
+}
+
+// DispensarChecklist oculta o card de primeiros passos; ReativarChecklist desfaz.
+func DispensarChecklist(ctx context.Context, s Sender) error {
+	return s.Send(ctx, "PATCH", PathDispensarChecklist, nil, nil)
+}
+
+// ReativarChecklist volta a mostrar as tarefas dispensadas.
+func ReativarChecklist(ctx context.Context, s Sender) error {
+	return s.Send(ctx, "PATCH", PathReativarChecklist, nil, nil)
+}

@@ -74,6 +74,10 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz plano`](ctbz_plano.md) | Mostra o plano contratado com a Contabilizei |
 | [`ctbz plano contrato`](ctbz_plano_contrato.md) | Exporta o contrato de prestação de serviços (HTML ou texto) |
 | [`ctbz plano proposta`](ctbz_plano_proposta.md) | Exporta a proposta do plano contratado, com a tabela de preços (HTML ou texto) |
+| [`ctbz primeiros-passos`](ctbz_primeiros-passos.md) | Lista as tarefas do checklist de primeiros passos do painel |
+| [`ctbz primeiros-passos concluir`](ctbz_primeiros-passos_concluir.md) | Marca uma tarefa dos primeiros passos como concluída |
+| [`ctbz primeiros-passos dispensar`](ctbz_primeiros-passos_dispensar.md) | Oculta o card de primeiros passos do painel |
+| [`ctbz primeiros-passos reativar`](ctbz_primeiros-passos_reativar.md) | Volta a mostrar as tarefas dos primeiros passos |
 | [`ctbz prolabore`](ctbz_prolabore.md) | Mostra o pró-labore vigente por sócio e o tipo de gerenciamento |
 | [`ctbz prolabore fator-r`](ctbz_prolabore_fator-r.md) | Mostra a situação do Fator R e os anexos possíveis de cada atividade |
 | [`ctbz prolabore historico`](ctbz_prolabore_historico.md) | Lista o histórico mensal de pró-labore dos sócios |

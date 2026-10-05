@@ -114,6 +114,7 @@ ctbz pendencias aceitar CHAVE                  # aceita (risco alto: declaraçã
 ctbz pendencias procuracao [--ja-criei]        # procuração do e-CAC: situação ou declaração
 ctbz rotinas --mes 2026-10                     # rotinas e obrigações do mês (empresa e Contabilizei)
 ctbz rotinas reclassificar ID [--classificacao ID]  # opções ou reclassifica e conclui a rotina
+ctbz primeiros-passos [concluir ETAPA]         # checklist de primeiros passos do painel
 ctbz chamados [--finalizados]                  # chamados de atendimento
 ctbz mensalidade                               # mensalidade atual da Contabilizei
 ctbz mensalidade situacao                      # a empresa está em dia com a Contabilizei?

@@ -30,6 +30,7 @@ Dados vão para stdout no formato escolhido com -o; mensagens e progresso vão p
 - [`ctbz notas`](ctbz_notas.md): Lista as notas fiscais de serviço (NFS-e) emitidas
 - [`ctbz pendencias`](ctbz_pendencias.md): Lista as pendências da empresa (tipo, detalhe, prazo e situação)
 - [`ctbz plano`](ctbz_plano.md): Mostra o plano contratado com a Contabilizei
+- [`ctbz primeiros-passos`](ctbz_primeiros-passos.md): Lista as tarefas do checklist de primeiros passos do painel
 - [`ctbz prolabore`](ctbz_prolabore.md): Mostra o pró-labore vigente por sócio e o tipo de gerenciamento
 - [`ctbz razao`](ctbz_razao.md): Lista os lançamentos do razão contábil por conta
 - [`ctbz resumo`](ctbz_resumo.md): Mostra numa lista só o que precisa de atenção

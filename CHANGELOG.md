@@ -17,6 +17,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   link) e a declaração de que ela foi criada.
 - `ctbz pendencias conciliacao resolver`: concilia pendências vinculando notas ou recebimentos,
   ou justificando com um motivo (com `motivos`, `candidatos` e `detalhes` para preparar).
+- `ctbz primeiros-passos`: tarefas do checklist do painel, com `concluir ETAPA`, `dispensar` e
+  `reativar`.
 
 ### Fixed
 

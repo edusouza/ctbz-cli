@@ -176,6 +176,23 @@ ctbz pendencias conciliacao detalhes --recebimento 123         # como uma pendê
 - `candidatos` e `detalhes` mostram os campos como a API devolve: o formato ainda não foi
   verificado com pendências reais. `detalhes` usa POST, mas é só leitura.
 
+## Primeiros passos
+
+O card "Primeiros passos" do painel tem tarefas de configuração da conta:
+
+```sh
+ctbz primeiros-passos
+ctbz primeiros-passos concluir REUNIAO_BOAS_VINDAS
+ctbz primeiros-passos dispensar     # oculta o card; reativar volta a mostrar
+```
+
+- Só dá para concluir à mão as tarefas que o painel deixa concluir (reunião de boas-vindas e
+  as lives); as demais o sistema conclui quando a ação é feita. A coluna "Concluir pela CLI"
+  indica quais.
+- Concluir não tem volta; `dispensar` e `reativar` desfazem um ao outro. Todas são de risco
+  baixo, com confirmação (`--yes` em scripts).
+- A procuração do e-CAC tem comando próprio: `ctbz pendencias procuracao`.
+
 ## Rotinas e obrigações do mês
 
 ```sh
