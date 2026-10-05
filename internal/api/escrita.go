@@ -241,6 +241,9 @@ func Escritas() []Escrita {
 				NomeArquivoStorage: "00000000000191_2026_9_123456_1789700400000.ofx",
 				Respostas:          []RespostaSaldo{{Tipo: "SALDO_ULTIMO_MES", Data: "2026-10-04T12:00:00.000Z", Valor: 1234.56}}})
 		}},
+		{Name: "extrato_excluir", Exemplo: func(ctx context.Context, s Sender) error {
+			return ExcluirExtrato(ctx, s, 7, 2026, 9)
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

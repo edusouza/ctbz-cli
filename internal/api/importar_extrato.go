@@ -164,3 +164,14 @@ func TipoArquivo(nome string) string {
 	}
 	return "application/octet-stream"
 }
+
+// PathExcluirExtrato exclui o extrato importado de uma conta num mês (DELETE; fora do
+// catálogo). Ver docs/api/escrita/contabilidade-e-documentos.md, seção 1.6.
+func PathExcluirExtrato(idConta int64, ano, mes int) string {
+	return fmt.Sprintf("movimentacao-financeira/extrato?idContaBancaria=%d&ano=%d&mes=%d", idConta, ano, mes)
+}
+
+// ExcluirExtrato apaga o extrato: a importação volta a ficar pendente e as classificações se perdem.
+func ExcluirExtrato(ctx context.Context, s Sender, idConta int64, ano, mes int) error {
+	return s.Send(ctx, "DELETE", PathExcluirExtrato(idConta, ano, mes), nil, nil)
+}

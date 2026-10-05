@@ -285,3 +285,64 @@ func tamanhoArquivo(n int) string {
 	}
 	return fmt.Sprintf("%.1f MB", float64(n)/(1<<20))
 }
+
+func newExtratosExcluirCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "excluir",
+		Short: "Exclui o extrato importado de uma conta num mês",
+		Long: `Exclui o extrato importado de uma conta na competência, por exemplo depois de enviar o
+arquivo errado (risco alto). A importação volta a ficar pendente e as classificações e
+informações adicionais das movimentações se perdem; não dá para desfazer, só reimportar e
+reclassificar. Se os contadores já concluíram a classificação, o painel não deixa excluir, e a
+CLI também não.
+
+Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
+		Example: `  ctbz extratos excluir --conta-bancaria 1000000000000001 --competencia 2026-09`,
+		Args:    exactArgs(0, "nenhum argumento"),
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			alvo, err := extratoFlags(cmd)
+			if err != nil {
+				return err
+			}
+			f, err := outputFormat(cmd, "")
+			if err != nil {
+				return err
+			}
+			s := streamsOf(cmd)
+			ctx := cmd.Context()
+			g := sessionGetter{s}
+			info, err := api.BuscarExtratoInfo(ctx, g, alvo.conta, alvo.ano(), alvo.mesNum())
+			if err != nil {
+				return err
+			}
+			if !info.PermiteExclusaoExtrato {
+				return errors.New("este extrato não pode ser excluído: os contadores já concluíram a classificação dele")
+			}
+			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(alvo.conta), Resumo: fmt.Sprintf("Excluir o extrato de %s da conta %d", alvo.mes.Format("01/2006"), alvo.conta),
+				Consequencia: "A importação volta a ficar pendente e você terá de importar um novo arquivo. As classificações e informações adicionais das movimentações se perdem. Não dá para desfazer."}
+			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.ExcluirExtrato(ctx, snd, alvo.conta, alvo.ano(), alvo.mesNum()) })
+			if err != nil || !enviado {
+				return err
+			}
+			var situacaoExtrato any
+			if es, err := api.BuscarExtratos(ctx, g); err != nil {
+				fmt.Fprintln(s.err, "aviso: extrato excluído, mas não foi possível reler os extratos:", err)
+			} else {
+				for _, e := range es {
+					if e.IDContaBancaria == alvo.conta && e.Ano == alvo.ano() && e.Mes == alvo.mesNum() {
+						situacaoExtrato = nilIfEmpty(e.Situacao)
+					}
+				}
+			}
+			fmt.Fprintf(s.err, "Não se esqueça de importar o extrato de %s de novo (ctbz extratos importar).\n", alvo.mes.Format("01/2006"))
+			rec := resultadoEscrita("excluir-extrato", "excluido", alvo.conta).
+				Add("competencia", "Competência", alvo.mes.Format("01/2006")).
+				Add("situacao_extrato", "Situação do extrato", situacaoExtrato)
+			return output.Write(s.out, f, rec)
+		},
+	}
+	addContaBancariaFlag(cmd)
+	addCompetenciaFlag(cmd)
+	addWriteFlags(cmd)
+	return cmd
+}

@@ -113,7 +113,15 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
   arquivo fica enviado mas o extrato não é efetivado; corrija e rode de novo.
 - Erros conhecidos viram mensagens claras: extrato de outro banco, outra conta ou agência, conta
   não cadastrada (cadastre com `ctbz contas-bancarias adicionar`).
-- Para desfazer, use `ctbz extratos excluir` (próxima seção).
+- Para desfazer, use `ctbz extratos excluir`:
+
+```sh
+ctbz extratos excluir --conta-bancaria 1000000000000001 --competencia 2026-09
+```
+
+`excluir` é de **risco alto**: a importação volta a ficar pendente, as classificações e
+informações adicionais se perdem e não dá para desfazer (só reimportar e reclassificar). Se os
+contadores já concluíram a classificação do extrato, ele não pode mais ser excluído.
 
 ## Lançar no caixa
 

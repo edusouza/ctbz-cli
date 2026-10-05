@@ -138,6 +138,7 @@ ctbz caixa adicionar --competencia 2026-09 --pagamento --valor 150,25 --conta ID
 ctbz caixa editar ID --competencia 2026-09 --valor 900   # altera só o que for informado
 ctbz caixa remover ID --competencia 2026-09              # exclui (mostra como recriar)
 ctbz extratos importar ARQ --conta-bancaria ID --competencia 2026-09   # envia o OFX ou PDF do mês
+ctbz extratos excluir --conta-bancaria ID --competencia 2026-09        # apaga o extrato importado
 ctbz extratos contas --competencia 2026-09     # classificações aceitas no extrato
 ctbz extratos lancamentos --conta-bancaria ID --competencia 2026-09   # lançamentos do extrato
 ctbz extratos classificar ID --conta-bancaria ID --competencia 2026-09 --conta ID

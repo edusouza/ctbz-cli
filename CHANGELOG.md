@@ -14,6 +14,7 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz contas-bancarias remover`: exclui uma conta bancária (risco alto), quando o painel permite.
 - `ctbz extratos importar`: importa o extrato do mês (OFX ou PDF) com as validações do painel e
   a confirmação do saldo do último dia (ou `--saldo-final`).
+- `ctbz extratos excluir`: exclui o extrato importado de um mês (risco alto), quando o painel permite.
 
 ## [1.4.0] - 2026-10-04
 

@@ -27,6 +27,7 @@ ctbz extratos [flags]
 - [`ctbz extratos contas`](ctbz_extratos_contas.md): Lista as classificações aceitas nos lançamentos do extrato de uma competência
 - [`ctbz extratos desfazer-desmembramento`](ctbz_extratos_desfazer-desmembramento.md): Volta um lançamento desmembrado do extrato ao original
 - [`ctbz extratos desmembrar`](ctbz_extratos_desmembrar.md): Divide um lançamento do extrato em partes com classificações diferentes
+- [`ctbz extratos excluir`](ctbz_extratos_excluir.md): Exclui o extrato importado de uma conta num mês
 - [`ctbz extratos importar`](ctbz_extratos_importar.md): Importa o extrato bancário (OFX ou PDF) de uma conta num mês
 - [`ctbz extratos lancamentos`](ctbz_extratos_lancamentos.md): Lista os lançamentos do extrato de uma conta bancária num mês
 

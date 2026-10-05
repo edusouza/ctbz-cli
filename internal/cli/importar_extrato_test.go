@@ -140,3 +140,20 @@ func TestExtratosImportarErroConhecido(t *testing.T) {
 		t.Errorf("código %d, %s", code, stderr)
 	}
 }
+
+func TestExtratosExcluir(t *testing.T) {
+	f := extratoFake(t)
+	f.gets["/api/plataforma/movimentacao-financeira/v2/extratos"] = `[{"ano":2026,"mes":9,"idContaBancaria":7,"banco":"B","agencia":"1","numeroConta":"1","situacao":"PENDENTE","statusIntegracao":null}]`
+	out, stderr, code := execCLI(t, "", "extratos", "excluir", "--conta-bancaria", "7", "--competencia", "2026-09", "--yes", "-o", "json")
+	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != "DELETE /api/plataforma/movimentacao-financeira/extrato?idContaBancaria=7&ano=2026&mes=9 " {
+		t.Fatalf("código %d, %q\n%s", code, f.writes, stderr)
+	}
+	if !strings.Contains(out, `"situacao_extrato": "PENDENTE"`) || !strings.Contains(stderr, "(risco alto)") || !strings.Contains(stderr, "importação volta a ficar pendente") {
+		t.Errorf("saída:\n%s\n%s", out, stderr)
+	}
+	f = extratoFake(t)
+	f.gets[pathInfoExtrato] = `{"permiteEditarLancamento":true,"permiteExclusaoExtrato":false}`
+	if _, stderr, code := execCLI(t, "", "extratos", "excluir", "--conta-bancaria", "7", "--competencia", "2026-09", "--yes"); code != ExitError || len(f.writes) != 0 || !strings.Contains(stderr, "já concluíram a classificação") {
+		t.Errorf("bloqueado: código %d, %s", code, stderr)
+	}
+}
