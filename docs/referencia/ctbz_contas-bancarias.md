@@ -23,6 +23,7 @@ ctbz contas-bancarias
 - [`ctbz contas-bancarias adicionar`](ctbz_contas-bancarias_adicionar.md): Cadastra uma conta bancária PJ
 - [`ctbz contas-bancarias bancos`](ctbz_contas-bancarias_bancos.md): Lista os bancos aceitos no cadastro de contas bancárias
 - [`ctbz contas-bancarias editar`](ctbz_contas-bancarias_editar.md): Corrige os dados de uma conta bancária cadastrada
+- [`ctbz contas-bancarias remover`](ctbz_contas-bancarias_remover.md): Exclui permanentemente uma conta bancária
 
 ## Flags globais
 

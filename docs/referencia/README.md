@@ -21,6 +21,7 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz contas-bancarias adicionar`](ctbz_contas-bancarias_adicionar.md) | Cadastra uma conta bancária PJ |
 | [`ctbz contas-bancarias bancos`](ctbz_contas-bancarias_bancos.md) | Lista os bancos aceitos no cadastro de contas bancárias |
 | [`ctbz contas-bancarias editar`](ctbz_contas-bancarias_editar.md) | Corrige os dados de uma conta bancária cadastrada |
+| [`ctbz contas-bancarias remover`](ctbz_contas-bancarias_remover.md) | Exclui permanentemente uma conta bancária |
 | [`ctbz documentos`](ctbz_documentos.md) | Lista os tipos de documento aceitos e os documentos enviados |
 | [`ctbz empresa`](ctbz_empresa.md) | Mostra os dados da empresa selecionada |
 | [`ctbz empresa atividades`](ctbz_empresa_atividades.md) | Lista os CNAEs da empresa e os anexos do Simples Nacional |

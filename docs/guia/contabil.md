@@ -225,6 +225,15 @@ ctbz contas-bancarias editar 1000000000000001 --abertura 2024-02-01
 - O painel pode bloquear a edição (por exemplo, com extratos já classificados); a CLI mostra
   o motivo.
 
+Para excluir uma conta cadastrada por engano ou encerrada:
+
+```sh
+ctbz contas-bancarias remover 1000000000000001
+```
+
+É de **risco alto**: a exclusão é permanente, os vínculos da conta se perdem e um novo
+cadastro não os recupera. No terminal, a CLI pede para digitar `confirmo`.
+
 ## Plano de contas (classificações)
 
 ```sh

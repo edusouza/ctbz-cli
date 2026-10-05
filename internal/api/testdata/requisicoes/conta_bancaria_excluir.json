@@ -1,0 +1,6 @@
+[
+  {
+    "metodo": "DELETE",
+    "caminho": "/api/plataforma/contabancaria/excluir/1000000000000001"
+  }
+]

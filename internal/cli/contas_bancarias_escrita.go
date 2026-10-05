@@ -319,3 +319,51 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 	addWriteFlags(cmd)
 	return cmd
 }
+
+func newContasBancariasRemoverCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "remover ID",
+		Short: "Exclui permanentemente uma conta bancária",
+		Long: `Exclui uma conta bancária cadastrada por engano ou encerrada (risco alto: "Excluir
+permanentemente" no painel; os vínculos da conta se perdem e um novo cadastro não os
+recupera). O painel pode bloquear a exclusão; nesse caso a CLI mostra o motivo.
+
+Mostra banco, agência e conta e pede "confirmo" no terminal (--yes em scripts); aceita --dry-run.`,
+		Example: `  ctbz contas-bancarias remover 1000000000000001`,
+		Args:    exactArgs(1, "o ID da conta"),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			formato, err := outputFormat(cmd, "")
+			if err != nil {
+				return err
+			}
+			s := streamsOf(cmd)
+			ctx := cmd.Context()
+			g := sessionGetter{s}
+			_, conta, det, err := contaComPermissao(ctx, g, args[0])
+			if err != nil {
+				return err
+			}
+			if !det.PermiteExcluir {
+				return fmt.Errorf("o painel não permite excluir esta conta%s", motivoBloqueio(det))
+			}
+			desc := descreverConta(conta.NomeBanco, conta.Agencia, conta.ContaCorrente)
+			op := operacao{Risco: riscoAlto, ID: args[0], Resumo: "Excluir permanentemente a conta bancária " + desc,
+				Consequencia: "Os vínculos da conta (extratos, classificações) se perdem, e um novo cadastro não os recupera."}
+			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.ExcluirContaBancaria(ctx, snd, conta.ID) })
+			if err != nil || !enviado {
+				return err
+			}
+			situacao := "removido"
+			if ainda, err := releConta(ctx, g, conta.ID, "", ""); err != nil {
+				fmt.Fprintln(s.err, "aviso: pedido enviado, mas não foi possível reler a lista:", err)
+				situacao = "enviado"
+			} else if ainda != nil {
+				fmt.Fprintln(s.err, "aviso: a conta ainda aparece; confira com ctbz contas-bancarias")
+				situacao = "enviado"
+			}
+			return output.Write(s.out, formato, resultadoEscrita("remover", situacao, conta.ID).Add("conta", "Conta", desc))
+		},
+	}
+	addWriteFlags(cmd)
+	return cmd
+}

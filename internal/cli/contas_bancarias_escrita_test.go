@@ -86,3 +86,20 @@ func TestContasBancariasEditar(t *testing.T) {
 		t.Errorf("sem alteração: código %d", code)
 	}
 }
+
+func TestContasBancariasRemover(t *testing.T) {
+	f := contasFake(t)
+	f.onWrite = func(f *escritaFake) { f.gets[pathContasBancarias] = `{"bancos":[],"contasBancarias":[]}` }
+	out, stderr, code := execCLI(t, "", "contas-bancarias", "remover", "1000000000000001", "--yes", "-o", "json")
+	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != "DELETE /api/plataforma/contabancaria/excluir/1000000000000001 " {
+		t.Fatalf("código %d, %q\n%s", code, f.writes, stderr)
+	}
+	if !strings.Contains(out, `"situacao": "removido"`) || !strings.Contains(stderr, "Banco Exemplo agência 1234 conta 12345-6 (risco alto)") || !strings.Contains(stderr, "vínculos") {
+		t.Errorf("saída:\n%s\n%s", out, stderr)
+	}
+	f = contasFake(t)
+	f.gets[pathDetalheConta] = `{"permiteEditar":true,"permiteExcluir":false,"motivoPermissoesExclusaoEEdicao":"Conta integrada."}`
+	if _, stderr, code := execCLI(t, "", "contas-bancarias", "remover", "1000000000000001", "--yes"); code != ExitError || len(f.writes) != 0 || !strings.Contains(stderr, "não permite excluir esta conta: Conta integrada.") {
+		t.Errorf("bloqueada: código %d, %s", code, stderr)
+	}
+}

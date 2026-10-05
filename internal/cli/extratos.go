@@ -97,6 +97,6 @@ da Contabilizei).`,
 			return output.Write(s.out, f, l)
 		},
 	}
-	cmd.AddCommand(newContasBancariasBancosCmd(), newContasBancariasAdicionarCmd(), newContasBancariasEditarCmd())
+	cmd.AddCommand(newContasBancariasBancosCmd(), newContasBancariasAdicionarCmd(), newContasBancariasEditarCmd(), newContasBancariasRemoverCmd())
 	return cmd
 }

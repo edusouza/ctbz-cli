@@ -229,6 +229,9 @@ func Escritas() []Escrita {
 			id := int64(1000000000000001)
 			return SalvarContaBancaria(ctx, s, ContaBancariaSalvar{ID: &id, BancoID: 33, Agencia: "4321", ContaCorrente: "654321", DataSaldoInicial: "2024-01-10", VlrSaldoInicial: 1234.56})
 		}},
+		{Name: "conta_bancaria_excluir", Exemplo: func(ctx context.Context, s Sender) error {
+			return ExcluirContaBancaria(ctx, s, 1000000000000001)
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

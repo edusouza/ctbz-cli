@@ -98,3 +98,13 @@ type ContaBancariaSalvar struct {
 func SalvarContaBancaria(ctx context.Context, s Sender, c ContaBancariaSalvar) error {
 	return s.Send(ctx, "POST", PathSalvarContaBancaria, c, nil)
 }
+
+// PathExcluirContaBancaria exclui uma conta bancária (DELETE, sem corpo). Só com permiteExcluir.
+func PathExcluirContaBancaria(id int64) string {
+	return fmt.Sprintf("contabancaria/excluir/%d", id)
+}
+
+// ExcluirContaBancaria exclui a conta permanentemente; os vínculos não voltam com um recadastro.
+func ExcluirContaBancaria(ctx context.Context, s Sender, id int64) error {
+	return s.Send(ctx, "DELETE", PathExcluirContaBancaria(id), nil, nil)
+}
