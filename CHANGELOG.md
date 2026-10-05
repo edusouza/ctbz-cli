@@ -7,12 +7,18 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-04
+
+Fundação das ações que alteram dados na Contabilizei
+([ADR-0018](https://github.com/edusouza/ctbz-cli/blob/main/docs/adr/0018-escrita-com-confirmacao.md)).
+Os comandos de escrita de cada contexto chegam a partir da 1.2.
+
 ### Added
 
 - `ctbz mensalidade historico`: pagamentos anteriores da mensalidade e situação do débito automático.
 - Base dos comandos que alteram dados: resumo e confirmação por risco (`confirmo` no risco
   alto), `--yes` para scripts e `--dry-run` para ver a requisição sem enviar
-  ([guia](docs/guia/escrita.md)).
+  ([guia](https://github.com/edusouza/ctbz-cli/blob/main/docs/guia/escrita.md)).
 - `ctbz acoes`: registro local das escritas enviadas (`$CTBZ_HOME/acoes.jsonl`, sem corpos),
   com `--desde` e `--limite`.
 
@@ -168,7 +174,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/edusouza/ctbz-cli/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/edusouza/ctbz-cli/compare/v0.8.0...v1.0.0
 [0.8.0]: https://github.com/edusouza/ctbz-cli/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/edusouza/ctbz-cli/compare/v0.6.0...v0.7.0

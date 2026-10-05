@@ -33,7 +33,7 @@ escritas, `risco: baixo|médio|alto`.
 | **v0.7** | Contabilidade: relatórios, caixa e extratos | [#40](https://github.com/edusouza/ctbz-cli/issues/40) | 6 | concluída |
 | **v0.8** | Documentos e certificado digital | [#47](https://github.com/edusouza/ctbz-cli/issues/47) | 2 | concluída |
 | **v1.0** | Estabilidade e distribuição | [#50](https://github.com/edusouza/ctbz-cli/issues/50) | 3 | concluída |
-| **v1.1** | Fundação da escrita | [#173](https://github.com/edusouza/ctbz-cli/issues/173) | 6 | planejada |
+| **v1.1** | Fundação da escrita | [#173](https://github.com/edusouza/ctbz-cli/issues/173) | 6 | concluída |
 | **v1.2** | Caixa e classificação de lançamentos | [#180](https://github.com/edusouza/ctbz-cli/issues/180) | 7 | planejada |
 | **v1.3** | Impostos: confirmar pagamento, recálculo e parcelamento | [#188](https://github.com/edusouza/ctbz-cli/issues/188) | 4 | planejada |
 | **v1.4** | Pendências, termos e conciliação | [#193](https://github.com/edusouza/ctbz-cli/issues/193) | 5 | planejada |
@@ -193,12 +193,12 @@ Base comum para todas as escritas: política registrada em ADR, camada HTTP de e
 
 | | Issue | Funcionalidade | Tipo | Risco |
 |---|---|---|---|---|
-| ⬜ | [#174](https://github.com/edusouza/ctbz-cli/issues/174) | Documentar endpoints de escrita e decidir a política de escrita (ADR-0018) | documentação | — |
-| ⬜ | [#175](https://github.com/edusouza/ctbz-cli/issues/175) | Camada de escrita: JSON e multipart, sem retentativa nem re-login no meio | infra | — |
-| ⬜ | [#176](https://github.com/edusouza/ctbz-cli/issues/176) | Confirmação, --dry-run, --yes e níveis de risco nos comandos de escrita | infra | — |
-| ⬜ | [#177](https://github.com/edusouza/ctbz-cli/issues/177) | Testes de requisição para as escritas | infra | — |
-| ⬜ | [#178](https://github.com/edusouza/ctbz-cli/issues/178) | Registro local das ações de escrita (ctbz acoes) | funcionalidade | — |
-| ⬜ | [#179](https://github.com/edusouza/ctbz-cli/issues/179) | Catálogo: capturar escritas em axios({method,url}) e caminhos em variáveis | infra | — |
+| ✅ | [#174](https://github.com/edusouza/ctbz-cli/issues/174) | Documentar endpoints de escrita e decidir a política de escrita (ADR-0018) | documentação | — |
+| ✅ | [#175](https://github.com/edusouza/ctbz-cli/issues/175) | Camada de escrita: JSON e multipart, sem retentativa nem re-login no meio | infra | — |
+| ✅ | [#176](https://github.com/edusouza/ctbz-cli/issues/176) | Confirmação, --dry-run, --yes e níveis de risco nos comandos de escrita | infra | — |
+| ✅ | [#177](https://github.com/edusouza/ctbz-cli/issues/177) | Testes de requisição para as escritas | infra | — |
+| ✅ | [#178](https://github.com/edusouza/ctbz-cli/issues/178) | Registro local das ações de escrita (ctbz acoes) | funcionalidade | — |
+| ✅ | [#179](https://github.com/edusouza/ctbz-cli/issues/179) | Catálogo: capturar escritas em axios({method,url}) e caminhos em variáveis | infra | — |
 
 Fora de escopo: Comandos de domínio que escrevem (a partir da v1.2).
 
