@@ -100,7 +100,7 @@ ctbz rotinas --mes 2026-11
 ```
 
 ```text
-Responsável   Rotina                                 Prazo       Status     Valor     Alerta
+Responsável   Rotina                                 Prazo       Status     Valor     Alerta   Pendências
 empresa       Importar extrato bancário de setembro  05/10/2026  EM_ABERTO            próxima
 empresa       DARF Unificada (Ativação do fator R)   06/10/2026  EM_ABERTO            próxima
 empresa       Mensalidade da Contabilizei            15/10/2026  EM_ABERTO  R$ 15,90
@@ -116,6 +116,35 @@ contabilizei  DCTFWeb                                15/10/2026  EM_ABERTO
   realizadas ([ADR-0012](../adr/0012-prazos-e-alertas.md)).
 - `--fail-on-vencidas` (código 4) considera só as rotinas da **empresa**: atraso numa
   obrigação da Contabilizei não é algo que você resolve sozinho.
+- `pendencias` traz os ids das pendências de uma rotina, como os lançamentos que ela pede para
+  reclassificar (ver abaixo).
+
+### Reclassificar lançamentos pedidos pela rotina
+
+Algumas rotinas pedem para confirmar ou alterar a classificação de um lançamento bancário
+(financiamento, investimento anjo e outros). Sem `--classificacao`, a CLI só mostra as opções:
+
+```sh
+ctbz rotinas reclassificar 1000000000000501
+```
+
+```text
+Pendência         Lançamento          Valor        Classificação atual           ID                Opção                         Sócios
+1000000000000501  TED RECEBIDA BANCO  R$ 50.000,00 Empréstimos e Financiamentos  1000000000000041  Empréstimos e Financiamentos
+1000000000000501  TED RECEBIDA BANCO  R$ 50.000,00 Empréstimos e Financiamentos  1000000000000042  Aporte de Capital             1000000000000031 FULANO DE TAL
+```
+
+Com a opção escolhida (id ou nome), a classificação é gravada e a rotina é **concluída** (risco
+médio: a rotina não reabre, mas a classificação ainda pode ser trocada com
+`ctbz extratos classificar` enquanto o período estiver aberto):
+
+```sh
+ctbz rotinas reclassificar 1000000000000501 --classificacao "Aporte de Capital"
+```
+
+- Opções com sócio exigem `--socio`; com um único sócio, ele é escolhido sozinho, como no painel.
+- Vários ids podem ir de uma vez, com a mesma classificação para todos.
+- Pede confirmação (`--yes` em scripts) e aceita `--dry-run` ([Ações que alteram dados](escrita.md)).
 
 ## Chamados de atendimento
 

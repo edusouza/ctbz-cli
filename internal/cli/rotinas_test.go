@@ -24,12 +24,12 @@ func TestRotinas(t *testing.T) {
 	if code != ExitAttention {
 		t.Errorf("com rotina vencida, código %d, quero %d: %s", code, ExitAttention, stderr)
 	}
-	want := "responsavel,rotina,prazo,status,valor,alerta\n" +
-		"empresa,Importar extrato bancário de setembro,2026-10-05,EM_ABERTO,,próxima\n" +
-		"empresa,DARF Unificada,2026-10-02,EM_ABERTO,,vencida\n" +
-		"empresa,Mensalidade da Contabilizei,2026-10-15,EM_ABERTO,15.90,\n" +
-		"empresa,Nova rotina,2026-10-20,REALIZADA,,\n" +
-		"contabilizei,EFD-Reinf - R2099 (Previdenciário),2026-10-15,EM_ABERTO,,\n"
+	want := "responsavel,rotina,prazo,status,valor,alerta,pendencias\n" +
+		"empresa,Importar extrato bancário de setembro,2026-10-05,EM_ABERTO,,próxima,\n" +
+		"empresa,DARF Unificada,2026-10-02,EM_ABERTO,,vencida,\n" +
+		"empresa,Mensalidade da Contabilizei,2026-10-15,EM_ABERTO,15.90,,\n" +
+		"empresa,Nova rotina,2026-10-20,REALIZADA,,,\n" +
+		"contabilizei,EFD-Reinf - R2099 (Previdenciário),2026-10-15,EM_ABERTO,,,\n"
 	if out != want {
 		t.Errorf("CSV:\n%s\nesperado:\n%s", out, want)
 	}
@@ -55,5 +55,16 @@ func TestRotinasFixture(t *testing.T) {
 		if !strings.Contains(out, want) {
 			t.Errorf("JSON sem %s:\n%s", want, out)
 		}
+	}
+}
+
+func TestRotinasPendencias(t *testing.T) {
+	fixNow(t, "2026-10-03")
+	withSession(t, fakeAPI(t, map[string]string{"/api/plataforma/dashboard/v2/central-rotinas": `{"pendencias":{},"rotinasContabilizei":[],
+"rotinas":[{"tipo":"RECLASSIFICACAO","prazo":"2026-10-10","status":"EM_ABERTO","automatica":false,
+"propriedades":{"tituloModal":"Alterar lançamento bancário","documentosPendentes":["p1","p2"]}}]}`}))
+	out, stderr, code := execCLI(t, "", "rotinas", "-o", "csv")
+	if code != ExitOK || !strings.HasSuffix(out, "empresa,Alterar lançamento bancário,2026-10-10,EM_ABERTO,,próxima,p1; p2\n") {
+		t.Errorf("código %d, %s\n%s", code, stderr, out)
 	}
 }

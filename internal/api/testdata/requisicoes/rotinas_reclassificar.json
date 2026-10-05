@@ -1,0 +1,15 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/documentos/reclassificar",
+    "content_type": "application/json",
+    "corpo": [
+      {
+        "idClassificacao": 1000000000000042,
+        "idLancamento": 1000000000000102,
+        "idPendencia": "1000000000000501",
+        "idSocio": 1000000000000031
+      }
+    ]
+  }
+]

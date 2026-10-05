@@ -68,5 +68,6 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz razao`](ctbz_razao.md) | Lista os lançamentos do razão contábil por conta |
 | [`ctbz resumo`](ctbz_resumo.md) | Mostra numa lista só o que precisa de atenção |
 | [`ctbz rotinas`](ctbz_rotinas.md) | Lista as rotinas e obrigações do mês (da empresa e da Contabilizei) |
+| [`ctbz rotinas reclassificar`](ctbz_rotinas_reclassificar.md) | Confirma ou altera a classificação de lançamentos pedida pela Central de Rotinas |
 | [`ctbz status`](ctbz_status.md) | Mostra a sessão atual e testa se ainda é válida |
 | [`ctbz version`](ctbz_version.md) | Mostra a versão do ctbz |

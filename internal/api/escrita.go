@@ -159,6 +159,12 @@ func Escritas() []Escrita {
 		{Name: "extrato_desfazer_desmembramento", Exemplo: func(ctx context.Context, s Sender) error {
 			return DesfazerDesmembramento(ctx, s, 1000000000000100)
 		}},
+		{Name: "rotinas_reclassificar", Exemplo: func(ctx context.Context, s Sender) error {
+			socio := int64(1000000000000031)
+			return Reclassificar(ctx, s, []Reclassificacao{
+				{IDPendencia: json.RawMessage(`"1000000000000501"`), IDClassificacao: 1000000000000042, IDSocio: &socio, IDLancamento: 1000000000000102},
+			})
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

@@ -10,6 +10,8 @@ O mês é o do prazo (padrão: o mês atual). A API só devolve o mês anterior,
 próximo; outros meses saem vazios.
 
 A coluna alerta marca prazos vencidos ("vencida") e que vencem em até 7 dias ("próxima").
+A coluna pendencias traz os ids das pendências da rotina (ex.: lançamentos para reclassificar
+com ctbz rotinas reclassificar).
 Com --fail-on-vencidas, o comando termina com código 4 quando há rotina da empresa vencida.
 
 ## Uso
@@ -25,6 +27,10 @@ ctbz rotinas [flags]
   ctbz rotinas --mes 2026-11
   ctbz rotinas --fail-on-vencidas -o json
 ```
+
+## Subcomandos
+
+- [`ctbz rotinas reclassificar`](ctbz_rotinas_reclassificar.md): Confirma ou altera a classificação de lançamentos pedida pela Central de Rotinas
 
 ## Flags
 

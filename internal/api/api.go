@@ -56,6 +56,7 @@ func Endpoints() []Endpoint {
 		{Name: "debitos_federais", LivePath: PathDebitosFederais, Type: DebitosFederais{}},
 		{Name: "pendencias_empresa", LivePath: PathPendenciasEmpresa, Type: []PendenciaEmpresa{}},
 		{Name: "central_rotinas", LivePath: PathCentralRotinas, Type: CentralRotinas{}},
+		{Name: "reclassificar_init", Type: []PendenciaReclassificacao{}}, // sintética (ADR-0021); ids de central_rotinas
 		{Name: "conciliacao_resumo", LivePath: PathConciliacaoInit, Type: ConciliacaoResumo{}},
 		{Name: "conciliacao_pendencias", LivePath: PathConciliacaoPendencias + "?status=PENDENTE&tipoPendencia=" + PendenciaNotaSemRecebimento, Type: PaginaConciliacao{}},
 		{Name: "chamados_em_andamento", LivePath: PathChamadosEmAndamento, Type: []Chamado{}},

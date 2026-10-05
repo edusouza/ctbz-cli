@@ -1,0 +1,16 @@
+[
+  {
+    "idPendencia": "1000000000000501",
+    "idLancamento": 1000000000000102,
+    "classificacaoAtual": "Empréstimos e Financiamentos",
+    "data": 1789786800000,
+    "valor": 50000,
+    "descricao": "TED RECEBIDA BANCO",
+    "banco": "Banco Exemplo",
+    "classificacoes": [
+      {"idClassificacao": 1000000000000041, "nome": "Empréstimos e Financiamentos", "socios": []},
+      {"idClassificacao": 1000000000000042, "nome": "Aporte de Capital", "socios": [{"idSocio": 1000000000000031, "nome": "FULANO DE TAL"}]},
+      {"idClassificacao": 1000000000000043, "nome": "Mútuo de Sócio", "socios": [{"idSocio": 1000000000000031, "nome": "FULANO DE TAL"}, {"idSocio": 1000000000000032, "nome": "BELTRANO DE TAL"}]}
+    ]
+  }
+]

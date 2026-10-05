@@ -35,6 +35,8 @@ O mês é o do prazo (padrão: o mês atual). A API só devolve o mês anterior,
 próximo; outros meses saem vazios.
 
 A coluna alerta marca prazos vencidos ("vencida") e que vencem em até 7 dias ("próxima").
+A coluna pendencias traz os ids das pendências da rotina (ex.: lançamentos para reclassificar
+com ctbz rotinas reclassificar).
 Com --fail-on-vencidas, o comando termina com código 4 quando há rotina da empresa vencida.`,
 		Example: `  ctbz rotinas
   ctbz rotinas --mes 2026-11
@@ -68,6 +70,7 @@ Com --fail-on-vencidas, o comando termina com código 4 quando há rotina da emp
 	}
 	cmd.Flags().StringVar(&mes, "mes", "", "mês do prazo, AAAA-MM (padrão: o mês atual)")
 	cmd.Flags().BoolVar(&failOnVencidas, "fail-on-vencidas", false, "termina com código 4 se houver rotina da empresa vencida")
+	cmd.AddCommand(newRotinasReclassificarCmd())
 	return cmd
 }
 
@@ -80,6 +83,7 @@ func rotinasList(c *api.CentralRotinas, ref time.Time) (*output.List, int) {
 		{Key: "status", Header: "Status"},
 		{Key: "valor", Header: "Valor"},
 		{Key: "alerta", Header: "Alerta"},
+		{Key: "pendencias", Header: "Pendências"},
 	}}
 	noMes := func(d output.Date) bool { return d.Year() == ref.Year() && d.Month() == ref.Month() }
 	vencidas := 0
@@ -96,7 +100,11 @@ func rotinasList(c *api.CentralRotinas, ref time.Time) (*output.List, int) {
 		if r.Propriedades != nil {
 			valor = moneyOrNil(r.Propriedades.ValorPagamento)
 		}
-		l.Append(responsavelEmpresa, nomeDaRotina(r), prazo, r.Status, valor, alerta)
+		var pendencias any
+		if ids := r.IDsPendentes(); len(ids) > 0 {
+			pendencias = ids
+		}
+		l.Append(responsavelEmpresa, nomeDaRotina(r), prazo, r.Status, valor, alerta, pendencias)
 	}
 	for _, r := range c.RotinasContabilizei {
 		prazo, _ := output.ParseDate(r.Prazo)
@@ -104,7 +112,7 @@ func rotinasList(c *api.CentralRotinas, ref time.Time) (*output.List, int) {
 			continue
 		}
 		l.Append(responsavelContabilizei, nomeDaObrigacao(r.Titulo), prazo, r.Status, nil,
-			alertaDePrazo(prazo, !statusConcluidos[r.Status]))
+			alertaDePrazo(prazo, !statusConcluidos[r.Status]), nil)
 	}
 	return l, vencidas
 }
