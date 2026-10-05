@@ -10,6 +10,7 @@ import (
 	"net/textproto"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 // Sender envia uma escrita (POST, PUT, PATCH ou DELETE) autenticada e decodifica a resposta
@@ -130,5 +131,12 @@ type Escrita struct {
 // Escritas lista todas as escritas tipadas, na ordem do roadmap. Toda escrita nova entra
 // aqui; o teste de cobertura falha se faltar o golden.
 func Escritas() []Escrita {
-	return []Escrita{}
+	return []Escrita{
+		{Name: "caixa_salvar_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
+			return SalvarLancamento(ctx, s, SalvarLancamentoCaixa{Ano: "2026", Mes: 9, LancamentoUsuario: LancamentoCaixaUsuario{
+				Data: DataISOBrasilia(time.Date(2026, 9, 15, 0, 0, 0, 0, time.UTC)), Descricao: "Guia do Simples",
+				IDContaUsuario: 1000000000000013, IDVinculo: json.RawMessage(`"1000000000000021"`), Valor: -150.25,
+			}})
+		}},
+	}
 }

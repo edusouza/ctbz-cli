@@ -10,6 +10,7 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz balancete`](ctbz_balancete.md) | Mostra o balancete de verificação de um mês |
 | [`ctbz balanco`](ctbz_balanco.md) | Mostra o balanço patrimonial (ativo, passivo e patrimônio líquido) |
 | [`ctbz caixa`](ctbz_caixa.md) | Lista os lançamentos do caixa de um mês |
+| [`ctbz caixa adicionar`](ctbz_caixa_adicionar.md) | Adiciona um recebimento ou pagamento no caixa de uma competência |
 | [`ctbz caixa contas`](ctbz_caixa_contas.md) | Lista as classificações aceitas nos lançamentos do caixa de uma competência |
 | [`ctbz certificado`](ctbz_certificado.md) | Mostra a situação do certificado digital da empresa e da renovação |
 | [`ctbz chamados`](ctbz_chamados.md) | Lista os chamados de atendimento (em andamento ou finalizados) |

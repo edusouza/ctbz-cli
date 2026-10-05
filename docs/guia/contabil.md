@@ -93,6 +93,34 @@ Competência  Banco                  Agência  Conta      Situação  Integraç�
 - Importar um extrato continua sendo feito pelo painel (`info-extrato` só existe depois de um
   upload).
 
+## Lançar no caixa
+
+Recebimentos e pagamentos em dinheiro entram no caixa da competência. É uma escrita de
+risco médio: pede confirmação (`--yes` em scripts) e aceita `--dry-run`
+([Ações que alteram dados](escrita.md)).
+
+```sh
+ctbz caixa adicionar --competencia 2026-09 --data 2026-09-15 --pagamento \
+  --valor 150,25 --conta 1000000000000012 --descricao "Material de escritório"
+```
+
+```text
+Adicionar pagamento de R$ 150,25 em 15/09/2026 no caixa de 09/2026: "Material de escritório" (Pagamento de Fornecedores) (risco médio)
+Confirma? [s/N] s
+Ação       adicionar
+Situação   adicionado
+ID         1000000000000099
+…
+```
+
+- O valor é sempre positivo; `--recebimento` ou `--pagamento` define o sinal.
+- `--conta` aceita o id ou a descrição exata de uma classificação aceita na competência
+  (veja abaixo). Contas "Impostos - …" exigem `--guia ID` ou `--sem-guia`; "Sócios -
+  Distribuição de Lucros Antecipados" exige `--socio ID`.
+- Sem `--data`, vale o dia que o painel sugere: hoje na competência atual, senão o dia 1.
+  Datas futuras são recusadas.
+- Depois de salvar, a CLI relê o caixa e mostra o lançamento criado.
+
 ## Classificações aceitas numa competência
 
 Antes de lançar no caixa ou classificar um lançamento do extrato, veja quais classificações

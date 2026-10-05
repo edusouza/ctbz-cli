@@ -1,0 +1,18 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/caixa/lancamentousuario/novo/",
+    "content_type": "application/json",
+    "corpo": {
+      "ano": "2026",
+      "lancamentoUsuario": {
+        "data": "2026-09-15T03:00:00.000Z",
+        "descricao": "Guia do Simples",
+        "idContaUsuario": 1000000000000013,
+        "idVinculo": "1000000000000021",
+        "valor": -150.25
+      },
+      "mes": 9
+    }
+  }
+]

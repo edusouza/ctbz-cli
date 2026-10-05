@@ -12,6 +12,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz caixa contas` e `ctbz extratos contas`: classificações aceitas numa competência, com o
   filtro do painel e o vínculo exigido (guia de imposto ou sócio); `--vinculos` lista as guias
   e os sócios do caixa.
+- `ctbz caixa adicionar`: registra um recebimento ou pagamento no caixa de uma competência,
+  com as validações do painel, confirmação e `--dry-run`.
 
 ## [1.1.0] - 2026-10-04
 

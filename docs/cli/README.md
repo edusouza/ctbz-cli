@@ -12,10 +12,13 @@ internal/cli/
   root.go        árvore Cobra, flag global -o, códigos de saída, ajuda em português
   login.go       comando login: retomada, fontes de OTP, escolha de empresa
   session.go     chamadas autenticadas (re-login automático), dados da sessão
+  escrita.go     sessionSender: sessão conferida antes, tentativa única, registro da ação
+  confirmacao.go escrever(): resumo, confirmação por risco, --yes, --dry-run (simulacao.go)
   status.go, empresa.go, api.go, logout.go, version.go   um arquivo por comando
   docs.go        gerador da referência de comandos (docs/referencia)
 internal/api/
   api.go         Getter/TextGetter, registro de endpoints (Endpoints) para os contratos
+  escrita.go     Sender, codificação de corpos (JSON, string JSON, multipart), Escritas()
   empresa.go     caminhos, tipos de resposta e BuscarXxx de um contexto
   testdata/      fixtures anonimizadas (go run ./tools/capture)
 internal/contract/
@@ -58,6 +61,37 @@ Go 1.24; versões mais novas exigem Go 1.26.
 4. Testes com `execCLI` e `fakeAPI` (ver `internal/cli/output_test.go`).
 5. `go run ./tools/gendocs` e entrada no `CHANGELOG.md`.
 
+## Como adicionar um comando de escrita
+
+Segue a [ADR-0018](../adr/0018-escrita-com-confirmacao.md); o esqueleto é sempre o mesmo:
+
+1. Em `internal/api`: tipo da requisição e função `Xxx(ctx, s Sender, req)`, registrada em
+   `Escritas()` com golden de requisição ([Requisições de escrita](../contratos.md#requisicoes-de-escrita)).
+2. No comando: validar as flags (erros de uso com `usageError`), fazer os `GET` de preparação
+   e aplicar as validações do front **antes** de chamar `escrever`.
+3. `escrever(cmd, operacao{Risco, Resumo, Consequencia, ID}, func(s api.Sender) error {…})`
+   cuida de confirmação, `--yes`, `--dry-run` e registro em `acoes.jsonl`
+   ([ADR-0020](../adr/0020-confirmacao-e-simulacao.md)). `addWriteFlags(cmd)` acrescenta as flags.
+4. Se `escrever` devolver `true`, reler o estado e mostrar `resultadoEscrita(acao, situacao, id)`
+   com os campos do objeto. Se a releitura falhar ou não achar o objeto, avisar no stderr e
+   mostrar o que foi enviado com `situacao: enviado`; a escrita já aconteceu.
+5. Testes: corpo enviado, validações (nada é enviado), `--dry-run` e resultado.
+
+Convenções das escritas:
+
+- **Valores em centavos** (`int64`): `parseValor` lê o que o usuário digita (`150,25`,
+  `1.234,56` ou `150.25`), somas e comparações são feitas em centavos, e `reais(c)` converte
+  na hora de montar o corpo. O usuário digita valores positivos; o sinal vem de uma flag
+  (`--pagamento`), como no painel.
+- **Datas em Brasília**: o painel envia `new Date()` da meia-noite local, então
+  `api.DataISOBrasilia(dia)` gera `2026-09-15T03:00:00.000Z`. `api.DiaEmBrasilia` converte
+  instantes e epochs das respostas para o dia em Brasília. "Data futura" é comparada com hoje
+  em Brasília.
+- **Ids opacos**: ids que a API devolve como número ou texto (ex.: guias) são guardados como
+  `json.RawMessage` e reenviados exatamente como vieram.
+- **Escolha por id ou descrição**: flags como `--conta` aceitam o id ou a descrição exata (sem
+  diferenciar maiúsculas), sempre dentro das opções que o painel ofereceria.
+
 ## Máquina de estados do login
 
 ```mermaid
@@ -97,6 +131,7 @@ de forma atômica (arquivo temporário seguido de `rename`):
 |---|---|
 | `session.json` | `base_url`, `cnpj`, `created_at`, `cookies` (`__C`, `oauth-token` com expiração) e `storage` (`l`, `r`, `e` decodificados) |
 | `pending.json` | login em andamento: `state` (`LoginState`) e `wanted_cnpj` |
+| `acoes.jsonl` | uma linha por escrita enviada, sem corpos (`ctbz acoes`); só cresce, sem gravação atômica |
 
 As credenciais (`CTBZ_USER`, `CTBZ_PASSWORD`) nunca são gravadas.
 

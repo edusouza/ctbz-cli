@@ -2,7 +2,9 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"time"
 )
 
 // PathCaixa é a lista de lançamentos do caixa de um mês (1–12). O painel pede 1000 registros
@@ -56,4 +58,52 @@ func BuscarContasUsuario(ctx context.Context, g Getter) ([]ContaUsuario, error) 
 		return nil, err
 	}
 	return *c, nil
+}
+
+// PathSalvarLancamentoCaixa cria e edita lançamentos do caixa: com LancamentoUsuario.ID é
+// uma edição (não existe PUT). Ver docs/api/escrita/contabilidade-e-documentos.md, seção 1.1.
+const PathSalvarLancamentoCaixa = "caixa/lancamentousuario/novo/"
+
+// SalvarLancamentoCaixa é o corpo de PathSalvarLancamentoCaixa.
+type SalvarLancamentoCaixa struct {
+	Ano               string                 `json:"ano"` // string, como o front envia
+	Mes               int                    `json:"mes"`
+	LancamentoUsuario LancamentoCaixaUsuario `json:"lancamentoUsuario"`
+}
+
+// LancamentoCaixaUsuario é o lançamento enviado ao salvar. Não há campo de tipo: o sinal de
+// Valor é o tipo (positivo = recebimento, negativo = pagamento).
+type LancamentoCaixaUsuario struct {
+	Data           string `json:"data"` // ISO, meia-noite de Brasília (DataISOBrasilia)
+	Descricao      string `json:"descricao"`
+	ID             *int64 `json:"id,omitempty"` // só na edição
+	IDContaUsuario int64  `json:"idContaUsuario"`
+	// IDVinculo é a guia (ou "0", SEM GUIA) ou o sócio exigido pela classificação, como veio
+	// em CategoriaVinculo.ID; nil é enviado como null.
+	IDVinculo json.RawMessage `json:"idVinculo"`
+	Valor     float64         `json:"valor"`
+}
+
+// SemGuia é o idVinculo de "SEM GUIA" nas classificações de imposto.
+var SemGuia = json.RawMessage(`"0"`)
+
+// SalvarLancamento cria (ou edita, com ID) um lançamento do caixa.
+func SalvarLancamento(ctx context.Context, s Sender, req SalvarLancamentoCaixa) error {
+	return s.Send(ctx, "POST", PathSalvarLancamentoCaixa, req, nil)
+}
+
+// brasilia é o fuso que o painel usa nas datas (sem horário de verão desde 2019).
+var brasilia = time.FixedZone("BRT", -3*60*60)
+
+// DataISOBrasilia formata o dia como o front (new Date de meia-noite em Brasília, em UTC).
+func DataISOBrasilia(dia time.Time) string {
+	d := time.Date(dia.Year(), dia.Month(), dia.Day(), 0, 0, 0, 0, brasilia)
+	return d.UTC().Format("2006-01-02T15:04:05.000Z")
+}
+
+// DiaEmBrasilia devolve o dia (meia-noite UTC) que o instante t é em Brasília. Para epoch em
+// milissegundos das respostas, use DiaEmBrasilia(time.UnixMilli(ms)).
+func DiaEmBrasilia(t time.Time) time.Time {
+	t = t.In(brasilia)
+	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
 }

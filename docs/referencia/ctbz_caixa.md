@@ -23,6 +23,7 @@ ctbz caixa AAAA-MM
 
 ## Subcomandos
 
+- [`ctbz caixa adicionar`](ctbz_caixa_adicionar.md): Adiciona um recebimento ou pagamento no caixa de uma competência
 - [`ctbz caixa contas`](ctbz_caixa_contas.md): Lista as classificações aceitas nos lançamentos do caixa de uma competência
 
 ## Flags globais
