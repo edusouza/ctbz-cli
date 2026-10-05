@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-04
+
+Impostos: confirmar ou negar o pagamento de guias, pedir recálculo e simular ou contratar
+parcelamentos.
+
 ### Added
 
 - `ctbz impostos confirmar ID [--nao-paguei]` e `ctbz impostos desmarcar ID`: informam que uma
@@ -209,7 +214,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/edusouza/ctbz-cli/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/edusouza/ctbz-cli/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/edusouza/ctbz-cli/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/edusouza/ctbz-cli/compare/v0.8.0...v1.0.0

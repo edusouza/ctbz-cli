@@ -35,7 +35,7 @@ escritas, `risco: baixo|médio|alto`.
 | **v1.0** | Estabilidade e distribuição | [#50](https://github.com/edusouza/ctbz-cli/issues/50) | 3 | concluída |
 | **v1.1** | Fundação da escrita | [#173](https://github.com/edusouza/ctbz-cli/issues/173) | 6 | concluída |
 | **v1.2** | Caixa e classificação de lançamentos | [#180](https://github.com/edusouza/ctbz-cli/issues/180) | 7 | concluída |
-| **v1.3** | Impostos: confirmar pagamento, recálculo e parcelamento | [#188](https://github.com/edusouza/ctbz-cli/issues/188) | 4 | planejada |
+| **v1.3** | Impostos: confirmar pagamento, recálculo e parcelamento | [#188](https://github.com/edusouza/ctbz-cli/issues/188) | 4 | concluída |
 | **v1.4** | Pendências, termos e conciliação | [#193](https://github.com/edusouza/ctbz-cli/issues/193) | 5 | planejada |
 | **v1.5** | Extratos, contas bancárias e documentos | [#199](https://github.com/edusouza/ctbz-cli/issues/199) | 6 | planejada |
 | **v1.6** | Notas fiscais: tomadores e notas de entrada | [#206](https://github.com/edusouza/ctbz-cli/issues/206) | 4 | planejada |
@@ -228,10 +228,10 @@ Marcar guias como pagas (ou desmarcar), pedir recálculo de guia vencida e simul
 
 | | Issue | Funcionalidade | Tipo | Risco |
 |---|---|---|---|---|
-| ⬜ | [#189](https://github.com/edusouza/ctbz-cli/issues/189) | Confirmar pagamento de guia, "não paguei" e desmarcar | funcionalidade | médio |
-| ⬜ | [#190](https://github.com/edusouza/ctbz-cli/issues/190) | Pedir recálculo de guia vencida | funcionalidade | alto |
-| ⬜ | [#191](https://github.com/edusouza/ctbz-cli/issues/191) | Simular parcelamento de débitos | investigação | baixo |
-| ⬜ | [#192](https://github.com/edusouza/ctbz-cli/issues/192) | Contratar parcelamento de débitos | funcionalidade | alto |
+| ✅ | [#189](https://github.com/edusouza/ctbz-cli/issues/189) | Confirmar pagamento de guia, "não paguei" e desmarcar | funcionalidade | médio |
+| ✅ | [#190](https://github.com/edusouza/ctbz-cli/issues/190) | Pedir recálculo de guia vencida | funcionalidade | alto |
+| ✅ | [#191](https://github.com/edusouza/ctbz-cli/issues/191) | Simular parcelamento de débitos | investigação | baixo |
+| ✅ | [#192](https://github.com/edusouza/ctbz-cli/issues/192) | Contratar parcelamento de débitos | funcionalidade | alto |
 
 Fora de escopo: Pagar imposto com cartão e débito automático (pagamentos fora do roadmap de escrita).
 
