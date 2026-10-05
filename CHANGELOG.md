@@ -11,6 +11,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 - `ctbz pendencias termos` e `ctbz pendencias termo CHAVE`: termos e cartas com aceite pendente
   na Central de Rotinas (com o prazo do aceite tácito) e o texto completo.
+- `ctbz pendencias aceitar CHAVE`: aceita a carta de responsabilidade, o termo de débitos ou o
+  termo do TotalPass, mostrando o texto completo antes da confirmação de risco alto.
 
 ### Fixed
 

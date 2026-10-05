@@ -109,6 +109,7 @@ ctbz impostos recorrente [historico]           # pagamento recorrente (débito a
 ctbz pendencias                                # pendências abertas, com alerta de prazo
 ctbz pendencias conciliacao                    # notas e recebimentos a conciliar
 ctbz pendencias termos | termo CHAVE           # termos e cartas para aceitar; texto completo
+ctbz pendencias aceitar CHAVE                  # aceita (risco alto: declaração sem revogação)
 ctbz rotinas --mes 2026-10                     # rotinas e obrigações do mês (empresa e Contabilizei)
 ctbz rotinas reclassificar ID [--classificacao ID]  # opções ou reclassifica e conclui a rotina
 ctbz chamados [--finalizados]                  # chamados de atendimento

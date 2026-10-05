@@ -189,6 +189,15 @@ func Escritas() []Escrita {
 			_, err := ContratarParcelamento(ctx, s, TipoEspecializado, 0, "DIVIDA_ATIVA_E_VENCIDOS")
 			return err
 		}},
+		{Name: "aceitar_carta_responsabilidade", Exemplo: func(ctx context.Context, s Sender) error {
+			return Aceitar(ctx, s, PathAceitarCartaResponsabilidade)
+		}},
+		{Name: "aceitar_termo_debitos", Exemplo: func(ctx context.Context, s Sender) error {
+			return Aceitar(ctx, s, PathAceitarTermoDebitos)
+		}},
+		{Name: "aceitar_termo_totalpass", Exemplo: func(ctx context.Context, s Sender) error {
+			return Aceitar(ctx, s, PathAceitarTermoTotalPass)
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

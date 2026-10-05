@@ -49,7 +49,7 @@ Na tabela, o detalhe é cortado; use -o json para o texto completo.`,
 	}
 	cmd.Flags().BoolVar(&todas, "todas", false, "inclui as pendências finalizadas")
 	cmd.Flags().BoolVar(&failOnVencidas, "fail-on-vencidas", false, "termina com código 4 se houver pendência vencida")
-	cmd.AddCommand(newPendenciasConciliacaoCmd(), newPendenciasTermosCmd(), newPendenciasTermoCmd())
+	cmd.AddCommand(newPendenciasConciliacaoCmd(), newPendenciasTermosCmd(), newPendenciasTermoCmd(), newPendenciasAceitarCmd())
 	return cmd
 }
 

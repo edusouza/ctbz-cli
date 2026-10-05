@@ -92,6 +92,21 @@ termo-debitos           Termo de Ciência e Responsabilidade (retiradas de lucro
   entende que não há impedimento para as retiradas de lucros.
 - O texto vem em HTML e é convertido para texto, sem caracteres de controle.
 
+Para aceitar:
+
+```sh
+ctbz pendencias aceitar carta-responsabilidade
+ctbz pendencias aceitar termo-debitos
+ctbz pendencias aceitar termo-totalpass
+```
+
+- **Risco alto:** são declarações legais e contábeis, sem como revogar. O texto completo é
+  sempre impresso (no stderr) antes da confirmação, e no terminal é preciso digitar `confirmo`.
+  Em scripts, use `--yes` (o texto continua indo para o stderr, para ficar no log).
+- Sem aceite pendente, a CLI avisa "nada a aceitar" e termina com código 0.
+- Se a sessão for de um administrador da Contabilizei, a API recusa (HTTP 403): os aceites só
+  podem ser feitos pelo próprio cliente.
+
 ## Conciliação fiscal
 
 ```sh

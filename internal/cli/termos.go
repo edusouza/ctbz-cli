@@ -2,13 +2,16 @@ package cli
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"strings"
 
 	"github.com/spf13/cobra"
 
 	"github.com/edusouza/ctbz-cli/internal/api"
+	"github.com/edusouza/ctbz-cli/internal/ctbz"
 	"github.com/edusouza/ctbz-cli/internal/output"
 )
 
@@ -16,15 +19,21 @@ import (
 type termo struct {
 	slug, chave, titulo string
 	conteudo            func(api.PendenciaCentral) string
+	pathAceite          string
+	// consequencia é o que o painel diz sobre o aceite, mostrado na confirmação.
+	consequencia string
 }
 
 var termos = []termo{
 	{"carta-responsabilidade", api.PendenciaCartaResponsabilidade, "Carta de Responsabilidade da Administração",
-		func(p api.PendenciaCentral) string { return p.ConteudoCartaResponsabilidade }},
+		func(p api.PendenciaCentral) string { return p.ConteudoCartaResponsabilidade }, api.PathAceitarCartaResponsabilidade,
+		"É a declaração anual exigida pelo CFC de que todas as informações e documentos foram entregues à contabilidade. Não dá para revogar."},
 	{"termo-debitos", api.PendenciaTermoDebitos, "Termo de Ciência e Responsabilidade (retiradas de lucros)",
-		func(p api.PendenciaCentral) string { return p.ConteudoAceiteTermoDebito }},
+		func(p api.PendenciaCentral) string { return p.ConteudoAceiteTermoDebito }, api.PathAceitarTermoDebitos,
+		"Declara ciência dos riscos das retiradas de lucros (fiscalização pela Receita Federal, multas, juros e autuações). Não dá para revogar."},
 	{"termo-totalpass", api.PendenciaTermoTotalPass, "Termo de adesão ao TotalPass",
-		func(p api.PendenciaCentral) string { return p.ConteudoTermoAdesaoTotalPass }},
+		func(p api.PendenciaCentral) string { return p.ConteudoTermoAdesaoTotalPass }, api.PathAceitarTermoTotalPass,
+		"Adesão ao programa de benefícios (TotalPass e Starbem). Não dá para revogar pela CLI."},
 }
 
 func slugsTermos() string {
@@ -156,4 +165,77 @@ CHAVE: ` + slugsTermos() + `.`,
 			return escreverTermo(s.out, f, t, p, texto)
 		},
 	}
+}
+
+// erroAdmin traduz o 403 dos aceites e declarações: a sessão é de um administrador da
+// Contabilizei personificando o cliente.
+func erroAdmin(err error) error {
+	var we *ctbz.WriteError
+	if errors.As(err, &we) && we.Status == http.StatusForbidden {
+		return fmt.Errorf("a Contabilizei recusou porque a sessão é de administrador (%s): aceites e declarações só podem ser feitos pelo próprio cliente", we.Message)
+	}
+	return err
+}
+
+func newPendenciasAceitarCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "aceitar CHAVE",
+		Short: "Aceita um termo ou carta pendente da Central de Rotinas",
+		Long: `Assina um aceite cobrado pela Central de Rotinas (risco alto: são declarações legais e
+contábeis, sem como revogar). O texto completo do termo é sempre impresso no stderr antes da
+confirmação, que no terminal exige digitar "confirmo" (--yes em scripts).
+
+Se não houver aceite pendente, a CLI avisa "nada a aceitar" e termina com código 0.
+Depois do envio, relê a Central de Rotinas para confirmar que a pendência sumiu.
+
+CHAVE: ` + slugsTermos() + `.`,
+		Example: `  ctbz pendencias aceitar carta-responsabilidade
+  ctbz pendencias aceitar termo-debitos --dry-run`,
+		Args: exactArgs(1, "a CHAVE do termo"),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			t, err := acharTermo(args[0])
+			if err != nil {
+				return err
+			}
+			f, err := outputFormat(cmd, "")
+			if err != nil {
+				return err
+			}
+			s := streamsOf(cmd)
+			ctx := cmd.Context()
+			g := sessionGetter{s}
+			p, texto, err := lerTermo(ctx, g, t)
+			if err != nil {
+				return err
+			}
+			if !p.PossuiPendencia {
+				fmt.Fprintf(s.err, "Nada a aceitar: %s não está pendente.\n", t.titulo)
+				return output.Write(s.out, f, resultadoEscrita("aceitar", "nada_a_aceitar", t.slug))
+			}
+			if texto == "" {
+				return fmt.Errorf("a Central de Rotinas não trouxe o texto de %q; leia e aceite pelo painel", t.slug)
+			}
+			fmt.Fprintf(s.err, "%s\n\n%s\n", t.titulo, texto)
+			consequencia := t.consequencia
+			if dias := prazoTacito(t, p); dias != nil {
+				consequencia += fmt.Sprintf(" Sem resposta em %v dias, a Contabilizei considera o termo aceito (aceite tácito).", dias)
+			}
+			op := operacao{Risco: riscoAlto, ID: t.slug, Resumo: "Aceitar: " + t.titulo, Consequencia: consequencia}
+			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return erroAdmin(api.Aceitar(ctx, snd, t.pathAceite)) })
+			if err != nil || !enviado {
+				return err
+			}
+			situacao := "aceito"
+			if novo, _, err := lerTermo(ctx, g, t); err != nil {
+				fmt.Fprintln(s.err, "aviso: aceite enviado, mas não foi possível reler a Central de Rotinas:", err)
+				situacao = "enviado"
+			} else if novo.PossuiPendencia {
+				fmt.Fprintln(s.err, "aviso: a pendência ainda aparece na Central de Rotinas; confira com ctbz pendencias termos")
+				situacao = "enviado"
+			}
+			return output.Write(s.out, f, resultadoEscrita("aceitar", situacao, t.slug).Add("termo", "Termo", t.titulo))
+		},
+	}
+	addWriteFlags(cmd)
+	return cmd
 }

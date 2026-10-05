@@ -47,3 +47,16 @@ const (
 	PendenciaTermoTotalPass        = "pendenciaTermoAdesaoTotalPass"
 	PendenciaProcuracaoEcac        = "pendenciaProcuracaoEcac"
 )
+
+// Aceites da Central de Rotinas: POST sem corpo (empresa e período vêm da sessão), sem como
+// revogar. Um 403 indica sessão de administrador ("Não é possível realizar a assinatura como admin!").
+const (
+	PathAceitarCartaResponsabilidade = "central-rotinas/aceitar-carta-responsabilidade"
+	PathAceitarTermoDebitos          = "central-rotinas/aceitar-termo-debitos"
+	PathAceitarTermoTotalPass        = "central-rotinas/aceitar-termo-aceite-tp"
+)
+
+// Aceitar envia um dos aceites da Central de Rotinas (PathAceitar…).
+func Aceitar(ctx context.Context, s Sender, path string) error {
+	return s.Send(ctx, "POST", path, nil, nil)
+}
