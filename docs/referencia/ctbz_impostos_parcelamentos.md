@@ -7,7 +7,7 @@ em negociação (em_andamento), ativos e encerrados (historico). Para o detalhe 
 parcelamento, use "ctbz impostos parcelamento ID"; para simular um novo, "ctbz impostos
 parcelamento simular TIPO".
 
-Somente leitura: contratar um parcelamento continua sendo feito pelo painel.
+Para contratar: "ctbz impostos parcelamento contratar TIPO".
 
 ## Uso
 

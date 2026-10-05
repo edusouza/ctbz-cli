@@ -1,0 +1,6 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/impostos/parcelamento/negociacao-automatica/simples-nacional/contratar"
+  }
+]

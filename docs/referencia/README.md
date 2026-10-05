@@ -41,6 +41,7 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz impostos guia`](ctbz_impostos_guia.md) | Mostra o detalhe de uma guia de imposto |
 | [`ctbz impostos historico`](ctbz_impostos_historico.md) | Lista o histórico de guias de impostos |
 | [`ctbz impostos parcelamento`](ctbz_impostos_parcelamento.md) | Mostra o detalhe de um parcelamento de impostos |
+| [`ctbz impostos parcelamento contratar`](ctbz_impostos_parcelamento_contratar.md) | Contrata um parcelamento de débitos |
 | [`ctbz impostos parcelamento simular`](ctbz_impostos_parcelamento_simular.md) | Simula um parcelamento de débitos (opções de parcelas e custos) |
 | [`ctbz impostos parcelamentos`](ctbz_impostos_parcelamentos.md) | Lista os parcelamentos de impostos (em andamento, ativos e encerrados) |
 | [`ctbz impostos recalcular`](ctbz_impostos_recalcular.md) | Mostra ou pede o recálculo de uma guia vencida |

@@ -177,6 +177,18 @@ func Escritas() []Escrita {
 			_, err := Recalcular(ctx, s, 1000000000000001, PedidoRecalculo{Tipo: "GUIA", Origem: OrigemGuiaPadrao, DataVencimento: "20/10/2026"})
 			return err
 		}},
+		{Name: "parcelamento_contratar_simples_nacional", Exemplo: func(ctx context.Context, s Sender) error {
+			_, err := ContratarParcelamento(ctx, s, "simples-nacional", 0, "")
+			return err
+		}},
+		{Name: "parcelamento_contratar_pgfn", Exemplo: func(ctx context.Context, s Sender) error {
+			_, err := ContratarParcelamento(ctx, s, "pgfn-previdenciario", 24, "")
+			return err
+		}},
+		{Name: "parcelamento_contratar_especializado", Exemplo: func(ctx context.Context, s Sender) error {
+			_, err := ContratarParcelamento(ctx, s, TipoEspecializado, 0, "DIVIDA_ATIVA_E_VENCIDOS")
+			return err
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

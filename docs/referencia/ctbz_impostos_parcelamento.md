@@ -22,6 +22,7 @@ ctbz impostos parcelamento ID
 
 ## Subcomandos
 
+- [`ctbz impostos parcelamento contratar`](ctbz_impostos_parcelamento_contratar.md): Contrata um parcelamento de débitos
 - [`ctbz impostos parcelamento simular`](ctbz_impostos_parcelamento_simular.md): Simula um parcelamento de débitos (opções de parcelas e custos)
 
 ## Flags globais

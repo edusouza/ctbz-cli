@@ -16,6 +16,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   guia vencida ou pede o recálculo (risco alto: serviço cobrado na mensalidade).
 - `ctbz impostos parcelamento simular TIPO`: opções de parcelas e custos adicionais de um
   parcelamento de débitos (Simples, PGFN ou especializado); sem débitos, avisa e sai com 0.
+- `ctbz impostos parcelamento contratar TIPO`: contrata o parcelamento depois de simular, com os
+  avisos do painel (confissão de dívida, cancelamento, Selic) e os custos na mensalidade.
 
 ## [1.2.0] - 2026-10-04
 

@@ -76,7 +76,12 @@ type SimulacaoParcelamento struct {
 	ValorServicoAdicional  *float64        `json:"valorServicoAdicional" contract:"optional"`
 	ValorEmissaoGuia       *float64        `json:"valorEmissaoGuia" contract:"optional"`
 	TaxaReparcelamento     json.RawMessage `json:"taxaReparcelamento" contract:"optional"`
-	Negociacao             *struct {
+	ResumoParcelamento     *struct {
+		QuantidadeParcelas  int      `json:"quantidadeParcelas"`
+		ValorEntrada        *float64 `json:"valorEntrada"`
+		ValorDemaisParcelas *float64 `json:"valorDemaisParcelas"`
+	} `json:"resumoParcelamento" contract:"optional"`
+	Negociacao *struct {
 		Impostos []json.RawMessage `json:"impostos"`
 	} `json:"negociacao" contract:"optional"`
 }
@@ -85,4 +90,40 @@ type SimulacaoParcelamento struct {
 // ("Empresa não possui guias para simulação").
 func SimularParcelamento(ctx context.Context, g Getter, tipo, negociacao string) (*SimulacaoParcelamento, error) {
 	return get[SimulacaoParcelamento](ctx, g, PathSimulacaoParcelamento(tipo, negociacao))
+}
+
+// PathContratarParcelamento contrata um parcelamento de um tipo já validado (POST).
+func PathContratarParcelamento(tipo string) string {
+	if tipo == TipoEspecializado {
+		return "impostos/parcelamento/negociacao-especializada/contratar"
+	}
+	return "impostos/parcelamento/negociacao-automatica/" + tipo + "/contratar"
+}
+
+// PathDetalheNegociacaoEspecializada é o detalhe de um pedido especializado (pelo idTicket).
+func PathDetalheNegociacaoEspecializada(idTicket string) string {
+	return "impostos/parcelamento/negociacao-especializada/detalhes/init/" + url.PathEscape(idTicket)
+}
+
+// RespostaContratacao traz o idTicket do parcelamento especializado (os automáticos não
+// devolvem nada útil).
+type RespostaContratacao struct {
+	IDTicket json.RawMessage `json:"idTicket"`
+}
+
+// ContratarParcelamento contrata o parcelamento. O corpo depende do tipo: nenhum no Simples,
+// {quantidadeParcelas} na PGFN e {tipoNegociacao} no especializado. Não dá para desfazer.
+func ContratarParcelamento(ctx context.Context, s Sender, tipo string, parcelas int, negociacao string) (*RespostaContratacao, error) {
+	var body any
+	switch {
+	case tipo == TipoEspecializado:
+		body = map[string]string{"tipoNegociacao": negociacao}
+	case strings.HasPrefix(tipo, "pgfn-"):
+		body = map[string]int{"quantidadeParcelas": parcelas}
+	}
+	var r RespostaContratacao
+	if err := s.Send(ctx, "POST", PathContratarParcelamento(tipo), body, &r); err != nil {
+		return nil, err
+	}
+	return &r, nil
 }

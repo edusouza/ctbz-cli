@@ -165,6 +165,23 @@ simples-nacional  12        R$ 500,00         R$ 250,50        R$ 99,90         
 - O formato da simulação ainda não foi conferido com uma conta com dívidas; se faltar algo,
   `ctbz api` mostra a resposta completa.
 
+### Contratar um parcelamento
+
+```sh
+ctbz impostos parcelamento contratar pgfn-previdenciario --parcelas 24
+ctbz impostos parcelamento contratar especializado --negociacao VENCIDOS
+```
+
+- **Risco alto:** é uma confissão de dívida perante a Receita ou a PGFN. Se a primeira parcela
+  não for paga, o parcelamento é cancelado automaticamente; as parcelas são corrigidas pela
+  Selic + 1% ao mês; não dá para desfazer. A CLI mostra esses avisos e os custos cobrados na
+  mensalidade e, no terminal, pede para digitar `confirmo`.
+- A CLI sempre roda a simulação antes. Na PGFN, `--parcelas` escolhe uma das opções da
+  simulação (padrão: a primeira, como no painel). No Simples, a quantidade não é escolhida aqui.
+- O especializado vira um pedido de atendimento: a saída traz o `id` (idTicket) e o detalhe
+  do pedido.
+- Depois de contratar, acompanhe com `ctbz impostos parcelamentos`.
+
 ## Pagamento recorrente (débito automático)
 
 ```sh

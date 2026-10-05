@@ -19,7 +19,7 @@ em negociação (em_andamento), ativos e encerrados (historico). Para o detalhe 
 parcelamento, use "ctbz impostos parcelamento ID"; para simular um novo, "ctbz impostos
 parcelamento simular TIPO".
 
-Somente leitura: contratar um parcelamento continua sendo feito pelo painel.`,
+Para contratar: "ctbz impostos parcelamento contratar TIPO".`,
 		Example: `  ctbz impostos parcelamentos`,
 		Args:    exactArgs(0, "nenhum argumento"),
 		RunE: func(cmd *cobra.Command, _ []string) error {
@@ -97,7 +97,7 @@ parcelamentos), por isso os campos são mostrados como a API os devolve.`,
 			return output.Write(s.out, f, data)
 		},
 	}
-	cmd.AddCommand(newParcelamentoSimularCmd())
+	cmd.AddCommand(newParcelamentoSimularCmd(), newParcelamentoContratarCmd())
 	return cmd
 }
 

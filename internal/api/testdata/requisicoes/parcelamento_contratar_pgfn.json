@@ -1,0 +1,10 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/impostos/parcelamento/negociacao-automatica/pgfn-previdenciario/contratar",
+    "content_type": "application/json",
+    "corpo": {
+      "quantidadeParcelas": 24
+    }
+  }
+]

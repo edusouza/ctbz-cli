@@ -1,0 +1,10 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/impostos/parcelamento/negociacao-especializada/contratar",
+    "content_type": "application/json",
+    "corpo": {
+      "tipoNegociacao": "DIVIDA_ATIVA_E_VENCIDOS"
+    }
+  }
+]
