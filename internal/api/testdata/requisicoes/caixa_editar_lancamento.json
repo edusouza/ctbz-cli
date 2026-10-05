@@ -1,0 +1,19 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/caixa/lancamentousuario/novo/",
+    "content_type": "application/json",
+    "corpo": {
+      "ano": "2026",
+      "lancamentoUsuario": {
+        "data": "2026-09-18T03:00:00.000Z",
+        "descricao": "Venda à vista",
+        "id": 1000000000000002,
+        "idContaUsuario": 1000000000000011,
+        "idVinculo": null,
+        "valor": 900
+      },
+      "mes": 9
+    }
+  }
+]

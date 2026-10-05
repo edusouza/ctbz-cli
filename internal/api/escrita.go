@@ -138,5 +138,12 @@ func Escritas() []Escrita {
 				IDContaUsuario: 1000000000000013, IDVinculo: json.RawMessage(`"1000000000000021"`), Valor: -150.25,
 			}})
 		}},
+		{Name: "caixa_editar_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
+			id := int64(1000000000000002)
+			return SalvarLancamento(ctx, s, SalvarLancamentoCaixa{Ano: "2026", Mes: 9, LancamentoUsuario: LancamentoCaixaUsuario{
+				Data: DataISOBrasilia(time.Date(2026, 9, 18, 0, 0, 0, 0, time.UTC)), Descricao: "Venda à vista", ID: &id,
+				IDContaUsuario: 1000000000000011, Valor: 900,
+			}})
+		}},
 	}
 }

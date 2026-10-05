@@ -17,9 +17,9 @@ func TestCaixa(t *testing.T) {
 	if code != ExitOK {
 		t.Fatalf("código %d: %s", code, stderr)
 	}
-	want := "data,descricao,conta,classificacao,valor,situacao,automatico\n" +
-		"2026-09-18,Pagamento Contabilizei,Mensalidade de contabilidade,DESPESA,-141.83,CONFIRMADO,true\n" +
-		"2026-09-19,Recebimento cliente,,,1000.00,PENDENTE,false\n"
+	want := "data,descricao,conta,classificacao,valor,situacao,automatico,id\n" +
+		"2026-09-18,Pagamento Contabilizei,Mensalidade de contabilidade,DESPESA,-141.83,CONFIRMADO,true,1\n" +
+		"2026-09-19,Recebimento cliente,,,1000.00,PENDENTE,false,2\n"
 	if out != want {
 		t.Errorf("CSV:\n%s\nesperado:\n%s", out, want)
 	}

@@ -28,6 +28,8 @@ type LancamentoCaixa struct {
 	Tipo                 string   `json:"tipo"`
 	IDContaUsuario       *int64   `json:"idContaUsuario"` // classificação (ContaUsuario)
 	ConfirmadoViaSistema bool     `json:"confirmadoViaSistema"`
+	// IDVinculo é a guia ou o sócio vinculado (incerto se a listagem traz; ADR-0021).
+	IDVinculo json.RawMessage `json:"idVinculo" contract:"optional"`
 }
 
 // Caixa é a resposta de caixa/listpaginada.

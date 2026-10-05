@@ -64,8 +64,8 @@ ctbz caixa 2026-09 -o csv > caixa-2026-09.csv
 ```
 
 ```text
-Data        Descrição               Conta                         Classificação        Valor  Situação    Automático
-18/09/2026  Pagamento Contabilizei  Mensalidade de contabilidade  DESPESA         -R$ 141,83  CONFIRMADO  sim
+Data        Descrição               Conta                         Classificação        Valor  Situação    Automático  ID
+18/09/2026  Pagamento Contabilizei  Mensalidade de contabilidade  DESPESA         -R$ 141,83  CONFIRMADO  sim         1000000000000001
 Total do mês: -R$ 141,83 em 1 lançamento(s)
 ```
 
@@ -120,6 +120,17 @@ ID         1000000000000099
 - Sem `--data`, vale o dia que o painel sugere: hoje na competência atual, senão o dia 1.
   Datas futuras são recusadas.
 - Depois de salvar, a CLI relê o caixa e mostra o lançamento criado.
+
+Para corrigir um lançamento manual, informe só o que muda; o resumo mostra o antes e o depois:
+
+```sh
+ctbz caixa editar 1000000000000002 --competencia 2026-09 --valor 900 --descricao "Venda balcão"
+# Editar o lançamento 1000000000000002 do caixa de 09/2026: valor R$ 1.000,00 → R$ 900,00; descrição "Venda à vista" → "Venda balcão"
+```
+
+- Os ids aparecem em `ctbz caixa 2026-09 -o json`.
+- Lançamentos feitos pelo sistema (coluna "Automático") não podem ser editados, como no painel.
+- Trocar a classificação exige informar de novo o vínculo, quando a nova conta pede um.
 
 ## Classificações aceitas numa competência
 

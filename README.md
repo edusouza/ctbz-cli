@@ -125,6 +125,7 @@ ctbz razao --conta 1.01 --de 2026-01           # lançamentos do razão por cont
 ctbz caixa 2026-09                             # lançamentos do caixa do mês, com total
 ctbz caixa contas --competencia 2026-09        # classificações aceitas no caixa (e vínculos)
 ctbz caixa adicionar --competencia 2026-09 --pagamento --valor 150,25 --conta ID --descricao "…"
+ctbz caixa editar ID --competencia 2026-09 --valor 900   # altera só o que for informado
 ctbz extratos contas --competencia 2026-09     # classificações aceitas no extrato
 ctbz extratos --ano 2026 | ctbz contas-bancarias  # extratos por mês e contas cadastradas
 ctbz contas --busca alug                       # plano de contas usado nas classificações

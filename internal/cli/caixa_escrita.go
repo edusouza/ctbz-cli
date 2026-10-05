@@ -279,3 +279,199 @@ func lancamentoResultado(acao, situacao string, relido *api.LancamentoCaixa, env
 		Add("conta", "Conta", conta).
 		Add("valor", "Valor", valor)
 }
+
+// lancamentoDoCaixa acha um lançamento pelo id na competência e recusa os lançados pelo
+// sistema, que o painel não deixa editar nem excluir.
+func lancamentoDoCaixa(ctx context.Context, g api.Getter, mes time.Time, idArg string) (*api.LancamentoCaixa, error) {
+	id, err := strconv.ParseInt(idArg, 10, 64)
+	if err != nil {
+		return nil, usageError{fmt.Errorf("id de lançamento inválido %q", idArg)}
+	}
+	c, err := api.BuscarCaixa(ctx, g, mes.Year(), int(mes.Month()))
+	if err != nil {
+		return nil, err
+	}
+	for i := range c.List {
+		if c.List[i].ID == id {
+			if c.List[i].ConfirmadoViaSistema {
+				return nil, fmt.Errorf("o lançamento %d foi feito pelo sistema e não pode ser alterado (o painel também não permite)", id)
+			}
+			return &c.List[i], nil
+		}
+	}
+	return nil, fmt.Errorf("lançamento %d não encontrado no caixa de %s", id, mes.Format("01/2006"))
+}
+
+// mudanca descreve uma alteração para o resumo ("valor R$ 1,00 → R$ 2,00").
+func mudanca(campo, antes, depois string) string {
+	return fmt.Sprintf("%s %s → %s", campo, antes, depois)
+}
+
+func newCaixaEditarCmd() *cobra.Command {
+	var f lancamentoFlags
+	cmd := &cobra.Command{
+		Use:   "editar ID",
+		Short: "Altera um lançamento manual do caixa",
+		Long: `Altera data, valor, tipo (recebimento ou pagamento), classificação, vínculo ou descrição de
+um lançamento manual do caixa (risco médio, reversível editando de novo). Só as flags
+informadas mudam; o resto é mantido.
+
+O painel não tem um "editar" separado: reenvia o lançamento inteiro. A CLI lê o lançamento
+atual na competência, aplica as mudanças com as mesmas validações de ctbz caixa adicionar e
+mostra o antes e o depois no resumo. Lançamentos feitos pelo sistema não podem ser editados.
+
+Pede confirmação (--yes em scripts) e aceita --dry-run.`,
+		Example: `  ctbz caixa editar 1000000000000002 --competencia 2026-09 --valor 900
+  ctbz caixa editar 1000000000000002 --competencia 2026-09 --descricao "Venda balcão" --dry-run`,
+		Args: exactArgs(1, "o ID do lançamento"),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			mes, err := competenciaFlag(cmd)
+			if err != nil {
+				return err
+			}
+			if f.recebimento && f.pagamento {
+				return usageError{errors.New("use --recebimento ou --pagamento, não os dois")}
+			}
+			alteracoes := []string{"data", "valor", "recebimento", "pagamento", "conta", "descricao", "guia", "sem-guia", "socio"}
+			mudou := false
+			for _, nome := range alteracoes {
+				mudou = mudou || cmd.Flags().Changed(nome)
+			}
+			if !mudou {
+				return usageError{errors.New("informe o que alterar: --data, --valor, --recebimento/--pagamento, --conta, --descricao, --guia/--sem-guia ou --socio")}
+			}
+			formato, err := outputFormat(cmd, "")
+			if err != nil {
+				return err
+			}
+			s := streamsOf(cmd)
+			ctx := cmd.Context()
+			g := sessionGetter{s}
+			atual, err := lancamentoDoCaixa(ctx, g, mes, args[0])
+			if err != nil {
+				return err
+			}
+			cc, err := lerCaixaCompetencia(ctx, g, mes)
+			if err != nil {
+				return err
+			}
+			req, conta, resumo, err := aplicarEdicao(cc, atual, f)
+			if err != nil {
+				return err
+			}
+			op := operacao{Risco: riscoMedio, ID: args[0], Resumo: fmt.Sprintf("Editar o lançamento %d do caixa de %s: %s",
+				atual.ID, mes.Format("01/2006"), strings.Join(resumo, "; "))}
+			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.SalvarLancamento(ctx, snd, req) })
+			if err != nil || !enviado {
+				return err
+			}
+			l, err := releLancamento(ctx, g, mes, func(lc api.LancamentoCaixa) bool { return lc.ID == atual.ID })
+			if err != nil {
+				fmt.Fprintln(s.err, "aviso: lançamento salvo, mas não foi possível reler o caixa:", err)
+			}
+			return output.Write(s.out, formato, lancamentoResultado("editar", "editado", l, req.LancamentoUsuario, conta))
+		},
+	}
+	addCompetenciaFlag(cmd)
+	f.add(cmd)
+	addWriteFlags(cmd)
+	return cmd
+}
+
+// aplicarEdicao aplica as flags informadas ao lançamento atual e devolve a requisição, a
+// classificação final e a lista de mudanças para o resumo.
+func aplicarEdicao(cc *caixaCompetencia, atual *api.LancamentoCaixa, f lancamentoFlags) (api.SalvarLancamentoCaixa, string, []string, error) {
+	var req api.SalvarLancamentoCaixa
+	var resumo []string
+	valorAtual := int64(0)
+	if atual.Valor != nil {
+		valorAtual = centavos(*atual.Valor)
+	}
+	entrada := valorAtual > 0
+	if f.recebimento || f.pagamento {
+		if f.recebimento != entrada {
+			resumo = append(resumo, mudanca("tipo", ladoCaixa(entrada), ladoCaixa(f.recebimento)))
+		}
+		entrada = f.recebimento
+	}
+	valor := abs(valorAtual)
+	if f.valor != "" {
+		v, err := parseValor(f.valor)
+		if err != nil {
+			return req, "", nil, usageError{err}
+		}
+		if v <= 0 {
+			return req, "", nil, usageError{errors.New("o valor deve ser maior que zero; o sinal vem de --recebimento ou --pagamento")}
+		}
+		if v != valor {
+			resumo = append(resumo, mudanca("valor", formatarCentavos(valor), formatarCentavos(v)))
+		}
+		valor = v
+	}
+	if !entrada {
+		valor = -valor
+	}
+	dia := api.DiaEmBrasilia(time.UnixMilli(atual.Data))
+	if f.data != "" {
+		d, err := parseDiaLancamento(f.data)
+		if err != nil {
+			return req, "", nil, err
+		}
+		if !d.Equal(dia) {
+			resumo = append(resumo, mudanca("data", dia.Format("02/01/2006"), d.Format("02/01/2006")))
+		}
+		dia = d
+	}
+	idConta := ""
+	if atual.IDContaUsuario != nil {
+		idConta = strconv.FormatInt(*atual.IDContaUsuario, 10)
+	}
+	vinculoAtual := atual.IDVinculo
+	if string(vinculoAtual) == "null" {
+		vinculoAtual = nil
+	}
+	if f.conta != "" {
+		vinculoAtual = nil // nova classificação: o vínculo antigo não vale
+	}
+	alvo := idConta
+	if f.conta != "" {
+		alvo = f.conta
+	}
+	if alvo == "" {
+		return req, "", nil, usageError{errors.New("o lançamento não tem classificação; informe --conta")}
+	}
+	conta, err := cc.conta(alvo, entrada)
+	if err != nil {
+		return req, "", nil, err
+	}
+	if conta.IDTexto() != idConta {
+		antes := idConta
+		for _, c := range cc.cats {
+			if c.IDTexto() == idConta {
+				antes = c.Descricao
+			}
+		}
+		resumo = append(resumo, mudanca("conta", antes, conta.Descricao))
+	}
+	vinculo, nomeVinc, err := cc.vinculo(conta, f, vinculoAtual)
+	if err != nil {
+		return req, "", nil, err
+	}
+	if nomeVinc != "" {
+		resumo = append(resumo, "vínculo: "+nomeVinc)
+	}
+	descricao := atual.Descricao
+	if strings.TrimSpace(f.descricao) != "" && strings.TrimSpace(f.descricao) != descricao {
+		resumo = append(resumo, mudanca("descrição", strconv.Quote(descricao), strconv.Quote(strings.TrimSpace(f.descricao))))
+		descricao = strings.TrimSpace(f.descricao)
+	}
+	if len(resumo) == 0 {
+		return req, "", nil, usageError{errors.New("nada muda: os valores informados são iguais aos atuais")}
+	}
+	id := atual.ID
+	idNum, _ := strconv.ParseInt(conta.IDTexto(), 10, 64)
+	req = api.SalvarLancamentoCaixa{Ano: strconv.Itoa(cc.mes.Year()), Mes: int(cc.mes.Month()), LancamentoUsuario: api.LancamentoCaixaUsuario{
+		Data: api.DataISOBrasilia(dia), Descricao: descricao, ID: &id, IDContaUsuario: idNum, IDVinculo: vinculo, Valor: reais(valor),
+	}}
+	return req, conta.Descricao, resumo, nil
+}

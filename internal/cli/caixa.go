@@ -14,8 +14,8 @@ func newCaixaCmd() *cobra.Command {
 		Use:   "caixa AAAA-MM",
 		Short: "Lista os lançamentos do caixa de um mês",
 		Long: `Lista os lançamentos do caixa do mês (entradas e saídas classificadas): data, descrição,
-conta de classificação, tipo (receita, despesa…), valor (negativo nas saídas), situação e se
-foi lançado pelo sistema. Na tabela, o total do mês vai para o stderr.
+conta de classificação, tipo (receita, despesa…), valor (negativo nas saídas), situação, se
+foi lançado pelo sistema e o id (usado por ctbz caixa editar e remover). Na tabela, o total do mês vai para o stderr.
 
 O painel pede até 1000 lançamentos por mês; se houver mais, a CLI avisa no stderr.`,
 		Example: `  ctbz caixa 2026-09
@@ -53,7 +53,7 @@ O painel pede até 1000 lançamentos por mês; se houver mais, a CLI avisa no st
 			return nil
 		},
 	}
-	cmd.AddCommand(newCaixaContasCmd(), newCaixaAdicionarCmd())
+	cmd.AddCommand(newCaixaContasCmd(), newCaixaAdicionarCmd(), newCaixaEditarCmd())
 	return cmd
 }
 
@@ -70,6 +70,7 @@ func caixaList(ls []api.LancamentoCaixa, contas []api.ContaUsuario) (*output.Lis
 		{Key: "valor", Header: "Valor"},
 		{Key: "situacao", Header: "Situação"},
 		{Key: "automatico", Header: "Automático"},
+		{Key: "id", Header: "ID"},
 	}}
 	var total float64
 	for _, lc := range ls {
@@ -83,7 +84,7 @@ func caixaList(ls []api.LancamentoCaixa, contas []api.ContaUsuario) (*output.Lis
 			total += *lc.Valor
 		}
 		l.Append(dateFromMillis(lc.Data), output.Text(lc.Descricao), conta, classificacao, moneyOrNil(lc.Valor),
-			nilIfEmpty(lc.Situacao), lc.ConfirmadoViaSistema)
+			nilIfEmpty(lc.Situacao), lc.ConfirmadoViaSistema, lc.ID)
 	}
 	return l, total
 }

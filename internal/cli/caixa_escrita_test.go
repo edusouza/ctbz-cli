@@ -151,3 +151,64 @@ func TestCaixaAdicionarDryRun(t *testing.T) {
 		t.Errorf("código %d, escritas %v\nstdout:\n%s\nstderr:\n%s", code, f.writes, out, stderr)
 	}
 }
+
+func TestCaixaEditar(t *testing.T) {
+	f := newCaixaFake(t)
+	out, stderr, code := execCLI(t, "", "caixa", "editar", "2", "--competencia", "2026-09", "--valor", "900", "--descricao", "Venda balcão", "--yes", "-o", "json")
+	if code != ExitOK || len(f.writes) != 1 {
+		t.Fatalf("código %d, escritas %v\n%s", code, f.writes, stderr)
+	}
+	want := `{"ano":"2026","mes":9,"lancamentoUsuario":{"data":"2026-09-18T03:00:00.000Z","descricao":"Venda balcão","id":2,"idContaUsuario":1000000000000011,"idVinculo":null,"valor":900}}`
+	if !strings.HasSuffix(f.writes[0], want) {
+		t.Errorf("corpo:\n%s\nquero:\n%s", f.writes[0], want)
+	}
+	if !strings.Contains(stderr, `Editar o lançamento 2 do caixa de 09/2026: valor R$ 1.000,00 → R$ 900,00; descrição "Venda à vista" → "Venda balcão"`) {
+		t.Errorf("resumo: %s", stderr)
+	}
+	if !strings.Contains(out, `"situacao": "editado"`) || !strings.Contains(out, `"id": 2`) || !strings.Contains(out, `"valor": 900.00`) {
+		t.Errorf("saída:\n%s", out)
+	}
+}
+
+func TestCaixaEditarTrocaTipoEConta(t *testing.T) {
+	f := newCaixaFake(t)
+	_, stderr, code := execCLI(t, "", "caixa", "editar", "2", "--competencia", "2026-09", "--pagamento",
+		"--conta", "Impostos - Simples Nacional", "--sem-guia", "--data", "2026-09-20", "--yes")
+	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(f.writes[0], `"data":"2026-09-20T03:00:00.000Z"`) ||
+		!strings.Contains(f.writes[0], `"idContaUsuario":1000000000000013,"idVinculo":"0","valor":-1000`) {
+		t.Fatalf("código %d, escritas %v\n%s", code, f.writes, stderr)
+	}
+	if !strings.Contains(stderr, "tipo recebimento → pagamento; data 18/09/2026 → 20/09/2026; conta Receita de Serviços → Impostos - Simples Nacional; vínculo: SEM GUIA") {
+		t.Errorf("resumo: %s", stderr)
+	}
+}
+
+func TestCaixaEditarValidacoes(t *testing.T) {
+	for _, tc := range []struct {
+		args []string
+		code int
+		want string
+	}{
+		{[]string{"2"}, ExitUsage, "informe o que alterar"},
+		{[]string{"2", "--valor", "1000"}, ExitUsage, "nada muda"},
+		{[]string{"1", "--valor", "10"}, ExitError, "feito pelo sistema"},
+		{[]string{"77", "--valor", "10"}, ExitError, "não encontrado"},
+		{[]string{"abc", "--valor", "10"}, ExitUsage, "inválido"},
+		{[]string{"2", "--pagamento"}, ExitUsage, "não aceita para pagamento"}, // a conta atual é de recebimento
+		{[]string{"2", "--recebimento", "--pagamento"}, ExitUsage, "não os dois"},
+	} {
+		f := newCaixaFake(t)
+		_, stderr, code := execCLI(t, "", append([]string{"caixa", "editar", "--competencia", "2026-09", "--yes"}, tc.args...)...)
+		if code != tc.code || !strings.Contains(stderr, tc.want) || len(f.writes) != 0 {
+			t.Errorf("%v: código %d, escritas %d, stderr %q (quero %d, %q)", tc.args, code, len(f.writes), stderr, tc.code, tc.want)
+		}
+	}
+}
+
+func TestCaixaEditarDryRunMostraAntesEDepois(t *testing.T) {
+	f := newCaixaFake(t)
+	out, stderr, code := execCLI(t, "", "caixa", "editar", "2", "--competencia", "2026-09", "--valor", "1,50", "--dry-run")
+	if code != ExitOK || len(f.writes) != 0 || !strings.Contains(stderr, "valor R$ 1.000,00 → R$ 1,50") || !strings.Contains(out, `"id": 2`) {
+		t.Errorf("código %d\nstdout:\n%s\nstderr:\n%s", code, out, stderr)
+	}
+}
