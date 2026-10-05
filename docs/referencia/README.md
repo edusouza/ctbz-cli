@@ -63,6 +63,8 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz notas tomadores consulta`](ctbz_notas_tomadores_consulta.md) | Consulta os dados cadastrais de um CNPJ na Receita |
 | [`ctbz pendencias`](ctbz_pendencias.md) | Lista as pendências da empresa (tipo, detalhe, prazo e situação) |
 | [`ctbz pendencias conciliacao`](ctbz_pendencias_conciliacao.md) | Mostra as pendências de conciliação fiscal (notas e recebimentos) |
+| [`ctbz pendencias termo`](ctbz_pendencias_termo.md) | Mostra o texto completo de um termo ou carta da Central de Rotinas |
+| [`ctbz pendencias termos`](ctbz_pendencias_termos.md) | Lista os termos e cartas com aceite pendente na Central de Rotinas |
 | [`ctbz plano`](ctbz_plano.md) | Mostra o plano contratado com a Contabilizei |
 | [`ctbz plano contrato`](ctbz_plano_contrato.md) | Exporta o contrato de prestação de serviços (HTML ou texto) |
 | [`ctbz plano proposta`](ctbz_plano_proposta.md) | Exporta a proposta do plano contratado, com a tabela de preços (HTML ou texto) |

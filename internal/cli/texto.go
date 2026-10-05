@@ -4,6 +4,7 @@ import (
 	"html"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/edusouza/ctbz-cli/internal/output"
 )
@@ -39,5 +40,16 @@ func htmlParaTexto(doc string) string {
 		linhas[i] = strings.TrimSpace(reEspacoLinha.ReplaceAllString(l, " "))
 	}
 	s = reLinhasVazias.ReplaceAllString(strings.Join(linhas, "\n"), "\n\n")
-	return strings.TrimSpace(s) + "\n"
+	return semControle(strings.TrimSpace(s)) + "\n"
+}
+
+// semControle tira caracteres de controle (exceto quebra de linha e tabulação), para que um
+// texto vindo da API não mande sequências de escape ao terminal.
+func semControle(s string) string {
+	return strings.Map(func(r rune) rune {
+		if r == '\n' || r == '\t' || !unicode.IsControl(r) {
+			return r
+		}
+		return -1
+	}, s)
 }

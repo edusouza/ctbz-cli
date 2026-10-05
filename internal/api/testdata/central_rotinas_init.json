@@ -1,0 +1,30 @@
+{
+  "pendencias": {
+    "pendenciasCriticas": {
+      "pendenciaCartaResponsabilidade": {
+        "possuiPendencia": true,
+        "conteudoCartaResponsabilidade": "<h1>Carta de Responsabilidade da Administração</h1><p>Declaramos que TEXTO EXEMPLO.</p>"
+      },
+      "pendenciaAceiteTermoDebitos": {
+        "possuiPendencia": true,
+        "conteudoAceiteTermoDebito": "<p>Termo de Ciência e Responsabilidade: TEXTO EXEMPLO.</p>",
+        "prazoAceiteTacito": 15
+      },
+      "pendenciaProcuracaoEcac": {
+        "possuiPendencia": true,
+        "tipoPendencia": "SEM_PROCURACAO",
+        "cnpjOutorgado": "00000000000191"
+      },
+      "pendenciaImposto": {"possuiPendencia": false}
+    },
+    "outrasPendencias": {
+      "pendenciaTermoAdesaoTotalPass": {
+        "possuiPendencia": false,
+        "conteudoTermoAdesaoTotalPass": "<p>Termo de adesão TEXTO EXEMPLO.</p>"
+      }
+    }
+  },
+  "rotinas": [],
+  "rotinasCtbz": [],
+  "rotinasCalendario": []
+}

@@ -71,6 +71,27 @@ ctbz pendencias --fail-on-vencidas -o csv > /dev/null || notify-send "Há pendê
 ctbz pendencias -o json | jq -r '.[] | select(.alerta != null) | "\(.prazo) \(.tipo)"'
 ```
 
+## Termos e cartas para aceitar
+
+A Central de Rotinas pede aceites periódicos: a carta de responsabilidade da administração,
+o termo de ciência sobre retiradas de lucros e o termo de adesão ao TotalPass. Leia antes de
+aceitar:
+
+```sh
+ctbz pendencias termos                       # os pendentes (--todos inclui os demais)
+ctbz pendencias termo carta-responsabilidade # texto completo
+```
+
+```text
+Chave                   Termo                                                      Pendente  Aceite tácito em (dias)
+carta-responsabilidade  Carta de Responsabilidade da Administração                 sim
+termo-debitos           Termo de Ciência e Responsabilidade (retiradas de lucros)  sim       15
+```
+
+- O termo de débitos tem **aceite tácito**: se não houver resposta no prazo, a Contabilizei
+  entende que não há impedimento para as retiradas de lucros.
+- O texto vem em HTML e é convertido para texto, sem caracteres de controle.
+
 ## Conciliação fiscal
 
 ```sh

@@ -7,6 +7,15 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Added
+
+- `ctbz pendencias termos` e `ctbz pendencias termo CHAVE`: termos e cartas com aceite pendente
+  na Central de Rotinas (com o prazo do aceite tácito) e o texto completo.
+
+### Fixed
+
+- Textos convertidos de HTML (contrato, termos) não levam mais caracteres de controle ao terminal.
+
 ## [1.3.0] - 2026-10-04
 
 Impostos: confirmar ou negar o pagamento de guias, pedir recálculo e simular ou contratar

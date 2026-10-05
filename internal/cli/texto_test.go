@@ -14,3 +14,10 @@ func TestHTMLParaTexto(t *testing.T) {
 		t.Errorf("htmlParaTexto:\n%q\nquero:\n%q", got, want)
 	}
 }
+
+func TestHTMLParaTextoSemControle(t *testing.T) {
+	got := htmlParaTexto("<p>Termo\x1b[31m vermelho\x07</p><p>linha\tdois</p>")
+	if got != "Termo[31m vermelho\nlinha dois\n" {
+		t.Errorf("htmlParaTexto = %q", got)
+	}
+}
