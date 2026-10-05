@@ -149,6 +149,16 @@ func Escritas() []Escrita {
 			socio := int64(1000000000000031)
 			return Classificar(ctx, s, ClassificarLancamento{IDLancamentoUsuario: 1000000000000102, IDContaUsuario: 6199733752168448, IDSocio: &socio})
 		}},
+		{Name: "extrato_desmembrar", Exemplo: func(ctx context.Context, s Sender) error {
+			socio := int64(1000000000000031)
+			return Desmembrar(ctx, s, Desmembramento{IDLancamentoPai: 1000000000000102, LancamentosFilho: []LancamentoFilho{
+				{Descricao: "Fornecedor", Valor: -1000, IDContaUsuario: 1000000000000012},
+				{Descricao: "Antecipação de lucros", Valor: -234.56, IDContaUsuario: 6199733752168448, IDVinculo: &socio},
+			}})
+		}},
+		{Name: "extrato_desfazer_desmembramento", Exemplo: func(ctx context.Context, s Sender) error {
+			return DesfazerDesmembramento(ctx, s, 1000000000000100)
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

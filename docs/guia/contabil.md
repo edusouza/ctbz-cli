@@ -164,6 +164,29 @@ Confirma? [s/N]
 - Quando os contadores já fecharam o período, a classificação não pode mais ser trocada: o
   painel mostra "Nossos contadores já classificaram…", e a CLI recusa com a mesma mensagem.
 
+## Desmembrar um lançamento do extrato
+
+Um lançamento que mistura coisas (ex.: um boleto que paga aluguel e condomínio) pode ser
+dividido em partes com classificações diferentes:
+
+```sh
+ctbz extratos desmembrar 1000000000000102 --conta-bancaria 1000000000000001 --competencia 2026-09 \
+  --parte "Aluguel:1.000,00:Pagamento de Fornecedores" \
+  --parte "Condomínio:234,56:1000000000000012"
+```
+
+- Cada `--parte` é `"descrição:valor:conta[:sócio]"`. O valor é positivo; o sinal é o do
+  lançamento original. A descrição não pode ter `:`.
+- São necessárias pelo menos 2 partes, nenhuma com valor zero, e a soma tem de ser igual ao
+  valor do original (centavo por centavo).
+- Não dá para desmembrar uma parte de outro desmembramento nem um lançamento com vínculo.
+
+Para voltar ao lançamento original (o id pode ser o do original ou o de uma parte):
+
+```sh
+ctbz extratos desfazer-desmembramento 1000000000000102 --conta-bancaria 1000000000000001 --competencia 2026-09
+```
+
 ## Classificações aceitas numa competência
 
 Antes de lançar no caixa ou classificar um lançamento do extrato, veja quais classificações

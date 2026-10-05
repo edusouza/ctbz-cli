@@ -28,6 +28,8 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz extratos`](ctbz_extratos.md) | Lista a situação dos extratos bancários por mês e conta |
 | [`ctbz extratos classificar`](ctbz_extratos_classificar.md) | Troca a classificação de um lançamento do extrato |
 | [`ctbz extratos contas`](ctbz_extratos_contas.md) | Lista as classificações aceitas nos lançamentos do extrato de uma competência |
+| [`ctbz extratos desfazer-desmembramento`](ctbz_extratos_desfazer-desmembramento.md) | Volta um lançamento desmembrado do extrato ao original |
+| [`ctbz extratos desmembrar`](ctbz_extratos_desmembrar.md) | Divide um lançamento do extrato em partes com classificações diferentes |
 | [`ctbz extratos lancamentos`](ctbz_extratos_lancamentos.md) | Lista os lançamentos do extrato de uma conta bancária num mês |
 | [`ctbz impostos`](ctbz_impostos.md) | Lista as guias de impostos a pagar (em atraso, do mês e do próximo mês) |
 | [`ctbz impostos baixar`](ctbz_impostos_baixar.md) | Baixa o PDF de guias de imposto |

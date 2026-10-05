@@ -20,6 +20,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz caixa remover`: exclui um lançamento manual do caixa e mostra como recriá-lo.
 - `ctbz extratos lancamentos`: lançamentos do extrato de uma conta num mês, com a classificação
   atual; `ctbz extratos classificar` troca a classificação de um deles.
+- `ctbz extratos desmembrar` divide um lançamento do extrato em partes com classificações
+  diferentes (com as regras do painel), e `ctbz extratos desfazer-desmembramento` desfaz.
 
 ## [1.1.0] - 2026-10-04
 

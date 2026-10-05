@@ -1,0 +1,7 @@
+[
+  {
+    "metodo": "DELETE",
+    "caminho": "/api/plataforma/movimentacao-financeira/desmembrar/desfazer/1000000000000100",
+    "query": "idLancamentoPai=1000000000000100"
+  }
+]

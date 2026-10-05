@@ -130,6 +130,8 @@ ctbz caixa remover ID --competencia 2026-09              # exclui (mostra como r
 ctbz extratos contas --competencia 2026-09     # classificações aceitas no extrato
 ctbz extratos lancamentos --conta-bancaria ID --competencia 2026-09   # lançamentos do extrato
 ctbz extratos classificar ID --conta-bancaria ID --competencia 2026-09 --conta ID
+ctbz extratos desmembrar ID ... --parte "Aluguel:1000:ID" --parte "Condomínio:200:ID"
+ctbz extratos desfazer-desmembramento ID --conta-bancaria ID --competencia 2026-09
 ctbz extratos --ano 2026 | ctbz contas-bancarias  # extratos por mês e contas cadastradas
 ctbz contas --busca alug                       # plano de contas usado nas classificações
 ctbz documentos [--tipo TIPO]                  # central de documentos: tipos e arquivos enviados

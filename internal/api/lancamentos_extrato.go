@@ -116,3 +116,37 @@ func (d *Data) UnmarshalJSON(b []byte) error {
 	}
 	return fmt.Errorf("data inesperada %q", s)
 }
+
+// PathDesmembrar divide um lançamento do extrato em partes (PUT, corpo em string JSON).
+// Ver docs/api/escrita/contabilidade-e-documentos.md, seção 1.4.
+const PathDesmembrar = "movimentacao-financeira/desmembrar"
+
+// Desmembramento é o corpo de PathDesmembrar.
+type Desmembramento struct {
+	IDLancamentoPai  int64             `json:"idLancamentoPai"`
+	LancamentosFilho []LancamentoFilho `json:"lancamentosFilho"`
+}
+
+// LancamentoFilho é uma parte do desmembramento, com o mesmo sinal do lançamento original.
+type LancamentoFilho struct {
+	Descricao      string  `json:"descricao"`
+	Valor          float64 `json:"valor"`
+	IDContaUsuario int64   `json:"idContaUsuario"`
+	IDVinculo      *int64  `json:"idVinculo"` // sócio, nas classificações de sócio
+}
+
+// Desmembrar divide um lançamento do extrato. Desfaz-se com DesfazerDesmembramento.
+func Desmembrar(ctx context.Context, s Sender, req Desmembramento) error {
+	return s.Send(ctx, "PUT", PathDesmembrar, JSONString{req}, nil)
+}
+
+// PathDesfazerDesmembramento volta um lançamento desmembrado ao original. O front repete o id
+// na query. Fora do catálogo; ver a seção 1.5.
+func PathDesfazerDesmembramento(idLancamentoPai int64) string {
+	return fmt.Sprintf("movimentacao-financeira/desmembrar/desfazer/%d?idLancamentoPai=%d", idLancamentoPai, idLancamentoPai)
+}
+
+// DesfazerDesmembramento apaga as partes e restaura o lançamento original.
+func DesfazerDesmembramento(ctx context.Context, s Sender, idLancamentoPai int64) error {
+	return s.Send(ctx, "DELETE", PathDesfazerDesmembramento(idLancamentoPai), nil, nil)
+}

@@ -1,0 +1,8 @@
+[
+  {
+    "metodo": "PUT",
+    "caminho": "/api/plataforma/movimentacao-financeira/desmembrar",
+    "content_type": "application/json",
+    "corpo": "{\"idLancamentoPai\":1000000000000102,\"lancamentosFilho\":[{\"descricao\":\"Fornecedor\",\"valor\":-1000,\"idContaUsuario\":1000000000000012,\"idVinculo\":null},{\"descricao\":\"Antecipação de lucros\",\"valor\":-234.56,\"idContaUsuario\":6199733752168448,\"idVinculo\":1000000000000031}]}"
+  }
+]
