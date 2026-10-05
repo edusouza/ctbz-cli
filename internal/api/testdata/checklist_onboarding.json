@@ -1,0 +1,10 @@
+{
+  "etapas": [
+    {"nome": "CADASTRO_CONTA_PJ", "situacao": "CONCLUIDA"},
+    {"nome": "CADASTRE_PRO_LABORE", "situacao": "PENDENTE"},
+    {"nome": "GERAR_PROCURACAO_VIRTUAL", "situacao": "PENDENTE"},
+    {"nome": "REUNIAO_BOAS_VINDAS", "situacao": "PENDENTE"},
+    {"nome": "LIVE_EMISSAO_NOTAS_FISCAIS", "situacao": "CONCLUIDA"}
+  ],
+  "progresso": {"concluidas": 2, "total": 5}
+}

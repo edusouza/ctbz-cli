@@ -13,6 +13,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   na Central de Rotinas (com o prazo do aceite tácito) e o texto completo.
 - `ctbz pendencias aceitar CHAVE`: aceita a carta de responsabilidade, o termo de débitos ou o
   termo do TotalPass, mostrando o texto completo antes da confirmação de risco alto.
+- `ctbz pendencias procuracao [--ja-criei]`: situação da procuração do e-CAC (CNPJ a outorgar e
+  link) e a declaração de que ela foi criada.
 
 ### Fixed
 

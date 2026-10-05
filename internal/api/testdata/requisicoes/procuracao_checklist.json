@@ -1,0 +1,6 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/checklist-onboarding/procuracoes/compartilhamentos"
+  }
+]

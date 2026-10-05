@@ -198,6 +198,12 @@ func Escritas() []Escrita {
 		{Name: "aceitar_termo_totalpass", Exemplo: func(ctx context.Context, s Sender) error {
 			return Aceitar(ctx, s, PathAceitarTermoTotalPass)
 		}},
+		{Name: "procuracao_central_rotinas", Exemplo: func(ctx context.Context, s Sender) error {
+			return DeclararProcuracao(ctx, s, PathResolverProcuracaoEcac)
+		}},
+		{Name: "procuracao_checklist", Exemplo: func(ctx context.Context, s Sender) error {
+			return DeclararProcuracao(ctx, s, PathCompartilharProcuracao)
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

@@ -107,6 +107,28 @@ ctbz pendencias aceitar termo-totalpass
 - Se a sessão for de um administrador da Contabilizei, a API recusa (HTTP 403): os aceites só
   podem ser feitos pelo próprio cliente.
 
+## Procuração do e-CAC
+
+A Contabilizei precisa de uma procuração eletrônica no e-CAC da Receita. A CLI mostra se há
+pendência e para quem outorgar:
+
+```sh
+ctbz pendencias procuracao
+# Crie ou renove no e-CAC (https://cav.receita.fazenda.gov.br) uma procuração eletrônica ao CNPJ …
+```
+
+Depois de criar (ou renovar) a procuração no e-CAC, declare:
+
+```sh
+ctbz pendencias procuracao --ja-criei
+```
+
+- A procuração em si é feita no e-CAC, fora da Contabilizei; `--ja-criei` é só a declaração
+  ("Já criei a procuração" no painel), de risco médio. Se a procuração não existir, a pendência
+  deve voltar.
+- A CLI usa o caminho da origem da pendência: a Central de Rotinas ou a etapa
+  `GERAR_PROCURACAO_VIRTUAL` dos primeiros passos.
+
 ## Conciliação fiscal
 
 ```sh

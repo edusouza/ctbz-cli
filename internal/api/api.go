@@ -59,6 +59,7 @@ func Endpoints() []Endpoint {
 		{Name: "simulacao_parcelamento", Type: SimulacaoParcelamento{}}, // sintética (ADR-0021); sem dívidas a API responde 560
 		{Name: "pendencias_empresa", LivePath: PathPendenciasEmpresa, Type: []PendenciaEmpresa{}},
 		{Name: "central_rotinas", LivePath: PathCentralRotinas, Type: CentralRotinas{}},
+		{Name: "checklist_onboarding", LivePath: PathChecklistInit, Type: ChecklistOnboarding{}},     // sintética (ADR-0021)
 		{Name: "central_rotinas_init", LivePath: PathCentralRotinasInit, Type: CentralRotinasInit{}}, // sintética (ADR-0021)
 		{Name: "reclassificar_init", Type: []PendenciaReclassificacao{}},                             // sintética (ADR-0021); ids de central_rotinas
 		{Name: "conciliacao_resumo", LivePath: PathConciliacaoInit, Type: ConciliacaoResumo{}},
