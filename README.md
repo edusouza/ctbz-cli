@@ -161,6 +161,7 @@ ctbz documentos [--tipo TIPO]                  # central de documentos: tipos e 
 ctbz documentos pendentes | enviar ARQ --pendencia ID   # documentos pedidos pelas pendências
 ctbz documentos sem-arquivo | sem-aplicacao ...         # declara que o documento não existe
 ctbz certificado                               # certificado digital: validade e renovação
+ctbz usuarios [convidar EMAIL | desativar ID | ativar ID]  # quem acessa a empresa
 ctbz acoes --desde 2026-10-01                  # escritas enviadas por esta CLI (registro local)
 ctbz api menu/get        # qualquer endpoint; caminho relativo → /api/plataforma/
 ctbz api -X POST -d @corpo.json /api/plataforma/algum/endpoint

@@ -1,0 +1,11 @@
+[
+  {
+    "metodo": "PUT",
+    "caminho": "/api/multiusuario/usuarios/ativar",
+    "content_type": "application/json",
+    "corpo": {
+      "ativo": false,
+      "idUsuarioEmpresa": 102
+    }
+  }
+]

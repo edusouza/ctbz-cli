@@ -36,6 +36,7 @@ Dados vão para stdout no formato escolhido com -o; mensagens e progresso vão p
 - [`ctbz resumo`](ctbz_resumo.md): Mostra numa lista só o que precisa de atenção
 - [`ctbz rotinas`](ctbz_rotinas.md): Lista as rotinas e obrigações do mês (da empresa e da Contabilizei)
 - [`ctbz status`](ctbz_status.md): Mostra a sessão atual e testa se ainda é válida
+- [`ctbz usuarios`](ctbz_usuarios.md): Lista quem tem acesso à empresa no painel (multiusuário)
 - [`ctbz version`](ctbz_version.md): Mostra a versão do ctbz
 
 ## Flags
