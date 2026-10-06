@@ -38,7 +38,7 @@ escritas, `risco: baixo|médio|alto`.
 | **v1.3** | Impostos: confirmar pagamento, recálculo e parcelamento | [#188](https://github.com/edusouza/ctbz-cli/issues/188) | 4 | concluída |
 | **v1.4** | Pendências, termos e conciliação | [#193](https://github.com/edusouza/ctbz-cli/issues/193) | 5 | concluída |
 | **v1.5** | Extratos, contas bancárias e documentos | [#199](https://github.com/edusouza/ctbz-cli/issues/199) | 6 | concluída |
-| **v1.6** | Notas fiscais: tomadores e notas de entrada | [#206](https://github.com/edusouza/ctbz-cli/issues/206) | 4 | planejada |
+| **v1.6** | Notas fiscais: tomadores e notas de entrada | [#206](https://github.com/edusouza/ctbz-cli/issues/206) | 4 | concluída |
 | **v1.7** | Pró-labore, distribuição de lucros e informe de rendimentos | [#211](https://github.com/edusouza/ctbz-cli/issues/211) | 6 | planejada |
 | **v1.8** | Conta, usuários e acessos | [#218](https://github.com/edusouza/ctbz-cli/issues/218) | 4 | planejada |
 
@@ -276,10 +276,10 @@ Cadastro de tomadores e as obrigações sobre as NF-e de compra: manifestação 
 
 | | Issue | Funcionalidade | Tipo | Risco |
 |---|---|---|---|---|
-| ⬜ | [#207](https://github.com/edusouza/ctbz-cli/issues/207) | Cadastrar e editar tomador | funcionalidade | médio |
-| ⬜ | [#208](https://github.com/edusouza/ctbz-cli/issues/208) | Excluir tomador | funcionalidade | médio |
-| ⬜ | [#209](https://github.com/edusouza/ctbz-cli/issues/209) | Manifestar notas de entrada | funcionalidade | alto |
-| ⬜ | [#210](https://github.com/edusouza/ctbz-cli/issues/210) | Classificar notas de entrada | funcionalidade | médio |
+| ✅ | [#207](https://github.com/edusouza/ctbz-cli/issues/207) | Cadastrar e editar tomador | funcionalidade | médio |
+| ✅ | [#208](https://github.com/edusouza/ctbz-cli/issues/208) | Excluir tomador | funcionalidade | médio |
+| ✅ | [#209](https://github.com/edusouza/ctbz-cli/issues/209) | Manifestar notas de entrada | funcionalidade | alto |
+| ✅ | [#210](https://github.com/edusouza/ctbz-cli/issues/210) | Classificar notas de entrada | funcionalidade | médio |
 
 Fora de escopo: Emitir, replicar, registrar e cancelar NFS-e (fora do roadmap de escrita); anexo principal do Simples.
 
