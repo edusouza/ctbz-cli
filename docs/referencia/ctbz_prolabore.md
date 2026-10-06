@@ -27,6 +27,7 @@ ctbz prolabore
 
 - [`ctbz prolabore definir`](ctbz_prolabore_definir.md): Muda como o pró-labore de um sócio é definido (salário mínimo, teto, valor ou automático)
 - [`ctbz prolabore fator-r`](ctbz_prolabore_fator-r.md): Mostra a situação do Fator R e os anexos possíveis de cada atividade
+- [`ctbz prolabore gestao-inteligente`](ctbz_prolabore_gestao-inteligente.md): Põe a empresa no cálculo automático do pró-labore ou a tira dele
 - [`ctbz prolabore historico`](ctbz_prolabore_historico.md): Lista o histórico mensal de pró-labore dos sócios
 - [`ctbz prolabore parametros`](ctbz_prolabore_parametros.md): Mostra os valores usados no cálculo do pró-labore (INSS e IRRF)
 - [`ctbz prolabore zerar-sem-faturamento`](ctbz_prolabore_zerar-sem-faturamento.md): Liga ou desliga o pró-labore zerado nos meses sem faturamento

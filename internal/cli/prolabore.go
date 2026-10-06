@@ -43,7 +43,7 @@ ctbz prolabore definir.`,
 		},
 	}
 	cmd.AddCommand(newProlaboreHistoricoCmd(), newProlaboreParametrosCmd(), newProlaboreFatorRCmd(), newProlaboreDefinirCmd(),
-		newProlaboreZerarCmd())
+		newProlaboreZerarCmd(), newGestaoInteligenteCmd())
 	return cmd
 }
 

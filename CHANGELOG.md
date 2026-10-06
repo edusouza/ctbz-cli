@@ -13,6 +13,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   INSS, valor personalizado ou gestão inteligente com piso opcional).
 - `ctbz prolabore zerar-sem-faturamento on|off`: preferência de não ter pró-labore nos meses
   sem faturamento.
+- `ctbz prolabore gestao-inteligente ativar|sair`: põe a empresa no cálculo automático do
+  pró-labore ou a tira dele.
 - `ctbz prolabore` mostra o `id` de cada sócio, usado em `--socio`.
 
 ## [1.6.0] - 2026-10-04

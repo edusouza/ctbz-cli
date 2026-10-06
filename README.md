@@ -133,6 +133,7 @@ ctbz prolabore parametros                      # salário mínimo, INSS e IRRF u
 ctbz prolabore fator-r                         # Fator R, motor do Fator R e anexos por atividade
 ctbz prolabore definir --socio ID --tipo ...   # salário mínimo, teto, valor ou gestão inteligente
 ctbz prolabore zerar-sem-faturamento on|off    # sem pró-labore nos meses sem faturamento
+ctbz prolabore gestao-inteligente ativar|sair  # cálculo automático do pró-labore
 ctbz lucros                                    # distribuição de lucros do exercício
 ctbz lucros informe --ano 2025                 # valores do informe de rendimentos dos sócios (IR)
 ctbz balancete 2026-08                         # balancete do mês (árvore de contas)

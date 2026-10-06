@@ -123,3 +123,21 @@ func DefinirZerarProlabore(ctx context.Context, s Sender, zerar bool) error {
 func ZerarProlaboreGestaoInteligente(ctx context.Context, s Sender) error {
 	return s.Send(ctx, "PATCH", PathZerarProlaboreGT, nil, nil)
 }
+
+// Gestão inteligente da empresa (motor do Fator R), seções 4.1 e 4.2. Os dois PUT vão sem
+// corpo.
+const (
+	PathAtivarGestaoInteligente = "prolabore/central/empresa/gestao-inteligente"
+	PathSairMotorFatorR         = "prolabore/excluir-empresa-motor-fator-r"
+)
+
+// AtivarGestaoInteligente põe a empresa no cálculo automático do pró-labore.
+func AtivarGestaoInteligente(ctx context.Context, s Sender) error {
+	return s.Send(ctx, "PUT", PathAtivarGestaoInteligente, nil, nil)
+}
+
+// SairGestaoInteligente tira a empresa do cálculo automático: o pró-labore passa a ser
+// ajustado pelos sócios todo mês.
+func SairGestaoInteligente(ctx context.Context, s Sender) error {
+	return s.Send(ctx, "PUT", PathSairMotorFatorR, nil, nil)
+}

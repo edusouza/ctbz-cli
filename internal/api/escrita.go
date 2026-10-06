@@ -300,6 +300,8 @@ func Escritas() []Escrita {
 			return DefinirZerarProlabore(ctx, s, false)
 		}},
 		{Name: "prolabore_zerar_gestao_inteligente", Exemplo: ZerarProlaboreGestaoInteligente},
+		{Name: "prolabore_gestao_inteligente_ativar", Exemplo: AtivarGestaoInteligente},
+		{Name: "prolabore_gestao_inteligente_sair", Exemplo: SairGestaoInteligente},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

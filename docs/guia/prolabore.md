@@ -66,6 +66,25 @@ ctbz prolabore zerar-sem-faturamento off
 - Ainda não se sabe se `off` desfaz a variante da gestão inteligente; confira com
   `ctbz prolabore` depois.
 
+## Gestão inteligente (cálculo automático)
+
+```sh
+ctbz prolabore gestao-inteligente ativar
+ctbz prolabore gestao-inteligente sair
+```
+
+- Na gestão inteligente, a Contabilizei define o pró-labore de todos os sócios todo mês para
+  manter o Fator R no melhor ponto (ver [Fator R](#fator-r)).
+- `ativar` só envia se a empresa for elegível (`elegivelNoMotor` da central de pró-labore).
+- `sair` tira a empresa do cálculo automático: a partir daí os sócios ajustam o pró-labore
+  todo mês, até o penúltimo dia do mês, para valer no mês seguinte (`ctbz prolabore definir`).
+- A empresa conta como "na gestão inteligente" quando a central diz `INTELIGENTE` ou os
+  parâmetros dizem que ela está no motor do Fator R. Se ela já estiver no estado pedido, nada é
+  enviado.
+- Risco alto: muda quem decide o valor do pró-labore. Ainda não se sabe se `ativar` desfaz um
+  `sair` sem passar pelo questionário de preferências do painel; a CLI relê o estado e mostra
+  `enviado` quando a mudança ainda não aparece.
+
 ## Histórico
 
 ```sh
