@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-10-04
+
+Pró-labore, distribuição de lucros e informe de rendimentos: mudar a gestão do pró-labore,
+zerá-lo nos meses sem faturamento, entrar e sair da gestão inteligente, distribuir lucros, dar
+os aceites do informe e reabrir o balanço.
+
 ### Added
 
 - `ctbz prolabore definir`: muda a gestão do pró-labore de um sócio (salário mínimo, teto do
@@ -16,16 +22,16 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz prolabore gestao-inteligente ativar|sair`: põe a empresa no cálculo automático do
   pró-labore ou a tira dele.
 - `ctbz prolabore` mostra o `id` de cada sócio, usado em `--socio`.
-- `ctbz balanco reabrir`: reabre o exercício contábil de um ano para regularizar a pendência
-  documental do informe de rendimentos.
+- `ctbz lucros distribuir`: registra a distribuição de lucros do exercício, em percentual ou
+  em reais, com a soma conferida em centavos.
+- `ctbz lucros` mostra o `id` e o percentual de cada sócio; o `id` é o que `--socio` pede.
 - `ctbz lucros informe restricoes` e `carta`: o que bloqueia o informe de rendimentos de um ano
   e o texto da carta de responsabilidade.
 - `ctbz lucros informe aceitar carta-responsabilidade|termo-debitos` e `decidir`: aceites e
   decisões que liberam o informe (regularizar ou não a pendência documental, não distribuir
   lucros).
-- `ctbz lucros distribuir`: registra a distribuição de lucros do exercício, em percentual ou
-  em reais, com a soma conferida em centavos.
-- `ctbz lucros` mostra o `id` e o percentual de cada sócio; o `id` é o que `--socio` pede.
+- `ctbz balanco reabrir`: reabre o exercício contábil de um ano para regularizar a pendência
+  documental do informe de rendimentos.
 
 ## [1.6.0] - 2026-10-04
 
@@ -298,7 +304,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/edusouza/ctbz-cli/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/edusouza/ctbz-cli/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/edusouza/ctbz-cli/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/edusouza/ctbz-cli/compare/v1.3.0...v1.4.0
