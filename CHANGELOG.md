@@ -15,6 +15,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz extratos importar`: importa o extrato do mês (OFX ou PDF) com as validações do painel e
   a confirmação do saldo do último dia (ou `--saldo-final`).
 - `ctbz extratos excluir`: exclui o extrato importado de um mês (risco alto), quando o painel permite.
+- `ctbz documentos pendentes` e `ctbz documentos enviar`: documentos pedidos pelas pendências e
+  o envio do arquivo (um por pendência ou único para várias), com tipo e metadados da pendência.
 
 ## [1.4.0] - 2026-10-04
 

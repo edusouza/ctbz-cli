@@ -22,6 +22,11 @@ ctbz documentos [flags]
   ctbz documentos --tipo EXTRATO_BANCARIO_MOVIMENTACOES -o csv
 ```
 
+## Subcomandos
+
+- [`ctbz documentos enviar`](ctbz_documentos_enviar.md): Envia o documento pedido por uma ou mais pendências
+- [`ctbz documentos pendentes`](ctbz_documentos_pendentes.md): Lista os documentos pedidos pelas pendências da Central de Rotinas
+
 ## Flags
 
 ```

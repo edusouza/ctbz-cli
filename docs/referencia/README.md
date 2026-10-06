@@ -23,6 +23,8 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz contas-bancarias editar`](ctbz_contas-bancarias_editar.md) | Corrige os dados de uma conta bancária cadastrada |
 | [`ctbz contas-bancarias remover`](ctbz_contas-bancarias_remover.md) | Exclui permanentemente uma conta bancária |
 | [`ctbz documentos`](ctbz_documentos.md) | Lista os tipos de documento aceitos e os documentos enviados |
+| [`ctbz documentos enviar`](ctbz_documentos_enviar.md) | Envia o documento pedido por uma ou mais pendências |
+| [`ctbz documentos pendentes`](ctbz_documentos_pendentes.md) | Lista os documentos pedidos pelas pendências da Central de Rotinas |
 | [`ctbz empresa`](ctbz_empresa.md) | Mostra os dados da empresa selecionada |
 | [`ctbz empresa atividades`](ctbz_empresa_atividades.md) | Lista os CNAEs da empresa e os anexos do Simples Nacional |
 | [`ctbz empresa certificado`](ctbz_empresa_certificado.md) | Mostra a situação do certificado digital da empresa e da renovação |

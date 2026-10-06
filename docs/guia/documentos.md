@@ -20,6 +20,28 @@ EXTRATO_BANCARIO_MOVIMENTACOES  Extrato bancário        13  10/09/2026
 - Enviar documentos continua sendo feito pelo painel (a CLI só lê, ver
   [ADR-0002](../adr/0002-somente-leitura-ate-1-0.md)).
 
+## Enviar documentos pedidos pelas pendências
+
+```sh
+ctbz documentos pendentes                                          # o que as pendências pedem
+ctbz documentos enviar aplicacao-agosto.pdf --pendencia 1000000000000601
+ctbz documentos enviar aplicacoes.pdf --pendencia 1000000000000601 --pendencia 1000000000000602
+```
+
+```text
+Pendência         Tipo                          Competência  Conta                                 Investimento
+1000000000000601  EXTRATO_APLICACAO_FINANCEIRA  08/2026      Banco Exemplo ag. 1234 conta 123456   RENDA_FIXA
+```
+
+- Sem `--pendencia`, `pendentes` usa as pendências das rotinas do painel (coluna `pendencias` de
+  `ctbz rotinas`).
+- O tipo do documento e os metadados (competência, conta, investimento) vêm da pendência, nunca
+  são digitados.
+- Com várias `--pendencia` do mesmo tipo, o arquivo vai uma vez só para todas ("em um arquivo
+  único" no painel).
+- Risco médio: o documento entra na contabilidade e resolve a pendência; não há exclusão pela API.
+- Extratos de movimentação bancária usam `ctbz extratos importar`.
+
 ## Certificado digital
 
 ```sh

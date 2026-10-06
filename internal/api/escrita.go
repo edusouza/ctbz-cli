@@ -244,8 +244,22 @@ func Escritas() []Escrita {
 		{Name: "extrato_excluir", Exemplo: func(ctx context.Context, s Sender) error {
 			return ExcluirExtrato(ctx, s, 7, 2026, 9)
 		}},
+		{Name: "documento_enviar", Exemplo: func(ctx context.Context, s Sender) error {
+			return EnviarDocumento(ctx, s, exemploDocumento("1000000000000601", 8), "aplicacao-agosto.pdf", []byte("%PDF-1.4"))
+		}},
+		{Name: "documento_enviar_consolidado", Exemplo: func(ctx context.Context, s Sender) error {
+			return EnviarDocumentoConsolidado(ctx, s, []DocumentoPendente{exemploDocumento("1000000000000601", 8), exemploDocumento("1000000000000602", 9)},
+				"aplicacoes.pdf", []byte("%PDF-1.4"))
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},
 	}
+}
+
+func exemploDocumento(idPendencia string, mes int) DocumentoPendente {
+	return DocumentoPendente{Tipo: "EXTRATO_APLICACAO_FINANCEIRA", Propriedades: PropriedadesDocumento{
+		IDPendencia: json.RawMessage(`"` + idPendencia + `"`), IDContaBancaria: json.RawMessage("7"), TipoInvestimento: json.RawMessage(`"RENDA_FIXA"`),
+		Competencia: &CompetenciaDocumento{Mes: mes, Ano: 2026},
+	}}
 }

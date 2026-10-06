@@ -148,6 +148,7 @@ ctbz extratos --ano 2026 | ctbz contas-bancarias  # extratos por mês e contas c
 ctbz contas-bancarias adicionar|editar|remover ...  # cadastra, corrige ou exclui conta PJ
 ctbz contas --busca alug                       # plano de contas usado nas classificações
 ctbz documentos [--tipo TIPO]                  # central de documentos: tipos e arquivos enviados
+ctbz documentos pendentes | enviar ARQ --pendencia ID   # documentos pedidos pelas pendências
 ctbz certificado                               # certificado digital: validade e renovação
 ctbz acoes --desde 2026-10-01                  # escritas enviadas por esta CLI (registro local)
 ctbz api menu/get        # qualquer endpoint; caminho relativo → /api/plataforma/

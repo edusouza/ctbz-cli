@@ -1,0 +1,23 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/documentos/envio-documento/enviar/consolidado",
+    "content_type": "multipart/form-data",
+    "campos": [
+      {
+        "nome": "arquivo",
+        "arquivo": "aplicacoes.pdf",
+        "tipo": "application/pdf",
+        "tamanho": 8
+      },
+      {
+        "nome": "tipoDocumento",
+        "valor": "EXTRATO_APLICACAO_FINANCEIRA"
+      },
+      {
+        "nome": "documentos",
+        "valor": "[{\"competencia\":{\"mes\":8,\"ano\":2026},\"metadados\":{\"idPendencia\":\"1000000000000601\",\"periodo\":null,\"idContaBancaria\":7,\"tipoInvestimento\":\"RENDA_FIXA\"}},{\"competencia\":{\"mes\":9,\"ano\":2026},\"metadados\":{\"idPendencia\":\"1000000000000602\",\"periodo\":null,\"idContaBancaria\":7,\"tipoInvestimento\":\"RENDA_FIXA\"}}]"
+      }
+    ]
+  }
+]

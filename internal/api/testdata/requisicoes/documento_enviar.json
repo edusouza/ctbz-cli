@@ -1,0 +1,31 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/documentos/envio-documento/enviar",
+    "content_type": "multipart/form-data",
+    "campos": [
+      {
+        "nome": "arquivo",
+        "arquivo": "aplicacao-agosto.pdf",
+        "tipo": "application/pdf",
+        "tamanho": 8
+      },
+      {
+        "nome": "tipoDocumento",
+        "valor": "EXTRATO_APLICACAO_FINANCEIRA"
+      },
+      {
+        "nome": "competencia",
+        "valor": "{\"mes\":8,\"ano\":2026}"
+      },
+      {
+        "nome": "metadados",
+        "valor": "{\"valor\":null,\"idPendencia\":\"1000000000000601\",\"periodo\":null,\"idContaBancaria\":7,\"tipoInvestimento\":\"RENDA_FIXA\"}"
+      },
+      {
+        "nome": "ordemArquivoCompetencia",
+        "valor": "null"
+      }
+    ]
+  }
+]

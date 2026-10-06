@@ -1,0 +1,10 @@
+{
+  "tiposPermitidos": ["EXTRATO_APLICACAO_FINANCEIRA", "ESTOQUE"],
+  "documentos": [
+    {"tipo": "EXTRATO_APLICACAO_FINANCEIRA", "propriedades": {"idPendencia": "1000000000000601", "idContaBancaria": 7, "tipoInvestimento": "RENDA_FIXA",
+      "competencia": {"mes": 8, "ano": 2026, "periodo": null}, "banco": "Banco Exemplo", "agencia": "1234", "contaCorrente": "123456"}},
+    {"tipo": "EXTRATO_APLICACAO_FINANCEIRA", "propriedades": {"idPendencia": "1000000000000602", "idContaBancaria": 7, "tipoInvestimento": "RENDA_FIXA",
+      "competencia": {"mes": 9, "ano": 2026, "periodo": null}, "banco": "Banco Exemplo", "agencia": "1234", "contaCorrente": "123456"}},
+    {"tipo": "ESTOQUE", "propriedades": {"idPendencia": "1000000000000603", "competencia": {"mes": 12, "ano": 2025}}}
+  ]
+}
