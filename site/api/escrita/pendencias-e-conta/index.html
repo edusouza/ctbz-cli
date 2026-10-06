@@ -1,0 +1,3849 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Opere a Contabilizei pela linha de comando.">
+      
+      
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../impostos-e-pagamentos/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Pendências e conta - ctbz — CLI para a Contabilizei</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#escrita-pendencias-termos-atendimento-conta-e-usuarios" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../../.." title="ctbz — CLI para a Contabilizei" class="md-header__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ctbz — CLI para a Contabilizei
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Pendências e conta
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ctbz — CLI para a Contabilizei" class="md-nav__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ctbz — CLI para a Contabilizei
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de uso
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guia de uso
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/impostos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/pendencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências, rotinas e atendimento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/mensalidade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mensalidade e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/notas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/prolabore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pró-labore e lucros
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/contabil/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/documentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentos e certificado
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ações que alteram dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../referencia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência de comandos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Autenticação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Autenticação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/01-credenciais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credenciais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/02-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Código OTP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/03-selecao-de-empresa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Seleção de empresa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/04-sessao-e-cookies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessão e cookies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../otp-automatico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OTP automático
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../endpoints-verificados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Endpoints verificados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../catalogo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catálogo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notas-fiscais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6_5" id="__nav_6_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Escrita
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Escrita
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências e conta
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências e conta
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-pendencias-rotinas-e-termos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pendências, rotinas e termos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Pendências, rotinas e termos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-central-de-rotinas-central-rotinas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Central de Rotinas: central-rotinas/*
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.1 Central de Rotinas: central-rotinas/*">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformacentral-rotinasaceitar-carta-responsabilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/central-rotinas/aceitar-carta-responsabilidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformacentral-rotinasaceitar-termo-debitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/central-rotinas/aceitar-termo-debitos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformacentral-rotinasresolver-pendencia-procuracao-ecac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/central-rotinas/resolver-pendencia-procuracao-ecac
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformacentral-rotinasaceitar-termo-aceite-tp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/central-rotinas/aceitar-termo-aceite-tp
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-informe-de-rendimentos-informerendimento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Informe de rendimentos: informerendimento/*
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2 Informe de rendimentos: informerendimento/*">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformainformerendimentoaceitar-carta-responsabilidadeano" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/informerendimento/aceitar-carta-responsabilidade/{ano}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformainformerendimentoaceitar-termo-debitosano" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/informerendimento/aceitar-termo-debitos/{ano}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformainformerendimentoaceiteano" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/informerendimento/aceite/{ano}
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-dashboard-post-apiplataformadashboardv2termo-exclusao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Dashboard: POST /api/plataforma/dashboard/v2/termo-exclusao
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-conciliacao-fiscal-receitas-recebimentos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Conciliação fiscal (receitas × recebimentos)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.4 Conciliação fiscal (receitas × recebimentos)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaconciliacao-fiscalconciliarresolver-pendencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/conciliacao-fiscal/conciliar/resolver-pendencia
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patch-apiplataformaconciliacao-fiscalconciliaralerta-receitasfechar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PATCH /api/plataforma/conciliacao-fiscal/conciliar/alerta-receitas/fechar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaconciliacao-fiscalpendenciadetalhes-leitura-via-post" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/conciliacao-fiscal/pendencia/detalhes (leitura via POST)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-checklist-de-onboarding-checklist-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 Checklist de onboarding: checklist-onboarding/*
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16-dashboard-notificacoes-primeiros-passos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.6 Dashboard: notificações "primeiros passos"
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.6 Dashboard: notificações &#34;primeiros passos&#34;">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformadashboardinteracao-notificacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/dashboard/interacao-notificacao
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#17-ativacao-ativacaotimeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.7 Ativação: ativacao/timeline/*
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-chamados-de-atendimento-abrir-ou-responder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Chamados de atendimento (abrir ou responder)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-conta-usuarios-e-empresa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Conta, usuários e empresa
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Conta, usuários e empresa">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-dados-da-conta-do-usuario-conta-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Dados da conta do usuário: conta-usuario/*
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1 Dados da conta do usuário: conta-usuario/*">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaconta-usuarioenviar-token-otp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/conta-usuario/enviar-token-otp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaconta-usuarioalterar-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/conta-usuario/alterar-dados
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaconta-usuarioalterar-senha" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/conta-usuario/alterar-senha
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaconta-usuariovalidar-codigo-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/conta-usuario/validar-codigo-app
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-multiusuario-apimultiusuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Multiusuário: /api/multiusuario/
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 Multiusuário: /api/multiusuario/">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apimultiusuarioinvitesenviar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/multiusuario/invites/enviar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#put-apimultiusuariousuariosativar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PUT /api/multiusuario/usuarios/ativar
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-dados-de-acesso-a-orgaos-publicos-empresadadosacesso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Dados de acesso a órgãos públicos: empresa/dadosacesso/*
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.3 Dados de acesso a órgãos públicos: empresa/dadosacesso/*">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaempresadadosacessoatualizardadosacesso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/empresa/dadosacesso/atualizarDadosAcesso
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#put-apiplataformaempresadadosacessoconfirmar-credencial-prefeitura-valida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PUT /api/plataforma/empresa/dadosacesso/confirmar-credencial-prefeitura-valida
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-escritorio-virtual-correspondencias-escritorio-virtual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Escritório virtual (correspondências): escritorio-virtual/*
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.4 Escritório virtual (correspondências): escritorio-virtual/*">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#put-apiplataformaescritorio-virtualautorizar-recebimentotruefalse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PUT /api/plataforma/escritorio-virtual/autorizar-recebimento/{true|false}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaescritorio-virtualsalvar-endereco-correspondencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/escritorio-virtual/salvar-endereco-correspondencia
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-outros-achados-neste-contexto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Outros achados neste contexto
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resumo-de-risco-e-reversibilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resumo de risco e reversibilidade
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../impostos-e-pagamentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contabilidade-e-documentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade e documentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notas-e-prolabore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas e pró-labore
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../frontend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Front-end
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Desenvolvimento
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Desenvolvimento
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura da CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contratos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testes de contrato
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../monitoramento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoramento da API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contribuindo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contribuindo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metodologia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metodologia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisões (ADRs)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0001-registrar-decisoes-em-adrs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0001 Registrar decisões
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0002-somente-leitura-ate-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0002 Somente leitura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0003-versionamento-e-changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0003 Versionamento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0004-branches-empilhadas-e-prs-por-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0004 Branches e PRs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0005-documentacao-em-github-pages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0005 Documentação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0006-saida-padronizada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0006 Saída padronizada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0007-login-sessao-e-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0007 Login e sessão
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0008-cobra-para-a-arvore-de-comandos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0008 Cobra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0009-camada-api-tipada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0009 Camada api
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0010-testes-de-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0010 Contratos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0011-fixtures-podadas-ao-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0011 Fixtures podadas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0012-prazos-e-alertas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0012 Prazos e alertas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0013-sem-retentativa-com-fonte-alternativa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0013 Sem retentativa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0014-ci-no-github-actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0014 CI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0015-releases-com-goreleaser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0015 Releases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0016-monitoramento-agendado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0016 Monitoramento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0017-contrato-publico-da-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0017 Contrato da 1.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0018-escrita-com-confirmacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0018 Escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0019-camada-de-escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0019 Camada de escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0020-confirmacao-e-simulacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0020 Confirmação e simulação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0021-tipos-e-fixtures-sinteticos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0021 Fixtures sintéticas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0022-classificacao-de-notas-de-entrada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0022 Classificação de notas de entrada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-pendencias-rotinas-e-termos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Pendências, rotinas e termos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Pendências, rotinas e termos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-central-de-rotinas-central-rotinas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Central de Rotinas: central-rotinas/*
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.1 Central de Rotinas: central-rotinas/*">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformacentral-rotinasaceitar-carta-responsabilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/central-rotinas/aceitar-carta-responsabilidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformacentral-rotinasaceitar-termo-debitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/central-rotinas/aceitar-termo-debitos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformacentral-rotinasresolver-pendencia-procuracao-ecac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/central-rotinas/resolver-pendencia-procuracao-ecac
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformacentral-rotinasaceitar-termo-aceite-tp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/central-rotinas/aceitar-termo-aceite-tp
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-informe-de-rendimentos-informerendimento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Informe de rendimentos: informerendimento/*
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2 Informe de rendimentos: informerendimento/*">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformainformerendimentoaceitar-carta-responsabilidadeano" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/informerendimento/aceitar-carta-responsabilidade/{ano}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformainformerendimentoaceitar-termo-debitosano" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/informerendimento/aceitar-termo-debitos/{ano}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformainformerendimentoaceiteano" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/informerendimento/aceite/{ano}
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-dashboard-post-apiplataformadashboardv2termo-exclusao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Dashboard: POST /api/plataforma/dashboard/v2/termo-exclusao
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-conciliacao-fiscal-receitas-recebimentos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Conciliação fiscal (receitas × recebimentos)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.4 Conciliação fiscal (receitas × recebimentos)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaconciliacao-fiscalconciliarresolver-pendencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/conciliacao-fiscal/conciliar/resolver-pendencia
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patch-apiplataformaconciliacao-fiscalconciliaralerta-receitasfechar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PATCH /api/plataforma/conciliacao-fiscal/conciliar/alerta-receitas/fechar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaconciliacao-fiscalpendenciadetalhes-leitura-via-post" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/conciliacao-fiscal/pendencia/detalhes (leitura via POST)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-checklist-de-onboarding-checklist-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 Checklist de onboarding: checklist-onboarding/*
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16-dashboard-notificacoes-primeiros-passos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.6 Dashboard: notificações "primeiros passos"
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1.6 Dashboard: notificações &#34;primeiros passos&#34;">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformadashboardinteracao-notificacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/dashboard/interacao-notificacao
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#17-ativacao-ativacaotimeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.7 Ativação: ativacao/timeline/*
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-chamados-de-atendimento-abrir-ou-responder" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Chamados de atendimento (abrir ou responder)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-conta-usuarios-e-empresa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Conta, usuários e empresa
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Conta, usuários e empresa">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-dados-da-conta-do-usuario-conta-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Dados da conta do usuário: conta-usuario/*
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1 Dados da conta do usuário: conta-usuario/*">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaconta-usuarioenviar-token-otp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/conta-usuario/enviar-token-otp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaconta-usuarioalterar-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/conta-usuario/alterar-dados
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaconta-usuarioalterar-senha" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/conta-usuario/alterar-senha
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaconta-usuariovalidar-codigo-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/conta-usuario/validar-codigo-app
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-multiusuario-apimultiusuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Multiusuário: /api/multiusuario/
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.2 Multiusuário: /api/multiusuario/">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apimultiusuarioinvitesenviar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/multiusuario/invites/enviar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#put-apimultiusuariousuariosativar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PUT /api/multiusuario/usuarios/ativar
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-dados-de-acesso-a-orgaos-publicos-empresadadosacesso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Dados de acesso a órgãos públicos: empresa/dadosacesso/*
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.3 Dados de acesso a órgãos públicos: empresa/dadosacesso/*">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaempresadadosacessoatualizardadosacesso" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/empresa/dadosacesso/atualizarDadosAcesso
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#put-apiplataformaempresadadosacessoconfirmar-credencial-prefeitura-valida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PUT /api/plataforma/empresa/dadosacesso/confirmar-credencial-prefeitura-valida
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-escritorio-virtual-correspondencias-escritorio-virtual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Escritório virtual (correspondências): escritorio-virtual/*
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.4 Escritório virtual (correspondências): escritorio-virtual/*">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#put-apiplataformaescritorio-virtualautorizar-recebimentotruefalse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PUT /api/plataforma/escritorio-virtual/autorizar-recebimento/{true|false}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apiplataformaescritorio-virtualsalvar-endereco-correspondencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/plataforma/escritorio-virtual/salvar-endereco-correspondencia
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-outros-achados-neste-contexto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Outros achados neste contexto
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resumo-de-risco-e-reversibilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resumo de risco e reversibilidade
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="escrita-pendencias-termos-atendimento-conta-e-usuarios">Escrita: pendências, termos, atendimento, conta e usuários<a class="headerlink" href="#escrita-pendencias-termos-atendimento-conta-e-usuarios" title="Permanent link">&para;</a></h1>
+<p>Análise <strong>estática</strong> dos chunks do painel (<code>/painel-de-controle/</code>, Vue 2). Nenhuma requisição foi feita.
+Bases (módulo axios <code>d5c2</code>): <code>X["c"]</code> = <code>/api/plataforma/</code>, <code>X["e"]</code> = <code>/api/multiusuario/</code>.
+O axios junta base e caminho removendo a barra duplicada, então <code>"/checklist-onboarding/x"</code> vira
+<code>/api/plataforma/checklist-onboarding/x</code>.</p>
+<p>Convenções:</p>
+<ul>
+<li><strong>Risco</strong>: baixo = só estado de UI/telemetria; médio = altera cadastro/credencial/preferência ou gera
+  efeito operacional; alto = efeito fiscal, legal (aceite de termo/declaração) ou financeiro (contratação, cobrança).</li>
+<li>"(incerto)" = inferido do código, sem confirmação no front.</li>
+<li>Os 403 com a mensagem <em>"Não é possível realizar a assinatura como admin!"</em> aparecem quando a sessão é de
+  um administrador da Contabilizei personificando o cliente; para o usuário dono da sessão a chamada passa.</li>
+</ul>
+<hr />
+<h2 id="1-pendencias-rotinas-e-termos">1. Pendências, rotinas e termos<a class="headerlink" href="#1-pendencias-rotinas-e-termos" title="Permanent link">&para;</a></h2>
+<h3 id="11-central-de-rotinas-central-rotinas">1.1 Central de Rotinas: <code>central-rotinas/*</code><a class="headerlink" href="#11-central-de-rotinas-central-rotinas" title="Permanent link">&para;</a></h3>
+<p>Origem: <code>app.*.js</code> (composable <code>useCentralDeRotinas</code>, módulo de pendências) + chunk <code>CentralDeRotinas</code>
+(componentes <code>SectionPendencias</code>/<code>SectionRotinas</code>). Tela <code>#/central-de-rotinas</code> (rota <code>CentralDeRotinas</code>).</p>
+<p><strong>Pré-condição comum</strong>: <code>GET /api/plataforma/central-rotinas/init</code> devolve
+<code>{ pendencias: { pendenciasCriticas: {...}, outrasPendencias: {...} }, rotinas: [...], rotinasCtbz: [...], rotinasCalendario: [...] }</code>.
+Cada pendência é um objeto com <code>possuiPendencia: boolean</code> e campos próprios. Chaves vistas no front:
+<code>pendenciaCartaResponsabilidade</code>, <code>pendenciaProcuracaoEcac</code>, <code>pendenciaAceiteTermoDebitos</code>,
+<code>pendenciaTermoAdesaoTotalPass</code>, <code>pendenciaCredencialPrefeitura</code>, <code>pendenciaCertificadoDigital</code>,
+<code>pendenciaConciliacaoFiscal</code>, <code>pendenciaContratoPrestacaoServico</code>, <code>pendenciaImposto</code>, <code>pendenciaMensalidade</code>,
+<code>pendenciaCadastroContaBancaria</code>, <code>pendenciaCadastroProlabore</code>, <code>pendenciaImportacaoExtrato</code>,
+<code>pendenciaIntegracaoAExpirar</code>/<code>Expirada</code>, <code>pendenciaExigibilidadeDocumental</code>, <code>pendenciaContratoAFAC</code>,
+<code>pendenciaContratoDeEmprestimo</code>, <code>pendenciaContratoDeFinanciamento</code>, <code>pendenciaContratoDeInvestimentoAnjo</code>,
+<code>pendenciaAquisicaoAtivoImobilizado</code>, <code>pendenciaEstoque</code>, <code>pendenciaControleDeIntermediacoes</code>,
+<code>pendenciaExtratoAplicacaoFinanceira</code>, <code>pendenciaInformeDeRendimentoInvestimentos</code>.
+Só as quatro abaixo têm endpoint de resolução próprio. As demais apenas navegam para outra tela
+(envio de documentos, impostos, conta bancária, dados de acesso etc.).</p>
+<p>Os quatro POSTs <strong>não têm corpo nem parâmetros</strong>: o servidor deduz empresa e período pela sessão.
+A resposta é lida (<code>.data</code>), mas o front não usa o conteúdo. Ao dar certo, o front marca
+<code>possuiPendencia = false</code> e mostra o toast "Pendência resolvida".</p>
+<h4 id="post-apiplataformacentral-rotinasaceitar-carta-responsabilidade"><code>POST /api/plataforma/central-rotinas/aceitar-carta-responsabilidade</code><a class="headerlink" href="#post-apiplataformacentral-rotinasaceitar-carta-responsabilidade" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: nenhum.</li>
+<li>Fluxo: card "Aceite da carta de responsabilidade pendente", botão "Ver carta", que abre o
+  <code>ModalCartaDeResponsabilidade</code> com o HTML de <code>pendenciaCartaResponsabilidade.conteudoCartaResponsabilidade</code>.
+  Botões: "Regularizar mais tarde" (sem chamada) e <strong>"Aceitar as declarações"</strong> (dispara o POST).</li>
+<li>Semântica: aceite da <em>Carta de Responsabilidade da Administração</em>, a declaração anual exigida pelo CFC de que
+  o cliente entregou todas as informações e documentos à contabilidade.</li>
+<li>Erros: 403 dá o toast "Não é possível realizar a assinatura como admin!". Outros erros são relançados.</li>
+<li>Reversível: <strong>não</strong> há endpoint de revogação.</li>
+<li>Risco: <strong>alto</strong> (declaração legal/contábil assinada).</li>
+</ul>
+<h4 id="post-apiplataformacentral-rotinasaceitar-termo-debitos"><code>POST /api/plataforma/central-rotinas/aceitar-termo-debitos</code><a class="headerlink" href="#post-apiplataformacentral-rotinasaceitar-termo-debitos" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: nenhum.</li>
+<li>Fluxo: card crítico "Aceite do Termo de Ciência e Responsabilidade" (template scroll com
+  <code>bodyText = pendenciaAceiteTermoDebitos.conteudoAceiteTermoDebito</code>), botão <strong>"Estou ciente do termo"</strong>.</li>
+<li>Texto: "O documento explica os impactos das retiradas mensais de lucros a partir de 2026". Consequência:
+  "Caso a gente não receba seu aceite no termo em até <code>{prazoAceiteTacito}</code> dias, vamos entender que não há
+  impedimentos para as retiradas de lucros e a administração e/ou os sócios estão cientes dos riscos envolvidos,
+  como fiscalização pela Receita Federal, multas, juros e autuações." Ou seja, existe <strong>aceite tácito</strong> por prazo.</li>
+<li>Erros: 403 dá "Não é possível realizar a assinatura como admin!". Os demais dão "Erro inesperado ao aceitar o
+  termo. Por favor tente novamente.", e o card volta para pendente.</li>
+<li>Reversível: não.</li>
+<li>Risco: <strong>alto</strong> (ciência de risco fiscal sobre distribuição de lucros e débitos federais).</li>
+<li>Relacionado: <code>informerendimento/aceitar-termo-debitos/{ano}</code> (1.2), a versão por ano-calendário no informe
+  de rendimentos.</li>
+</ul>
+<h4 id="post-apiplataformacentral-rotinasresolver-pendencia-procuracao-ecac"><code>POST /api/plataforma/central-rotinas/resolver-pendencia-procuracao-ecac</code><a class="headerlink" href="#post-apiplataformacentral-rotinasresolver-pendencia-procuracao-ecac" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: nenhum.</li>
+<li>Fluxo: card "Emissão de procuração eletrônica pendente" (<code>pendenciaProcuracaoEcac</code>, com
+  <code>tipoPendencia</code> ∈ <code>SEM_PROCURACAO</code> | <code>EM_EXPIRACAO</code> | outro valor tratado como "vencida", e <code>cnpjOutorgado</code>).
+  Botões: "Portal de serviços da receita" (só abre o e-CAC) e <strong>"Já criei a procuração"</strong> (dispara o POST).
+  No caso <code>EM_EXPIRACAO</code>, o card mostra "Renovar procuração" e abre o link da Receita.</li>
+<li>Semântica: o cliente <strong>declara</strong> que já outorgou ou renovou a procuração eletrônica no e-CAC para a
+  Contabilizei (CNPJ em <code>cnpjOutorgado</code>). O servidor provavelmente revalida depois (incerto).</li>
+<li>Erros: 403 dá "Não é possível realizar a assinatura como admin!".</li>
+<li>Reversível: não há endpoint. Se a procuração não existir, a pendência deve reaparecer no próximo <code>init</code> (incerto).</li>
+<li>Risco: <strong>médio</strong> (é só uma declaração; o efeito legal está na procuração feita no e-CAC, fora da plataforma).</li>
+<li>Equivalente no checklist de onboarding: <code>POST /checklist-onboarding/procuracoes/compartilhamentos</code> (1.5).</li>
+</ul>
+<h4 id="post-apiplataformacentral-rotinasaceitar-termo-aceite-tp"><code>POST /api/plataforma/central-rotinas/aceitar-termo-aceite-tp</code><a class="headerlink" href="#post-apiplataformacentral-rotinasaceitar-termo-aceite-tp" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: nenhum.</li>
+<li>Fluxo: pendência "outras" <code>pendenciaTermoAdesaoTotalPass</code> (card "Termo de adesão ao programa TotalPass",
+  botão "Ler termo") ou rotina <code>TermoAdesaoTotalPass</code>. Abre o <code>ModalTermoAdesaoTotalPass</code> com
+  <code>conteudoTermoAdesaoTotalPass</code>. Botões: "Ler depois" (sem chamada) e <strong>"Estou ciente do termo"</strong> (dispara o POST).</li>
+<li>Texto: "Sem a assinatura, você não terá acesso ao TotalPass e ao Starbem. Além disso, a falta de aceite pode
+  levar ao cancelamento do seu plano de benefícios."</li>
+<li>Resposta: o front devolve <code>{status:true}</code> quando dá certo. Erros: 403 dá "Não é possível realizar a assinatura
+  como admin!". Os demais dão "Erro inesperado ao aceitar o termo de adesão. Por favor tente novamente."</li>
+<li>Reversível: não.</li>
+<li>Risco: <strong>médio/alto</strong> (adesão contratual a benefício; efeito financeiro indireto no plano de benefícios).</li>
+</ul>
+<blockquote>
+<p>Pela URL: <code>#/central-de-rotinas?pendencia=&lt;chave&gt;</code> abre o modal da pendência "outras" indicada, se ela existir.</p>
+</blockquote>
+<h3 id="12-informe-de-rendimentos-informerendimento">1.2 Informe de rendimentos: <code>informerendimento/*</code><a class="headerlink" href="#12-informe-de-rendimentos-informerendimento" title="Permanent link">&para;</a></h3>
+<p>Chunk <code>informe-de-rendimentos</code>. Tela <code>#/socio/comprovante-rendimentos</code> (rota <code>informe-de-rendimentos</code>). O parâmetro de caminho <code>{ano}</code> é
+<code>filtro.anoCompetencia</code>, o <strong>ano-calendário</strong> do informe (lista de 2013 ou do início da responsabilidade
+até o ano anterior ao atual).</p>
+<h4 id="post-apiplataformainformerendimentoaceitar-carta-responsabilidadeano"><code>POST /api/plataforma/informerendimento/aceitar-carta-responsabilidade/{ano}</code><a class="headerlink" href="#post-apiplataformainformerendimentoaceitar-carta-responsabilidadeano" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: nenhum.</li>
+<li>Pré-condição: <code>GET informerendimento/carta-responsabilidade/{ano}</code> devolve
+  <code>{ deveAssinarCartaResponsabilidade: bool, html: string }</code>. Também existe
+  <code>GET informerendimento/visualizar-carta-responsabilidade/{ano}</code>.</li>
+<li>Fluxo: com <code>deveAssinarCartaResponsabilidade</code>, aparece a checkbox <strong>"Aceito os termos da Carta de
+  Responsabilidade"</strong>, obrigatória para pré-visualizar ou baixar o informe ("Para visualizar o informe você precisa
+  aceitar os termos da Carta de Responsabilidade."). Ao visualizar ou baixar, o front chama o POST e depois gera o PDF.</li>
+<li>Reversível: não. Risco: <strong>alto</strong> (mesma declaração da 1.1, mas por ano).</li>
+</ul>
+<h4 id="post-apiplataformainformerendimentoaceitar-termo-debitosano"><code>POST /api/plataforma/informerendimento/aceitar-termo-debitos/{ano}</code><a class="headerlink" href="#post-apiplataformainformerendimentoaceitar-termo-debitosano" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: <code>{ "aceite": "PRIMEIRA_VEZ" | "NEGOU_DA_PRIMEIRA_VEZ" }</code>. É uma <strong>string</strong>: identifica em qual
+  apresentação do termo o aceite aconteceu, não é booleano.</li>
+<li><code>PRIMEIRA_VEZ</code>: o modal abriu automaticamente na primeira visita.</li>
+<li><code>NEGOU_DA_PRIMEIRA_VEZ</code>: o usuário tinha clicado "Ler depois" e reabriu o termo pelo link.</li>
+<li>Pré-condição: <code>GET informerendimento/v2/{ano}/restricoes</code> devolve
+  <code>{ restricoes: { debitosFederais: { possuiPendencia, debitos[], divergenciaContabilFiscal },
+  pendenciaDocumental: { possuiPendencia, fluxoRegularizacao, pendencias[], valorServicoAdicional } },
+  processoReabertura: { status } }</code>. Com <code>debitosFederais.possuiPendencia</code>, abre o <code>ModalDebitosFederais</code> e, em
+  seguida, o modal do termo.</li>
+<li>Botões: <strong>"Estou ciente do termo"</strong> (este POST, depois recarrega a distribuição) e "Ler depois". Na primeira vez,
+  "Ler depois" chama <code>informerendimento/aceite/{ano}</code> com <code>IR_NAO_DISTRIBUIR_LUCROS</code>, ver abaixo.</li>
+<li>Erro: "Erro ao processar a ação. Aguarde um pouco e tente novamente."</li>
+<li>Reversível: não. Risco: <strong>alto</strong>.</li>
+</ul>
+<h4 id="post-apiplataformainformerendimentoaceiteano"><code>POST /api/plataforma/informerendimento/aceite/{ano}</code><a class="headerlink" href="#post-apiplataformainformerendimentoaceiteano" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: <code>{ "tipoAceite": "&lt;enum&gt;" }</code>. Valores encontrados:</li>
+<li><code>IR_NAO_DISTRIBUIR_LUCROS</code>: enviado por "Ler depois" no modal de termo de débitos (primeira vez). O efeito é
+    <strong>não distribuir lucros</strong> no informe daquele ano.</li>
+<li><code>NAO_REGULARIZAR_PENDENCIA_DOCUMENTAL</code>: botão "Não regularizar pendência" nos modais
+    <code>ModalExigibilidadeDocumental</code>/<code>ModalPendenciasDocumentais</code>. Texto: "Caso opte por 'Não regularizar pendência',
+    não haverá distribuição de lucros."</li>
+<li><code>REGULARIZAR_PENDENCIA_DOCUMENTAL</code>: botão "Regularizar pendência". Depois do POST, o front abre o formulário
+    Zendesk <code>https://suporte.contabilizei.com.br/hc/pt-br/requests/new?ticket_form_id=360000562139</code>.</li>
+<li>Erros: 400 com <code>detalhes[0].identificador == "exception/erro-negocial-001"</code> mostra <code>detalhes[0].detalhe</code>. Fora isso,
+  mostra "Erro ao tentar salvar aceite."</li>
+<li>Reversível: não há endpoint explícito (incerto se um novo <code>aceite</code> sobrescreve o anterior).</li>
+<li>Risco: <strong>alto</strong> (decide se haverá distribuição de lucros isenta no informe de rendimentos).</li>
+</ul>
+<p>Adjacentes no mesmo serviço, fora deste escopo mas com escrita:</p>
+<ul>
+<li><code>POST informerendimento/salvarconfiguracaocliente</code>: corpo <code>[{idSocio, percentual, valor}]</code>, distribuição de lucro
+  por sócio.</li>
+<li><code>POST informerendimento/historico</code>: corpo <code>{tipoEvento: "VISUALIZOU_IR"|"BAIXOU_IR", anoExercicio}</code>, telemetria.</li>
+<li><code>POST informerendimento/reabrir-balanco/{ano}</code>: sem corpo. <strong>Risco alto</strong>: o texto diz que o serviço "gera uma
+  cobrança de R$ …". Um 403 mostra "Usuário admin não pode fazer a reabertura do exercício contábil para um cliente."</li>
+</ul>
+<h3 id="13-dashboard-post-apiplataformadashboardv2termo-exclusao">1.3 Dashboard: <code>POST /api/plataforma/dashboard/v2/termo-exclusao</code><a class="headerlink" href="#13-dashboard-post-apiplataformadashboardv2termo-exclusao" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Chunk <code>chunk-b88c6b8a</code> (dashboard v2), componente <code>ModalTermoDeExclusao2023</code>.</li>
+<li>Pré-condição: o init do dashboard devolve <code>modalInitDashboard == "TERMO_EXCLUSAO_2023"</code>, e então o modal abre
+  sozinho.</li>
+<li>Corpo: <code>{ "contratarServico": boolean }</code></li>
+<li><code>false</code>: botão <strong>"Estou ciente, não quero regularizar"</strong>. Em seguida, mostra o modal "Regularize suas pendências".</li>
+<li><code>true</code>: botão <strong>"Solicitar verificação de pendências"</strong>. Em seguida, mostra o modal "Serviço contratado".</li>
+<li>Texto: "Sua empresa será excluída do regime do Simples Nacional… A Receita Federal notificou sua empresa com o
+  TERMO DE EXCLUSÃO DO SIMPLES NACIONAL… a não regularização irá desenquadrar sua empresa do Simples Nacional,
+  podendo aumentar significativamente o valor dos seus impostos e também acrescenta o valor de R$95 à sua
+  mensalidade." Os prazos são de 2023/2024: campanha antiga, provavelmente inativa.</li>
+<li>Resposta: ignorada. Reversível: não.</li>
+<li>Risco: <strong>alto</strong> (<code>true</code> contrata um serviço; <code>false</code> registra ciência de exclusão do Simples).</li>
+</ul>
+<h3 id="14-conciliacao-fiscal-receitas-recebimentos">1.4 Conciliação fiscal (receitas × recebimentos)<a class="headerlink" href="#14-conciliacao-fiscal-receitas-recebimentos" title="Permanent link">&para;</a></h3>
+<p>Serviço <code>04aa</code> em <code>app.*.js</code> (v1) e cópias no chunk <code>conciliacao-v2</code>. Telas <code>ConciliacaoFiscal</code> (v1) e
+conciliação v2 (Vuex <code>conciliacaoFiscalV2</code>).</p>
+<h4 id="post-apiplataformaconciliacao-fiscalconciliarresolver-pendencia"><code>POST /api/plataforma/conciliacao-fiscal/conciliar/resolver-pendencia</code><a class="headerlink" href="#post-apiplataformaconciliacao-fiscalconciliarresolver-pendencia" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Pré-condição: <code>GET conciliacao-fiscal/pendencias?…</code> (v1) ou <code>GET conciliacao-fiscal/v2/pendencias?…</code> (v2) para os
+  ids das pendências. Contrapartes vêm de <code>GET conciliacao-fiscal/conciliar/receitas</code> (notas) ou
+  <code>…/conciliar/recebimentos</code> (movimentações). Sócios para <code>idVinculo</code>: getter <code>sociosDisponiveisParaVinculo</code> (incerto
+  sobre o GET de origem).</li>
+<li>Corpo (três formas usadas):</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1">// a) conciliar: vincular pendência(s) a contraparte(s)</span>
+<span class="p">{</span><span class="w"> </span><span class="nt">"idPendencia"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">123</span><span class="p">,</span><span class="w"> </span><span class="mi">124</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"contraparte"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"origem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"NOTAFISCAL"</span><span class="w"> </span><span class="err">|</span><span class="w"> </span><span class="s2">"MOVIMENTACAO"</span><span class="p">,</span><span class="w"> </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">987</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"tipoResolucaoPendencia"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">}</span>
+
+<span class="c1">// b) reclassificar / justificar sem contraparte</span>
+<span class="p">{</span><span class="w"> </span><span class="nt">"idPendencia"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">123</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"contraparte"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">  </span><span class="nt">"tipoResolucaoPendencia"</span><span class="p">:</span><span class="w"> </span><span class="s2">"REEMBOLSO"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"idVinculo"</span><span class="p">:</span><span class="w"> </span><span class="mi">55</span><span class="p">,</span><span class="w">                       </span><span class="c1">// opcional: id do sócio quando o motivo exige sócio</span>
+<span class="w">  </span><span class="nt">"numeroNotaAtivacaoContabil"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1234"</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// opcional: fluxo "nota anterior/ativação contábil"</span>
+
+<span class="c1">// c) conciliar com diferença justificada: contraparte preenchida + tipoResolucaoPendencia não nulo</span>
+</code></pre></div>
+<ul>
+<li><code>origem</code>: quando a pendência é de <strong>recebimento</strong>, as contrapartes são notas (<code>NOTAFISCAL</code>). Quando é de <strong>nota</strong>,
+  são movimentações (<code>MOVIMENTACAO</code>).</li>
+<li><code>tipoResolucaoPendencia</code> (enum encontrado): <code>ADIANTAMENTO_EMISSAO_NOTA_FISCAL_FUTURA</code>, <code>AFAC</code>, <code>ATIVACAO_CONTABIL</code>,
+  <code>CAIXA_OU_PESSOA_FISICA</code>, <code>CASHBACK</code>, <code>DESCONTO_CONCEDIDO</code>, <code>DEVOLUCAO_DE_SAQUE_DE_LUCROS_ANTECIPADOS</code>,
+  <code>DIFERENCA_REPASSAR</code>, <code>EMPRESTIMO_BANCARIO</code>, <code>EMPRESTIMO_DO_SOCIO_A_EMPRESA</code>, <code>ESTORNO_TRANSACAO_BANCARIA</code>,
+  <code>INTEGRALIZACAO_CAPITAL</code>, <code>INVESTIMENTO_ANJO_MUTUO</code>, <code>JUROS_RECEBIDOS</code>, <code>NOTA_FISCAL_FUTURA</code>, <code>PERDA</code>,
+  <code>RECEBIMENTO_DE_EMPRESTIMOS_CONCEDIDOS</code>, <code>RECEBIMENTO_DE_INTERMEDIACAO_DE_SERVICOS_A_SEREM_REPASSADOS</code>,
+  <code>RECEBIMENTO_DE_VALORES_A_SEREM_REPASSADOS_AO_CLIENTE</code>, <code>RECEBIMENTO_PARCELADO</code>, <code>REEMBOLSO</code>,
+  <code>REEMBOLSO_DE_CLIENTES_ADMINISTRACAO_DE_IMOVEIS</code>, <code>REEMBOLSO_DE_PAGAMENTO_ANTECIPADO_DE_DESPESAS_PARA_CLIENTES</code>,
+  <code>REEMBOLSO_DE_TAXAS_E_CUSTAS_DE_PROCESSOS_JUDICIAIS_DE_CLIENTES</code>, <code>TAXAS_INTERMEDIADORAS</code>,
+  <code>TRANSFERENCIA_ENTRE_CONTAS</code>, <code>VARIACAO_CAMBIAL_NEGATIVA</code>, <code>VARIACAO_CAMBIAL_POSITIVA</code>.
+  Exemplos de rótulos na UI: "Recebi em dinheiro" / "Recebi em uma conta PF" → <code>CAIXA_OU_PESSOA_FISICA</code>;
+  "Não vou mais receber por essa nota" → <code>PERDA</code>; "Valor adiantado para virar capital social" → <code>AFAC</code>.
+  O motivo "Outro" não chama a API: manda para o atendimento.</li>
+<li>Restrição de UI: algumas opções só valem se cada item for menor que R$ 1.000,00. Também aparece
+  "Você já usou essa opção para esta pendência."</li>
+<li>Resposta: ignorada. Depois do POST, o front recarrega as pendências e mostra "Pendência conciliada com sucesso." /
+  "O recebimento foi c…". Erros: "Falha ao conciliar pendência. Tente novamente." /
+  "Falha ao reclassificar recebimento. Tente novamente."</li>
+<li>Reversível: a v2 tem o fluxo "alteração" (<code>iniciarAlteracao</code>/<code>abrirModalConfirmarAlteracao</code>), que <strong>reenvia o mesmo
+  endpoint</strong> sobre uma conciliação já feita (histórico em <code>selecionarConciliacaoHistorico</code>). Não há DELETE.</li>
+<li>Risco: <strong>alto</strong>. A classificação define a natureza contábil e fiscal do recebimento (receita tributável ou não,
+  empréstimo, capital etc.).</li>
+</ul>
+<h4 id="patch-apiplataformaconciliacao-fiscalconciliaralerta-receitasfechar"><code>PATCH /api/plataforma/conciliacao-fiscal/conciliar/alerta-receitas/fechar</code><a class="headerlink" href="#patch-apiplataformaconciliacao-fiscalconciliaralerta-receitasfechar" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: nenhum (chamada sem argumento). Fecha o banner/alerta de receitas no drawer de conciliação.</li>
+<li>Risco: <strong>baixo</strong> (estado de UI). Sem endpoint de desfazer.</li>
+</ul>
+<h4 id="post-apiplataformaconciliacao-fiscalpendenciadetalhes-leitura-via-post"><code>POST /api/plataforma/conciliacao-fiscal/pendencia/detalhes</code> (leitura via POST)<a class="headerlink" href="#post-apiplataformaconciliacao-fiscalpendenciadetalhes-leitura-via-post" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: <code>{ "idsRecebimento": [..], "idsReceita": [..] }</code> (a v1 manda <code>idsReceita = idsNotaFiscal</code> do item).</li>
+<li>Devolve os detalhes da pendência ou conciliação (justificativa/reclassificação). Campos da resposta: (incerto).</li>
+<li><strong>Sem efeito colateral</strong>: pode ser tratado como GET na CLI. Risco: nenhum.</li>
+</ul>
+<h3 id="15-checklist-de-onboarding-checklist-onboarding">1.5 Checklist de onboarding: <code>checklist-onboarding/*</code><a class="headerlink" href="#15-checklist-de-onboarding-checklist-onboarding" title="Permanent link">&para;</a></h3>
+<p>Módulo <code>bd38</code> no chunk <code>chunk-b88c6b8a</code> (dashboard v2: <code>ChecklistAside</code>, card "Primeiros passos").</p>
+<table>
+<thead>
+<tr>
+<th>Método e caminho (<code>/api/plataforma/…</code>)</th>
+<th>Corpo</th>
+<th>Semântica</th>
+<th>Risco</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET checklist-onboarding/aside/init</code></td>
+<td></td>
+<td><code>{etapas:[{nome, situacao}], progresso}</code></td>
+<td>–</td>
+</tr>
+<tr>
+<td><code>GET checklist-onboarding/aside/trilha/{trilha}</code></td>
+<td></td>
+<td><code>trilha</code> ∈ <code>configure-conta</code>, <code>aprenda-basico</code>; devolve <code>{etapas, progresso}</code></td>
+<td>–</td>
+</tr>
+<tr>
+<td><code>POST checklist-onboarding/aside/concluir-etapa</code></td>
+<td><code>{"etapa": "&lt;nome&gt;"}</code></td>
+<td>marca uma tarefa como concluída</td>
+<td>baixo</td>
+</tr>
+<tr>
+<td><code>POST checklist-onboarding/procuracoes/compartilhamentos</code></td>
+<td>nenhum</td>
+<td>botão "Já criei a procuração" na etapa <code>GERAR_PROCURACAO_VIRTUAL</code>; declara a procuração e avança a etapa</td>
+<td>médio</td>
+</tr>
+<tr>
+<td><code>POST checklist-onboarding/pular-tarefas</code></td>
+<td>nenhum</td>
+<td>fechar o card do checklist (v1) = pular as tarefas restantes</td>
+<td>baixo</td>
+</tr>
+<tr>
+<td><code>PATCH checklist-onboarding/exibir-primeiros-passos/dispensar</code></td>
+<td>nenhum</td>
+<td>dispensa ou oculta o card "Primeiros passos"</td>
+<td>baixo</td>
+</tr>
+<tr>
+<td><code>PATCH checklist-onboarding/reativar-tarefas</code></td>
+<td>nenhum</td>
+<td>botão <strong>"Desfazer"</strong> depois de dispensar: desfaz o <code>dispensar</code></td>
+<td>baixo</td>
+</tr>
+<tr>
+<td><code>POST checklist-onboarding/tooltip/guia-inicio/concluir</code></td>
+<td>nenhum</td>
+<td>conclui o tour guiado</td>
+<td>baixo</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Valores de <code>etapa</code> (<code>nome</code>): <code>CADASTRO_CONTA_PJ</code>, <code>CADASTRE_PRO_LABORE</code>, <code>GERAR_PROCURACAO_VIRTUAL</code>,
+  <code>ACEITE_TERMOS_MULTIBENEFICIOS</code>, <code>REUNIAO_BOAS_VINDAS</code>, <code>LIVE_EMISSAO_NOTAS_FISCAIS</code>, <code>LIVE_VIDA_COM_CNPJ</code>.
+  Nem toda etapa tem "concluir" manual: os botões são <code>marcarConcluido</code>/<code>concluirTarefa</code>/<code>agendarEConcluir</code>.</li>
+<li>Resposta <strong>304</strong> em <code>concluir-etapa</code>/<code>tooltip/.../concluir</code> é tratada como "já estava concluído" (não é erro).
+  Outros erros: "Ocorreu um erro ao concluir a tarefa. Tente novamente mais tarde."</li>
+<li>Reversibilidade: <code>dispensar</code> ↔ <code>reativar-tarefas</code>. Não há endpoint para "desconcluir" uma etapa.</li>
+</ul>
+<h3 id="16-dashboard-notificacoes-primeiros-passos">1.6 Dashboard: notificações "primeiros passos"<a class="headerlink" href="#16-dashboard-notificacoes-primeiros-passos" title="Permanent link">&para;</a></h3>
+<h4 id="post-apiplataformadashboardinteracao-notificacao"><code>POST /api/plataforma/dashboard/interacao-notificacao</code><a class="headerlink" href="#post-apiplataformadashboardinteracao-notificacao" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Chunk <code>chunk-2371324a</code> (dashboard v1). Pré-condição: <code>GET dashboard/primeiros-passos</code> devolve
+  <code>[{tipo, visto}]</code>.</li>
+<li>Corpo: <code>{ "tipo": "DUPLO_VINCULO" }</code> (único tipo mapeado no front: pop-up "Sabia que você pode estar pagando um
+  valor de INSS maior que o necessário?", botão "Saber mais").</li>
+<li>Semântica: marca a notificação como vista (<code>visto = true</code>) e abre um artigo de suporte.</li>
+<li>Risco: <strong>baixo</strong>. Não há como desfazer.</li>
+</ul>
+<p>Outras escritas de interação ou telemetria no dashboard (todas <code>/api/plataforma/</code>, risco baixo):
+<code>home/nps</code> <code>{nota: 0..10, comentario}</code> (NPS); <code>upsell/banner/clicar</code>; <code>retencao/paywall/salvar-interacao</code> <code>{}</code>;
+<code>dashboard/v2/notas-fiscais/salvar-clique-emitir</code>; <code>evento-tour</code> (base legado <code>X["d"]</code>, corpo <code>{flow, evento}</code>)
+(incerto); <code>hubspot/enviar</code> (lead/CRM).</p>
+<h3 id="17-ativacao-ativacaotimeline">1.7 Ativação: <code>ativacao/timeline/*</code><a class="headerlink" href="#17-ativacao-ativacaotimeline" title="Permanent link">&para;</a></h3>
+<p>Chunk <code>ativacao</code> (timeline de abertura de empresa, várias versões A–G do mesmo componente).
+Pré-condição: <code>GET /api/plataforma/ativacao/timeline</code> (steps, <code>mfaAtivo</code>, <code>hasCertificadoDigital</code>,
+<code>contaDigital</code>, <code>regimeTributario</code>, <code>inscricaoMunicipal</code>…).</p>
+<table>
+<thead>
+<tr>
+<th>Método e caminho</th>
+<th>Corpo</th>
+<th>Semântica</th>
+<th>Risco</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST ativacao/timeline/salvar-interacao</code></td>
+<td><code>{"step": "CONTA_DIGITAL"\|"CERTIFICADO_DIGITAL"\|"PLANO_SAUDE", "label": "&lt;texto livre&gt;"}</code>; labels vistos: <code>"ver step"</code>, <code>"aceite"</code>, <code>"emitir e-cnpj"</code> e rótulos de botão</td>
+<td>registra a interação num passo (colapsa ou expande o step)</td>
+<td>baixo</td>
+</tr>
+<tr>
+<td><code>POST ativacao/timeline/finalizar</code></td>
+<td>nenhum ou <code>{}</code></td>
+<td>botão "Acessar plataforma": encerra a timeline (<code>auth/updateTimelineFinalizada</code>). Resposta <code>{rolloutOnboarding: bool}</code></td>
+<td>baixo/médio (sem volta)</td>
+</tr>
+<tr>
+<td><code>POST ativacao/timeline/finish-step-plano-saude</code></td>
+<td><code>{"nomeBotao": "QUERO_SABER_MAIS"\|"AGORA_NAO"}</code></td>
+<td>conclui o step de plano de saúde</td>
+<td>baixo</td>
+</tr>
+<tr>
+<td><code>POST ativacao/timeline/aceite/mfa-gov</code></td>
+<td><code>{}</code></td>
+<td>declaração "Declaro que desativei a verificação em duas etapas [gov.br] e estou ciente que: 1. A verificação impede a Contabilizei de concluir a abertura e entregar as obrigações, o que pode gerar multas…" (botão "Continuar")</td>
+<td>médio (declaração)</td>
+</tr>
+</tbody>
+</table>
+<p>Erro genérico: "Não foi possível prosseguir! Tente novamente." Nenhum desses endpoints tem desfazer.
+A timeline também chama <code>fintech/conta-digital/aceite?origem=timeline</code> e <code>fintech/conta-digital/notificacao-conclusao</code>
+(escopo fintech).</p>
+<p><strong>Recomendação para a CLI (contexto 1)</strong></p>
+<ul>
+<li><code>ctbz pendencias listar</code> (GET <code>central-rotinas/init</code>): mostra as chaves com <code>possuiPendencia</code>, o tipo e o texto.</li>
+<li><code>ctbz pendencias ver &lt;chave&gt;</code>: imprime o conteúdo do termo ou da carta (<code>conteudo*</code>) para o usuário ler <strong>antes</strong>.</li>
+<li><code>ctbz pendencias aceitar carta|termo-debitos|totalpass</code> e <code>ctbz pendencias procuracao-ecac --ja-criei</code>: exigir
+  confirmação interativa e <code>--yes</code> explícito, exibir o texto do termo e avisar que é irreversível.</li>
+<li><code>ctbz ir aceite --ano 2025 --tipo NAO_REGULARIZAR_PENDENCIA_DOCUMENTAL|...</code> e
+  <code>ctbz ir termo-debitos --ano 2025</code>: só com confirmação dupla, porque decidem a distribuição de lucros.</li>
+<li><code>ctbz conciliacao resolver &lt;idPendencia...&gt; --contraparte NOTAFISCAL:987 | --motivo REEMBOLSO [--socio id]</code>:
+  útil, mas é a escrita de maior impacto fiscal desta página. Sugere-se <code>--dry-run</code> padrão que mostra o JSON, e
+  <code>ctbz conciliacao detalhes</code> (POST de leitura).</li>
+<li><code>ctbz onboarding concluir &lt;ETAPA&gt;</code>, <code>ctbz onboarding dispensar|reativar</code>: baixo valor; opcionais.</li>
+<li>Não expor: <code>termo-exclusao</code> (campanha 2023), <code>interacao-notificacao</code>, <code>salvar-interacao</code>, <code>finalizar</code> da
+  timeline e o restante da telemetria.</li>
+</ul>
+<hr />
+<h2 id="2-chamados-de-atendimento-abrir-ou-responder">2. Chamados de atendimento (abrir ou responder)<a class="headerlink" href="#2-chamados-de-atendimento-abrir-ou-responder" title="Permanent link">&para;</a></h2>
+<p><strong>Conclusão: o painel não tem endpoint de API para abrir chamado nem para responder a um.</strong></p>
+<ul>
+<li><code>GET /api/plataforma/atendimento/chamados?em-andamento=true</code> e <code>…?finalizados=true</code> (tela <code>#/chamados</code>,
+  rota <code>MeusChamados</code>, chunk <code>chunk-49028f4c</code>) são <strong>somente leitura</strong>. Itens:
+  <code>{id, assunto, canal, status, atualizado, previsaoRetorno}</code>. Cada card é um <strong>link para o Zendesk Help Center</strong>:
+  <code>https://suporte.contabilizei.com.br/hc/pt-br/requests/{id}</code>, e é lá que o cliente "adiciona mais informações".
+  A resposta acontece no Zendesk, com outra sessão e autenticação, e não pela API da Contabilizei.</li>
+<li>"Fale conosco" / "Ajuda" abre um iframe do app separado <code>/widget-window/#/helpdesk</code> (CRM widget, que conversa por
+  <code>postMessage</code> com eventos <code>helpdesk/open</code>, <code>chat/open</code>, <code>whatsapp/open</code>, <code>zendesk/open</code>). As chamadas desse widget
+  não estão nos bundles analisados. O canal WhatsApp é <code>https://wa.me/&lt;numero&gt;?text=Olá, eu quero falar sobre o
+  tema … e assunto …</code>.</li>
+<li>Formulário Zendesk direto: <code>https://suporte.contabilizei.com.br/hc/pt-br/requests/new?ticket_form_id=360000562139</code>
+  (aberto pelo informe de rendimentos).</li>
+<li><code>GET zendesk/artigos?filtro=</code> só busca artigos da central de ajuda.</li>
+</ul>
+<p>Escritas que se parecem com "pedir atendimento" (efeito: o time entra em contato):</p>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Corpo</th>
+<th>Contexto</th>
+<th>Risco</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /api/plataforma/empresa-inativa/registrar-solicitacao</code></td>
+<td><code>{"tipoSolicitacao": "AJUDA"}</code></td>
+<td>tela <code>#/central-inativos</code> (empresa sem acesso: mensalidade atrasada ou empresa encerrada), botão "Solicitar atendimento" → "Recebemos o seu pedido!". Pré-condição: <code>GET /empresa-inativa/permite-registrar-solicitacao</code> → <code>{permiteRegistrarSolicitacao, tipoSolicitacao}</code> (se <code>false</code>, já existe pedido). 403 → "Usuário administrador não tem permissão para executar essa ação."</td>
+<td>baixo</td>
+</tr>
+<tr>
+<td><code>POST certificado-digital/v2/solicitar-atendimento-pendencia</code></td>
+<td>nenhum</td>
+<td>fluxo de certificado digital (outra página)</td>
+<td>baixo</td>
+</tr>
+<tr>
+<td><code>POST fintech/conta-digital/lead-atendimento</code></td>
+<td>nenhum</td>
+<td>conta digital (fintech)</td>
+<td>baixo</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recomendação para a CLI (contexto 2)</strong>: <code>ctbz chamados listar [--finalizados]</code> (leitura) imprimindo o link
+<code>…/hc/pt-br/requests/{id}</code>, e <code>ctbz chamados abrir</code> apenas abrindo o navegador no formulário Zendesk ou no
+<code>/widget-window/</code>. Uma integração real exigiria a API do Zendesk (<code>/api/v2/requests</code>) com autenticação própria,
+fora do escopo da sessão Contabilizei. <code>empresa-inativa/registrar-solicitacao</code> só faz sentido para empresa inativa.</p>
+<hr />
+<h2 id="3-conta-usuarios-e-empresa">3. Conta, usuários e empresa<a class="headerlink" href="#3-conta-usuarios-e-empresa" title="Permanent link">&para;</a></h2>
+<h3 id="31-dados-da-conta-do-usuario-conta-usuario">3.1 Dados da conta do usuário: <code>conta-usuario/*</code><a class="headerlink" href="#31-dados-da-conta-do-usuario-conta-usuario" title="Permanent link">&para;</a></h3>
+<p>Chunk <code>DadosDaContaDoUsuario</code>, tela <code>#/conta-do-usuario</code> "Dados da minha conta" ("Alterações no e-mail, senha e telefone impactam seu
+acesso à plataforma Contabilizei."). Todas as escritas exigem um <strong>código OTP</strong> de 6 dígitos.</p>
+<p>Pré-condição: <code>GET /api/plataforma/conta-usuario/init</code> → <code>{ email, telefone, metodo }</code>. Os valores vêm
+mascarados com <code>*</code>, e <code>metodo</code> é o método atual de 2FA: <code>EMAIL</code> | <code>SMS</code> | <code>APP</code>.</p>
+<h4 id="post-apiplataformaconta-usuarioenviar-token-otp"><code>POST /api/plataforma/conta-usuario/enviar-token-otp</code><a class="headerlink" href="#post-apiplataformaconta-usuarioenviar-token-otp" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: <code>{ "metodoEnvio": "EMAIL" | "SMS" }</code>. Com <code>APP</code>, o front não chama: o código vem do app autenticador.</li>
+<li>Resposta: <code>{ "tempo": &lt;segundos&gt; }</code>, usado no contador "Reenviar por …".</li>
+<li><strong>422</strong> com <code>data.error</code> numérico = rate-limit. O número é o tempo restante e o modal abre mesmo assim.
+  Outro erro: "Não foi possível enviar o código. Tente novamente mais tarde."</li>
+<li>Risco: <strong>baixo</strong> (envia e-mail ou SMS ao titular).</li>
+</ul>
+<h4 id="post-apiplataformaconta-usuarioalterar-dados"><code>POST /api/plataforma/conta-usuario/alterar-dados</code><a class="headerlink" href="#post-apiplataformaconta-usuarioalterar-dados" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: <code>{ "email": string, "telefone": "11987654321", "codigo": "123456", "metodo": "EMAIL"|"SMS"|"APP" }</code>.
+  <code>telefone</code> sai do formulário <code>(DD)NNNNN-NNNN</code> sem <code>()-</code>. <code>metodo</code> é o mesmo usado no OTP.</li>
+<li>Validação no front: e-mail por regex; telefone <code>^\(\d{2}\)\d{4,5}-\d{4,5}$</code> com 14 caracteres.</li>
+<li>Resposta: 2xx → recarrega o <code>init</code> e mostra o modal "As alterações foram salvas!". <strong>404 = código incorreto</strong>
+  ("O código está incorreto ou inválido"). Outros erros → "As alterações não foram salvas!".</li>
+<li>Reversível: só alterando de novo. Risco: <strong>médio/alto</strong> (troca o e-mail de login e o telefone do 2FA; pode
+  causar perda de acesso).</li>
+</ul>
+<h4 id="post-apiplataformaconta-usuarioalterar-senha"><code>POST /api/plataforma/conta-usuario/alterar-senha</code><a class="headerlink" href="#post-apiplataformaconta-usuarioalterar-senha" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: <code>{ "senha": "&lt;nova&gt;", "codigo": "123456", "metodo": "EMAIL"|"SMS"|"APP" }</code>. Não envia a senha atual:
+  a prova é o OTP.</li>
+<li>Regras no front: no mínimo 8 caracteres, minúsculas e maiúsculas, números e caractere especial; a confirmação
+  precisa ser igual.</li>
+<li>Respostas: iguais às de <code>alterar-dados</code> (404 = código inválido).</li>
+<li>Risco: <strong>alto</strong> (credencial). Pode invalidar outras sessões (incerto).</li>
+</ul>
+<h4 id="post-apiplataformaconta-usuariovalidar-codigo-app"><code>POST /api/plataforma/conta-usuario/validar-codigo-app</code><a class="headerlink" href="#post-apiplataformaconta-usuariovalidar-codigo-app" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Pré-condição: <code>GET conta-usuario/qr-code-aplicativo-autenticacao</code> → QR code (imagem/otpauth; formato incerto).</li>
+<li>Corpo: <code>{ "codigo": "123456", "metodo": "APP" }</code>.</li>
+<li>Semântica: sincroniza o app autenticador (TOTP) e passa a usá-lo como método de 2FA.
+  Sucesso: "O aplicativo de autenticação foi sincronizado!". 404 = código inválido.</li>
+<li>Risco: <strong>médio/alto</strong> (muda o segundo fator). Para voltar a EMAIL/SMS não há endpoint visível (incerto).</li>
+</ul>
+<h3 id="32-multiusuario-apimultiusuario">3.2 Multiusuário: <code>/api/multiusuario/</code><a class="headerlink" href="#32-multiusuario-apimultiusuario" title="Permanent link">&para;</a></h3>
+<p>Módulo <code>9649</code> (<code>app.*.js</code>), telas <code>#/multiusuario</code> (lista) e <code>#/convite-usuario</code>.</p>
+<ul>
+<li><code>GET /api/multiusuario/usuarios-e-invites/consultar</code> → <code>[{id, nome, email, tipo: "USUARIO_PRINCIPAL"|"USUARIO_SECUNDARIO", status: "ATIVO"|"INATIVO"|"CONVITE_ENVIADO"}]</code>.</li>
+<li><code>GET /api/multiusuario/status/servico</code> → <code>{ativo: bool, limite: number}</code>. O front bloqueia o convite se
+  <code>!ativo</code> ("O serviço está indisponivel no momento.") ou se os secundários ativos ≥ <code>limite</code> ("Você já cadastrou o
+  número máximo de N usuários.").</li>
+</ul>
+<h4 id="post-apimultiusuarioinvitesenviar"><code>POST /api/multiusuario/invites/enviar</code><a class="headerlink" href="#post-apimultiusuarioinvitesenviar" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: <code>{ "email": "&lt;convidado&gt;" }</code>. O front recusa e-mails <code>@contabilizei.</code>.</li>
+<li>Texto: "Ao convidar uma pessoa com acesso total, ela terá permissão para realizar todas as ações na plataforma e
+  visualizar todas as informações da empresa, inclusive financeiras." Depois: "O convite foi enviado para o novo
+  usuário…". Erro: "Não foi possível enviar o convite! Tente novamente mais tarde."</li>
+<li>Resposta: sem conteúdo usado.</li>
+<li>Reversível: <strong>não há endpoint para revogar ou reenviar convite</strong> no front. Só é possível desativar o usuário
+  depois que ele aceitar (<code>ativar</code> com <code>false</code>), e isso vale para convites pendentes também (incerto).</li>
+<li>Risco: <strong>alto</strong> (concede acesso total à empresa a terceiros).</li>
+</ul>
+<h4 id="put-apimultiusuariousuariosativar"><code>PUT /api/multiusuario/usuarios/ativar</code><a class="headerlink" href="#put-apimultiusuariousuariosativar" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: <code>{ "idUsuarioEmpresa": &lt;id da lista&gt;, "ativo": true|false }</code>.</li>
+<li>Bloqueio no front: <code>tipo == "USUARIO_PRINCIPAL"</code> → "Não é possível desativar o administrador da empresa."</li>
+<li>Mensagens: "O usuário foi ativado com sucesso." / "O usuário foi desativado com sucesso." / "Ação não realizada."</li>
+<li>Reversível: <strong>sim</strong> (alternar <code>ativo</code>). Esta é a única forma de "revogar" acesso; não existe DELETE.</li>
+<li>Risco: <strong>médio</strong>.</li>
+</ul>
+<h3 id="33-dados-de-acesso-a-orgaos-publicos-empresadadosacesso">3.3 Dados de acesso a órgãos públicos: <code>empresa/dadosacesso/*</code><a class="headerlink" href="#33-dados-de-acesso-a-orgaos-publicos-empresadadosacesso" title="Permanent link">&para;</a></h3>
+<p>Chunk <code>dados-de-acesso</code>, tela <code>#/dados-de-acesso</code> (aba "Dados de acesso").</p>
+<ul>
+<li>Pré-condição: <code>GET /api/plataforma/empresa/dadosacesso/init</code> →
+  <code>{ formulario: { chaveAcessoSimples, usuarioPrefeitura, senhaPrefeitura, usuarioDataprev, senhaDataprev, dataValidadeSenhaPrefeituraCuritiba }, alertaPendenciaCredencial: bool, … }</code>.
+  <strong>Atenção: o GET devolve as credenciais em texto claro.</strong> A CLI nunca deve logá-las. Com 403 (admin), o front
+  mostra "Edição bloqueada" (<code>ADMIN_SEM_AUTORIZACAO_AOS_DADOS</code>).</li>
+</ul>
+<h4 id="post-apiplataformaempresadadosacessoatualizardadosacesso"><code>POST /api/plataforma/empresa/dadosacesso/atualizarDadosAcesso</code><a class="headerlink" href="#post-apiplataformaempresadadosacessoatualizardadosacesso" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"> </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="err">&lt;empresa.id</span><span class="w"> </span><span class="err">da</span><span class="w"> </span><span class="err">sessão</span><span class="w"> </span><span class="err">(ge</span><span class="kc">t</span><span class="err">Logi</span><span class="kc">n</span><span class="err">Da</span><span class="kc">ta</span><span class="err">.empresa.id)&gt;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"chaveAcessoSimples"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123456789012"</span><span class="p">,</span><span class="w">   </span><span class="c1">// 12 dígitos; obrigatório se empresa.optanteSimples</span>
+<span class="w">  </span><span class="nt">"usuarioPrefeitura"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w"> </span><span class="nt">"senhaPrefeitura"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">   </span><span class="c1">// mínimo de 3 caracteres cada, se preenchidos</span>
+<span class="w">  </span><span class="nt">"usuarioDataprev"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w"> </span><span class="nt">"senhaDataprev"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w">       </span><span class="c1">// só para quem retirou pró-labore antes de 10/2021</span>
+<span class="w">  </span><span class="nt">"dataValidadeSenhaPrefeituraCuritiba"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<ul>
+<li>O formulário inteiro é reenviado: os campos não alterados vão com o valor do <code>init</code>.</li>
+<li>Resposta: <strong>204</strong> = sucesso ("Dados de acesso salvos com sucesso"). Qualquer outro status → "Ocorreu um erro
+  inesperado. Verifique as informações no formulário e tente novamente". Erro de validação local: "Código de acesso
+  deve possuir 12 caracteres apenas numéricos".</li>
+<li>Depois de salvar, o servidor verifica o acesso: "Verificação de acesso iniciada… Caso seja negado, enviaremos um
+  e-mail". Status mostrados no chip: Pendente, Verificando Acesso, Vinculada, Acesso Negado, Atualização Necessária.</li>
+<li>Reversível: só regravando. Risco: <strong>alto</strong> (credenciais usadas para transmitir declarações; um erro gera
+  "multas e juros").</li>
+</ul>
+<h4 id="put-apiplataformaempresadadosacessoconfirmar-credencial-prefeitura-valida"><code>PUT /api/plataforma/empresa/dadosacesso/confirmar-credencial-prefeitura-valida</code><a class="headerlink" href="#put-apiplataformaempresadadosacessoconfirmar-credencial-prefeitura-valida" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: nenhum.</li>
+<li>Fluxo: alerta "Redefina a senha da prefeitura e atualize os dados de acesso" (<code>alertaPendenciaCredencial</code>), link
+  "clique aqui", modal "Você atualizou a senha de acesso à prefeitura e garante que o acesso está correto?", botão
+  <strong>"Sim, já atualizei a senha"</strong>.</li>
+<li>Semântica: declara que a credencial da prefeitura atual é válida e limpa o alerta.
+  Também resolve a pendência crítica <code>CREDENCIAL_NAO_PREENCHIDA</code> da Central de Rotinas (incerto).</li>
+<li>Risco: <strong>médio</strong> (declaração; se for falsa, as obrigações municipais falham).</li>
+</ul>
+<h3 id="34-escritorio-virtual-correspondencias-escritorio-virtual">3.4 Escritório virtual (correspondências): <code>escritorio-virtual/*</code><a class="headerlink" href="#34-escritorio-virtual-correspondencias-escritorio-virtual" title="Permanent link">&para;</a></h3>
+<p>Chunk <code>escritorio-virtual</code>, tela <code>#/escritorio-virtual</code> ("Correspondências"; abas "Disponíveis" e "Configurações
+de envio").</p>
+<p>Leituras: <code>GET escritorio-virtual/endereco-entrega</code>, <code>GET escritorio-virtual/recuperar-mensagens?{cursor,…}</code>
+(paginação <code>meta.cursor</code>/<code>meta.count</code>), <code>GET escritorio-virtual/verifica-autorizacao-recebimento</code> → <code>{autoriza}</code>,
+<code>GET escritorio-virtual/pesquisarEndereco/{cep}</code> (CEP com 8 dígitos), e
+<code>GET escritorio-virtual/gerar-link-download-correspondencia/{id}</code> ou <code>…/gerar-link-download-comprovante/{id}</code> →
+<code>{url}</code> (link assinado, sem efeito colateral conhecido).</p>
+<h4 id="put-apiplataformaescritorio-virtualautorizar-recebimentotruefalse"><code>PUT /api/plataforma/escritorio-virtual/autorizar-recebimento/{true|false}</code><a class="headerlink" href="#put-apiplataformaescritorio-virtualautorizar-recebimentotruefalse" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Valor no caminho: o booleano do switch "Autorizo o recebimento de correspondências e documentos entregues no
+  endereço informado."</li>
+<li>Corpo: nenhum. Mensagens: "Autorização de recebimento alterada!" / "Ocorreu um erro ao alterar a autorização de
+  recebimento."</li>
+<li>Reversível: <strong>sim</strong> (enviar o valor oposto). Risco: <strong>médio</strong>. A lista mostra "Valor do envio" (<code>taxa</code>), então o
+  envio de correspondência pode ser cobrado (incerto).</li>
+</ul>
+<h4 id="post-apiplataformaescritorio-virtualsalvar-endereco-correspondencia"><code>POST /api/plataforma/escritorio-virtual/salvar-endereco-correspondencia</code><a class="headerlink" href="#post-apiplataformaescritorio-virtualsalvar-endereco-correspondencia" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Corpo: <code>{ "cep": "01310100", "numero": "100", "complemento": "sala 1" }</code>. Logradouro, bairro, município e UF vêm
+  do <code>pesquisarEndereco/{cep}</code> e não são enviados.</li>
+<li>Resposta: o novo <code>infoEndereco</code> (mesmo formato de <code>endereco-entrega</code>). Mensagens: "Endereço alterado!" /
+  "Ocorreu um erro ao alterar o endereço." Aviso: "As alterações de endereço são apenas para o envio das
+  correspondências."</li>
+<li>Reversível: sim, regravando o endereço anterior. Risco: <strong>médio</strong> (para onde vão documentos oficiais).</li>
+</ul>
+<h3 id="35-outros-achados-neste-contexto">3.5 Outros achados neste contexto<a class="headerlink" href="#35-outros-achados-neste-contexto" title="Permanent link">&para;</a></h3>
+<ul>
+<li>O catálogo não deixou de fora nenhuma escrita de conta, usuários ou empresa: todas as chamadas desses módulos
+  usam caminho literal. A busca por caminhos em variáveis só encontrou chamadas do emissor de notas, da integração
+  bancária e de <code>notafiscaltomada</code>, fora deste escopo.</li>
+<li>Não existe endpoint de logout no servidor, nem de exclusão de conta ou usuário (<code>DELETE</code>).</li>
+</ul>
+<p><strong>Recomendação para a CLI (contexto 3)</strong></p>
+<ul>
+<li><code>ctbz conta ver</code> (GET <code>init</code>).</li>
+<li><code>ctbz conta otp enviar --via email|sms</code>.</li>
+<li><code>ctbz conta alterar --email X --telefone Y --codigo N</code> e <code>ctbz conta senha --codigo N</code> (lendo a senha por prompt
+  oculto, nunca por argumento). As duas devem ser interativas: primeiro enviam o OTP, depois pedem o código.</li>
+<li><code>ctbz conta 2fa app</code> (mostra o QR no terminal e chama <code>validar-codigo-app</code>): opcional e de risco.</li>
+<li><code>ctbz usuarios listar</code>, <code>ctbz usuarios convidar &lt;email&gt; --yes</code>, <code>ctbz usuarios ativar|desativar &lt;id&gt;</code> (o par
+  ativar/desativar é reversível e seguro).</li>
+<li><code>ctbz empresa credenciais ver</code> (mascarar senhas por padrão; <code>--mostrar</code> explícito),
+  <code>ctbz empresa credenciais atualizar --simples 123456789012 [--prefeitura-usuario …]</code> (com merge do <code>init</code>: o POST
+  exige o formulário completo) e <code>ctbz empresa credenciais confirmar-prefeitura</code>.</li>
+<li><code>ctbz correspondencias listar|baixar &lt;id&gt;</code>, <code>ctbz correspondencias endereco --cep … --numero …</code> e
+  <code>ctbz correspondencias autorizar on|off</code>.</li>
+<li>Ordem sugerida de implementação: primeiro as leituras; depois as escritas reversíveis (usuários ativar/desativar,
+  autorização de correspondência, endereço); por último as declarações e termos irreversíveis, sempre com confirmação.</li>
+</ul>
+<hr />
+<h2 id="resumo-de-risco-e-reversibilidade">Resumo de risco e reversibilidade<a class="headerlink" href="#resumo-de-risco-e-reversibilidade" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Risco</th>
+<th>Desfazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>central-rotinas/aceitar-carta-responsabilidade, informerendimento/aceitar-carta-responsabilidade/{ano}</td>
+<td>alto</td>
+<td>não</td>
+</tr>
+<tr>
+<td>central-rotinas/aceitar-termo-debitos, informerendimento/aceitar-termo-debitos/{ano}</td>
+<td>alto</td>
+<td>não</td>
+</tr>
+<tr>
+<td>informerendimento/aceite/{ano}</td>
+<td>alto</td>
+<td>não (incerto)</td>
+</tr>
+<tr>
+<td>conciliacao-fiscal/conciliar/resolver-pendencia</td>
+<td>alto</td>
+<td>refazer pelo fluxo "alteração" (mesmo endpoint)</td>
+</tr>
+<tr>
+<td>dashboard/v2/termo-exclusao</td>
+<td>alto</td>
+<td>não</td>
+</tr>
+<tr>
+<td>empresa/dadosacesso/atualizarDadosAcesso</td>
+<td>alto</td>
+<td>regravar</td>
+</tr>
+<tr>
+<td>conta-usuario/alterar-senha, alterar-dados, validar-codigo-app</td>
+<td>alto/médio</td>
+<td>alterar de novo</td>
+</tr>
+<tr>
+<td>invites/enviar</td>
+<td>alto</td>
+<td>só desativando o usuário</td>
+</tr>
+<tr>
+<td>central-rotinas/aceitar-termo-aceite-tp</td>
+<td>médio/alto</td>
+<td>não</td>
+</tr>
+<tr>
+<td>central-rotinas/resolver-pendencia-procuracao-ecac, checklist procuracoes/compartilhamentos</td>
+<td>médio</td>
+<td>não</td>
+</tr>
+<tr>
+<td>empresa/dadosacesso/confirmar-credencial-prefeitura-valida, ativacao/timeline/aceite/mfa-gov</td>
+<td>médio</td>
+<td>não</td>
+</tr>
+<tr>
+<td>usuarios/ativar, escritorio-virtual/*</td>
+<td>médio</td>
+<td>sim</td>
+</tr>
+<tr>
+<td>checklist-onboarding/* (exceto procuração), interacao-notificacao, timeline/salvar-interacao, alerta-receitas/fechar</td>
+<td>baixo</td>
+<td>dispensar ↔ reativar; o resto não</td>
+</tr>
+<tr>
+<td>conciliacao-fiscal/pendencia/detalhes</td>
+<td>nenhum (leitura)</td>
+<td>–</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

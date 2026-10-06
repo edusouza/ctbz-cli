@@ -31,9 +31,9 @@ rendimentos dos sócios. Cada --socio ID=parte diz a parte de um sócio, em perc
 em reais (30000,00); os sócios não citados ficam com zero. A soma precisa ser o lucro total
 (saldo na empresa + o já distribuído), como no painel.
 
-Os IDs dos sócios estão em ctbz empresa socios. A distribuição só é aceita enquanto o painel
-deixa alterar (até a data limite) e sem restrições no informe (pendência documental ou
-débitos federais, ver ctbz lucros).
+Os IDs dos sócios são o id de cada sócio em ctbz lucros. A distribuição só é aceita
+enquanto o painel deixa alterar (até a data limite) e sem restrições no informe (pendência
+documental ou débitos federais, também em ctbz lucros).
 
 Risco alto: define os rendimentos isentos que os sócios declaram no IRPF. Dá para refazer
 enquanto a distribuição puder ser alterada. Aceita --yes e --dry-run.`,
@@ -206,7 +206,7 @@ func montarDistribuicao(lucros []api.LucroSocio, nomes map[string]string, partes
 	porID := map[string]*parteSocio{}
 	for i := range partes {
 		if !naDistribuicao[partes[i].id] {
-			return nil, "", usageError{fmt.Errorf("sócio %s não está na distribuição (veja ctbz empresa socios)", partes[i].id)}
+			return nil, "", usageError{fmt.Errorf("sócio %s não está na distribuição; os sócios dela são %s (veja ctbz lucros)", partes[i].id, sociosDaDistribuicao(lucros, nomes))}
 		}
 		porID[partes[i].id] = &partes[i]
 	}
@@ -242,6 +242,19 @@ func montarDistribuicao(lucros []api.LucroSocio, nomes map[string]string, partes
 		resumo = append(resumo, fmt.Sprintf("%s %s%% (%s)", firstNonEmpty(nomes[id], id), strings.Replace(fmt.Sprintf("%d.%02d", pct/100, pct%100), ".", ",", 1), formatarCentavos(cent)))
 	}
 	return itens, strings.Join(resumo, "; "), nil
+}
+
+// sociosDaDistribuicao lista os ids aceitos em --socio, com o nome quando há.
+func sociosDaDistribuicao(lucros []api.LucroSocio, nomes map[string]string) string {
+	ids := make([]string, 0, len(lucros))
+	for _, l := range lucros {
+		id := idTexto(l.ID)
+		if n := nomes[id]; n != "" {
+			id += " (" + n + ")"
+		}
+		ids = append(ids, id)
+	}
+	return strings.Join(ids, ", ")
 }
 
 func abs64(v int64) int64 {

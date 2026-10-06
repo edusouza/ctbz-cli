@@ -79,7 +79,7 @@ func TestLucrosDistribuirRecusas(t *testing.T) {
 		{"percentual", distribuicaoJSON, restricoesOK, []string{"--socio", "1=120%"}, ExitUsage, "parte inválida"},
 		{"repetido", distribuicaoJSON, restricoesOK, []string{"--socio", "1=10%", "--socio", "1=90%"}, ExitUsage, "sócio 1 repetido"},
 		{"soma", distribuicaoJSON, restricoesOK, []string{"--socio", "1=60%", "--socio", "2=30%"}, ExitUsage, "a soma das partes (R$ 900,01) deve ser igual ao lucro total do exercício (R$ 1.000,01)"},
-		{"sócio de fora", distribuicaoJSON, restricoesOK, []string{"--socio", "9=100%"}, ExitUsage, "sócio 9 não está na distribuição"},
+		{"sócio de fora", distribuicaoJSON, restricoesOK, []string{"--socio", "9=100%"}, ExitUsage, "sócio 9 não está na distribuição; os sócios dela são 1 (FULANO), 2 (BELTRANO) (veja ctbz lucros)"},
 		{"sem exercício", `{"ano":0,"podeAlterar":true}`, restricoesOK, []string{"--socio", "1=100%"}, ExitError, "não há exercício aberto"},
 		{"não pode alterar", `{"ano":2025,"podeAlterar":false,"motivoNaoPodeAlterar":"Exercício encerrado"}`, restricoesOK, []string{"--socio", "1=100%"}, ExitError, "não pode mais ser alterada: Exercício encerrado"},
 		{"prazo", strings.Replace(distribuicaoJSON, "2026-12-31", "2026-04-30", 1), restricoesOK, []string{"--socio", "1=100%"}, ExitError, "o prazo para distribuir os lucros de 2025 acabou em 30/04/2026"},
