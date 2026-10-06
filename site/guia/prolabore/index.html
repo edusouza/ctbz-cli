@@ -1,0 +1,2671 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Opere a Contabilizei pela linha de comando.">
+      
+      
+      
+      
+        <link rel="prev" href="../notas/">
+      
+      
+        <link rel="next" href="../contabil/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Pró-labore e lucros - ctbz — CLI para a Contabilizei</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pro-labore-e-lucros" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../.." title="ctbz — CLI para a Contabilizei" class="md-header__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ctbz — CLI para a Contabilizei
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Pró-labore e lucros
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ctbz — CLI para a Contabilizei" class="md-nav__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ctbz — CLI para a Contabilizei
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de uso
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guia de uso
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../impostos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pendencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências, rotinas e atendimento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mensalidade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mensalidade e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pró-labore e lucros
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pró-labore e lucros
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pro-labore-vigente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pró-labore vigente
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mudar-a-gestao-do-pro-labore-de-um-socio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mudar a gestão do pró-labore de um sócio
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pro-labore-zerado-nos-meses-sem-faturamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pró-labore zerado nos meses sem faturamento
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gestao-inteligente-calculo-automatico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gestão inteligente (cálculo automático)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#historico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Histórico
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parametros-de-calculo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parâmetros de cálculo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fator-r" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fator R
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#distribuicao-de-lucros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Distribuição de lucros
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Distribuição de lucros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registrar-a-distribuicao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registrar a distribuição
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#informe-de-rendimentos-dos-socios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Informe de rendimentos dos sócios
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contabil/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../documentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentos e certificado
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ações que alteram dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência de comandos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Autenticação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Autenticação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/01-credenciais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credenciais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/02-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Código OTP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/03-selecao-de-empresa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Seleção de empresa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/04-sessao-e-cookies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessão e cookies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../otp-automatico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OTP automático
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/endpoints-verificados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Endpoints verificados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/catalogo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catálogo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/notas-fiscais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_5" id="__nav_6_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Escrita
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Escrita
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/escrita/pendencias-e-conta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências e conta
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/escrita/impostos-e-pagamentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/escrita/contabilidade-e-documentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade e documentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/escrita/notas-e-prolabore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas e pró-labore
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Front-end
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Desenvolvimento
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Desenvolvimento
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura da CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contratos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testes de contrato
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../monitoramento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoramento da API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribuindo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contribuindo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../metodologia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metodologia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisões (ADRs)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0001-registrar-decisoes-em-adrs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0001 Registrar decisões
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0002-somente-leitura-ate-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0002 Somente leitura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0003-versionamento-e-changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0003 Versionamento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0004-branches-empilhadas-e-prs-por-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0004 Branches e PRs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0005-documentacao-em-github-pages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0005 Documentação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0006-saida-padronizada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0006 Saída padronizada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0007-login-sessao-e-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0007 Login e sessão
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0008-cobra-para-a-arvore-de-comandos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0008 Cobra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0009-camada-api-tipada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0009 Camada api
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0010-testes-de-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0010 Contratos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0011-fixtures-podadas-ao-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0011 Fixtures podadas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0012-prazos-e-alertas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0012 Prazos e alertas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0013-sem-retentativa-com-fonte-alternativa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0013 Sem retentativa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0014-ci-no-github-actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0014 CI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0015-releases-com-goreleaser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0015 Releases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0016-monitoramento-agendado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0016 Monitoramento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0017-contrato-publico-da-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0017 Contrato da 1.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0018-escrita-com-confirmacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0018 Escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0019-camada-de-escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0019 Camada de escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0020-confirmacao-e-simulacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0020 Confirmação e simulação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0021-tipos-e-fixtures-sinteticos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0021 Fixtures sintéticas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0022-classificacao-de-notas-de-entrada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0022 Classificação de notas de entrada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pro-labore-vigente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pró-labore vigente
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mudar-a-gestao-do-pro-labore-de-um-socio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mudar a gestão do pró-labore de um sócio
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pro-labore-zerado-nos-meses-sem-faturamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pró-labore zerado nos meses sem faturamento
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gestao-inteligente-calculo-automatico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gestão inteligente (cálculo automático)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#historico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Histórico
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parametros-de-calculo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parâmetros de cálculo
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fator-r" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fator R
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#distribuicao-de-lucros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Distribuição de lucros
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Distribuição de lucros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#registrar-a-distribuicao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Registrar a distribuição
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#informe-de-rendimentos-dos-socios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Informe de rendimentos dos sócios
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="pro-labore-e-lucros">Pró-labore e lucros<a class="headerlink" href="#pro-labore-e-lucros" title="Permanent link">&para;</a></h1>
+<h2 id="pro-labore-vigente">Pró-labore vigente<a class="headerlink" href="#pro-labore-vigente" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>prolabore
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Gerenciamento:  INTELIGENTE
+Total:          R$ 1.621,00
+Calculando:     não
+Indisponível:   não
+Sócios:
+  Nome           CPF                   Valor  Recebe pró-labore  Responsável na Receita  Gestão       Atualizado em  Dependentes
+  FULANO DE TAL  000.000.000-00  R$ 1.621,00  sim                sim                     INTELIGENTE  01/09/2026               2
+</code></pre></div>
+<ul>
+<li><strong>Gerenciamento</strong> <code>INTELIGENTE</code> significa que a Contabilizei calcula todo mês o pró-labore
+  que leva ao menor imposto (inclusive o Fator R).</li>
+<li>O valor e as competências do card do painel (<code>valor_card</code>, <code>competencia_atual</code>,
+  <code>competencia_anterior</code>) aparecem quando a Contabilizei já calculou o mês.</li>
+<li>Em JSON, os sócios vêm em <code>socios</code>, com o <code>id</code> que os comandos <code>--socio</code> pedem; em CSV, a
+  lista de sócios sai como JSON na célula.</li>
+</ul>
+<h2 id="mudar-a-gestao-do-pro-labore-de-um-socio">Mudar a gestão do pró-labore de um sócio<a class="headerlink" href="#mudar-a-gestao-do-pro-labore-de-um-socio" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>prolabore<span class="w"> </span>definir<span class="w"> </span>--socio<span class="w"> </span>ID<span class="w"> </span>--tipo<span class="w"> </span>salario-minimo
+ctbz<span class="w"> </span>prolabore<span class="w"> </span>definir<span class="w"> </span>--socio<span class="w"> </span>ID<span class="w"> </span>--tipo<span class="w"> </span>teto-inss
+ctbz<span class="w"> </span>prolabore<span class="w"> </span>definir<span class="w"> </span>--socio<span class="w"> </span>ID<span class="w"> </span>--tipo<span class="w"> </span>personalizado<span class="w"> </span>--valor<span class="w"> </span><span class="m">3000</span>,00
+ctbz<span class="w"> </span>prolabore<span class="w"> </span>definir<span class="w"> </span>--socio<span class="w"> </span>ID<span class="w"> </span>--tipo<span class="w"> </span>inteligente<span class="w"> </span><span class="o">[</span>--minimo<span class="w"> </span><span class="m">1518</span>,00<span class="o">]</span>
+</code></pre></div>
+<ul>
+<li>É o "Editar gestão" da central do sócio. <code>salario-minimo</code> e <code>teto-inss</code> usam os valores
+  vigentes que a Contabilizei informa; <code>personalizado</code> aceita qualquer valor a partir do
+  salário mínimo; <code>inteligente</code> deixa a Contabilizei calcular o valor todo mês, com um piso
+  opcional (<code>--minimo</code>).</li>
+<li>Se o sócio era o último na gestão inteligente, a empresa sai dela; com outros sócios nela,
+  a empresa continua. A CLI avisa no resumo.</li>
+<li><strong>A partir de quando vale</strong>: a Contabilizei decide pela data (a CLI não manda competência).
+  Até o fechamento do mês (em geral o dia 25) a mudança vale para o mês atual; depois, para o
+  seguinte. Quando o painel diz que o mês está fechado, a CLI avisa.</li>
+<li>Risco alto: muda o INSS, o IRRF e o Fator R. A CLI mostra o antes e o depois e pede que
+  você digite <code>confirmo</code>. Dá para mudar de novo enquanto o mês estiver aberto.</li>
+<li>Depois do envio, a CLI relê a central e mostra a gestão e o valor; <code>enviado</code> quer dizer que
+  a gestão relida ainda não é a pedida.</li>
+<li>Aceita <code>--yes</code> e <code>--dry-run</code> (ver <a href="../escrita/">Escrita</a>).</li>
+</ul>
+<h2 id="pro-labore-zerado-nos-meses-sem-faturamento">Pró-labore zerado nos meses sem faturamento<a class="headerlink" href="#pro-labore-zerado-nos-meses-sem-faturamento" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>prolabore<span class="w"> </span>zerar-sem-faturamento<span class="w"> </span>on
+ctbz<span class="w"> </span>prolabore<span class="w"> </span>zerar-sem-faturamento<span class="w"> </span>off
+</code></pre></div>
+<ul>
+<li>É a chave "Não quero ter pró-labore cadastrado em meses sem faturamento" da central de
+  pró-labore, que vale para todos os sócios. O estado atual aparece em <code>ctbz prolabore -o json</code>
+  (<code>zerar</code> na resposta deste comando).</li>
+<li>Ligada, nos meses sem faturamento os sócios ficam sem pró-labore e <strong>não contribuem para o
+  INSS</strong>, o que conta para aposentadoria e auxílios. Por isso <code>on</code> é de risco alto (<code>confirmo</code>)
+  e <code>off</code>, de risco médio.</li>
+<li>Numa empresa na gestão inteligente, <code>on</code> usa a variante do painel que vale a partir deste
+  mês e não altera os meses passados.</li>
+<li>Se a preferência já estiver no estado pedido, nada é enviado.</li>
+<li>Ainda não se sabe se <code>off</code> desfaz a variante da gestão inteligente; confira com
+  <code>ctbz prolabore</code> depois.</li>
+</ul>
+<h2 id="gestao-inteligente-calculo-automatico">Gestão inteligente (cálculo automático)<a class="headerlink" href="#gestao-inteligente-calculo-automatico" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>prolabore<span class="w"> </span>gestao-inteligente<span class="w"> </span>ativar
+ctbz<span class="w"> </span>prolabore<span class="w"> </span>gestao-inteligente<span class="w"> </span>sair
+</code></pre></div>
+<ul>
+<li>Na gestão inteligente, a Contabilizei define o pró-labore de todos os sócios todo mês para
+  manter o Fator R no melhor ponto (ver <a href="#fator-r">Fator R</a>).</li>
+<li><code>ativar</code> só envia se a empresa for elegível (<code>elegivelNoMotor</code> da central de pró-labore).</li>
+<li><code>sair</code> tira a empresa do cálculo automático: a partir daí os sócios ajustam o pró-labore
+  todo mês, até o penúltimo dia do mês, para valer no mês seguinte (<code>ctbz prolabore definir</code>).</li>
+<li>A empresa conta como "na gestão inteligente" quando a central diz <code>INTELIGENTE</code> ou os
+  parâmetros dizem que ela está no motor do Fator R. Se ela já estiver no estado pedido, nada é
+  enviado.</li>
+<li>Risco alto: muda quem decide o valor do pró-labore. Ainda não se sabe se <code>ativar</code> desfaz um
+  <code>sair</code> sem passar pelo questionário de preferências do painel; a CLI relê o estado e mostra
+  <code>enviado</code> quando a mudança ainda não aparece.</li>
+</ul>
+<h2 id="historico">Histórico<a class="headerlink" href="#historico" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>prolabore<span class="w"> </span>historico<span class="w">               </span><span class="c1"># todos os sócios, todo o histórico</span>
+ctbz<span class="w"> </span>prolabore<span class="w"> </span>historico<span class="w"> </span>--ano<span class="w"> </span><span class="m">2026</span>
+ctbz<span class="w"> </span>prolabore<span class="w"> </span>historico<span class="w"> </span>--socio<span class="w"> </span>ID<span class="w">    </span><span class="c1"># ID de "ctbz prolabore -o json"</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Competência  Sócio          Pró-labore  Descontos
+07/2026      FULANO DE TAL  R$ 1.621,00  R$ 178,31
+</code></pre></div>
+<p>A API devolve o histórico inteiro de um sócio de uma vez (não aceita ano nem página); a CLI
+consulta cada sócio e filtra por <code>--ano</code>. Os descontos são o INSS e o IRRF retidos.</p>
+<h2 id="parametros-de-calculo">Parâmetros de cálculo<a class="headerlink" href="#parametros-de-calculo" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>prolabore<span class="w"> </span>parametros
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Salário mínimo:               R$ 1.621,00
+Alíquota do INSS (%):         11
+Contribuição máxima ao INSS:  R$ 932,31
+Pró-labore no teto do INSS:   R$ 8.475,55
+IRRF a partir de:             R$ 5.000,00
+</code></pre></div>
+<ul>
+<li>O pró-labore não pode ser menor que o salário mínimo.</li>
+<li>O sócio contribui com 11% de INSS até o teto; acima do pró-labore no teto, a contribuição
+  não aumenta.</li>
+<li>Abaixo do valor de incidência, não há IRRF retido.</li>
+</ul>
+<h2 id="fator-r">Fator R<a class="headerlink" href="#fator-r" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>prolabore<span class="w"> </span>fator-r
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Motor do Fator R:      sim
+Fator R (%):           28.75
+Pró-labore 12 meses:   R$ 27.600,00
+Faturamento 12 meses:  R$ 96.000,00
+Simulador:             DISPONIVEL
+Atividades:
+  CNAE       Atividade                                       Anexos    Alíquotas                                     Anexo fixo
+  6311-90/0  Tratamento de dados, provedores de serviços d…  V ou III  Alíquota inicial de 6% ou 15,5%; Alíquota 6%  sim
+</code></pre></div>
+<ul>
+<li><strong>Fator R</strong> = pró-labore ÷ faturamento dos últimos 12 meses. A partir de 28%, as atividades
+  sujeitas a ele saem do Anexo V (alíquota inicial de 15,5%) para o Anexo III (6%).</li>
+<li><strong>Motor do Fator R</strong> indica que a Contabilizei ajusta o pró-labore todo mês para manter o
+  Fator R no melhor ponto.</li>
+<li><code>anexos</code> mostra em quais anexos cada atividade pode ser tributada; <code>anexo_fixo</code> diz se
+  alguma delas não depende do Fator R.</li>
+<li>O simulador do painel é só consultado: simular cenários continua sendo feito por lá.</li>
+</ul>
+<h2 id="distribuicao-de-lucros">Distribuição de lucros<a class="headerlink" href="#distribuicao-de-lucros" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>lucros
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Exercício:               2025
+Saldo na empresa:        R$ 5.000,00
+Total distribuído:       R$ 3.000,00
+Adiantamentos:           R$ 0,00
+Limite para distribuir:  R$ 8.000,00
+Exercício fechado:       sim
+Pode alterar:            não
+Data limite:             31/03/2026
+Pendência documental:    não
+Débitos federais:        não
+Reabertura do balanço:   NENHUM
+Por sócio:
+  Sócio          Valor        Percentual  ID
+  FULANO DE TAL  R$ 3.000,00  100         1000000000000001
+</code></pre></div>
+<ul>
+<li>O exercício é o que a Contabilizei tem aberto para distribuição; a API não aceita outro
+  ano. Sem exercício aberto, as restrições mostradas são as do ano anterior (como no painel).</li>
+<li><strong>Restrições</strong>: pendências documentais e débitos federais impedem o informe de
+  rendimentos; <code>reabertura_balanco</code> mostra se há um pedido de reabertura do balanço em
+  andamento.</li>
+</ul>
+<h3 id="registrar-a-distribuicao">Registrar a distribuição<a class="headerlink" href="#registrar-a-distribuicao" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>lucros<span class="w"> </span>distribuir<span class="w"> </span>--socio<span class="w"> </span><span class="nv">1000000000000001</span><span class="o">=</span><span class="m">60</span>%<span class="w"> </span>--socio<span class="w"> </span><span class="nv">1000000000000002</span><span class="o">=</span><span class="m">40</span>%
+ctbz<span class="w"> </span>lucros<span class="w"> </span>distribuir<span class="w"> </span>--socio<span class="w"> </span><span class="nv">1000000000000001</span><span class="o">=</span><span class="m">30000</span>,00<span class="w"> </span>--socio<span class="w"> </span><span class="nv">1000000000000002</span><span class="o">=</span><span class="m">20000</span>,00
+</code></pre></div>
+<ul>
+<li>Diz quanto do lucro do exercício cabe a cada sócio no informe de rendimentos. Os IDs estão
+  em <code>ctbz lucros</code> (o <code>id</code> de cada sócio); cada <code>--socio</code> aceita um percentual (<code>60%</code>, <code>33,33%</code>) ou um valor
+  em reais. Os sócios não citados ficam com zero.</li>
+<li>A soma precisa ser o <strong>lucro total</strong> do exercício: o saldo na empresa mais o já distribuído
+  (a regra do painel). A CLI calcula em centavos; quando os percentuais não fecham por
+  arredondamento, o centavo de diferença vai para o último sócio citado em percentual.</li>
+<li>A CLI recusa sem exercício aberto, quando o painel não deixa alterar (com o motivo), depois
+  da data limite e com restrições no informe (pendência documental ou débitos federais).</li>
+<li>Risco alto: são os rendimentos isentos que os sócios declaram no IRPF. A CLI mostra a parte
+  de cada um e pede <code>confirmo</code>. Dá para refazer enquanto a distribuição puder ser alterada.</li>
+<li>Depois do envio, a CLI relê a distribuição: <code>registrado</code> quando o valor relido é o enviado,
+  <code>enviado</code> quando ainda não.</li>
+<li>O formato dos sócios na distribuição (<code>lucrosSocios</code>) não foi visto com dados reais
+  (<a href="https://github.com/edusouza/ctbz-cli/issues/147">#147</a>); sem sócios listados, a CLI pede
+  para distribuir pelo painel.</li>
+</ul>
+<h2 id="informe-de-rendimentos-dos-socios">Informe de rendimentos dos sócios<a class="headerlink" href="#informe-de-rendimentos-dos-socios" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>lucros<span class="w"> </span>informe<span class="w">              </span><span class="c1"># ano anterior (o da declaração de IR)</span>
+ctbz<span class="w"> </span>lucros<span class="w"> </span>informe<span class="w"> </span>--ano<span class="w"> </span><span class="m">2025</span><span class="w"> </span>-o<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>informe-2025.csv
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Ano   Sócio          CPF             Rendimentos tributáveis  Previdência (INSS)  IRRF retido  13º salário  IRRF sobre o 13º  Lucros isentos
+2025  FULANO DE TAL  000.000.000-00              R$ 19.452,00          R$ 2.139,72      R$ 0,00      R$ 0,00           R$ 0,00    R$ 50.000,00
+</code></pre></div>
+<ul>
+<li>São os valores do comprovante de rendimentos que cada sócio usa na declaração de IR:
+  rendimentos tributáveis (pró-labore), INSS, IRRF, 13º e lucros isentos.</li>
+<li>O painel monta o PDF do comprovante no navegador a partir desses valores; a API não
+  oferece o PDF, por isso a CLI entrega os números (use <code>-o csv</code> ou <code>-o json</code> para guardar).</li>
+<li>O formato vem do código do painel: a conta usada no desenvolvimento não tinha informes.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

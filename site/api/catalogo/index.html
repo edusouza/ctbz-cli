@@ -1,0 +1,5856 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Opere a Contabilizei pela linha de comando.">
+      
+      
+      
+      
+        <link rel="prev" href="../endpoints-verificados/">
+      
+      
+        <link rel="next" href="../notas-fiscais/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Catálogo - ctbz — CLI para a Contabilizei</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#catalogo-de-endpoints-gerado" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../.." title="ctbz — CLI para a Contabilizei" class="md-header__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ctbz — CLI para a Contabilizei
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Catálogo
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ctbz — CLI para a Contabilizei" class="md-nav__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ctbz — CLI para a Contabilizei
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de uso
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guia de uso
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guia/impostos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guia/pendencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências, rotinas e atendimento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guia/mensalidade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mensalidade e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guia/notas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guia/prolabore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pró-labore e lucros
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guia/contabil/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guia/documentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentos e certificado
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guia/escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ações que alteram dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência de comandos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Autenticação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Autenticação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/01-credenciais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credenciais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/02-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Código OTP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/03-selecao-de-empresa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Seleção de empresa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/04-sessao-e-cookies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessão e cookies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../otp-automatico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OTP automático
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../endpoints-verificados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Endpoints verificados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catálogo
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catálogo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#apiplataforma-318" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        /api/plataforma/ (318)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/plataforma/ (318)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        api
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appbar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        appbar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#atendimento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        atendimento
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ativacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ativacao
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#autopilot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        autopilot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#billing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        billing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caixa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        caixa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cartoes-de-credito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cartoes-de-credito
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#central-rotinas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        central-rotinas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        certificado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificado-digital" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        certificado-digital
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checklist-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        checklist-onboarding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conciliacao-fiscal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        conciliacao-fiscal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conta-bancaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        conta-bancaria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conta-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        conta-usuario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contabancaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        contabancaria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contrato" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        contrato
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-sell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cross-sell
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dadosempresa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dadosempresa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dashboard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        documentos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#empresa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        empresa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#empresa-inativa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        empresa-inativa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#escritorio-virtual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        escritorio-virtual
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#experience-enhancement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        experience-enhancement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#experts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        experts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fintech" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fintech
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#home" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        home
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hubspot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hubspot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#impostos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        impostos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inadimplencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        inadimplencia
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#informerendimento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        informerendimento
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loans" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        loans
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#movimentacao-financeira" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        movimentacao-financeira
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notafiscal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        notafiscal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#novo-emissor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        novo-emissor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oferta-conta-integracao-bs2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        oferta-conta-integracao-bs2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onboarding-plataforma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        onboarding-plataforma
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pagamento-cartao-credito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pagamento-cartao-credito
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parametrosempresa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        parametrosEmpresa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        payments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#planos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        planos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prolabore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        prolabore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#questionario-preferencia-prolabore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        questionario-preferencia-prolabore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relatorios-ms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        relatorios-ms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retencao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retencao
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simulador-impostos-avancado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        simulador-impostos-avancado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#socio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        socio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upload-documentos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upload-documentos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upsell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upsell
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apilegado-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        /api/legado/ (11)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/legado/ (11)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#contrato_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        contrato
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#empresa_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        empresa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evento-tour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        evento-tour
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nota" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        nota
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notafiscal_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        notafiscal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#socio_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        socio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zendesk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        zendesk
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apimultiusuario-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        /api/multiusuario/ (4)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/multiusuario/ (4)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#invites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        invites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usuarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        usuarios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usuarios-e-invites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        usuarios-e-invites
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apileadshubspot-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        /api/leads/hubspot/ (2)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/leads/hubspot/ (2)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#send" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        send
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#track-event" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        track-event
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notas-fiscais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_5" id="__nav_6_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Escrita
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Escrita
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../escrita/pendencias-e-conta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências e conta
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../escrita/impostos-e-pagamentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../escrita/contabilidade-e-documentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade e documentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../escrita/notas-e-prolabore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas e pró-labore
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Front-end
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Desenvolvimento
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Desenvolvimento
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura da CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contratos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testes de contrato
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../monitoramento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoramento da API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribuindo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contribuindo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../metodologia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metodologia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisões (ADRs)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0001-registrar-decisoes-em-adrs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0001 Registrar decisões
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0002-somente-leitura-ate-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0002 Somente leitura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0003-versionamento-e-changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0003 Versionamento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0004-branches-empilhadas-e-prs-por-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0004 Branches e PRs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0005-documentacao-em-github-pages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0005 Documentação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0006-saida-padronizada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0006 Saída padronizada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0007-login-sessao-e-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0007 Login e sessão
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0008-cobra-para-a-arvore-de-comandos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0008 Cobra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0009-camada-api-tipada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0009 Camada api
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0010-testes-de-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0010 Contratos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0011-fixtures-podadas-ao-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0011 Fixtures podadas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0012-prazos-e-alertas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0012 Prazos e alertas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0013-sem-retentativa-com-fonte-alternativa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0013 Sem retentativa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0014-ci-no-github-actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0014 CI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0015-releases-com-goreleaser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0015 Releases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0016-monitoramento-agendado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0016 Monitoramento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0017-contrato-publico-da-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0017 Contrato da 1.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0018-escrita-com-confirmacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0018 Escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0019-camada-de-escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0019 Camada de escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0020-confirmacao-e-simulacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0020 Confirmação e simulação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0021-tipos-e-fixtures-sinteticos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0021 Fixtures sintéticas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0022-classificacao-de-notas-de-entrada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0022 Classificação de notas de entrada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#apiplataforma-318" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        /api/plataforma/ (318)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/plataforma/ (318)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        api
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#appbar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        appbar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#atendimento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        atendimento
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ativacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ativacao
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#autopilot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        autopilot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#billing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        billing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caixa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        caixa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cartoes-de-credito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cartoes-de-credito
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#central-rotinas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        central-rotinas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        certificado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#certificado-digital" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        certificado-digital
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checklist-onboarding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        checklist-onboarding
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conciliacao-fiscal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        conciliacao-fiscal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conta-bancaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        conta-bancaria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conta-usuario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        conta-usuario
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contabancaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        contabancaria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contrato" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        contrato
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-sell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cross-sell
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dadosempresa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dadosempresa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        dashboard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        documentos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#empresa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        empresa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#empresa-inativa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        empresa-inativa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#escritorio-virtual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        escritorio-virtual
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#experience-enhancement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        experience-enhancement
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#experts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        experts
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fintech" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        fintech
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#home" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        home
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hubspot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        hubspot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#impostos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        impostos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inadimplencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        inadimplencia
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#informerendimento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        informerendimento
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loans" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        loans
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#menu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        menu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#movimentacao-financeira" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        movimentacao-financeira
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notafiscal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        notafiscal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#novo-emissor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        novo-emissor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oferta-conta-integracao-bs2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        oferta-conta-integracao-bs2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onboarding-plataforma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        onboarding-plataforma
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pagamento-cartao-credito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        pagamento-cartao-credito
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parametrosempresa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        parametrosEmpresa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#payments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        payments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#planos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        planos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prolabore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        prolabore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#questionario-preferencia-prolabore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        questionario-preferencia-prolabore
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relatorios-ms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        relatorios-ms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retencao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        retencao
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simulador-impostos-avancado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        simulador-impostos-avancado
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#socio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        socio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upload-documentos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upload-documentos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upsell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        upsell
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apilegado-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        /api/legado/ (11)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/legado/ (11)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#contrato_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        contrato
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#empresa_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        empresa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evento-tour" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        evento-tour
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nota" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        nota
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notafiscal_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        notafiscal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#socio_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        socio
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#zendesk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        zendesk
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apimultiusuario-4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        /api/multiusuario/ (4)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/multiusuario/ (4)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#invites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        invites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usuarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        usuarios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usuarios-e-invites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        usuarios-e-invites
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apileadshubspot-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        /api/leads/hubspot/ (2)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="/api/leads/hubspot/ (2)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#send" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        send
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#track-event" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        track-event
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="catalogo-de-endpoints-gerado">Catálogo de endpoints (gerado)<a class="headerlink" href="#catalogo-de-endpoints-gerado" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Gerado por <code>scripts/extrair-endpoints.py</code> em 2026-10-03 a partir de 165 arquivos JavaScript do painel. 335 chamadas encontradas.</p>
+<p>A base de cada chamada é inferida pela instância axios usada no código; caminhos terminados em <code>/</code> ou <code>=</code> recebem parâmetros concatenados pelo front.
+Endpoints já testados estão em <a href="../endpoints-verificados/">endpoints-verificados.md</a>.</p>
+</blockquote>
+<p>Bases declaradas no front: <code>/api/fintech/</code>, <code>/api/leads/hubspot/</code>, <code>/api/legado/</code>, <code>/api/multiusuario/</code>, <code>/api/pagamentos/</code>, <code>/api/plataforma/</code>, <code>/api/public/</code></p>
+<h2 id="apiplataforma-318"><code>/api/plataforma/</code> (318)<a class="headerlink" href="#apiplataforma-318" title="Permanent link">&para;</a></h2>
+<h3 id="api">api<a class="headerlink" href="#api" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/api/pagamentos-fintech/card-cobranca</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>api/pagamentos-fintech/card-impostos</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="appbar">appbar<a class="headerlink" href="#appbar" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>appbar/get</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="atendimento">atendimento<a class="headerlink" href="#atendimento" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>atendimento/chamados?em-andamento=true</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>atendimento/chamados?finalizados=true</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="ativacao">ativacao<a class="headerlink" href="#ativacao" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/ativacao/timeline/aceite/mfa-gov</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>ativacao/timeline</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>ativacao/timeline/finalizar</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>ativacao/timeline/finish-step-plano-saude</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>ativacao/timeline/salvar-interacao</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="autopilot">autopilot<a class="headerlink" href="#autopilot" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DELETE</td>
+<td><code>/autopilot/clientes/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/autopilot/clientes/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/autopilot/clientes/consulta/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="billing">billing<a class="headerlink" href="#billing" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>billing/gestao-pagamentos/get-client-key</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="caixa">caixa<a class="headerlink" href="#caixa" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>caixa/lancamentousuario/novo/</code></td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>caixa/lancamentousuario/remover/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>caixa/listpaginada/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="cartoes-de-credito">cartoes-de-credito<a class="headerlink" href="#cartoes-de-credito" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/cartoes-de-credito/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>cartoes-de-credito/gestao-pagamentos</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>cartoes-de-credito/gestao-pagamentos</code></td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>cartoes-de-credito/gestao-pagamentos/</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>cartoes-de-credito/gestao-pagamentos/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="central-rotinas">central-rotinas<a class="headerlink" href="#central-rotinas" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>central-rotinas/aceitar-carta-responsabilidade</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>central-rotinas/aceitar-termo-aceite-tp</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>central-rotinas/aceitar-termo-debitos</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>central-rotinas/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>central-rotinas/resolver-pendencia-procuracao-ecac</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="certificado">certificado<a class="headerlink" href="#certificado" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/certificado/agendamento-contabilizei/horario</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>certificado/agendamento-contabilizei</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/agendamento-contabilizei/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>certificado/agendamento-contabilizei/senha</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/agendamento/dados-cliente</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>certificado/agendamento/dados-cliente</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/bird-id/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/checkout</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/download</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>certificado/emitir-certificado</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/emitir-certificado/aguarde/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/emitir-certificado/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/emitir-certificado/status</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/fluxo-configurar-certificado/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/fluxo-one-click/alterarParametroEmpresa</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>certificado/fluxo-one-click/bird-id/emitir-certificado</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/fluxo-one-click/bird-id/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>certificado/fluxo-one-click/bird-id/valida-senha</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/fluxo-one-click/sucesso/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/pre-checkout</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/processo-aquisicao/agendamento/init</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>certificado/processo-aquisicao/etapa</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/processo-aquisicao/status</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/senha</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/solicitacao-certificado/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado/status</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="certificado-digital">certificado-digital<a class="headerlink" href="#certificado-digital" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>certificado-digital/v2/agendar-atendimento</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado-digital/v2/buscar-horarios-agendamento</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>certificado-digital/v2/cancelar-solicitacao</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado-digital/v2/consultar-status-solicitacao-criada</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>certificado-digital/v2/emitir-certificado</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>certificado-digital/v2/emitir-certificado-com-senha</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>certificado-digital/v2/informar-cnh</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado-digital/v2/iniciar-atendimento-expresso</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado-digital/v2/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado-digital/v2/pontos-atendimento/buscar</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado-digital/v2/pontos-atendimento/buscar-bairros</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado-digital/v2/pontos-atendimento/buscar-cidades</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado-digital/v2/reiniciar-atendimento</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>certificado-digital/v2/salvar-aceite</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>certificado-digital/v2/solicitar-atendimento-pendencia</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>certificado-digital/v2/tipo-atendimento</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>certificado-digital/v2/verificar-rollout</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="checklist-onboarding">checklist-onboarding<a class="headerlink" href="#checklist-onboarding" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/checklist-onboarding/aside/concluir-etapa</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/checklist-onboarding/aside/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/checklist-onboarding/aside/trilha/</code></td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>/checklist-onboarding/exibir-primeiros-passos/dispensar</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/checklist-onboarding/procuracoes/compartilhamentos</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/checklist-onboarding/pular-tarefas</code></td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>/checklist-onboarding/reativar-tarefas</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/checklist-onboarding/tooltip/guia-inicio/concluir</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="conciliacao-fiscal">conciliacao-fiscal<a class="headerlink" href="#conciliacao-fiscal" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PATCH</td>
+<td><code>conciliacao-fiscal/conciliar/alerta-receitas/fechar</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>conciliacao-fiscal/conciliar/recebimentos</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>conciliacao-fiscal/conciliar/receitas</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>conciliacao-fiscal/conciliar/resolver-pendencia</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>conciliacao-fiscal/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>conciliacao-fiscal/pendencia/detalhes</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>conciliacao-fiscal/pendencias</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>conciliacao-fiscal/reclassificacao/consulta-periodo</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>conciliacao-fiscal/v2/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>conciliacao-fiscal/v2/pendencias</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>conciliacao-fiscal/versao-experiencia</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="conta-bancaria">conta-bancaria<a class="headerlink" href="#conta-bancaria" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>conta-bancaria/bs2</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="conta-usuario">conta-usuario<a class="headerlink" href="#conta-usuario" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>conta-usuario/alterar-dados</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>conta-usuario/alterar-senha</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>conta-usuario/enviar-token-otp</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>conta-usuario/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>conta-usuario/qr-code-aplicativo-autenticacao</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>conta-usuario/validar-codigo-app</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="contabancaria">contabancaria<a class="headerlink" href="#contabancaria" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/contabancaria/detalhes-da-conta/saldo/</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/contabancaria/divergencia/atualizar-conta</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/contabancaria/divergencia/cadastrar-conta</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>contabancaria/detalhes-da-conta/init/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>contabancaria/divergencia/init/</code></td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>contabancaria/excluir/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>contabancaria/list</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>contabancaria/salvar</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="contrato">contrato<a class="headerlink" href="#contrato" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/contrato/buscarContratoServico</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/contrato/empresaSemContratosComFaturaGeradaPeloAdmin</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>contrato/buscarContratoServico/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>contrato/empresaSemContratosComFaturaGeradaPeloAdmin/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="cross-sell">cross-sell<a class="headerlink" href="#cross-sell" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>cross-sell/multibeneficios/cms/v1/landing-upsell</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>cross-sell/multibeneficios/coachmark/v1/beneficios</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>cross-sell/multibeneficios/modal/v2/beneficios</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>cross-sell/multibeneficios/v1/beneficio/jornada/termo-adesao/assinar</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>cross-sell/multibeneficios/v1/beneficios/escolher</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>cross-sell/multibeneficios/v1/beneficios/guard?urlDestino=</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>cross-sell/multibeneficios/v2/beneficio/detalhes?idBeneficio=</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>cross-sell/multibeneficios/v2/beneficio/jornada/termo-adesao?idBeneficio=</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>cross-sell/multibeneficios/v2/beneficio/jornada?idBeneficio=</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>cross-sell/multibeneficios/v2/beneficios</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>cross-sell/multibeneficios/v2/beneficios/escolhidos</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>cross-sell/simulador/enviar-contato</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>cross-sell/simulador/plano-saude/hubspot/enviar-evento</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>cross-sell/simulador/planos-saude/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>cross-sell/simulador/planos-saude/prestadores</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>cross-sell/simulador/planos-saude/resultados/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>cross-sell/simular</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>cross-sell/simular/busca-cidade</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>cross-sell/v2/simulador/planos-saude/prestadores</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>cross-sell/v2/simular</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="dadosempresa">dadosempresa<a class="headerlink" href="#dadosempresa" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/dadosempresa/existeContaCadastrada</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>dadosempresa/get</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="dashboard">dashboard<a class="headerlink" href="#dashboard" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/dashboard/cross-upsell/vitrine</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/dashboard/fatura</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/dashboard/rotinas-mensais</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/dashboard/situacao-app</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>dashboard/card-certificado</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>dashboard/informerendimento/debitos-federais</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>dashboard/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>dashboard/interacao-notificacao</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>dashboard/primeiros-passos</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>dashboard/produto/plano-de-saude/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>dashboard/prolabore</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>dashboard/v1/central-rotinas</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>dashboard/v1/mensalidade</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>dashboard/v2/central-rotinas</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>dashboard/v2/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>dashboard/v2/notas-fiscais/salvar-clique-emitir</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>dashboard/v2/prolabore/salvar-decisao</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>dashboard/v2/termo-exclusao</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="documentos">documentos<a class="headerlink" href="#documentos" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/documentos/listar-enviados?</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/documentos/tipos/init?area=</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>documentos/envio-documento/enviar/sem-arquivo</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>documentos/envio-documento/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>documentos/reclassificar</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>documentos/reclassificar/init</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="empresa">empresa<a class="headerlink" href="#empresa" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DELETE</td>
+<td><code>empresa/certificado/removercert</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>empresa/dadosacesso/atualizarDadosAcesso</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>empresa/dadosacesso/confirmar-credencial-prefeitura-valida</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>empresa/dadosacesso/init</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="empresa-inativa">empresa-inativa<a class="headerlink" href="#empresa-inativa" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/empresa-inativa/permite-registrar-solicitacao</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/empresa-inativa/registrar-solicitacao</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="escritorio-virtual">escritorio-virtual<a class="headerlink" href="#escritorio-virtual" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PUT</td>
+<td><code>escritorio-virtual/autorizar-recebimento/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>escritorio-virtual/endereco-entrega</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>escritorio-virtual/gerar-link-download-comprovante/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>escritorio-virtual/gerar-link-download-correspondencia/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>escritorio-virtual/pesquisarEndereco/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>escritorio-virtual/recuperar-mensagens</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>escritorio-virtual/salvar-endereco-correspondencia</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>escritorio-virtual/verifica-autorizacao-recebimento</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="experience-enhancement">experience-enhancement<a class="headerlink" href="#experience-enhancement" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>experience-enhancement/pode-exibir-flow-cnpj</code></td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>experience-enhancement/salvar-exibicao-cnpj</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="experts">experts<a class="headerlink" href="#experts" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>experts/cashflow/dashboard</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>experts/cashflow/notas-fiscais</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>experts/cashflow/notas-fiscais?mes=</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>experts/cashflow/pagamentos?mes=</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>experts/cashflow/status</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="fintech">fintech<a class="headerlink" href="#fintech" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>fintech/conta-digital/aceite?origem=</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>fintech/conta-digital/aceite?origem=pagamento-recorrente</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>fintech/conta-digital/aceite?origem=timeline</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>fintech/conta-digital/dashboard</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>fintech/conta-digital/desistir</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>fintech/conta-digital/lead-atendimento</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>fintech/conta-digital/notificacao-conclusao</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>fintech/metodos-pagamento-impostos/init</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="home">home<a class="headerlink" href="#home" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PUT</td>
+<td><code>/home/pagtoplano/atualizar-plano</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>home/nps</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>home/pendencia/pendenciasEmpresa</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="hubspot">hubspot<a class="headerlink" href="#hubspot" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>hubspot/enviar</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="impostos">impostos<a class="headerlink" href="#impostos" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>impostos/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/como-imposto-foi-calculado/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/como-imposto-foi-calculado/tabela-irrf</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/impostos-a-pagar/</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>impostos/impostos-a-pagar/memoria-de-calculo-visualizada</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/parcelamento/banner-oferta-parcelamento</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/parcelamento/detalhes/</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>impostos/parcelamento/negociacao-automatica/pgfn-nao-previdenciario/contratar</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/parcelamento/negociacao-automatica/pgfn-nao-previdenciario/detalhes/init/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/parcelamento/negociacao-automatica/pgfn-nao-previdenciario/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>impostos/parcelamento/negociacao-automatica/pgfn-previdenciario/contratar</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/parcelamento/negociacao-automatica/pgfn-previdenciario/detalhes/init/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/parcelamento/negociacao-automatica/pgfn-previdenciario/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>impostos/parcelamento/negociacao-automatica/pgfn-simples-nacional/contratar</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/parcelamento/negociacao-automatica/pgfn-simples-nacional/detalhes/init/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/parcelamento/negociacao-automatica/pgfn-simples-nacional/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>impostos/parcelamento/negociacao-automatica/simples-nacional/contratar</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/parcelamento/negociacao-automatica/simples-nacional/detalhes/init/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/parcelamento/negociacao-automatica/simples-nacional/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>impostos/parcelamento/negociacao-especializada/contratar</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/parcelamento/negociacao-especializada/detalhes/init/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/parcelamento/negociacao-especializada/init?tipoNegociacao=</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/parcelamento/regularize-seus-impostos/init?tipoNegociacao=</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/rollout</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/v2/historico-impostos/guia/</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>impostos/v2/historico-impostos/guia/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/v2/historico-impostos/guias</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/v2/historico-impostos/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/v2/historico-impostos/parcela/</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>impostos/v2/impostos-a-pagar/guia/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/v2/impostos-a-pagar/recalculo/init?idGuia=</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/v3/impostos-a-pagar/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/v3/impostos-a-pagar/guia/</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>impostos/v3/impostos-a-pagar/guia/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/v3/impostos-a-pagar/parcela/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/v5/impostos-a-pagar/banners</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/v5/impostos-a-pagar/guia/</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>impostos/v5/impostos-a-pagar/guia/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/v5/impostos-a-pagar/guias</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>impostos/v5/impostos-a-pagar/init</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="inadimplencia">inadimplencia<a class="headerlink" href="#inadimplencia" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>inadimplencia/consultasituacaomensalidadeempresa</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="informerendimento">informerendimento<a class="headerlink" href="#informerendimento" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>informerendimento/aceitar-carta-responsabilidade/</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>informerendimento/aceitar-termo-debitos/</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>informerendimento/aceite/</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>informerendimento/historico</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>informerendimento/listSocioInformeRendimentos/</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>informerendimento/reabrir-balanco/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>informerendimento/recuperardadosdistribuicaocliente</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>informerendimento/salvarconfiguracaocliente</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>informerendimento/v2/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>informerendimento/visualizar-carta-responsabilidade/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="loans">loans<a class="headerlink" href="#loans" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>loans/aceite-oferta-dash/OFERTA_LOANS_FINTECH</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="menu">menu<a class="headerlink" href="#menu" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>menu/get</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="movimentacao-financeira">movimentacao-financeira<a class="headerlink" href="#movimentacao-financeira" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PUT</td>
+<td><code>/movimentacao-financeira/classificar</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/movimentacao-financeira/desmembrar</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/movimentacao-financeira/redirecionarNovoCaixaExtrato</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/movimentacao-financeira/v2/extratos</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>movimentacao-financeira/contas-usuario/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>movimentacao-financeira/contasUsuario</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>movimentacao-financeira/eventoUploadExtrato</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>movimentacao-financeira/getContaBancaria</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>movimentacao-financeira/info-extrato/</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>movimentacao-financeira/interagiu-modal-integracao</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>movimentacao-financeira/permiteImportacao/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="notafiscal">notafiscal<a class="headerlink" href="#notafiscal" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/notafiscal/emitir/tomador/list/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>notafiscal/listaliquotaatividade</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="novo-emissor">novo-emissor<a class="headerlink" href="#novo-emissor" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/novo-emissor/assistente-nbs/session</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/novo-emissor/assistente-nbs/session</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/novo-emissor/emissao/atividades</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/novo-emissor/emissao/cancelar/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/novo-emissor/listagem/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/novo-emissor/listagem/notas</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/novo-emissor/v2/emissao/atividades/cindop?</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/novo-emissor/v2/emissao/atividades/codigo-municipal?codigoIbge=</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/novo-emissor/v2/feature-flag</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/novo-emissor/v2/registro/atividades</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/novo-emissor/v2/tipo-emissor-disponivel</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/novo-emissor/v2/trilhas-empresa</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="oferta-conta-integracao-bs2">oferta-conta-integracao-bs2<a class="headerlink" href="#oferta-conta-integracao-bs2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/oferta-conta-integracao-bs2</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/oferta-conta-integracao-bs2</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="onboarding-plataforma">onboarding-plataforma<a class="headerlink" href="#onboarding-plataforma" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>onboarding-plataforma/rollout</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="pagamento-cartao-credito">pagamento-cartao-credito<a class="headerlink" href="#pagamento-cartao-credito" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>pagamento-cartao-credito/faturas</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>pagamento-cartao-credito/pagar</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="parametrosempresa">parametrosEmpresa<a class="headerlink" href="#parametrosempresa" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/parametrosEmpresa/list/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="payments">payments<a class="headerlink" href="#payments" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>payments/aceite-termo-recorrencia</code></td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>payments/cartao/</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>payments/cartao/adicionar</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>payments/recorrencia/ativar</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>payments/recorrencia/ativar-conta-com-termo</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>payments/recorrencia/desativar</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>payments/recorrencia/historico</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>payments/recorrencia/init</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="planos">planos<a class="headerlink" href="#planos" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>planos/aceite-plano-manutencao</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="prolabore">prolabore<a class="headerlink" href="#prolabore" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>prolabore/assessor/abandonar-fluxo</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>prolabore/assessor/escolher-socio/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>prolabore/assessor/init</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>prolabore/assessor/passo</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>prolabore/assessor/passo/</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>prolabore/assessor/rollout</code></td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>prolabore/assessor/socio/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>prolabore/assessor/socio/</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>prolabore/assessor/socio/</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>prolabore/central/empresa/gestao-inteligente</code></td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>prolabore/central/empresa/zerar-prolabore</code></td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>prolabore/central/empresa/zerar-prolabore-gt</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>prolabore/central/gestao/</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>prolabore/central/gestao/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>prolabore/central/historico/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>prolabore/central/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>prolabore/central/rollout</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>prolabore/excluir-empresa-motor-fator-r</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>prolabore/init</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>prolabore/rollout</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>prolabore/viu-dialog-informacao-prolabore</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="questionario-preferencia-prolabore">questionario-preferencia-prolabore<a class="headerlink" href="#questionario-preferencia-prolabore" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>questionario-preferencia-prolabore/decisao-preferencia</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>questionario-preferencia-prolabore/decisao-preferencia</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>questionario-preferencia-prolabore/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>questionario-preferencia-prolabore/salvar-resposta</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="relatorios-ms">relatorios-ms<a class="headerlink" href="#relatorios-ms" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>relatorios-ms/gerar-balancete/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>relatorios-ms/gerarbalanco/</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>relatorios-ms/gerarrazaotipoa/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="retencao">retencao<a class="headerlink" href="#retencao" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/retencao/paywall/salvar-interacao</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="simulador-impostos-avancado">simulador-impostos-avancado<a class="headerlink" href="#simulador-impostos-avancado" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>simulador-impostos-avancado/init</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>simulador-impostos-avancado/simular</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="socio">socio<a class="headerlink" href="#socio" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>socio/dados-logado</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>socio/tipo-dependentes-esocial</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="upload-documentos">upload-documentos<a class="headerlink" href="#upload-documentos" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>upload-documentos/extrato-aplicacao-financeira/enviar/sem-aplicacao-financeira</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>upload-documentos/extrato/enviar/bucket</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>upload-documentos/extrato/v2/init</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="upsell">upsell<a class="headerlink" href="#upsell" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>upsell/simulador/checkpoint</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>upsell/spot</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="apilegado-11"><code>/api/legado/</code> (11)<a class="headerlink" href="#apilegado-11" title="Permanent link">&para;</a></h2>
+<h3 id="contrato_1">contrato<a class="headerlink" href="#contrato_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>contrato/buscarContratoPlanoPagamento/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="empresa_1">empresa<a class="headerlink" href="#empresa_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>empresa/cnpj?cnpj=</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="evento-tour">evento-tour<a class="headerlink" href="#evento-tour" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>evento-tour</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>evento-tour/</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="nota">nota<a class="headerlink" href="#nota" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>nota</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="notafiscal_1">notafiscal<a class="headerlink" href="#notafiscal_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/notafiscal/cnaeanexosmultiplos/list</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/notafiscal/salvaranexosprincipais</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>notafiscal/buscarNotaEmpresa</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>notafiscal/cancelarAPI</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="socio_1">socio<a class="headerlink" href="#socio_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>socio/list</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="zendesk">zendesk<a class="headerlink" href="#zendesk" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>zendesk/artigos?filtro=</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="apimultiusuario-4"><code>/api/multiusuario/</code> (4)<a class="headerlink" href="#apimultiusuario-4" title="Permanent link">&para;</a></h2>
+<h3 id="invites">invites<a class="headerlink" href="#invites" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/invites/enviar</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="status">status<a class="headerlink" href="#status" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/status/servico</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="usuarios">usuarios<a class="headerlink" href="#usuarios" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PUT</td>
+<td><code>/usuarios/ativar</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="usuarios-e-invites">usuarios-e-invites<a class="headerlink" href="#usuarios-e-invites" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/usuarios-e-invites/consultar</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="apileadshubspot-2"><code>/api/leads/hubspot/</code> (2)<a class="headerlink" href="#apileadshubspot-2" title="Permanent link">&para;</a></h2>
+<h3 id="send">send<a class="headerlink" href="#send" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>send</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="track-event">track-event<a class="headerlink" href="#track-event" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>track-event</code></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

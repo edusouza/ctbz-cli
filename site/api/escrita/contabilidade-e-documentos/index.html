@@ -1,0 +1,3837 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Opere a Contabilizei pela linha de comando.">
+      
+      
+      
+      
+        <link rel="prev" href="../impostos-e-pagamentos/">
+      
+      
+        <link rel="next" href="../notas-e-prolabore/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Contabilidade e documentos - ctbz — CLI para a Contabilizei</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#escrita-caixa-extratos-contas-bancarias-contabilidade-documentos-e-certificado" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../../.." title="ctbz — CLI para a Contabilizei" class="md-header__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ctbz — CLI para a Contabilizei
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Contabilidade e documentos
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ctbz — CLI para a Contabilizei" class="md-nav__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ctbz — CLI para a Contabilizei
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de uso
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guia de uso
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/impostos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/pendencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências, rotinas e atendimento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/mensalidade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mensalidade e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/notas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/prolabore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pró-labore e lucros
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/contabil/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/documentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentos e certificado
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ações que alteram dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../referencia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência de comandos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Autenticação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Autenticação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/01-credenciais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credenciais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/02-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Código OTP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/03-selecao-de-empresa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Seleção de empresa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/04-sessao-e-cookies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessão e cookies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../otp-automatico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OTP automático
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../endpoints-verificados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Endpoints verificados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../catalogo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catálogo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notas-fiscais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6_5" id="__nav_6_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Escrita
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Escrita
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pendencias-e-conta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências e conta
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../impostos-e-pagamentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade e documentos
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade e documentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-caixa-e-movimentacao-financeira" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Caixa e movimentação financeira
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Caixa e movimentação financeira">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-post-caixalancamentousuarionovo-criar-e-editar-lancamento-do-caixa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 POST caixa/lancamentousuario/novo/: criar e editar lançamento do caixa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-delete-caixalancamentousuarioremoveranomesidlancamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 DELETE caixa/lancamentousuario/remover/{ano}/{mes}/{idLancamento}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-put-movimentacao-financeiraclassificar-reclassificar-lancamento-de-extrato" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 PUT /movimentacao-financeira/classificar: reclassificar lançamento de extrato
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-put-movimentacao-financeiradesmembrar-dividir-um-lancamento-de-extrato" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 PUT /movimentacao-financeira/desmembrar: dividir um lançamento de extrato
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-delete-movimentacao-financeiradesmembrardesfazeridlancamentopaiidlancamentopaiidlancamentopai-ausente-do-catalogo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 DELETE /movimentacao-financeira/desmembrar/desfazer/{idLancamentoPai}?idLancamentoPai={idLancamentoPai} (ausente do catálogo)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16-delete-movimentacao-financeiraextratoidcontabancariaidanoaaaamesm-ausente-do-catalogo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.6 DELETE /movimentacao-financeira/extrato?idContaBancaria={id}&amp;ano={aaaa}&amp;mes={m} (ausente do catálogo)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#17-post-movimentacao-financeiraeventouploadextrato-concluir-a-importacao-do-extrato" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.7 POST movimentacao-financeira/eventoUploadExtrato: concluir a importação do extrato
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#18-get-movimentacao-financeirapermiteimportacaoidcontabancariaanomes-so-leitura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.8 GET movimentacao-financeira/permiteImportacao/{idContaBancaria}/{ano}/{mes} (só leitura)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#19-post-movimentacao-financeirainteragiu-modal-integracao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.9 POST movimentacao-financeira/interagiu-modal-integracao
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#110-outras-escritas-de-ui-nesta-area" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.10 Outras escritas de UI nesta área
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-extratos-e-contas-bancarias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Extratos e contas bancárias
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Extratos e contas bancárias">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-como-o-arquivo-de-extrato-e-enviado-multipart-direto-ao-bff-sem-url-assinada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Como o arquivo de extrato é enviado: multipart direto ao BFF (sem URL assinada)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-post-upload-documentosextrato-aplicacao-financeiraenviarsem-aplicacao-financeira-nao-tenho-aplicacao-nesta-conta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 POST upload-documentos/extrato-aplicacao-financeira/enviar/sem-aplicacao-financeira ("Não tenho aplicação nesta conta")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-get-upload-documentosextratov2init-so-leitura-ver-21b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 GET upload-documentos/extrato/v2/init: só leitura (ver 2.1b)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-post-contabancariasalvar-cadastrar-ou-editar-conta-bancaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 POST contabancaria/salvar: cadastrar ou editar conta bancária
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-delete-contabancariaexcluiridcontabancaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 DELETE contabancaria/excluir/{idContaBancaria}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-post-contabancariadivergenciaatualizar-conta-e-post-contabancariadivergenciacadastrar-conta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 POST /contabancaria/divergencia/atualizar-conta e POST /contabancaria/divergencia/cadastrar-conta
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#27-post-oferta-conta-integracao-bs2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.7 POST /oferta-conta-integracao-bs2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#28-integracao-bancaria-open-finance-ausente-do-catalogo-caminho-em-variavel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.8 Integração bancária (Open Finance), ausente do catálogo (caminho em variável)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-contabilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Contabilidade
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Contabilidade">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-post-informerendimentoreabrir-balancoanocompetencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 POST informerendimento/reabrir-balanco/{anoCompetencia}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-post-documentosreclassificar-alterar-a-classificacao-de-lancamento-bancario-central-de-rotinas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 POST documentos/reclassificar: alterar a classificação de lançamento bancário (Central de Rotinas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-documentos-central-de-documentos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Documentos (Central de Documentos)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Documentos (Central de Documentos)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-upload-de-documento-com-arquivo-multipart-para-o-bff-ausente-do-catalogo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Upload de documento com arquivo: multipart para o BFF (ausente do catálogo)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-post-documentosenvio-documentoenviarsem-arquivo-declarar-nao-tenho-o-documento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 POST documentos/envio-documento/enviar/sem-arquivo: declarar "não tenho o documento"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-get-documentostiposinitareadocumentos_contabeis-so-leitura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 GET /documentos/tipos/init?area=DOCUMENTOS_CONTABEIS (só leitura)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-certificado-digital" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Certificado digital
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Certificado digital">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-upload-de-certificado-a1-pfxp12-tres-endpoints-todos-multipart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Upload de certificado A1 (.pfx/.p12): três endpoints, todos multipart
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-remocao-delete-empresacertificadoremovercert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Remoção: DELETE empresa/certificado/removercert
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-fluxo-v2-de-aquisicao-certisign-chunk-chunk-173ea0c1-tela-certificado-digital" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Fluxo v2 de aquisição (CERTISIGN), chunk chunk-173ea0c1 (tela /certificado-digital)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-fluxo-legado-certificado-modulo-689a-em-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Fluxo legado (certificado/*, módulo 689a em app)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-escritas-ausentes-do-catalogomd-resumo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Escritas ausentes do catalogo.md (resumo)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-prioridade-sugerida-para-o-roadmap-da-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Prioridade sugerida para o roadmap da CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notas-e-prolabore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas e pró-labore
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../frontend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Front-end
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Desenvolvimento
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Desenvolvimento
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura da CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contratos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testes de contrato
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../monitoramento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoramento da API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contribuindo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contribuindo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metodologia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metodologia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisões (ADRs)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0001-registrar-decisoes-em-adrs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0001 Registrar decisões
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0002-somente-leitura-ate-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0002 Somente leitura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0003-versionamento-e-changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0003 Versionamento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0004-branches-empilhadas-e-prs-por-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0004 Branches e PRs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0005-documentacao-em-github-pages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0005 Documentação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0006-saida-padronizada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0006 Saída padronizada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0007-login-sessao-e-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0007 Login e sessão
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0008-cobra-para-a-arvore-de-comandos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0008 Cobra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0009-camada-api-tipada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0009 Camada api
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0010-testes-de-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0010 Contratos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0011-fixtures-podadas-ao-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0011 Fixtures podadas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0012-prazos-e-alertas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0012 Prazos e alertas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0013-sem-retentativa-com-fonte-alternativa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0013 Sem retentativa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0014-ci-no-github-actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0014 CI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0015-releases-com-goreleaser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0015 Releases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0016-monitoramento-agendado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0016 Monitoramento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0017-contrato-publico-da-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0017 Contrato da 1.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0018-escrita-com-confirmacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0018 Escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0019-camada-de-escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0019 Camada de escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0020-confirmacao-e-simulacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0020 Confirmação e simulação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0021-tipos-e-fixtures-sinteticos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0021 Fixtures sintéticas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0022-classificacao-de-notas-de-entrada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0022 Classificação de notas de entrada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-caixa-e-movimentacao-financeira" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Caixa e movimentação financeira
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Caixa e movimentação financeira">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-post-caixalancamentousuarionovo-criar-e-editar-lancamento-do-caixa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 POST caixa/lancamentousuario/novo/: criar e editar lançamento do caixa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-delete-caixalancamentousuarioremoveranomesidlancamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 DELETE caixa/lancamentousuario/remover/{ano}/{mes}/{idLancamento}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-put-movimentacao-financeiraclassificar-reclassificar-lancamento-de-extrato" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 PUT /movimentacao-financeira/classificar: reclassificar lançamento de extrato
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-put-movimentacao-financeiradesmembrar-dividir-um-lancamento-de-extrato" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 PUT /movimentacao-financeira/desmembrar: dividir um lançamento de extrato
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-delete-movimentacao-financeiradesmembrardesfazeridlancamentopaiidlancamentopaiidlancamentopai-ausente-do-catalogo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 DELETE /movimentacao-financeira/desmembrar/desfazer/{idLancamentoPai}?idLancamentoPai={idLancamentoPai} (ausente do catálogo)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16-delete-movimentacao-financeiraextratoidcontabancariaidanoaaaamesm-ausente-do-catalogo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.6 DELETE /movimentacao-financeira/extrato?idContaBancaria={id}&amp;ano={aaaa}&amp;mes={m} (ausente do catálogo)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#17-post-movimentacao-financeiraeventouploadextrato-concluir-a-importacao-do-extrato" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.7 POST movimentacao-financeira/eventoUploadExtrato: concluir a importação do extrato
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#18-get-movimentacao-financeirapermiteimportacaoidcontabancariaanomes-so-leitura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.8 GET movimentacao-financeira/permiteImportacao/{idContaBancaria}/{ano}/{mes} (só leitura)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#19-post-movimentacao-financeirainteragiu-modal-integracao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.9 POST movimentacao-financeira/interagiu-modal-integracao
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#110-outras-escritas-de-ui-nesta-area" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.10 Outras escritas de UI nesta área
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-extratos-e-contas-bancarias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Extratos e contas bancárias
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Extratos e contas bancárias">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-como-o-arquivo-de-extrato-e-enviado-multipart-direto-ao-bff-sem-url-assinada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Como o arquivo de extrato é enviado: multipart direto ao BFF (sem URL assinada)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-post-upload-documentosextrato-aplicacao-financeiraenviarsem-aplicacao-financeira-nao-tenho-aplicacao-nesta-conta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 POST upload-documentos/extrato-aplicacao-financeira/enviar/sem-aplicacao-financeira ("Não tenho aplicação nesta conta")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-get-upload-documentosextratov2init-so-leitura-ver-21b" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 GET upload-documentos/extrato/v2/init: só leitura (ver 2.1b)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-post-contabancariasalvar-cadastrar-ou-editar-conta-bancaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 POST contabancaria/salvar: cadastrar ou editar conta bancária
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-delete-contabancariaexcluiridcontabancaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 DELETE contabancaria/excluir/{idContaBancaria}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-post-contabancariadivergenciaatualizar-conta-e-post-contabancariadivergenciacadastrar-conta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 POST /contabancaria/divergencia/atualizar-conta e POST /contabancaria/divergencia/cadastrar-conta
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#27-post-oferta-conta-integracao-bs2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.7 POST /oferta-conta-integracao-bs2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#28-integracao-bancaria-open-finance-ausente-do-catalogo-caminho-em-variavel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.8 Integração bancária (Open Finance), ausente do catálogo (caminho em variável)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-contabilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Contabilidade
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Contabilidade">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-post-informerendimentoreabrir-balancoanocompetencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 POST informerendimento/reabrir-balanco/{anoCompetencia}
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-post-documentosreclassificar-alterar-a-classificacao-de-lancamento-bancario-central-de-rotinas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 POST documentos/reclassificar: alterar a classificação de lançamento bancário (Central de Rotinas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-documentos-central-de-documentos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Documentos (Central de Documentos)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Documentos (Central de Documentos)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-upload-de-documento-com-arquivo-multipart-para-o-bff-ausente-do-catalogo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Upload de documento com arquivo: multipart para o BFF (ausente do catálogo)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-post-documentosenvio-documentoenviarsem-arquivo-declarar-nao-tenho-o-documento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 POST documentos/envio-documento/enviar/sem-arquivo: declarar "não tenho o documento"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-get-documentostiposinitareadocumentos_contabeis-so-leitura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 GET /documentos/tipos/init?area=DOCUMENTOS_CONTABEIS (só leitura)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-certificado-digital" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Certificado digital
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Certificado digital">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-upload-de-certificado-a1-pfxp12-tres-endpoints-todos-multipart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 Upload de certificado A1 (.pfx/.p12): três endpoints, todos multipart
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-remocao-delete-empresacertificadoremovercert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 Remoção: DELETE empresa/certificado/removercert
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-fluxo-v2-de-aquisicao-certisign-chunk-chunk-173ea0c1-tela-certificado-digital" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Fluxo v2 de aquisição (CERTISIGN), chunk chunk-173ea0c1 (tela /certificado-digital)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54-fluxo-legado-certificado-modulo-689a-em-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 Fluxo legado (certificado/*, módulo 689a em app)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-escritas-ausentes-do-catalogomd-resumo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Escritas ausentes do catalogo.md (resumo)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-prioridade-sugerida-para-o-roadmap-da-cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Prioridade sugerida para o roadmap da CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="escrita-caixa-extratos-contas-bancarias-contabilidade-documentos-e-certificado">Escrita: caixa, extratos, contas bancárias, contabilidade, documentos e certificado<a class="headerlink" href="#escrita-caixa-extratos-contas-bancarias-contabilidade-documentos-e-certificado" title="Permanent link">&para;</a></h1>
+<p>Análise <strong>estática</strong> dos chunks minificados do painel (<code>/painel-de-controle/</code>, Vue 2), formatados
+com <code>prettier</code> para leitura. Nenhuma requisição de rede foi feita.</p>
+<p>Convenções:</p>
+<ul>
+<li>Bases: <code>X["c"]</code> = <code>/api/plataforma/</code> (BFF), <code>X["d"]</code>/<code>X["b"]</code> = <code>/api/legado/</code>. Salvo indicação,
+  <strong>todos os caminhos abaixo estão em <code>/api/plataforma/</code></strong>. Caminhos com barra inicial
+  (<code>/movimentacao-financeira/...</code>) são relativos à mesma base: o axios junta <code>baseURL</code> e caminho.</li>
+<li>"Chunk" é o arquivo em <code>/painel-de-controle/js/</code> em que a chamada e a tela foram encontradas.</li>
+<li>Risco: <strong>baixo</strong> (marcação de UI ou evento, reversível), <strong>médio</strong> (altera dados contábeis,
+  mas há como desfazer), <strong>alto</strong> (irreversível, envolve cobrança, segredo ou documento legal).</li>
+<li>Itens que não foi possível confirmar estão marcados como <strong>(incerto)</strong>.</li>
+<li>Também são registradas as chamadas que <strong>faltam no <code>catalogo.md</code></strong>. Elas escapam ao gerador
+  porque usam <code>axios({method, url})</code>, um caminho guardado em variável ou um helper que monta a query.</li>
+</ul>
+<hr />
+<h2 id="1-caixa-e-movimentacao-financeira">1. Caixa e movimentação financeira<a class="headerlink" href="#1-caixa-e-movimentacao-financeira" title="Permanent link">&para;</a></h2>
+<h3 id="11-post-caixalancamentousuarionovo-criar-e-editar-lancamento-do-caixa">1.1 <code>POST caixa/lancamentousuario/novo/</code>: criar <strong>e editar</strong> lançamento do caixa<a class="headerlink" href="#11-post-caixalancamentousuarionovo-criar-e-editar-lancamento-do-caixa" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk/tela:</strong> <code>lancamentos-caixa</code> (rota <code>/movimentacao-financeira/caixa</code>), modal "Novo"/"Editar"
+  (<code>acao</code> = <code>CRIAR</code>/<code>EDITAR</code>).</li>
+<li><strong>Existe "editar lançamento"?</strong> <strong>Sim, pelo mesmo endpoint.</strong> Se <code>lancamentoUsuario.id</code> vem
+  preenchido, a operação é uma edição. Não existe <code>PUT</code> separado.</li>
+<li><strong>Corpo (JSON):</strong></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"ano"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026"</span><span class="p">,</span><span class="w">                 </span><span class="c1">// string: competência selecionada no filtro (String(ano))</span>
+<span class="w">  </span><span class="nt">"mes"</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w">                      </span><span class="c1">// competência do filtro (número ou string, conforme o filtro; incerto)</span>
+<span class="w">  </span><span class="nt">"lancamentoUsuario"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2026-09-15T03:00:00.000Z"</span><span class="p">,</span><span class="w"> </span><span class="c1">// new Date(timestamp_ms) serializado; meia-noite local (BRT)</span>
+<span class="w">    </span><span class="nt">"descricao"</span><span class="p">:</span><span class="w"> </span><span class="s2">"texto livre"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">123</span><span class="p">,</span><span class="w">                   </span><span class="c1">// AUSENTE na criação; id do lançamento na edição</span>
+<span class="w">    </span><span class="nt">"idContaUsuario"</span><span class="p">:</span><span class="w"> </span><span class="mi">456</span><span class="p">,</span><span class="w">       </span><span class="c1">// classificação (ver abaixo)</span>
+<span class="w">    </span><span class="nt">"idVinculo"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w">           </span><span class="c1">// id de guia de imposto / sócio, quando a classificação exigir</span>
+<span class="w">    </span><span class="nt">"valor"</span><span class="p">:</span><span class="w"> </span><span class="mf">-150.25</span><span class="w">             </span><span class="c1">// número; POSITIVO = Recebimento, NEGATIVO = Pagamento</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li><strong>Origem dos valores:</strong></li>
+<li><code>tipo</code>: dois botões, <strong>"Recebimento"</strong> (<code>tipo=true</code>, o valor é forçado a positivo) e
+    <strong>"Pagamento"</strong> (<code>tipo=false</code>, valor forçado a negativo, em <code>verificarSinalTrocado</code>).
+    O backend não recebe nenhum campo "tipo": <strong>o sinal de <code>valor</code> é o tipo</strong>.</li>
+<li><code>data</code>: <code>&lt;input type=date&gt;</code> com <code>max</code> = hoje (uma data futura volta para hoje). O padrão é o dia 01
+    da competência, ou hoje se a competência for o mês corrente.</li>
+<li><code>idContaUsuario</code>: vem de <code>serializedList.categoriasVinculoDTO</code> na resposta de
+    <code>GET caixa/listpaginada/{ano}/{mes}/1000/null</code>. A lista é filtrada assim:<ul>
+<li><code>tipo === "CONTA_USUARIO"</code> e <code>entrada === true</code> para Recebimento, ou <code>entrada === false</code> para Pagamento;</li>
+<li>para Pagamento, é removido o id fixo <code>5981343255101440</code> (<code>categoriasIdNaoPermitidas</code>);</li>
+<li>fica só o que tem <code>exibir: true</code> em <code>GET movimentacao-financeira/contas-usuario/{ano}/{mes}?origem=CAIXA</code>
+  (lista <code>{id, exibir, ...}</code>).</li>
+</ul>
+</li>
+<li>
+<p><code>idVinculo</code>: obrigatório só quando a descrição da classificação é:</p>
+<ul>
+<li>um imposto gerado pela Contabilizei (<code>"Impostos - COFINS"</code>, <code>"- CSLL"</code>, <code>"- FGTS"</code>, <code>"- INSS"</code>,
+  <code>"- IRPJ"</code>, <code>"- IRRF"</code>, <code>"- ISS"</code>, <code>"- Simples Nacional"</code>). Nesse caso, a escolha é entre os itens
+  <code>tipo === "GUIA_IMPOSTO"</code> de <code>categoriasVinculoDTO</code>, mais <code>{id:"0", descricao:"SEM GUIA"}</code>;</li>
+<li><code>"Sócios - Distribuição de Lucros Antecipados"</code>. Nesse caso, a escolha é entre os itens
+  <code>tipo === "SOCIO"</code>.</li>
+</ul>
+<p>Nos demais casos, <code>idVinculo = null</code> (o validador o ignora).
+  - Validação do front: todos os campos devem ser "truthy"; o valor 0 é recusado. Na edição, o botão
+só habilita se algo mudou.
+- <strong>Resposta/UI:</strong> sucesso mostra o snackbar "Lançamento salvo com sucesso!". Erro mostra
+  "Não foi possível salvar o lançamento! Tente novamente mais tarde. [<response.data>]".
+  Nos dois casos a tela recarrega a listagem; o corpo da resposta não é usado.
+- <strong>Pré-condições:</strong> <code>GET caixa/listpaginada/...</code> (categorias) e <code>GET movimentacao-financeira/contas-usuario/{ano}/{mes}?origem=CAIXA</code>.
+  Lançamentos com <code>confirmadoViaSistema: true</code> mostram "SISTEMA" e <strong>não têm botões de editar
+  nem de excluir</strong> (a CLI deve recusar o mesmo).
+- <strong>Semântica:</strong> cria ou altera um lançamento manual do caixa (dinheiro em espécie) na competência.
+- <strong>Reversível:</strong> sim (editar de novo ou excluir). <strong>Risco: médio</strong>, porque entra na contabilidade
+  do mês.</p>
+</li>
+</ul>
+<h3 id="12-delete-caixalancamentousuarioremoveranomesidlancamento">1.2 <code>DELETE caixa/lancamentousuario/remover/{ano}/{mes}/{idLancamento}</code><a class="headerlink" href="#12-delete-caixalancamentousuarioremoveranomesidlancamento" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk:</strong> <code>lancamentos-caixa</code>. Não tem corpo. <code>ano</code>/<code>mes</code> vêm da competência do filtro e <code>idLancamento</code> é o <code>id</code> do item
+  de <code>caixa/listpaginada</code>.</li>
+<li><strong>UI:</strong> <code>DecisionModal</code> com o título "Excluir lançamento", o texto "Tem certeza de que deseja excluir o lançamento:
+  <descrição> de <data> no valor de <valor>" e os botões "Não" e <strong>"Excluir permanentemente"</strong>.
+  Sucesso mostra "Lançamento excluído permanentemente!". Erro mostra "Não foi possível excluir o lançamento! Tente
+  novamente mais tarde. [<response.data>]".</li>
+<li><strong>Reversível:</strong> não há undo (seria preciso recriar o lançamento à mão). <strong>Risco: médio/alto.</strong></li>
+</ul>
+<h3 id="13-put-movimentacao-financeiraclassificar-reclassificar-lancamento-de-extrato">1.3 <code>PUT /movimentacao-financeira/classificar</code>: reclassificar lançamento de extrato<a class="headerlink" href="#13-put-movimentacao-financeiraclassificar-reclassificar-lancamento-de-extrato" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk/tela:</strong> <code>detalhes-do-extrato</code> (modal "ExtratoDetalhesModalEditarLancamento", botão
+  "Salvar"). O serviço está em <code>detalhes-do-extrato~lancamentos-caixa</code> e em <code>importar-extrato~movimentacao-financeira</code>
+  (módulo <code>9fe3</code>).</li>
+<li><strong>Corpo:</strong> uma string JSON já serializada (<code>JSON.stringify</code>), com <code>Content-Type: application/json</code>:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"> </span><span class="nt">"idLancamentoUsuario"</span><span class="p">:</span><span class="w"> </span><span class="mi">789</span><span class="p">,</span><span class="w"> </span><span class="nt">"idContaUsuario"</span><span class="p">:</span><span class="w"> </span><span class="mi">456</span><span class="p">,</span><span class="w"> </span><span class="nt">"idSocio"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<ul>
+<li><code>idLancamentoUsuario</code>: item de
+    <code>GET /movimentacao-financeira/lancamento-usuario/paginado?idContaBancaria&amp;ano&amp;mes&amp;registroPorPagina=100&amp;pagina=N</code>.</li>
+<li><code>idContaUsuario</code>: escolhido no autocomplete "Classificação". As opções vêm de
+    <code>GET movimentacao-financeira/contas-usuario/{ano}/{mes}?origem=EXTRATO</code>. Ficam só as que têm <code>exibir</code>,
+    <code>situacao === "ATIVO"</code> e <code>classificacao</code> igual a <code>RECEITA</code> (se <code>valor &gt; 0</code>) ou <code>DESPESA</code> (se <code>valor &lt; 0</code>).
+    Os <code>predicts</code> do lançamento aparecem primeiro.</li>
+<li><code>idSocio</code>: as contas de id fixo <code>6199733752168448</code>, <code>5491304964816896</code>,
+    <code>4975757608615936</code> e <code>5605376636485632</code> (contas de sócio) são desdobradas em uma opção por sócio,
+    com <code>idComposto = "&lt;idConta&gt;/&lt;idSocio&gt;"</code>. Os sócios vêm de <code>GET /movimentacao-financeira/extrato/info</code>
+    (campo <code>socios</code>). Sem sócio, o front manda <code>parseInt(undefined)</code> = <code>NaN</code>, que o JSON serializa como <strong><code>null</code></strong>.</li>
+<li><strong>Pré-condição:</strong> <code>extrato/info</code> com <code>permiteEditarLancamento: true</code>; sem isso, a coluna "Ações" some.</li>
+<li><strong>UI:</strong> sucesso (HTTP 200) mostra "Lançamento editado com sucesso!". Erro mostra "Erro ao salvar edição. [<msg>]".
+  Um erro 406 <code>exception/erro-negocial-406</code> é mapeado para "Nossos contadores já classificaram as
+  movimentações deste período para fazer a contabilidade. Em casos de correções entre em contato com
+  nosso suporte."</li>
+<li><strong>Reversível:</strong> sim, basta reclassificar de novo, enquanto o período estiver aberto. <strong>Risco: médio.</strong></li>
+</ul>
+<h3 id="14-put-movimentacao-financeiradesmembrar-dividir-um-lancamento-de-extrato">1.4 <code>PUT /movimentacao-financeira/desmembrar</code>: dividir um lançamento de extrato<a class="headerlink" href="#14-put-movimentacao-financeiradesmembrar-dividir-um-lancamento-de-extrato" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk:</strong> <code>detalhes-do-extrato</code> (modal "Desmembrar"). O corpo é uma string JSON:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"idLancamentoPai"</span><span class="p">:</span><span class="w"> </span><span class="mi">789</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"lancamentosFilho"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"descricao"</span><span class="p">:</span><span class="w"> </span><span class="s2">"parte 1"</span><span class="p">,</span><span class="w"> </span><span class="nt">"valor"</span><span class="p">:</span><span class="w"> </span><span class="s2">"50.00"</span><span class="p">,</span><span class="w"> </span><span class="nt">"idContaUsuario"</span><span class="p">:</span><span class="w"> </span><span class="mi">456</span><span class="p">,</span><span class="w"> </span><span class="nt">"idVinculo"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="nt">"descricao"</span><span class="p">:</span><span class="w"> </span><span class="s2">"parte 2"</span><span class="p">,</span><span class="w"> </span><span class="nt">"valor"</span><span class="p">:</span><span class="w"> </span><span class="mf">25.5</span><span class="p">,</span><span class="w">    </span><span class="nt">"idContaUsuario"</span><span class="p">:</span><span class="w"> </span><span class="mi">457</span><span class="p">,</span><span class="w"> </span><span class="nt">"idVinculo"</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li>O modal começa com 2 filhos com metade do valor cada. <strong>Atenção:</strong> esses valores iniciais são
+    <em>strings</em> (<code>toFixed(2)</code>); os que o usuário digita são números. O backend aceita os dois formatos (incerto).</li>
+<li><code>idVinculo</code>: id do sócio quando a classificação é composta (<code>"&lt;idConta&gt;/&lt;idSocio&gt;"</code>). Fora disso, <code>NaN</code>, que vira <code>null</code>.</li>
+<li>O sinal de cada filho é forçado a ser igual ao do pai.</li>
+<li>Validações do front: descrição e classificação são obrigatórias, nenhum filho pode ter valor 0 e a
+    soma dos filhos tem de ser igual ao valor do pai ("O Valor total dos Lançamentos Desmembrados não pode ser diferente do
+    valor do Lançamento Original."). Não é possível remover filhos quando restam 2 ou menos.</li>
+<li>Desmembrar só é permitido se <code>valor != 0</code>, se o item não tiver <code>idLancamentoPai</code> e se não tiver <code>idVinculo</code>.</li>
+<li><strong>UI:</strong> sucesso mostra "Lançamento desmembrado com sucesso!". Erro mostra "Erro ao salvar desmembramento. [<msg>]".</li>
+<li><strong>Reversível:</strong> <strong>sim</strong>, pelo endpoint da seção 1.5. <strong>Risco: médio.</strong></li>
+</ul>
+<h3 id="15-delete-movimentacao-financeiradesmembrardesfazeridlancamentopaiidlancamentopaiidlancamentopai-ausente-do-catalogo">1.5 <code>DELETE /movimentacao-financeira/desmembrar/desfazer/{idLancamentoPai}?idLancamentoPai={idLancamentoPai}</code> (ausente do catálogo)<a class="headerlink" href="#15-delete-movimentacao-financeiradesmembrardesfazeridlancamentopaiidlancamentopaiidlancamentopai-ausente-do-catalogo" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk:</strong> <code>detalhes-do-extrato</code>, modal "Cancelar desmembramento": "Este lançamento voltará ao
+  formato original. Você poderá desmembrar novamente se precisar.", com o botão "Confirmar".</li>
+<li>O helper <code>_()</code> gera a query a partir do objeto <code>{idLancamentoPai}</code>, por isso o id aparece duas vezes.
+  Disponível em um lançamento filho (<code>idLancamentoPai !== null</code>).</li>
+<li><strong>UI:</strong> sucesso mostra "Desmembramento cancelado com sucesso!". Erro mostra "Erro ao cancelar desmembramento. [..]".</li>
+<li><strong>Risco: médio</strong> (desfaz o desmembramento).</li>
+</ul>
+<h3 id="16-delete-movimentacao-financeiraextratoidcontabancariaidanoaaaamesm-ausente-do-catalogo">1.6 <code>DELETE /movimentacao-financeira/extrato?idContaBancaria={id}&amp;ano={aaaa}&amp;mes={m}</code> (ausente do catálogo)<a class="headerlink" href="#16-delete-movimentacao-financeiraextratoidcontabancariaidanoaaaamesm-ausente-do-catalogo" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk:</strong> <code>detalhes-do-extrato</code>, botão "Excluir Extrato". Se <code>extrato/info.permiteExclusaoExtrato</code>
+  for falso, o modal mostrado é "Ops! Este extrato não pode ser excluído" ("Nossos contadores já concluíram a
+  classificação deste extrato…").</li>
+<li><strong>Confirmação:</strong> "Ao excluir você ficará com a <strong>importação pendente</strong> para este mês e deverá importar
+  um novo arquivo. Informações adicionais das movimentações também deverão ser preenchidas novamente.
+  Tem certeza que deseja excluir?"</li>
+<li><strong>UI:</strong> sucesso mostra "O extrato de <Mês>/<ano> foi excluído com sucesso. Não se esqueça de importá-lo
+  novamente." Erro abre o modal "não pode ser excluído".</li>
+<li><strong>Reversível:</strong> não; é preciso reimportar, e as classificações se perdem. <strong>Risco: alto.</strong></li>
+</ul>
+<h3 id="17-post-movimentacao-financeiraeventouploadextrato-concluir-a-importacao-do-extrato">1.7 <code>POST movimentacao-financeira/eventoUploadExtrato</code>: concluir a importação do extrato<a class="headerlink" href="#17-post-movimentacao-financeiraeventouploadextrato-concluir-a-importacao-do-extrato" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Segundo passo, chamado depois de <code>upload-documentos/extrato/enviar/bucket</code> (ver 2.1). O corpo é:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"ano"</span><span class="p">:</span><span class="w"> </span><span class="mi">2026</span><span class="p">,</span><span class="w"> </span><span class="nt">"mes"</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="nt">"cnpj"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;cnpj da empresa&gt;"</span><span class="p">,</span><span class="w"> </span><span class="nt">"idContaBancaria"</span><span class="p">:</span><span class="w"> </span><span class="mi">111</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"nomeArquivoStorage"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;cnpj&gt;_&lt;ano&gt;_&lt;mes&gt;_&lt;numeroConta&gt;_&lt;lastModified&gt;.ofx"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"respostas"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"tipo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"SALDO_ULTIMO_MES"</span><span class="p">,</span><span class="w"> </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;new Date()&gt;"</span><span class="p">,</span><span class="w"> </span><span class="nt">"valor"</span><span class="p">:</span><span class="w"> </span><span class="mf">1234.56</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li><strong>PDF:</strong> chamado logo após o upload, com <code>respostas: []</code>. Abre o modal de sucesso do PDF.</li>
+<li><strong>OFX:</strong> depois de <code>GET movimentacao-financeira/info-extrato/{idConta}/{ano}/{mes}/{nomeArquivo}</code>
+    (que devolve <code>infoExtrato.saldoUltimoDia</code>, <code>extratoForaPeriodo</code> etc.), a tela "ExtratoUploadSucesso"
+    pede a confirmação do saldo do último dia ("Preenchimento obrigatório") e manda
+    <code>respostas: [{tipo:"SALDO_ULTIMO_MES", data, valor:saldoUltimoDia}]</code>.</li>
+<li>O ramo <code>extratoSemMovimentacao</code> envia <code>respostas: []</code>, mas nenhum código encontrado liga essa flag
+    <strong>(incerto: possivelmente código morto)</strong>.</li>
+<li><strong>UI:</strong> os modais "ComMovimentoSucesso" e "SemMovimentoSucesso". Erro mostra "Ops! Um erro ocorreu ao tentar processar o arquivo."</li>
+<li>Em seguida o front chama <code>GET /integracao-bancaria/parametros-integracao/{idContaBancaria}</code> (oferta
+  de Open Finance).</li>
+<li><strong>Risco: médio.</strong> Efetiva a importação; o desfazer é o <code>DELETE /movimentacao-financeira/extrato</code> da seção 1.6.</li>
+</ul>
+<h3 id="18-get-movimentacao-financeirapermiteimportacaoidcontabancariaanomes-so-leitura">1.8 <code>GET movimentacao-financeira/permiteImportacao/{idContaBancaria}/{ano}/{mes}</code> (só leitura)<a class="headerlink" href="#18-get-movimentacao-financeirapermiteimportacaoidcontabancariaanomes-so-leitura" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Validação prévia ao upload. Resposta: <code>{ periodosDeImportacao: [{ano, mes, mensagem, temLancamentoPendente,
+  teveLancamento, ...}] }</code>. Se existir um período anterior pendente diferente do escolhido, a tela mostra o modal
+  "ErroImportacaoPeriodoComPendencia" e <strong>não</strong> deixa importar.</li>
+<li>Não tem efeito colateral visível. A CLI deve chamá-lo antes de importar.</li>
+</ul>
+<h3 id="19-post-movimentacao-financeirainteragiu-modal-integracao">1.9 <code>POST movimentacao-financeira/interagiu-modal-integracao</code><a class="headerlink" href="#19-post-movimentacao-financeirainteragiu-modal-integracao" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk:</strong> <code>movimentacao-financeira</code>, chamado ao clicar em "integrar" ou ao fechar o modal de integração
+  automática. Por um <strong>bug do front</strong>, o corpo enviado é o objeto de config:
+  <code>{"headers":{"Content-Type":"application/json"}}</code>. O servidor provavelmente ignora o corpo.</li>
+<li><strong>Semântica:</strong> marca "usuário viu ou interagiu com o modal de integração" (flag de UI). <strong>Risco: baixo.</strong>
+  Não é útil na CLI.</li>
+</ul>
+<h3 id="110-outras-escritas-de-ui-nesta-area">1.10 Outras escritas de UI nesta área<a class="headerlink" href="#110-outras-escritas-de-ui-nesta-area" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>POST /api/legado/evento-tour</code> com o corpo <code>{cnpj, flow, evento:"visualizado"}</code>. Antes é feito
+  <code>GET /api/legado/evento-tour/{cnpj}/{flow}/{evento}</code>. É um registro de tour do Appcues. Risco baixo; ignorar.</li>
+</ul>
+<p><strong>Recomendação para a CLI (caixa e extratos):</strong></p>
+<div class="highlight"><pre><span></span><code>ctbz caixa adicionar   --competencia 2026-09 --data 2026-09-15 --valor 150.25 \
+                       (--recebimento|--pagamento) --conta &lt;idContaUsuario|nome&gt; \
+                       --descricao "…" [--guia &lt;id&gt;|--sem-guia] [--socio &lt;id&gt;]
+ctbz caixa editar &lt;id&gt; --competencia 2026-09 [--data …] [--valor …] [--conta …] [--descricao …]
+ctbz caixa remover &lt;id&gt; --competencia 2026-09            # pedir confirmação; --yes
+ctbz caixa contas      --competencia 2026-09 [--entrada|--saida]   # categoriasVinculoDTO ∩ exibir
+ctbz extrato classificar &lt;idLancamentoUsuario&gt; --conta &lt;id&gt; [--socio &lt;id&gt;]
+ctbz extrato desmembrar  &lt;idLancamentoUsuario&gt; --parte "desc:valor:conta[:socio]" …
+ctbz extrato desfazer-desmembramento &lt;idLancamentoPai&gt;
+ctbz extrato excluir --conta-bancaria &lt;id&gt; --competencia 2026-09   # risco alto, confirmação dupla
+</code></pre></div>
+<p>Na CLI, o sinal deve ser derivado da flag (<code>--pagamento</code> grava o valor negativo). Antes de qualquer escrita, a CLI deve
+validar as regras do front: nada de lançamento <code>confirmadoViaSistema</code>, nada de data futura e soma exata no
+desmembramento.</p>
+<hr />
+<h2 id="2-extratos-e-contas-bancarias">2. Extratos e contas bancárias<a class="headerlink" href="#2-extratos-e-contas-bancarias" title="Permanent link">&para;</a></h2>
+<h3 id="21-como-o-arquivo-de-extrato-e-enviado-multipart-direto-ao-bff-sem-url-assinada">2.1 Como o arquivo de extrato é enviado: <strong>multipart direto ao BFF</strong> (sem URL assinada)<a class="headerlink" href="#21-como-o-arquivo-de-extrato-e-enviado-multipart-direto-ao-bff-sem-url-assinada" title="Permanent link">&para;</a></h3>
+<p>Existem <strong>dois</strong> caminhos de upload. Nenhum usa URL assinada, GCS direto ou <code>storage.googleapis</code>.
+O nome "bucket" indica apenas que o backend grava o arquivo no storage.</p>
+<p><strong>(a) <code>POST upload-documentos/extrato/enviar/bucket</code></strong> (tela "Importar extrato" em Movimentação financeira)</p>
+<ul>
+<li><code>multipart/form-data</code> com os campos <code>nomeArquivo</code>, <code>ano</code>, <code>mes</code>, <code>documento</code> (o arquivo) e <code>idConta</code>.</li>
+<li><code>nomeArquivo</code> é gerado pelo front: <code>"&lt;cnpjEmpresa&gt;_&lt;ano&gt;_&lt;mes&gt;_&lt;numeroConta&gt;_&lt;file.lastModified&gt;&lt;.ext&gt;"</code>.
+  Esse nome é reaproveitado depois em <code>info-extrato/...</code> e em <code>eventoUploadExtrato.nomeArquivoStorage</code>.</li>
+<li><strong>Formatos:</strong> <code>.ofx</code>, <code>.pdf</code> (<code>extencoesValidas</code>, <code>acceptedFiles: "application/pdf,.ofx"</code>), até <strong>30 MB</strong>.
+  Se o banco tem <code>importacaoManualParaPdf</code> e o arquivo é PDF, a tela mostra o erro "ErroImportacaoManual".</li>
+<li><strong>Erros conhecidos:</strong></li>
+<li><code>exception/movimentacao-financeira-901</code>: "Por enquanto a importação do seu banco é compatível
+    apenas com OFX…";</li>
+<li><code>-902</code>/<code>-903</code>/<code>-904</code>/<code>-905</code>: o extrato não corresponde ao banco, à conta, à agência e conta ou à agência
+    (detalhe em JSON no campo <code>detalhes[0].detalhe</code>);</li>
+<li>resposta <code>{account_validation:"account_dont_match", error:"…(CONTA-NAO-CADASTRADA)…", agency_number,
+    account_number}</code>: abre o modal de cadastro de conta já preenchido. O texto é "A conta bancária identificada no extrato
+    não foi encontrada no seu cadastro…". A tela salva com <code>contabancaria/salvar</code> e recarrega;</li>
+<li><code>(ERRO-NA-VALIDACAO-DE-DOCUMENTO-API-CONTABIL)</code>: o modal "Extrato não identificado".</li>
+<li><strong>Fluxo completo:</strong> <code>permiteImportacao</code> → <code>extrato/enviar/bucket</code> → <code>GET info-extrato/…</code>
+  (o erro <code>extratoForaPeriodo</code> abre o modal "mês incorreto") → <code>POST eventoUploadExtrato</code> (seção 1.7).</li>
+</ul>
+<p><strong>(b) <code>POST upload-documentos/extrato/enviar</code></strong> (Central de Documentos, ausente do catálogo, usa <code>axios({method,url})</code>)</p>
+<ul>
+<li><code>multipart/form-data</code> com os campos <code>documento</code> (arquivo), <code>competencia</code> (<code>"MM/AAAA"</code>) e <code>idContaBancaria</code>.</li>
+<li>Os bancos e as contas vêm de <code>GET upload-documentos/extrato/v2/init</code>, que devolve
+  <code>{bancos:[{id, codigo, formatosDisponiveisUpload:["OFX","PDF",…], contasBancarias:[{id, statusIntegracao,…}]}],
+  primeiraCompetencia:{mes, ano}}</code>. O formato aceito depende do banco. Contas <code>INTEGRADA</code> ficam bloqueadas
+  ("Não é preciso fazer importação para esta conta, ela é feita automaticamente"). O tamanho máximo é 30 MB.
+  Para o banco de código 323, a tela mostra um alerta do Mercado Pago.</li>
+<li><strong>UI:</strong> sucesso mostra "Arquivo enviado com sucesso!". Erro mostra <code>response.data</code> ou "Arquivo não enviado. Verifique seu
+  arquivo e tente enviar novamente."</li>
+<li>Neste caminho não há confirmação de saldo nem <code>eventoUploadExtrato</code> <strong>(incerto se o backend
+  processa como importação ou só arquiva)</strong>.</li>
+</ul>
+<p><strong>Risco do upload: médio.</strong> O extrato importado entra na contabilidade; o desfazer é o
+<code>DELETE /movimentacao-financeira/extrato</code> da seção 1.6.</p>
+<h3 id="22-post-upload-documentosextrato-aplicacao-financeiraenviarsem-aplicacao-financeira-nao-tenho-aplicacao-nesta-conta">2.2 <code>POST upload-documentos/extrato-aplicacao-financeira/enviar/sem-aplicacao-financeira</code> ("Não tenho aplicação nesta conta")<a class="headerlink" href="#22-post-upload-documentosextrato-aplicacao-financeiraenviarsem-aplicacao-financeira-nao-tenho-aplicacao-nesta-conta" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk:</strong> <code>central-de-documentos</code>, formulário de Extrato de aplicação financeira, botão
+  <strong>"Não tenho aplicação nesta conta"</strong>. O corpo é:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"tipoDocumento"</span><span class="p">:</span><span class="w"> </span><span class="s2">"EXTRATO_APLICACAO_FINANCEIRA"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"competenciasPendentes"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;idPendencia&gt;"</span><span class="p">,</span><span class="w"> </span><span class="nt">"mes"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nt">"ano"</span><span class="p">:</span><span class="w"> </span><span class="mi">2026</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">"idContaBancaria"</span><span class="p">:</span><span class="w"> </span><span class="mi">111</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"tipoPendencia"</span><span class="p">:</span><span class="w"> </span><span class="s2">"EXTRATO_APLICACAO_FINANCEIRA"</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li><code>tipoDocumento</code> e <code>tipoPendencia</code> recebem o mesmo valor, o tipo da tela. O formulário também serve
+    <code>INFORME_DE_RENDIMENTO_INVESTIMENTOS</code> (incerto se o botão aparece nesse tipo).</li>
+<li>As competências são as pendências da conta e do <code>tipoInvestimento</code> que ainda não têm arquivo <code>SUCCESS</code>.
+    Vêm de <code>GET documentos/envio-documento/init?id=&lt;idPendencia&gt;&amp;id=…</code> (campo <code>documentos</code>, com
+    <code>propriedades.{idPendencia, idContaBancaria, tipoInvestimento, competencia{mes,ano,periodo}, banco,
+    agencia, contaCorrente}</code>).</li>
+<li><strong>Resposta:</strong> em caso de erro, <code>response.data.competenciasComErro: [{mes, ano}]</code>. O front marca as demais como
+  sucesso e mostra "Ocorreu um erro ao processar sua solicitação. Tente novamente."</li>
+<li><strong>Semântica:</strong> declara que não houve aplicação ou movimentação no período, o que <strong>resolve as pendências</strong>.</li>
+<li><strong>Reversível:</strong> não há endpoint de desfazer (incerto). <strong>Risco: médio/alto</strong> (é uma declaração).</li>
+</ul>
+<h3 id="23-get-upload-documentosextratov2init-so-leitura-ver-21b">2.3 <code>GET upload-documentos/extrato/v2/init</code>: só leitura (ver 2.1b)<a class="headerlink" href="#23-get-upload-documentosextratov2init-so-leitura-ver-21b" title="Permanent link">&para;</a></h3>
+<h3 id="24-post-contabancariasalvar-cadastrar-ou-editar-conta-bancaria">2.4 <code>POST contabancaria/salvar</code>: cadastrar ou editar conta bancária<a class="headerlink" href="#24-post-contabancariasalvar-cadastrar-ou-editar-conta-bancaria" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunks:</strong> <code>conta-bancaria</code>, <code>detalhes-da-conta</code> e <code>movimentacao-financeira</code> (cadastro pelo
+  upload). O serviço está no módulo <code>ffc2</code> e o modal é <code>ModalContaBancaria</code>.</li>
+<li><strong>Corpo:</strong></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">222</span><span class="p">,</span><span class="w">                       </span><span class="c1">// só na edição</span>
+<span class="w">  </span><span class="nt">"bancoId"</span><span class="p">:</span><span class="w"> </span><span class="mi">33</span><span class="p">,</span><span class="w">                   </span><span class="c1">// id do banco (lista "bancos" de contabancaria/list)</span>
+<span class="w">  </span><span class="nt">"agencia"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1234"</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"contaCorrente"</span><span class="p">:</span><span class="w"> </span><span class="s2">"123456"</span><span class="p">,</span><span class="w">       </span><span class="c1">// conta + dígito concatenados, sem hífen</span>
+<span class="w">  </span><span class="nt">"dataSaldoInicial"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-01-10"</span><span class="p">,</span><span class="c1">// "Abertura da conta*" (YYYY-MM-DD)</span>
+<span class="w">  </span><span class="nt">"vlrSaldoInicial"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Na edição, o objeto é a cópia do item de <code>contabancaria/list</code> <strong>sem</strong> os campos <code>permissoes</code>, <code>codigoBanco</code>,
+  <code>dataExpiracao</code>, <code>dataIntegracao</code>, <code>fluxoIntegracao</code>, <code>idConsentimento</code>, <code>statusIntegracao</code>,
+  <code>permiteVerDetalhes</code> e <code>identificadorInstituicao</code> (os demais campos do item vão junto: <code>nomeBanco</code> etc.).
+  É <strong>obrigatório</strong> marcar o checkbox "Declaro que a conta acima é uma Conta PJ e suas movimentações
+  refletem exclusivamente este CNPJ." (só no front).
+- <strong>Resposta:</strong> <code>{ contaBancariaInfo: { contasBancarias: [...] }, exibirModalIntegracaoOpenFinance: bool }</code>.
+  Na criação, se <code>exibirModalIntegracaoOpenFinance</code> for verdadeiro, a tela oferece integrar via Open Finance.
+- <strong>UI:</strong> sucesso mostra "Conta Bancária salva com sucesso!". Erro mostra "Não foi possível identificar uma conta bancária.
+  Tente novamente mais tarde. [<erro>]".
+- Editar e excluir dependem de <code>permiteEditar</code>/<code>permiteExcluir</code>/<code>motivoPermissoesExclusaoEEdicao</code>, vindos de
+  <code>GET contabancaria/detalhes-da-conta/init/{id}</code>.
+- <strong>Risco: médio.</strong> A data de abertura define o período cobrado de extratos.</p>
+<h3 id="25-delete-contabancariaexcluiridcontabancaria">2.5 <code>DELETE contabancaria/excluir/{idContaBancaria}</code><a class="headerlink" href="#25-delete-contabancariaexcluiridcontabancaria" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk:</strong> <code>detalhes-da-conta</code>, botão "Excluir conta" (visível só com <code>permiteExcluir</code>).
+  <code>DecisionModal</code> "Excluir Conta Bancária": "Tem certeza de que deseja excluir a conta bancária:
+  <banco> agência <ag> conta <cc>?", com os botões "Não" e <strong>"Excluir permanentemente"</strong>.</li>
+<li><strong>UI:</strong> sucesso mostra "Conta Bancária excluída com sucesso!". Erro mostra "Não foi possível excluir a conta bancária…".</li>
+<li><strong>Reversível:</strong> não (seria preciso recadastrar, e os vínculos se perdem). <strong>Risco: alto.</strong></li>
+</ul>
+<h3 id="26-post-contabancariadivergenciaatualizar-conta-e-post-contabancariadivergenciacadastrar-conta">2.6 <code>POST /contabancaria/divergencia/atualizar-conta</code> e <code>POST /contabancaria/divergencia/cadastrar-conta</code><a class="headerlink" href="#26-post-contabancariadivergenciaatualizar-conta-e-post-contabancariadivergenciacadastrar-conta" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk:</strong> <code>divergencia-de-contas</code>, tela "Divergência de dados bancários". Aparece quando a conta
+  integrada (Open Finance/Belvo) não bate com a conta cadastrada.</li>
+<li>Pré-condição: <code>GET contabancaria/divergencia/init/{bancoId}</code> devolve
+  <code>{contaIntegradaBelvo:{agencia, conta, codigoBanco}, contasNaoIntegradas:[...]}</code>. Os parâmetros da rota vêm
+  do item da conta divergente (<code>id</code>, <code>bancoId</code>, <code>nomeBanco</code>).</li>
+<li><strong>atualizar-conta</strong> ("vincular conta", quando o usuário escolhe uma conta cadastrada correspondente):
+  <code>{ idContaBancaria: &lt;id da conta cadastrada escolhida&gt;, agenciaContaIntegrada, contaContaIntegrada,
+  idContaBancariaDivergente: &lt;id da conta divergente&gt; }</code>.</li>
+<li><strong>cadastrar-conta</strong> ("cadastrar como nova"):
+  <code>{ codigoBanco, agenciaContaIntegrada, contaContaIntegrada, idContaBancariaDivergente }</code>.</li>
+<li><strong>UI:</strong> os modais "Conta atualizada" e "Conta cadastrada". Erro mostra "Houve um erro ao inesperado. Por favor, tente novamente."</li>
+<li><strong>Risco: médio</strong> (mexe no vínculo da integração). Pouco útil na CLI.</li>
+</ul>
+<h3 id="27-post-oferta-conta-integracao-bs2">2.7 <code>POST /oferta-conta-integracao-bs2</code><a class="headerlink" href="#27-post-oferta-conta-integracao-bs2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk:</strong> <code>movimentacao-financeira</code>, modal de oferta e integração do banco BS2 (Contabilizei Bank).
+  O corpo é <code>{ visualizouModalIntegracao: bool, visualizouModalConta: bool }</code>
+  (<code>theme === "integracao"</code> ou <code>"ativacao"</code>). É enviado tanto ao aceitar (o front então navega para
+  <code>/conta-bancaria/bs2/integracao|pendencias</code>) quanto ao recusar (<code>204</code> atualiza a view).</li>
+<li><strong>Semântica:</strong> registra que a oferta foi vista (flag de UI). <strong>Risco: baixo.</strong> Ignorar na CLI.</li>
+</ul>
+<h3 id="28-integracao-bancaria-open-finance-ausente-do-catalogo-caminho-em-variavel">2.8 Integração bancária (Open Finance), ausente do catálogo (caminho em variável)<a class="headerlink" href="#28-integracao-bancaria-open-finance-ausente-do-catalogo-caminho-em-variavel" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>POST /integracao-bancaria/token</code> com <code>{ token, parceiro }</code>: conclui a conexão feita no widget do
+  parceiro (Pluggy/Belvo). Depende de um token gerado no browser. <strong>Fora do alcance da CLI.</strong></li>
+<li><code>POST /integracao-bancaria/{idContaBancaria}/inativacao</code> com <code>{ idContaBancaria }</code>: "remover integração".
+  UI: "Integração removida com sucesso!" / "Não foi possível remover sua integração…". <strong>Risco: alto</strong>
+  (o texto do modal diz que "não poderá ser desfeito").</li>
+<li><code>GET /integracao-bancaria/widget-info?parceiro&amp;gerenciar-consentimento&amp;idContaBancariaRenovacao&amp;url-success&amp;url-exit&amp;url-event</code>
+  e <code>GET /integracao-bancaria/parametros-integracao/{id}</code> (só leitura).</li>
+<li>BS2 (fora do escopo; anotado apenas): <code>PUT conta-bancaria/{chave}/{conta}?integrar={status}</code>
+  (chunk <code>contaBancariaIntegracao</code>), <code>POST /api/bs2/sync/aceitar</code>,
+  <code>POST api/bs2/envia-resolucao-pendencias…</code>.</li>
+</ul>
+<p><strong>Recomendação para a CLI (contas e extratos):</strong></p>
+<div class="highlight"><pre><span></span><code>ctbz contas-bancarias adicionar --banco &lt;id|código&gt; --agencia 1234 --conta 12345-6 \
+                                --abertura 2024-01-10 [--saldo-inicial 0] --declaro-conta-pj
+ctbz contas-bancarias editar &lt;id&gt; [--agencia …] [--conta …] [--abertura …]
+ctbz contas-bancarias remover &lt;id&gt;                 # risco alto: confirmação + --yes
+ctbz extrato importar arquivo.ofx --conta-bancaria &lt;id&gt; --competencia 2026-09 \
+                      [--saldo-final 1234.56]      # permiteImportacao → bucket → info-extrato → eventoUploadExtrato
+ctbz extrato enviar arquivo.pdf --conta-bancaria &lt;id&gt; --competencia 2026-09   # rota Central de Documentos
+ctbz aplicacoes sem-movimento --conta-bancaria &lt;id&gt; --pendencia &lt;id&gt;…        # sem-aplicacao-financeira
+</code></pre></div>
+<p>Para <code>importar</code>, recomenda-se o fluxo (a). Ele valida período, banco e conta e devolve o
+saldo do último dia, que a CLI pode mostrar e confirmar ou receber via <code>--saldo-final</code>. O <code>nomeArquivo</code> deve ser
+gerado no mesmo formato do front.</p>
+<hr />
+<h2 id="3-contabilidade">3. Contabilidade<a class="headerlink" href="#3-contabilidade" title="Permanent link">&para;</a></h2>
+<h3 id="31-post-informerendimentoreabrir-balancoanocompetencia">3.1 <code>POST informerendimento/reabrir-balanco/{anoCompetencia}</code><a class="headerlink" href="#31-post-informerendimentoreabrir-balancoanocompetencia" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk:</strong> <code>informe-de-rendimentos</code>. Não tem corpo.</li>
+<li><strong>Quando aparece:</strong> <code>GET informerendimento/v2/{ano}/restricoes</code> devolve
+  <code>restricoes.pendenciaDocumental.{possuiPendencia, pendencias[], fluxoRegularizacao, valorServicoAdicional}</code>
+  e <code>processoReabertura.status</code> (<code>NENHUM</code>/<code>EM_ANDAMENTO</code>/<code>ANALISANDO</code>). Com
+  <code>possuiPendencia</code> e <code>fluxoRegularizacao === "REABERTURA_BALANCO"</code>, a tela abre o modal "ModalExigibilidadeDocumental":
+  "Verificamos que você possui pendências documentais referentes ao exercício de <ano> … Caso sua
+  empresa possua lucros no exercício e você opte por <strong>não regularizar pendência</strong>, não será possível
+  realizar a distribuição de lucros…", com os botões "Não regularizar pendência" e <strong>"Regularizar pendências"</strong>.</li>
+<li>Clicar em "Regularizar pendências" dispara <code>reabrir-balanco</code>. Em caso de sucesso, a tela vai para a Central de Rotinas.
+  Com <code>fluxoRegularizacao === "CONTRATAR_SERVICO_ADICIONAL"</code>, a tela <strong>não</strong> chama o endpoint: abre um modal de
+  serviço pago ("Seu período contábil já foi fechado… Esse serviço gera uma cobrança de R$ <valor>") que
+  leva à rota <code>ServicosAvulsosReaberturaDoBalanco</code>.</li>
+<li><strong>Erros:</strong> <code>403</code> mostra "Usuário admin não pode fazer a reabertura do exercício contábil para um cliente."</li>
+<li><strong>Semântica:</strong> reabre o exercício contábil (balanço) do ano para que as pendências documentais sejam
+  regularizadas. O status passa a <code>EM_ANDAMENTO</code>/<code>ANALISANDO</code>, e o informe de rendimentos fica indisponível.</li>
+<li><strong>Reversível:</strong> não há endpoint. <strong>Risco: alto</strong> (afeta balanço, informe e distribuição de lucros).</li>
+<li>Os demais <code>POST informerendimento/*</code> (<code>aceite/{ano}</code>, <code>aceitar-termo-debitos/{ano}</code> com <code>{aceite}</code>,
+  <code>aceitar-carta-responsabilidade/{ano}</code>, <code>historico</code>, <code>salvarconfiguracaocliente</code>) estão no mesmo
+  módulo e pertencem ao contexto de lucros e informe (outra página).</li>
+</ul>
+<h3 id="32-post-documentosreclassificar-alterar-a-classificacao-de-lancamento-bancario-central-de-rotinas">3.2 <code>POST documentos/reclassificar</code>: alterar a classificação de lançamento bancário (Central de Rotinas)<a class="headerlink" href="#32-post-documentosreclassificar-alterar-a-classificacao-de-lancamento-bancario-central-de-rotinas" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk:</strong> <code>app</code> (módulo da Central de Rotinas), modal "ModalCentralDocumentosReclassificacao".
+  O título é "Alterar classificação de extrato bancário" para os tipos <code>CONTRATO_DE_FINANCIAMENTO</code> e
+  <code>AQUISICAO_INVESTIMENTO_ANJO</code>; nos demais casos é "Alterar lançamento bancário".</li>
+<li><strong>Pré-condição:</strong> <code>GET documentos/reclassificar/init?id=&lt;idPendencia&gt;&amp;id=…</code> (ids de
+  <code>rotina.propriedades.documentosPendentes</code>). A resposta é uma lista de
+  <code>{idPendencia, idLancamento, classificacaoAtual, data, valor, descricao, banco,
+  classificacoes:[{idClassificacao, nome, socios:[{idSocio, nome}]}]}</code>.</li>
+<li><strong>Corpo:</strong> um array, um item por pendência:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"idPendencia"</span><span class="p">:</span><span class="w"> </span><span class="s2">"…"</span><span class="p">,</span><span class="w"> </span><span class="nt">"idClassificacao"</span><span class="p">:</span><span class="w"> </span><span class="mi">456</span><span class="p">,</span><span class="w"> </span><span class="nt">"idSocio"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="nt">"idLancamento"</span><span class="p">:</span><span class="w"> </span><span class="mi">789</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">]</span>
+</code></pre></div>
+<p><code>idSocio</code> é obrigatório quando a classificação escolhida tem <code>socios</code> (com um único sócio, o front o seleciona sozinho).
+- <strong>UI:</strong> sucesso mostra "A nova classificação do extrato foi salva e a rotina concluída." (vindo da Central de
+  Rotinas, a página recarrega). Erro mostra "Falha ao salvar nova classificação. Tente novamente."
+- <strong>Semântica:</strong> reclassifica o lançamento e <strong>conclui a pendência/rotina</strong>. <strong>Risco: médio</strong>
+  (é possível reclassificar de novo pela seção 1.3 enquanto o período estiver aberto; a rotina não reabre).</p>
+<p><strong>Recomendação para a CLI (contabilidade):</strong></p>
+<div class="highlight"><pre><span></span><code>ctbz balanco reabrir --ano 2025         # só se restricoes.fluxoRegularizacao == REABERTURA_BALANCO;
+                                        # mostrar restrições e exigir --yes; nunca para CONTRATAR_SERVICO_ADICIONAL
+ctbz rotinas reclassificar &lt;idPendencia&gt;… --classificacao &lt;id&gt; [--socio &lt;id&gt;]
+</code></pre></div>
+<hr />
+<h2 id="4-documentos-central-de-documentos">4. Documentos (Central de Documentos)<a class="headerlink" href="#4-documentos-central-de-documentos" title="Permanent link">&para;</a></h2>
+<h3 id="41-upload-de-documento-com-arquivo-multipart-para-o-bff-ausente-do-catalogo">4.1 Upload de documento <strong>com arquivo</strong>: multipart para o BFF (ausente do catálogo)<a class="headerlink" href="#41-upload-de-documento-com-arquivo-multipart-para-o-bff-ausente-do-catalogo" title="Permanent link">&para;</a></h3>
+<p><strong><code>POST documentos/envio-documento/enviar</code></strong> (um arquivo para uma pendência)</p>
+<ul>
+<li><code>multipart/form-data</code>:</li>
+<li><code>arquivo</code>: o arquivo;</li>
+<li><code>tipoDocumento</code>: o tipo da pendência (lista abaixo);</li>
+<li><code>competencia</code>: JSON <code>{"mes":1,"ano":2026}</code>;</li>
+<li><code>metadados</code>: JSON <code>{"valor", "idPendencia", "periodo", "idContaBancaria", "tipoInvestimento"}</code> (campos
+    nulos quando não se aplicam);</li>
+<li><code>ordemArquivoCompetencia</code>: número da ordem do arquivo, ou a string <code>"null"</code> (FormData de <code>null</code>).</li>
+</ul>
+<p><strong><code>POST documentos/envio-documento/enviar/consolidado</code></strong> (um arquivo para várias competências,
+"Em um arquivo único")</p>
+<ul>
+<li><code>multipart/form-data</code>:</li>
+<li><code>arquivo</code>;</li>
+<li><code>tipoDocumento</code>;</li>
+<li><code>documentos</code>: JSON
+    <code>[{competencia:{mes,ano}, metadados:{idPendencia, idContaBancaria, periodo, tipoInvestimento}}, …]</code>.</li>
+</ul>
+<p><strong>Comportamento comum aos dois:</strong></p>
+<ul>
+<li><strong>Origem dos dados:</strong> <code>GET documentos/envio-documento/init?id=&lt;idPendencia&gt;&amp;id=…</code> devolve
+  <code>{ tiposPermitidos: [...], documentos: [ {tipo, propriedades:{…}} ] }</code>. Os ids das pendências chegam pela
+  Central de Rotinas (<code>query.id</code>).</li>
+<li><strong>Tipos</strong> (mapa de formulários da tela "EnvioDeDocumentos"):</li>
+<li><code>EXTRATO_BANCARIO_MOVIMENTACOES</code> (usa 2.1b);</li>
+<li><code>EXTRATO_APLICACAO_FINANCEIRA</code>;</li>
+<li><code>INFORME_DE_RENDIMENTO_INVESTIMENTOS</code>;</li>
+<li><code>CONTRATO_DE_EMPRESTIMO</code>;</li>
+<li><code>CONTRATO_DE_FINANCIAMENTO</code>;</li>
+<li><code>CONTROLE_DE_INTERMEDIACOES</code>;</li>
+<li><code>ESTOQUE</code>;</li>
+<li><code>AQUISICAO_ATIVO_IMOBILIZADO</code>;</li>
+<li><code>AQUISICAO_INVESTIMENTO_ANJO</code>;</li>
+<li><code>CONTRATO_DE_AFAC</code>.</li>
+<li>O limite de tamanho no formulário de aplicações é <code>MAX_FILE_SIZE_MB</code> (30 MB, incerto para os outros tipos).</li>
+<li><strong>Resposta/erros:</strong> cada envio é uma promessa independente (<code>Promise.allSettled</code>). Para cada erro, o front lê
+  <code>response.data</code> e remove o prefixo <code>(ERRO-NA-VALIDACAO-DE-DOCUMENTO-API-CONTABIL)</code>. Também extrai
+  <code>idPendencia</code> do FormData para marcar o item. Em caso de sucesso, a tela mostra o modal "ModalSuccessUploadFiles".
+  Exceção: em <code>AQUISICAO_ATIVO_IMOBILIZADO</code> os itens não são marcados como enviados.</li>
+<li><strong>Risco: médio.</strong> Envia um documento contábil e resolve a pendência. Não há endpoint de exclusão no
+  front (incerto).</li>
+</ul>
+<h3 id="42-post-documentosenvio-documentoenviarsem-arquivo-declarar-nao-tenho-o-documento">4.2 <code>POST documentos/envio-documento/enviar/sem-arquivo</code>: declarar "não tenho o documento"<a class="headerlink" href="#42-post-documentosenvio-documentoenviarsem-arquivo-declarar-nao-tenho-o-documento" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chunk:</strong> <code>app</code> (Central de Rotinas e pendências críticas). O corpo é um array:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"idPendencia"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;id&gt;"</span><span class="p">,</span><span class="w"> </span><span class="nt">"tipo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ESTOQUE"</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">]</span>
+</code></pre></div>
+<p><code>tipo</code> ∈ { <code>CONTROLE_DE_INTERMEDIACOES</code>, <code>ESTOQUE</code>, <code>CONTRATO_DE_AFAC</code> (ou o <code>tipo</code> da rotina) }.
+  Os ids vêm de <code>rotina.propriedades.documentosPendentes</code>.
+- <strong>Modais e textos:</strong>
+  - estoque: "Confirmar ausência de estoque no período". "Ao confirmar que sua empresa não teve estoque
+    em <ano>, esse período será excluído. Mas atenção: para empresas de comércio, a falta desse documento
+    pode gerar inconsistências na declaração anual. Deseja confirmar?";
+  - AFAC: "Confirmar envio do contrato". "Ao confirmar que já enviou o contrato, usaremos o documento
+    recebido anteriormente como comprovante…";
+  - intermediações: modal equivalente ("ModalConfirmarRelatorioIntermediacoes").
+- <strong>UI:</strong> sucesso recarrega a página ou emite <code>excluiuPendencia</code>. Erro mostra "Não foi possível excluir o período. Por favor, tente
+  outra vez."
+- <strong>Semântica:</strong> fecha a pendência sem arquivo. <strong>Reversível:</strong> não. <strong>Risco: médio/alto.</strong></p>
+<h3 id="43-get-documentostiposinitareadocumentos_contabeis-so-leitura">4.3 <code>GET /documentos/tipos/init?area=DOCUMENTOS_CONTABEIS</code> (só leitura)<a class="headerlink" href="#43-get-documentostiposinitareadocumentos_contabeis-so-leitura" title="Permanent link">&para;</a></h3>
+<p>O único valor de <code>area</code> encontrado nos bundles é <code>DOCUMENTOS_CONTABEIS</code>. A CLI já tem essa leitura em <code>documentos.go</code>.</p>
+<p><strong>Recomendação para a CLI (documentos):</strong></p>
+<div class="highlight"><pre><span></span><code>ctbz documentos pendentes                       # envio-documento/init (sem ids → tiposPermitidos)
+ctbz documentos enviar &lt;arquivo&gt; --pendencia &lt;id&gt; [--tipo …]          # envio-documento/enviar
+ctbz documentos enviar &lt;arquivo&gt; --pendencia &lt;id&gt; --pendencia &lt;id&gt;…   # …/consolidado
+ctbz documentos sem-arquivo --pendencia &lt;id&gt; --tipo ESTOQUE           # confirmação obrigatória
+</code></pre></div>
+<hr />
+<h2 id="5-certificado-digital">5. Certificado digital<a class="headerlink" href="#5-certificado-digital" title="Permanent link">&para;</a></h2>
+<p>Existem <strong>três gerações</strong> de fluxo convivendo no bundle. <code>GET certificado-digital/v2/verificar-rollout</code>
+devolve <code>{certificadora}</code>, que decide a tela de upload. Os valores são:</p>
+<ul>
+<li><code>SOLUTI</code>: fluxo antigo, rota <code>EnviarCertificado</code>;</li>
+<li><code>CERTISIGN</code>: fluxo v2;</li>
+<li><code>SAFEWEB</code>: fluxo v3.</li>
+</ul>
+<h3 id="51-upload-de-certificado-a1-pfxp12-tres-endpoints-todos-multipart">5.1 Upload de certificado A1 (.pfx/.p12): três endpoints, todos multipart<a class="headerlink" href="#51-upload-de-certificado-a1-pfxp12-tres-endpoints-todos-multipart" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Certificadora</th>
+<th>Método e caminho</th>
+<th>Campos</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SOLUTI (legado)</td>
+<td><code>POST certificado/envio-manual</code> (ausente do catálogo)</td>
+<td><code>file</code>, <code>password</code></td>
+</tr>
+<tr>
+<td>CERTISIGN (v2)</td>
+<td><code>POST certificado-digital/v2/upload-certificado</code> (ausente do catálogo)</td>
+<td><code>file</code>, <code>password</code></td>
+</tr>
+<tr>
+<td>SAFEWEB (v3)</td>
+<td><code>POST /certificado-digital/v3/upload</code> (ausente do catálogo, base em variável <code>"/certificado-digital/v3"</code>)</td>
+<td><code>file</code>, <code>password</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Validação do front:</strong></li>
+<li>o arquivo é obrigatório e precisa ter a extensão <code>/(\.pfx|\.p12)$/i</code> ("O arquivo deve ter a extensão pfx ou p12.");</li>
+<li>tamanho máximo de <strong>1 MB</strong> ("O arquivo não pode ter mais que 1mb."; <code>h = 1e6</code> no v2);</li>
+<li>a senha é obrigatória.</li>
+<li><strong>Resposta e erros:</strong></li>
+<li>legado: devolve <code>{dataVencimento}</code>, gravado em <code>COMPANY_DATA.configuracao.dataValidadeCertificado</code>.
+    O erro <code>certificado/InvalidTypeECPFException</code> mostra "Certificado inválido. Envie um certificado digital no formato e-CNPJ A1.";</li>
+<li>v2: o erro <code>SENHA_INVALIDA_UPLOAD_CERTIFICADO</code> aparece no campo senha (<code>detalhes[0].detalhe</code>); outros
+    <code>detalhes[0].detalhe</code> aparecem no campo arquivo; o erro genérico é "Ocorreu um erro durante o upload, tente novamente mais tarde.";</li>
+<li>em caso de sucesso, a tela volta para "CertificadoDigital".</li>
+<li>v3: também tem <code>GET /certificado-digital/v3/init</code>, <code>/download</code> e <code>/senha</code>.</li>
+<li><strong>Semântica:</strong> passa a usar esse certificado na empresa (emissão de NF, e-CAC etc.).
+  <strong>Risco: alto</strong> (manipula a chave privada e a senha). É reversível só por novo upload.</li>
+<li>Para a CLI: a senha nunca deve ir para os argumentos (usar prompt ou stdin), e o arquivo deve ser validado localmente.</li>
+</ul>
+<h3 id="52-remocao-delete-empresacertificadoremovercert">5.2 Remoção: <code>DELETE empresa/certificado/removercert</code><a class="headerlink" href="#52-remocao-delete-empresacertificadoremovercert" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Existe no serviço (export <code>j</code>) e na action Vuex <code>certificadoDigital/removeCertificadoDigital</code>, que
+  depois faz <code>setCertificadoDigital({situacao:"NAO_ENVIADO"})</code>. <strong>Nenhum componente despacha essa
+  action neste build (incerto: código morto ou chamado via outro app).</strong> Não tem corpo.</li>
+<li><strong>Risco: alto</strong> (remove o certificado da empresa; emissões automáticas param).</li>
+</ul>
+<h3 id="53-fluxo-v2-de-aquisicao-certisign-chunk-chunk-173ea0c1-tela-certificado-digital">5.3 Fluxo v2 de aquisição (CERTISIGN), chunk <code>chunk-173ea0c1</code> (tela <code>/certificado-digital</code>)<a class="headerlink" href="#53-fluxo-v2-de-aquisicao-certisign-chunk-chunk-173ea0c1-tela-certificado-digital" title="Permanent link">&para;</a></h3>
+<p>Estado: <code>GET certificado-digital/v2/init</code> devolve <code>status</code> (<code>CRIANDO_SOLICITACAO</code>, <code>SOLICITACAO_CRIADA</code>,
+<code>ATENDIMENTO_AGENDADO</code>, <code>ATENDIMENTO_REALIZADO</code>, <code>EMISSAO_INICIADA</code>, <code>CERTIFICADO_PRONTO_PARA_EMISSAO</code>,
+<code>EMITIDO</code>, <code>ERRO_*</code>, <code>PENDENCIA_CNPJ_IRREGULAR</code>, <code>PENDENCIA_SOCIO_DIVERGENTE</code>, …) e os blocos
+<code>dadosAquisicao</code>, <code>dadosAgendamento</code>, <code>dadosCertificado</code>, <code>documentos</code> e <code>possuiTicketPendenciaEmAberto</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Corpo</th>
+<th>Semântica e UI</th>
+<th>Risco</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST certificado-digital/v2/salvar-aceite</code></td>
+<td><code>{senhaCertificado: &lt;senha criada pelo usuário&gt;, confirmouSenhaSalvaLocalSeguro: true, estaRecriandoSenha: bool}</code></td>
+<td><strong>Inicia a aquisição.</strong> O modal de termos exige "Declaro que li e concordo com os termos acima" (Termo de Titularidade Certisign) e, quando aplicável, "<strong>Autorizo a cobrança do valor do certificado na minha próxima mensalidade</strong>". Devolve <code>{status}</code>. Sucesso mostra "A senha foi cadastrada com sucesso." ou, ao recriar, "Seu processo foi reiniciado. Agende e refaça a entrevista para prosseguir.". O erro 400 <code>chaveErro</code> contendo <code>ERRO_INICIAR_SOLICITACAO</code> mostra "Emissão pausada".</td>
+<td><strong>alto</strong> (cobrança e segredo)</td>
+</tr>
+<tr>
+<td><code>PUT certificado-digital/v2/tipo-atendimento</code></td>
+<td><code>{tipoAtendimento: "ONLINE"\|"PRESENCIAL", informouQueTemCNH?: bool}</code></td>
+<td>Muda a modalidade da entrevista.</td>
+<td>baixo/médio</td>
+</tr>
+<tr>
+<td><code>POST certificado-digital/v2/agendar-atendimento</code></td>
+<td><code>{dataHoraAgendamento: "&lt;data&gt; &lt;hora&gt;", posto: &lt;objeto do ponto de atendimento&gt; \| undefined}</code></td>
+<td>Agenda a videoconferência ou o atendimento presencial. Os horários vêm de <code>GET …/buscar-horarios-agendamento?data&amp;postoId</code> e os postos de <code>GET …/pontos-atendimento/buscar?estado&amp;cidade&amp;bairro</code> (com <code>buscar-cidades</code> e <code>buscar-bairros</code>). A resposta é <code>{status, dadosAgendamento}</code>; <code>status:"HORARIO_INDISPONIVEL"</code> remove o horário da lista. O formato da data é incerto (provavelmente <code>YYYY-MM-DD HH:mm</code>).</td>
+<td>médio</td>
+</tr>
+<tr>
+<td><code>GET certificado-digital/v2/reiniciar-atendimento</code> (<strong>GET com efeito</strong>)</td>
+<td>—</td>
+<td>"Deseja realizar uma nova entrevista?" (reagendar). Devolve <code>{status, dadosAtendimento}</code>. O erro 400 <code>FILA_EXPRESSA_BLOQUEADA</code> abre o modal "entrevista realizada".</td>
+<td>médio</td>
+</tr>
+<tr>
+<td><code>GET certificado-digital/v2/iniciar-atendimento-expresso</code> (<strong>GET com efeito</strong>)</td>
+<td>—</td>
+<td>Entra na fila virtual. Devolve <code>{status, link, tipoAtendimento, tempoEspera}</code>.</td>
+<td>médio</td>
+</tr>
+<tr>
+<td><code>PUT certificado-digital/v2/emitir-certificado-com-senha</code></td>
+<td><code>{senhaCertificado}</code></td>
+<td>Emite após a entrevista. O status passa a <code>EMISSAO_INICIADA</code>. O erro 400 <code>SENHA_INVALIDA_EMISSAO_CERTIFICADO</code> mostra a mensagem de senha inválida.</td>
+<td>alto</td>
+</tr>
+<tr>
+<td><code>POST certificado-digital/v2/solicitar-atendimento-pendencia</code></td>
+<td>sem corpo</td>
+<td>Abre um ticket de suporte para a pendência (CNPJ irregular ou sócio divergente). Mostra o modal "Atendimento solicitado".</td>
+<td>baixo</td>
+</tr>
+<tr>
+<td><code>PUT certificado-digital/v2/cancelar-solicitacao</code></td>
+<td>sem corpo</td>
+<td>Usado no modal "Antes de continuar": "Ao confirmar que a pendência foi resolvida, você irá <strong>recomeçar o processo</strong> de emissão…", botão "Confirmar e recomeçar". Cancela a solicitação atual e recarrega o fluxo.</td>
+<td>alto</td>
+</tr>
+<tr>
+<td><code>POST certificado-digital/v2/emitir-certificado</code></td>
+<td><code>{usuario, senha, aceite}</code></td>
+<td>Tela "EmitirCertificado" (one-click SOLUTI no v2): o usuário digita as credenciais da certificadora (com aviso se tiver menos de 31 caracteres) e aceita as políticas de privacidade da Contabilizei e da Soluti.</td>
+<td>alto</td>
+</tr>
+<tr>
+<td><code>POST certificado-digital/v2/informar-cnh</code></td>
+<td><code>{temCNH: bool}</code></td>
+<td>Informa se o titular tem CNH (decide entre videoconferência e presencial).</td>
+<td>baixo</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-fluxo-legado-certificado-modulo-689a-em-app">5.4 Fluxo legado (<code>certificado/*</code>, módulo <code>689a</code> em <code>app</code>)<a class="headerlink" href="#54-fluxo-legado-certificado-modulo-689a-em-app" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>Corpo</th>
+<th>Uso</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST certificado/emitir-certificado</code></td>
+<td><code>{usuario, senha, aceite}</code></td>
+<td><code>fluxoEmitirCertificado</code>: emissão one-click (SOLUTI).</td>
+</tr>
+<tr>
+<td><code>POST certificado/fluxo-one-click/bird-id/valida-senha</code></td>
+<td><code>{senha}</code> → <code>{isSenhaValida}</code></td>
+<td>Valida a senha nova (6–42 caracteres, com maiúscula, especial etc.). Recusada: "Não foi possível cadastrar sua senha. Digite novamente."</td>
+</tr>
+<tr>
+<td><code>POST certificado/fluxo-one-click/bird-id/emitir-certificado</code></td>
+<td><code>{codigoOTP, senha}</code></td>
+<td>Emissão BirdID. O erro <code>certificado/codigoOTPInvalido</code> mostra "Token inválido".</td>
+</tr>
+<tr>
+<td><code>GET certificado/fluxo-one-click/alterarParametroEmpresa</code> (<strong>GET com efeito</strong>)</td>
+<td>—</td>
+<td>"AlertRemoveFromOneClick": tira a empresa do fluxo one-click. Erro mostra "Serviço não disponível!".</td>
+</tr>
+<tr>
+<td><code>PUT certificado/processo-aquisicao/etapa</code></td>
+<td><code>{etapa}</code> ou <code>{etapa, sairFluxoBird: true}</code></td>
+<td>Máquina de estados do assistente. <code>etapa</code> ∈ <code>PRE_CHECKOUT</code>, <code>VERIFICACAO_COMPRA</code>, <code>VERIFICACAO_CNH</code>, <code>INFORMAR_DADOS</code>, <code>CADASTRO_SENHA</code>, <code>AGENDAMENTO_VIDEOCONFERENCIA</code>, <code>AGENDAMENTO_PRESENCIAL</code>, <code>AGENDAMENTO_REALIZADO</code>, <code>SELECIONAR_HORARIO</code>, <code>BIRDID_DADOS</code>, <code>EMISSAO</code>. Com <code>etapa</code> nula, o front só lê <code>etapaAtual</code>.</td>
+</tr>
+<tr>
+<td><code>POST certificado/agendamento-contabilizei</code></td>
+<td><code>{horario: "&lt;selectedDate&gt; &lt;selectedTime&gt;"}</code></td>
+<td>Agenda o atendimento da Contabilizei (videoconferência).</td>
+</tr>
+<tr>
+<td><code>POST certificado/agendamento/dados-cliente</code></td>
+<td><code>{telefone, email}</code></td>
+<td>Atualiza o contato do agendamento ("Atualizar"). Sem <code>await</code> no front.</td>
+</tr>
+<tr>
+<td><code>PUT certificado/agendamento-contabilizei/documento</code> (ausente do catálogo)</td>
+<td>multipart <code>arquivo</code>, <code>tipo</code> (<code>"FRENTE"</code>/<code>"VERSO"</code>)</td>
+<td>Envia a foto do documento de identidade do titular. <strong>Dado pessoal sensível.</strong></td>
+</tr>
+<tr>
+<td><code>POST certificado/agendamento-contabilizei/senha</code></td>
+<td><code>{senha}</code></td>
+<td>Cria a senha do certificado ("criar-senha"); em seguida <code>etapa=SELECIONAR_HORARIO</code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Riscos:</strong> emissão, senha e documento: <strong>alto</strong>. Etapa e agendamento: <strong>médio</strong>. Sem undo, exceto reagendar ou reiniciar.</p>
+<p><strong>Recomendação para a CLI (certificado):</strong></p>
+<div class="highlight"><pre><span></span><code>ctbz certificado status                        # certificado/status + certificado-digital/v2/init (leitura)
+ctbz certificado enviar empresa.pfx            # senha por prompt; escolhe o endpoint por verificar-rollout
+                                               # (SOLUTI→envio-manual, CERTISIGN→v2/upload-certificado, SAFEWEB→v3/upload)
+</code></pre></div>
+<p>Não convém automatizar a aquisição e a emissão (aceite com cobrança, entrevista, documento com foto).
+No máximo, <code>ctbz certificado agendamento</code> em modo leitura (horários e postos) e um link para a tela.</p>
+<hr />
+<h2 id="6-escritas-ausentes-do-catalogomd-resumo">6. Escritas ausentes do <code>catalogo.md</code> (resumo)<a class="headerlink" href="#6-escritas-ausentes-do-catalogomd-resumo" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho</th>
+<th>Motivo da ausência</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DELETE</td>
+<td><code>/movimentacao-financeira/extrato?idContaBancaria&amp;ano&amp;mes</code></td>
+<td>helper <code>_()</code> de query</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/movimentacao-financeira/desmembrar/desfazer/{id}?idLancamentoPai=</code></td>
+<td>helper <code>_()</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>upload-documentos/extrato/enviar</code></td>
+<td><code>axios({method,url})</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>documentos/envio-documento/enviar</code></td>
+<td><code>axios({method,url})</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>documentos/envio-documento/enviar/consolidado</code></td>
+<td><code>axios({method,url})</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>certificado/envio-manual</code></td>
+<td><code>axios({method,url})</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>certificado-digital/v2/upload-certificado</code></td>
+<td><code>axios({method,url})</code></td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>certificado/agendamento-contabilizei/documento</code></td>
+<td><code>axios({method,url})</code></td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/certificado-digital/v3/upload</code> (+ GET <code>init</code>, <code>download</code>, <code>senha</code>)</td>
+<td>base em variável</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/integracao-bancaria/token</code></td>
+<td>caminho em variável</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/integracao-bancaria/{id}/inativacao</code></td>
+<td>caminho em variável</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/integracao-bancaria/widget-info</code>, <code>/integracao-bancaria/parametros-integracao/{id}</code></td>
+<td>caminho em variável (leitura)</td>
+</tr>
+</tbody>
+</table>
+<p>O <code>evento-tour</code> (base legado) já está no catálogo.</p>
+<p>O catálogo não marca como escrita os GETs com efeito colateral <code>certificado-digital/v2/reiniciar-atendimento</code>,
+<code>certificado-digital/v2/iniciar-atendimento-expresso</code> e <code>certificado/fluxo-one-click/alterarParametroEmpresa</code>.</p>
+<h2 id="7-prioridade-sugerida-para-o-roadmap-da-cli">7. Prioridade sugerida para o roadmap da CLI<a class="headerlink" href="#7-prioridade-sugerida-para-o-roadmap-da-cli" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Caixa:</strong> <code>adicionar</code>, <code>editar</code>, <code>remover</code> e <code>contas</code>. Payload simples, valor alto para o usuário e risco controlável.</li>
+<li><strong>Extrato:</strong> <code>importar</code> (OFX/PDF) com o fluxo completo e <code>classificar</code>, <code>desmembrar</code>, <code>desfazer-desmembramento</code>.</li>
+<li><strong>Documentos:</strong> <code>enviar</code> e <code>sem-arquivo</code> a partir das pendências da Central de Rotinas.</li>
+<li><strong>Contas bancárias:</strong> <code>adicionar</code> e <code>editar</code>. <code>remover</code> fica atrás de <code>--yes</code>.</li>
+<li><strong>Certificado:</strong> só <code>enviar</code> (upload A1) e <code>status</code>.</li>
+<li>Não implementar (ou só com flag explícita): <code>reabrir-balanco</code>, <code>DELETE extrato</code>, aquisição e emissão de
+   certificado, integração Open Finance, flags de UI (<code>interagiu-modal-integracao</code>, oferta BS2, <code>evento-tour</code>).</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
