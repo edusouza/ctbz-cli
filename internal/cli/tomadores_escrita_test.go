@@ -88,3 +88,30 @@ func TestTomadoresEditar(t *testing.T) {
 		t.Errorf("inexistente: código %d, %s", code, stderr)
 	}
 }
+
+func TestTomadoresRemover(t *testing.T) {
+	f := tomadoresFake(t)
+	f.onWrite = func(f *escritaFake) {
+		f.gets[pathTomadores] = `{"tomadores":[{"id":77,"nome":"EXAMPLE INC","estrangeiro":true}],"emissaoSemTomador":false,"permiteEmissaoExterior":true}`
+	}
+	out, stderr, code := execCLI(t, "", "notas", "tomadores", "remover", "00.000.000/0001-91", "--yes", "-o", "json")
+	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != "DELETE /api/plataforma/autopilot/clientes/00000000000191 " {
+		t.Fatalf("código %d, %q\n%s", code, f.writes, stderr)
+	}
+	if !strings.Contains(out, `"situacao": "removido"`) || !strings.Contains(stderr, "Excluir o tomador BANCO EXEMPLO SA (00000000000191). Esta ação não pode ser desfeita") {
+		t.Errorf("saída:\n%s\n%s", out, stderr)
+	}
+	// Exterior pelo id; nacional pelo id usa o documento.
+	execCLI(t, "", "notas", "tomadores", "remover", "77", "--yes")
+	if len(f.writes) != 2 || f.writes[1] != "DELETE /api/plataforma/autopilot/clientes/77 " {
+		t.Errorf("exterior: %q", f.writes)
+	}
+	f = tomadoresFake(t)
+	execCLI(t, "", "notas", "tomadores", "remover", "5", "--yes")
+	if len(f.writes) != 1 || f.writes[0] != "DELETE /api/plataforma/autopilot/clientes/00000000000191 " {
+		t.Errorf("nacional pelo id: %q", f.writes)
+	}
+	if _, _, code := execCLI(t, "", "notas", "tomadores", "remover", "123", "--yes"); code != ExitError {
+		t.Errorf("inexistente: código %d", code)
+	}
+}

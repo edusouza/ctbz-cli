@@ -73,6 +73,7 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz notas tomadores adicionar`](ctbz_notas_tomadores_adicionar.md) | Cadastra um tomador (cliente) nacional ou do exterior |
 | [`ctbz notas tomadores consulta`](ctbz_notas_tomadores_consulta.md) | Consulta os dados cadastrais de um CNPJ na Receita |
 | [`ctbz notas tomadores editar`](ctbz_notas_tomadores_editar.md) | Corrige os dados de um tomador cadastrado |
+| [`ctbz notas tomadores remover`](ctbz_notas_tomadores_remover.md) | Exclui um tomador da lista de clientes |
 | [`ctbz pendencias`](ctbz_pendencias.md) | Lista as pendências da empresa (tipo, detalhe, prazo e situação) |
 | [`ctbz pendencias aceitar`](ctbz_pendencias_aceitar.md) | Aceita um termo ou carta pendente da Central de Rotinas |
 | [`ctbz pendencias conciliacao`](ctbz_pendencias_conciliacao.md) | Mostra as pendências de conciliação fiscal (notas e recebimentos) |

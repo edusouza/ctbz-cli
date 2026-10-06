@@ -331,3 +331,67 @@ func sortedCopy(ss []string) []string {
 	sort.Strings(ss)
 	return ss
 }
+
+// acharTomador procura um tomador pelo documento (nacional) ou pelo id (exterior).
+func acharTomador(ts []api.Tomador, v string) (*api.Tomador, string) {
+	d := normalizarDocumento(v)
+	for i, t := range ts {
+		if t.CPFCNPJ != "" && normalizarDocumento(t.CPFCNPJ) == d {
+			return &ts[i], d
+		}
+		if id, ok := rawTexto(t.ID).(string); ok && id == v {
+			if t.CPFCNPJ != "" && !t.Estrangeiro {
+				return &ts[i], normalizarDocumento(t.CPFCNPJ) // nacional: a exclusão usa o documento
+			}
+			return &ts[i], id
+		}
+	}
+	return nil, ""
+}
+
+func newTomadoresRemoverCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "remover DOCUMENTO|ID",
+		Short: "Exclui um tomador da lista de clientes",
+		Long: `Exclui um tomador da lista de clientes do emissor (risco médio: não dá para desfazer, só
+recadastrar com ctbz notas tomadores adicionar). Nacionais são identificados pelo documento;
+tomadores do exterior, pelo id. As notas já emitidas para o tomador não mudam (a confirmar).
+
+Pede confirmação (--yes em scripts) e aceita --dry-run.`,
+		Example: `  ctbz notas tomadores remover 00000000000191`,
+		Args:    exactArgs(1, "o DOCUMENTO ou ID do tomador"),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			formato, err := outputFormat(cmd, "")
+			if err != nil {
+				return err
+			}
+			s := streamsOf(cmd)
+			ctx := cmd.Context()
+			g := sessionGetter{s}
+			lista, err := api.BuscarTomadores(ctx, g)
+			if err != nil {
+				return err
+			}
+			t, chave := acharTomador(lista.Tomadores, args[0])
+			if t == nil {
+				return fmt.Errorf("tomador %s não encontrado; veja ctbz notas tomadores", args[0])
+			}
+			op := operacao{Risco: riscoMedio, ID: chave, Resumo: fmt.Sprintf("Excluir o tomador %s (%s). Esta ação não pode ser desfeita", t.Nome, chave)}
+			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.ExcluirCliente(ctx, snd, chave) })
+			if err != nil || !enviado {
+				return err
+			}
+			situacao := "removido"
+			if nova, err := api.BuscarTomadores(ctx, g); err != nil {
+				fmt.Fprintln(s.err, "aviso: pedido enviado, mas não foi possível reler a lista:", err)
+				situacao = "enviado"
+			} else if ainda, _ := acharTomador(nova.Tomadores, args[0]); ainda != nil {
+				fmt.Fprintln(s.err, "aviso: o tomador ainda aparece; confira com ctbz notas tomadores")
+				situacao = "enviado"
+			}
+			return output.Write(s.out, formato, resultadoEscrita("remover", situacao, chave).Add("nome", "Nome", t.Nome))
+		},
+	}
+	addWriteFlags(cmd)
+	return cmd
+}

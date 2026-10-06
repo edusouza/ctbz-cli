@@ -58,6 +58,15 @@ ctbz notas tomadores editar 00000000000191 --email novo@exemplo.com
 - Tomadores do exterior são editados pelo id (coluna `id` de `ctbz notas tomadores`).
 - Risco médio: os dados vão para as notas futuras; dá para editar de novo.
 
+Para excluir um tomador (sem desfazer; recadastre se precisar):
+
+```sh
+ctbz notas tomadores remover 00000000000191
+```
+
+As notas já emitidas para o tomador não devem mudar; isso ainda não foi confirmado com a
+Contabilizei.
+
 ## Configuração do emissor e alíquotas
 
 ```sh

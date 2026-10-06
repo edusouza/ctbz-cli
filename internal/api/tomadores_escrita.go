@@ -118,3 +118,14 @@ type CadastroCliente struct {
 func BuscarCadastroCliente(ctx context.Context, g Getter, id string) (*CadastroCliente, error) {
 	return get[CadastroCliente](ctx, g, PathCadastroCliente(id))
 }
+
+// PathExcluirCliente exclui um tomador: documento sem máscara (nacional) ou id (exterior).
+// "autopilot" é o nome antigo do serviço de clientes do BFF.
+func PathExcluirCliente(documentoOuID string) string {
+	return "autopilot/clientes/" + url.PathEscape(documentoOuID)
+}
+
+// ExcluirCliente exclui o tomador (sem desfazer; recadastre com SalvarCliente…).
+func ExcluirCliente(ctx context.Context, s Sender, documentoOuID string) error {
+	return s.Send(ctx, "DELETE", PathExcluirCliente(documentoOuID), nil, nil)
+}

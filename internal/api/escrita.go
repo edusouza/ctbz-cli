@@ -269,6 +269,9 @@ func Escritas() []Escrita {
 			return SalvarClienteExterior(ctx, s, ClienteExterior{RazaoSocialOuNome: "EXAMPLE INC", Email: "contact@example.com",
 				Endereco: EnderecoExterior{Logradouro: "Main St", Numero: "100", Cidade: "Springfield", Pais: json.RawMessage("249"), DescricaoPais: "Estados Unidos", SimboloPais: "US"}})
 		}},
+		{Name: "tomador_excluir", Exemplo: func(ctx context.Context, s Sender) error {
+			return ExcluirCliente(ctx, s, "00000000000191")
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

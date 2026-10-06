@@ -26,6 +26,7 @@ ctbz notas tomadores
 - [`ctbz notas tomadores adicionar`](ctbz_notas_tomadores_adicionar.md): Cadastra um tomador (cliente) nacional ou do exterior
 - [`ctbz notas tomadores consulta`](ctbz_notas_tomadores_consulta.md): Consulta os dados cadastrais de um CNPJ na Receita
 - [`ctbz notas tomadores editar`](ctbz_notas_tomadores_editar.md): Corrige os dados de um tomador cadastrado
+- [`ctbz notas tomadores remover`](ctbz_notas_tomadores_remover.md): Exclui um tomador da lista de clientes
 
 ## Flags globais
 
