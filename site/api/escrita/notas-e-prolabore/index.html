@@ -1,0 +1,3895 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Opere a Contabilizei pela linha de comando.">
+      
+      
+      
+      
+        <link rel="prev" href="../contabilidade-e-documentos/">
+      
+      
+        <link rel="next" href="../../../frontend/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Notas e pró-labore - ctbz — CLI para a Contabilizei</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#escrita-notas-fiscais-tomadores-notas-de-entrada-pro-labore-e-lucros" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../../.." title="ctbz — CLI para a Contabilizei" class="md-header__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ctbz — CLI para a Contabilizei
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Notas e pró-labore
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ctbz — CLI para a Contabilizei" class="md-nav__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ctbz — CLI para a Contabilizei
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de uso
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guia de uso
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/impostos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/pendencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências, rotinas e atendimento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/mensalidade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mensalidade e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/notas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/prolabore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pró-labore e lucros
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/contabil/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/documentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentos e certificado
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ações que alteram dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../referencia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência de comandos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Autenticação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Autenticação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/01-credenciais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credenciais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/02-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Código OTP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/03-selecao-de-empresa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Seleção de empresa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/04-sessao-e-cookies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessão e cookies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../otp-automatico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OTP automático
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../endpoints-verificados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Endpoints verificados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../catalogo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catálogo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notas-fiscais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6_5" id="__nav_6_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Escrita
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Escrita
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pendencias-e-conta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências e conta
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../impostos-e-pagamentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contabilidade-e-documentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade e documentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas e pró-labore
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas e pró-labore
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0-convencoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0. Convenções
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-nfs-e-novo-emissor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. NFS-e: novo emissor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. NFS-e: novo emissor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-mapa-do-fluxo-de-emissao-v2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Mapa do fluxo de emissão (v2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-emitir-nfs-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Emitir NFS-e
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-calculo-de-impostos-post-sem-efeito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Cálculo de impostos (POST sem efeito)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-replicar-emitir-de-novo-a-partir-de-uma-nota" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Replicar ("emitir de novo" a partir de uma nota)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-registro-de-nota-emitida-fora-tipoemissor-registro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 Registro de nota emitida fora (tipoEmissor = REGISTRO)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16-emissor-legado-v1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.6 Emissor legado (v1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#17-como-o-front-sabe-que-a-prefeitura-autorizou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.7 Como o front sabe que a prefeitura autorizou
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#18-cancelar-nfs-e-emitida-pelo-emissor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.8 Cancelar NFS-e emitida pelo emissor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#19-agendamento-recorrencia-e-rascunho-nao-existem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.9 Agendamento, recorrência e rascunho: não existem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#110-outros-endpoints-de-escrita-ligados-a-notas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.10 Outros endpoints de escrita ligados a notas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#111-notas-tomadas-legado-ainda-no-painel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.11 Notas tomadas (legado, ainda no painel)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-notas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI (notas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-tomadores-clientes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Tomadores (clientes)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Tomadores (clientes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-tomadores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI (tomadores)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-notas-de-entrada-nf-e-de-compra-base-apiemissor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Notas de entrada (NF-e de compra), base /api/emissor/
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Notas de entrada (NF-e de compra), base /api/emissor/">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-manifestacao-do-destinatario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Manifestação do destinatário
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-classificacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Classificação
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-outros-com-efeito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Outros com efeito
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-notas-de-entrada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI (notas de entrada)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-pro-labore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Pró-labore
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Pró-labore">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-central-do-socio-sociocentral-socioeditar-gestaosocioid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Central do sócio (#/socio/central, #/socio/editar-gestao/:socioId)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-motor-calculo-automatico-dashboard-e-questionario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Motor (cálculo automático), dashboard e questionário
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-assessor-de-pro-labore-assistente-socioassessor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Assessor de pró-labore (assistente #/socio/assessor/*)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-quando-vale-a-mudanca-competencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Quando vale a mudança (competência)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-pro-labore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI (pró-labore)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-distribuicao-de-lucros-e-informe-de-rendimentos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Distribuição de lucros e informe de rendimentos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Distribuição de lucros e informe de rendimentos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-lucros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI (lucros)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-endpoints-de-escrita-ausentes-do-catalogomd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Endpoints de escrita ausentes do catalogo.md
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-observacoes-gerais-para-o-roadmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Observações gerais para o roadmap
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../frontend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Front-end
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Desenvolvimento
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Desenvolvimento
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura da CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contratos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testes de contrato
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../monitoramento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoramento da API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contribuindo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contribuindo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metodologia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metodologia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisões (ADRs)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0001-registrar-decisoes-em-adrs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0001 Registrar decisões
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0002-somente-leitura-ate-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0002 Somente leitura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0003-versionamento-e-changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0003 Versionamento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0004-branches-empilhadas-e-prs-por-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0004 Branches e PRs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0005-documentacao-em-github-pages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0005 Documentação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0006-saida-padronizada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0006 Saída padronizada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0007-login-sessao-e-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0007 Login e sessão
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0008-cobra-para-a-arvore-de-comandos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0008 Cobra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0009-camada-api-tipada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0009 Camada api
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0010-testes-de-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0010 Contratos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0011-fixtures-podadas-ao-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0011 Fixtures podadas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0012-prazos-e-alertas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0012 Prazos e alertas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0013-sem-retentativa-com-fonte-alternativa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0013 Sem retentativa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0014-ci-no-github-actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0014 CI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0015-releases-com-goreleaser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0015 Releases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0016-monitoramento-agendado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0016 Monitoramento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0017-contrato-publico-da-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0017 Contrato da 1.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0018-escrita-com-confirmacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0018 Escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0019-camada-de-escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0019 Camada de escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0020-confirmacao-e-simulacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0020 Confirmação e simulação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0021-tipos-e-fixtures-sinteticos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0021 Fixtures sintéticas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0022-classificacao-de-notas-de-entrada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0022 Classificação de notas de entrada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#0-convencoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        0. Convenções
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-nfs-e-novo-emissor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. NFS-e: novo emissor
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. NFS-e: novo emissor">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-mapa-do-fluxo-de-emissao-v2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Mapa do fluxo de emissão (v2)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-emitir-nfs-e" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Emitir NFS-e
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-calculo-de-impostos-post-sem-efeito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Cálculo de impostos (POST sem efeito)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-replicar-emitir-de-novo-a-partir-de-uma-nota" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 Replicar ("emitir de novo" a partir de uma nota)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-registro-de-nota-emitida-fora-tipoemissor-registro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 Registro de nota emitida fora (tipoEmissor = REGISTRO)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16-emissor-legado-v1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.6 Emissor legado (v1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#17-como-o-front-sabe-que-a-prefeitura-autorizou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.7 Como o front sabe que a prefeitura autorizou
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#18-cancelar-nfs-e-emitida-pelo-emissor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.8 Cancelar NFS-e emitida pelo emissor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#19-agendamento-recorrencia-e-rascunho-nao-existem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.9 Agendamento, recorrência e rascunho: não existem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#110-outros-endpoints-de-escrita-ligados-a-notas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.10 Outros endpoints de escrita ligados a notas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#111-notas-tomadas-legado-ainda-no-painel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.11 Notas tomadas (legado, ainda no painel)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-notas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI (notas)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-tomadores-clientes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Tomadores (clientes)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Tomadores (clientes)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-tomadores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI (tomadores)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-notas-de-entrada-nf-e-de-compra-base-apiemissor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Notas de entrada (NF-e de compra), base /api/emissor/
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Notas de entrada (NF-e de compra), base /api/emissor/">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-manifestacao-do-destinatario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Manifestação do destinatário
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-classificacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Classificação
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-outros-com-efeito" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Outros com efeito
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-notas-de-entrada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI (notas de entrada)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-pro-labore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Pró-labore
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Pró-labore">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-central-do-socio-sociocentral-socioeditar-gestaosocioid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Central do sócio (#/socio/central, #/socio/editar-gestao/:socioId)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-motor-calculo-automatico-dashboard-e-questionario" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Motor (cálculo automático), dashboard e questionário
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-assessor-de-pro-labore-assistente-socioassessor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Assessor de pró-labore (assistente #/socio/assessor/*)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-quando-vale-a-mudanca-competencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Quando vale a mudança (competência)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-pro-labore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI (pró-labore)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-distribuicao-de-lucros-e-informe-de-rendimentos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Distribuição de lucros e informe de rendimentos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Distribuição de lucros e informe de rendimentos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-lucros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI (lucros)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-endpoints-de-escrita-ausentes-do-catalogomd" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Endpoints de escrita ausentes do catalogo.md
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-observacoes-gerais-para-o-roadmap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Observações gerais para o roadmap
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="escrita-notas-fiscais-tomadores-notas-de-entrada-pro-labore-e-lucros">Escrita: notas fiscais, tomadores, notas de entrada, pró-labore e lucros<a class="headerlink" href="#escrita-notas-fiscais-tomadores-notas-de-entrada-pro-labore-e-lucros" title="Permanent link">&para;</a></h1>
+<p>Análise <strong>estática</strong> dos bundles do painel (<code>/painel-de-controle/js/*.js</code>, Vue 2 + axios) e do
+front de notas de entrada (<code>/nota-entrada/static/js/app.*.js</code>, Vue 1 + vue-resource). Nenhuma
+requisição foi feita. Os bundles foram formatados com <code>prettier</code> para leitura; as referências
+"chunk:linha" abaixo valem para a versão formatada (formatada com <code>prettier</code>, não versionada).</p>
+<h2 id="0-convencoes">0. Convenções<a class="headerlink" href="#0-convencoes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Base</th>
+<th>Instância axios</th>
+<th>Uso</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/api/plataforma/</code></td>
+<td><code>X["c"]</code> (BFF)</td>
+<td>quase tudo desta página</td>
+</tr>
+<tr>
+<td><code>/api/legado/</code></td>
+<td><code>X["d"]</code> / <code>X["b"]</code> (monólito)</td>
+<td>cancelamento de nota importada, anexos, notas tomadas</td>
+</tr>
+<tr>
+<td><code>/api/emissor/</code></td>
+<td>vue-resource absoluto</td>
+<td>front de notas de entrada</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Autenticação só por cookie de sessão (<code>withCredentials</code>); nenhum cabeçalho extra (exceto
+  <code>strinfs-token</code> em <code>parametrosEmpresa/create</code> do front de notas de entrada).</li>
+<li>Corpo JSON salvo quando indicado <code>multipart/form-data</code>.</li>
+<li>Caminhos com <code>/</code> inicial no código (<code>"/novo-emissor/..."</code>) somam-se à base:
+  <code>POST /api/plataforma/novo-emissor/...</code>.</li>
+<li><strong>Risco</strong>: baixo = preferência/telemetria; médio = dado cadastral ou contábil reversível;
+  alto = documento fiscal, obrigação legal ou valor financeiro/tributário.</li>
+<li>"(incerto)" marca o que não pôde ser confirmado só pelo código.</li>
+</ul>
+<hr />
+<h2 id="1-nfs-e-novo-emissor">1. NFS-e: novo emissor<a class="headerlink" href="#1-nfs-e-novo-emissor" title="Permanent link">&para;</a></h2>
+<h3 id="11-mapa-do-fluxo-de-emissao-v2">1.1 Mapa do fluxo de emissão (v2)<a class="headerlink" href="#11-mapa-do-fluxo-de-emissao-v2" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>GET  novo-emissor/listagem/init                → emissorEnabled, certificadoDigital{vencido…}, hasInstability
+GET  novo-emissor/v2/versao-emissor            → qual emissor (v2 x legado)
+GET  novo-emissor/v2/feature-flag              → listagem v2
+GET  novo-emissor/tomadores/init               → tomadores[], emissaoSemTomador, permiteEmissaoExterior
+GET  novo-emissor/tomador/{cpfCnpj|id}         → tomador escolhido (rota recebe documentoTomador)
+GET  novo-emissor/v2/emissao/init              → regimeTributario (SIMPLES|LUCRO_PRESUMIDO), motorFatorR,
+                                                 exibirNovaExperienciaNbsCclass, exibirNovaExperienciaMoedaEstrangeira,
+                                                 exibirAssistenteNBS, aliquotas, codIbgePrestador,
+                                                 enderecoTomadorPFObrigatorio, exibirOfertaCtbzBank
+GET  novo-emissor/emissao/atividades           → cnaes[] {isMainService, listaCaracteristica,
+                                                 cnaeValues[{dadosParaEmissao{idCnaeEmpresa, codigoCnae}}]}
+GET  novo-emissor/v2/trilhas-empresa[?exportacaoServico=true]
+                                               → "trilhas": [{cnae, principal, preferencia,
+                                                 listaCaracteristica[{idCnaeEmpresa}],
+                                                 listaCodigoNacionalOuItemServico[{codigo, tipoExcecao (OBRA|EVENTO|null),
+                                                   listaCTribMun[{codigo}], listaNbs[{codigo, listaCclass[{codigo}]}]}]}]
+GET  novo-emissor/v2/emissao/atividades/cindop?codigoNacionalItemServico=&amp;nbs=[&amp;exportacaoServico=true]
+                                               → [{codigo}] (indicador de operação, IBS/CBS)
+GET  novo-emissor/v2/emissao/atividades/codigo-municipal?codigoIbge=&amp;codigoNacional=
+GET  novo-emissor/v2/emissor-async             → boolean: permite emissão assíncrona
+GET  banco-central/moeda ; banco-central/moeda/{moeda}/data-referencia/{data} → {saleRate} (tomador exterior)
+POST novo-emissor/v2/calculo/resumo-impostos   → cálculo (só leitura, ver 1.3)
+POST novo-emissor/v2/emissao/emitir | emitir-async   ← EMISSÃO
+</code></pre></div>
+<p>Arquivo: <code>NovoEmissorNF.b75ee2a3.js</code> (serviço no módulo <code>0f71</code>, montagem do corpo nas
+funções <code>rs</code>/<code>cs</code>, ~linhas 20480–20900). O catálogo não tem esses caminhos porque ficam em
+variáveis.</p>
+<h3 id="12-emitir-nfs-e">1.2 Emitir NFS-e<a class="headerlink" href="#12-emitir-nfs-e" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Método/caminho</strong></td>
+<td><code>POST /api/plataforma/novo-emissor/v2/emissao/emitir?origem=EMISSOR_SIMPLIFICADO_EMISSAO</code></td>
+</tr>
+<tr>
+<td><strong>Variante assíncrona</strong></td>
+<td><code>POST /api/plataforma/novo-emissor/v2/emissao/emitir-async?origem=EMISSOR_SIMPLIFICADO_EMISSAO</code>. Usada quando <code>tipoEmissor == "EMISSAO"</code>, não é replicação e <code>GET v2/emissor-async</code> devolveu <code>true</code>. Mesmo corpo.</td>
+</tr>
+<tr>
+<td><strong>Tela</strong></td>
+<td><code>#/emissor/...</code> rota <code>emitir-nota</code> (chunk <code>NovoEmissorNF</code>), botão <strong>"Confirmar e emitir"</strong></td>
+</tr>
+<tr>
+<td><strong>Risco</strong></td>
+<td><strong>alto</strong>: gera documento fiscal na prefeitura. Desfazer = cancelar (1.6), com prazo municipal e custo após o dia 5 do mês seguinte</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Corpo</strong> (função <code>rs</code> + complementos de <code>b()</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Tipo</th>
+<th>Origem / regra</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cpfCnpj</code></td>
+<td>string | null</td>
+<td>Documento do tomador só com alfanuméricos, em maiúsculas (pronto para CNPJ alfanumérico). Tomador estrangeiro: <code>tomador.id</code>. Emissão sem tomador: <code>null</code>.</td>
+</tr>
+<tr>
+<td><code>discriminacao</code></td>
+<td>string</td>
+<td>Descrição digitada (obrigatória, máx. <strong>1400</strong> caracteres). Se houver complementos (<code>complementoDescricaoNota</code>), anexa <code>"\n---------------\n"</code> + linhas.</td>
+</tr>
+<tr>
+<td><code>enviarEmailTomador</code></td>
+<td>bool</td>
+<td>Checkbox de envio ao cliente <strong>e</strong> tomador com e-mail.</td>
+</tr>
+<tr>
+<td><code>idCnaeEmpresa</code></td>
+<td>string</td>
+<td><code>selectedCaracteristica.idCnaeEmpresa</code> (das atividades/trilhas). Padrão: atividade principal com uma única característica.</td>
+</tr>
+<tr>
+<td><code>valorServico</code></td>
+<td>number</td>
+<td>Valor (&gt; 0, senão "Informe um valor para o serviço.").</td>
+</tr>
+<tr>
+<td><code>issRetido</code></td>
+<td>bool</td>
+<td>Toggle de ISS retido.</td>
+</tr>
+<tr>
+<td><code>aliquotaIssRetido</code></td>
+<td>number | null</td>
+<td>Com ISS retido: <code>parseFloat(aliquotaISS.replace(",", "."))</code>. Validação: "A alíquota deve ser de 2% a 5%."</td>
+</tr>
+<tr>
+<td><code>inscricaoMunicipal</code></td>
+<td>string | null</td>
+<td>Inscrição municipal do tomador (enviada quando há alíquota de ISS).</td>
+</tr>
+<tr>
+<td><code>valorIss</code></td>
+<td>number | null</td>
+<td>Com ISS retido: valor calculado.</td>
+</tr>
+<tr>
+<td><code>incidenciaExterior</code> / <code>servicoExportacao</code></td>
+<td>bool</td>
+<td><code>tomador.estrangeiro &amp;&amp; isForeignService == "1"</code> (os dois iguais).</td>
+</tr>
+<tr>
+<td><code>codigoNbs</code>, <code>codigoCclass</code>, <code>codigoNacionalServico</code></td>
+<td>string</td>
+<td>Só na "nova experiência NBS/cClass" (reforma tributária). Vêm da trilha escolhida: <code>listaCodigoNacionalOuItemServico[].codigo</code> → <code>listaNbs[].codigo</code> → <code>listaCclass[].codigo</code> (cClass só se <code>exibirCclass</code>).</td>
+</tr>
+<tr>
+<td><code>cTribMun</code></td>
+<td>string</td>
+<td>Código tributário municipal, da trilha (<code>listaCTribMun</code>). Obrigatório quando o código nacional tem exceção municipal.</td>
+</tr>
+<tr>
+<td><code>cIndOp</code></td>
+<td>string</td>
+<td>Indicador de operação, do <code>GET .../cindop</code>. Obrigatório na nova experiência ("Selecione uma indicação da operação.").</td>
+</tr>
+<tr>
+<td><code>definirNovaTrilhaPreferencial</code></td>
+<td>true</td>
+<td>Só presente quando o usuário marca a trilha como preferida.</td>
+</tr>
+<tr>
+<td><code>descontoIncondicionado</code></td>
+<td>number</td>
+<td>Padrão 0; não pode passar do valor ("O desconto não pode ser maior que o valor do serviço.").</td>
+</tr>
+<tr>
+<td><code>naturezaOperacao</code></td>
+<td>string</td>
+<td>Só se a tela calcular <code>naturezaOperacaoParaEnvio</code> (incerto: valores por município).</td>
+</tr>
+<tr>
+<td><code>moeda</code>, <code>cotacao</code>, <code>valorMoedaEstrangeira</code>, <code>dataInvoice</code></td>
+<td></td>
+<td>Só tomador estrangeiro. Recebimento em BRL: <code>moeda:"BRL"</code>, <code>cotacao:"1.0000"</code>, <code>valorMoedaEstrangeira = valorServico</code>. Em moeda estrangeira: <code>cotacao = saleRate</code> da API do BCB, <code>valorMoedaEstrangeira</code> digitado, <code>dataInvoice:"AAAA-MM-DDT12:00:00"</code>.</td>
+</tr>
+<tr>
+<td><code>localPrestacao</code></td>
+<td><code>{uf, codIbgeMunicipio, nomeMunicipio}</code></td>
+<td>Quando a tela mostra "local de prestação".</td>
+</tr>
+<tr>
+<td><code>obra</code></td>
+<td><code>{tipoIdentificacao: CIB\|CODIGO_OBRA\|ENDERECO, cib, codigoObra, endereco}</code></td>
+<td>Quando o código de serviço tem <code>tipoExcecao</code> de obra. <code>endereco</code> nacional <code>{pais:"BR", cep, logradouro, numero, semNumero, complemento, bairro, uf, codIbgeMunicipio, nomeMunicipio}</code> ou exterior <code>{pais, cidade, nomeMunicipio, regiao, cep, …}</code>.</td>
+</tr>
+<tr>
+<td><code>evento</code></td>
+<td><code>{nome, dataInicio, dataFim ("AAAA-MM-DDT12:00:00"), endereco}</code></td>
+<td>Quando <code>tipoExcecao == "EVENTO"</code>.</td>
+</tr>
+<tr>
+<td><code>irRetido</code>, <code>aliquotaIr</code>, <code>valorIr</code>, <code>inssRetido</code>, <code>valorInss</code>, <code>pisRetido</code>, <code>valorPis</code>, <code>cofinsRetido</code>, <code>valorCofins</code>, <code>csllRetido</code>, <code>valorCsll</code>, <code>valorLiquidoNfse</code></td>
+<td>bool/number</td>
+<td><strong>Só no Lucro Presumido</strong>. Os valores vêm do cálculo <code>resumo-impostos</code> (1.3); valor nulo quando a retenção está desligada.</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Não há campo de data de competência nem de data de emissão</strong> na emissão: a competência é a
+  da data de emissão. Os textos da tela confirmam: <em>"Você só paga os impostos dessa nota no
+  próximo mês"</em> e <em>"Se você emitir uma nota errada, basta cancelar e emitir uma nova dentro do
+  mesmo mês do serviço prestado."</em></li>
+<li>Outras validações do front: "Selecione um CNAE.", "Selecione um código de serviço.",
+  "Selecione um NBS.", "Selecione um cClass." (se obrigatório), "Selecione uma característica."
+  (quando a atividade tem duas ou mais), "Informe a descrição do serviço.".</li>
+<li><strong>Resposta</strong>: o front ignora o corpo de sucesso. Em sucesso mostra <em>"Estamos processando a
+  nota fiscal"</em> / <em>"Assim que a nota for autorizada pela prefeitura você receberá o arquivo
+  por e-mail."</em>. Em erro lê <code>response.data.{identificador, mensagemAmigavel | message}</code> e mostra
+  <strong>"Falha na emissão"</strong> (padrão: <em>"Não foi possível emitir a nota fiscal. Tente novamente mais
+  tarde."</em>), com botões "Editar cadastro do cliente" / "Voltar para dados da nota". Em ambos os
+  casos chama <code>notas/notasInit</code> (relê a listagem).</li>
+</ul>
+<h3 id="13-calculo-de-impostos-post-sem-efeito">1.3 Cálculo de impostos (POST sem efeito)<a class="headerlink" href="#13-calculo-de-impostos-post-sem-efeito" title="Permanent link">&para;</a></h3>
+<p><code>POST /api/plataforma/novo-emissor/v2/calculo/resumo-impostos</code>. Chamado com debounce e
+cancelamento a cada mudança no formulário. Corpo:
+<code>{valorServico, idCnaeEmpresa, issRetido, aliquotaIssRetido|null, tomadorPessoaJuridica,
+incidenciaExterior, pisRetido, cofinsRetido, csllRetido, inssRetido, irRetido, aliquotaIr|null,
+codigoNacionalServico|null, tomadorExterior, [cTribMun, codIbgeLocalPrestacao]}</code>.
+Responde valores de ISS, retenções, base de cálculo e valor líquido. <strong>Só leitura</strong>, sem risco:
+serve para um <code>ctbz notas emitir --dry-run</code>.</p>
+<h3 id="14-replicar-emitir-de-novo-a-partir-de-uma-nota">1.4 Replicar ("emitir de novo" a partir de uma nota)<a class="headerlink" href="#14-replicar-emitir-de-novo-a-partir-de-uma-nota" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Caminho</strong></td>
+<td><code>POST /api/plataforma/novo-emissor/v2/emissao/replicar?origem=EMISSOR_SIMPLIFICADO_REPLICACAO</code></td>
+</tr>
+<tr>
+<td><strong>Corpo</strong></td>
+<td>igual ao 1.2 <strong>+ <code>idNotaReplicada</code></strong> (id da nota de origem)</td>
+</tr>
+<tr>
+<td><strong>Pré</strong></td>
+<td><code>GET novo-emissor/v2/emissao/init?idNotaReplicada={id}</code> → <code>dadosReplicacao{tomador, idCnaeEmpresa, valorServico, discriminacao, issRetido, aliquotaIssRetido, servicoPrestadoExterior, nbs, cclass, codigoNacionalServico, moeda, cotacao, valorMoedaEstrangeira, dataInvoice, localPrestacao…}</code> para preencher o formulário</td>
+</tr>
+<tr>
+<td><strong>Tela</strong></td>
+<td>listagem → botão "Replicar" (só se <code>permiteReplicacao</code>), rota <code>/emissor/notas/:hash</code> com <code>hash = btoa(idNota)</code> e <code>?idNotaReplicada=</code></td>
+</tr>
+<tr>
+<td><strong>Risco</strong></td>
+<td><strong>alto</strong>: é uma emissão nova (não há "duplicar como rascunho")</td>
+</tr>
+</tbody>
+</table>
+<h3 id="15-registro-de-nota-emitida-fora-tipoemissor-registro">1.5 Registro de nota emitida fora (tipoEmissor = REGISTRO)<a class="headerlink" href="#15-registro-de-nota-emitida-fora-tipoemissor-registro" title="Permanent link">&para;</a></h3>
+<p>Para empresas que emitem no site da prefeitura e só lançam a nota no Contabilizei.</p>
+<ul>
+<li><code>POST /api/plataforma/novo-emissor/v2/registro-de-notas/registrar</code>: corpo do 1.2 <strong>+</strong>
+  <code>dataEmissao</code>, <code>numeroNota</code>, <code>competencia</code> (as duas datas em <code>"AAAA-MM-DDT12:00:00"</code>, não
+  futuras: "A data de emissão não pode ser futura.", "A competência não pode ser futura.").</li>
+<li><code>POST /api/plataforma/novo-emissor/v2/registro-de-notas/replicar</code>: o mesmo <strong>+</strong>
+  <code>idNotaReplicada</code>. Pré-carga: <code>GET v2/emissao/init?idNotaReplicada={id}&amp;isRegistro=true</code>.</li>
+<li>Sucesso: <em>"Nota registrada com sucesso!"</em>. Risco <strong>médio</strong> (lançamento contábil e fiscal;
+  as notas "Registrada" aparecem na listagem e podem ficar "Cancelada").</li>
+</ul>
+<h3 id="16-emissor-legado-v1">1.6 Emissor legado (v1)<a class="headerlink" href="#16-emissor-legado-v1" title="Permanent link">&para;</a></h3>
+<p>Usado quando <code>versao-emissor</code> não é v2 (chunk <code>notas</code>, serviço <code>0de2</code> no <code>app</code>):
+<code>POST /api/plataforma/novo-emissor/emissao/nova-nota?origem=EMISSOR_SIMPLIFICADO_EMISSAO</code> e
+<code>POST /api/plataforma/novo-emissor/emissao/replicar/{idNota}?origem=EMISSOR_SIMPLIFICADO_REPLICACAO</code>.
+Corpo: <code>{cpfCnpj, discriminacao, enviarEmailTomador, idCnaeEmpresa, valorServico, issRetido,
+aliquotaIssRetido, inscricaoMunicipal, incidenciaExterior, [codigoNbs, codigoCclass,
+codigoNacionalServico], [moeda, cotacao, valorMoedaEstrangeira, dataInvoice], [naturezaOperacao,
+descontoCondicionado, descontoIncondicionado, valorCofins, valorCsll, valorIr, valorIss,
+valorLiquidoNfse, valorPis, servicoExportacao]}</code>. Pré: <code>GET novo-emissor/formulario-emissao/init[?idNotaReplicada=]</code>.
+A CLI deve atender só o v2 e recusar o legado.</p>
+<h3 id="17-como-o-front-sabe-que-a-prefeitura-autorizou">1.7 Como o front sabe que a prefeitura autorizou<a class="headerlink" href="#17-como-o-front-sabe-que-a-prefeitura-autorizou" title="Permanent link">&para;</a></h3>
+<p><strong>Não há polling.</strong> Depois do POST o front só mostra "processando" e relê a listagem. O estado
+vem da listagem <code>GET novo-emissor/v2/listagem/notas/filtro?pagina=&amp;limite=&amp;ano=&amp;mes=</code>, item a
+item:
+<code>situacaoNota</code> (ex.: <code>PROCESSADO_SUCESSO</code>, <code>CANCELADA</code>), <code>statusNotaFiscal{text, badgeType}</code>
+(rótulo pronto do servidor), <code>errosNotaFiscal[{descricao}]</code> (popover "detalhes" com o erro da
+prefeitura), <code>numero</code> (só aparece com <code>PROCESSADO_SUCESSO</code>) e <code>permiteReplicacao</code>. O comprovante
+chega por e-mail. Para a CLI: depois de emitir, consultar a listagem do mês em intervalos até
+<code>numero</code> aparecer ou <code>errosNotaFiscal</code> vir preenchido. O POST não devolve id confiável (incerto),
+então use tomador, valor e horário para achar a nota.</p>
+<h3 id="18-cancelar-nfs-e-emitida-pelo-emissor">1.8 Cancelar NFS-e emitida pelo emissor<a class="headerlink" href="#18-cancelar-nfs-e-emitida-pelo-emissor" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Caminho</strong></td>
+<td><code>POST /api/plataforma/novo-emissor/emissao/cancelar/{idNota}</code></td>
+</tr>
+<tr>
+<td><strong>Corpo</strong></td>
+<td><strong>nenhum</strong>. Não há motivo, código de cancelamento nem justificativa.</td>
+</tr>
+<tr>
+<td><strong>Pré</strong></td>
+<td><code>GET /api/legado/nota{perfil.codigo}/obtercodverificacao/{codigoNota}</code> → objeto com <code>idNota</code> (e dados mostrados: código de verificação, tomador). <code>perfil.codigo</code> vem do <code>COMPANY_DATA</code> em localStorage (base64). O caminho resultante é provavelmente <code>notafiscal/obtercodverificacao/…</code> (incerto). O <code>idNota</code> deve ser o <code>id</code> da listagem (incerto).</td>
+</tr>
+<tr>
+<td><strong>Tela</strong></td>
+<td>rotas <code>#/cancelamento-nota-emitida/inicio/:codigoNota</code> → <code>detalhes</code> → <code>finalizacao</code> (no <code>app</code>, ~29780–30250). A entrada vem do front antigo (<code>/sistema</code>, "consultar notas"); a listagem v2 não tem botão de cancelar.</td>
+</tr>
+<tr>
+<td><strong>Textos</strong></td>
+<td>Início: <em>"Notas canceladas depois do dia 5 do próximo mês possuem um custo de operação contábil."</em> e <em>"O tempo de cancelamento da nota fiscal pode demorar um pouco em certas prefeituras."</em>. Confirmação: <em>"Tem certeza que deseja cancelar a seguinte nota fiscal?"</em>, botão "Confirmar cancelamento". Sucesso: toast <em>"Nota cancelada com sucesso"</em> + <em>"Sua solicitação de cancelamento foi registrada com sucesso."</em> (assíncrono na prefeitura).</td>
+</tr>
+<tr>
+<td><strong>Erro</strong></td>
+<td>Se <code>response.data.error.errorClassName</code> contém <code>CancelamentoPrefeituraException</code>, mostra <code>response.data.error.errorMessage</code> (mensagem da prefeitura); senão "Falha ao cancelar nota".</td>
+</tr>
+<tr>
+<td><strong>Risco</strong></td>
+<td><strong>alto</strong> e irreversível (nota cancelada não volta; corrigir = emitir outra). Pode gerar custo.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cancelamento de nota importada da prefeitura (legado, GET com efeito colateral)</strong></p>
+<ul>
+<li><code>GET /api/legado/notafiscal/cancelarAPI?notas={numero};{numeroNotaSubstituta|0};servico</code>
+  (montado por <code>Hn()</code>: <code>numero;substituta;tipoNota</code>; vários itens por vírgula é incerto).</li>
+<li>Pré: <code>GET /api/legado/notafiscal/buscarNotaEmpresa?numero={numero}</code> → <code>{nota:{…}}</code>.</li>
+<li>Fluxo <code>#/cancelamento-nota-importada/…</code>: <em>"Primeiro faça o cancelamento no site da sua
+  prefeitura"</em> + checkbox <strong>"Confirmo que cancelei a nota na prefeitura"</strong>. Só baixa a nota na
+  contabilidade, sem falar com a prefeitura. Prazo mostrado: até o dia 5 (Simples) ou dia 1
+  (demais regimes) do mês seguinte.</li>
+<li>Erro: <code>response.data.errorMessage</code> (caminho diferente do fluxo anterior). Risco <strong>médio/alto</strong>
+  (contábil) e é <strong>GET</strong>: nunca chamar em sondagem.</li>
+</ul>
+<h3 id="19-agendamento-recorrencia-e-rascunho-nao-existem">1.9 Agendamento, recorrência e rascunho: não existem<a class="headerlink" href="#19-agendamento-recorrencia-e-rascunho-nao-existem" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>novo-emissor/rollout/agendamento</code> → <code>{permiteAgendamento}</code> controla o card <em>"Precisa de ajuda
+  na emissão da sua 1ª nota fiscal?"</em> (<strong>agendar reunião</strong> com especialista), não agendamento
+  de nota.</li>
+<li>Os chunks <code>agendamentoEmissao</code>/<code>agendamentoRealizado</code> são do <strong>certificado digital</strong> (Soluti).</li>
+<li>"Rascunho" é só estado local: <code>loadSnapshot()</code> na store Vuex e <code>localStorage["selected-tomador"]</code>.
+  Não há endpoint de rascunho, duplicação sem emitir, nota recorrente nem emissão programada.</li>
+</ul>
+<h3 id="110-outros-endpoints-de-escrita-ligados-a-notas">1.10 Outros endpoints de escrita ligados a notas<a class="headerlink" href="#110-outros-endpoints-de-escrita-ligados-a-notas" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método/caminho</th>
+<th>Corpo</th>
+<th>Semântica</th>
+<th>Risco</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /api/plataforma/novo-emissor/assistente-nbs/session</code></td>
+<td><code>{stateVariables:{trilha:[…], trilha_selecionado:{cnae, codigoNacionalServico, cTribMun, nbs, …}}}</code> (objetos internos enviados como string JSON)</td>
+<td>Abre sessão do <strong>assistente de IA de NBS</strong> (ChatKit); responde <code>{clientSecret}</code>. Há também um <code>GET</code> da mesma rota (simulação).</td>
+<td>baixo (sem efeito fiscal); inútil para a CLI</td>
+</tr>
+<tr>
+<td><code>POST /api/plataforma/dashboard/v2/notas-fiscais/salvar-clique-emitir</code></td>
+<td>nenhum</td>
+<td>Registra que o usuário clicou "Emitir" no card do dashboard (flag <code>clicouEmitir</code>), quando não há certificado ou o registro é manual</td>
+<td>baixo (telemetria)</td>
+</tr>
+<tr>
+<td><code>PUT /api/legado/notafiscal/salvaranexosprincipais</code></td>
+<td><code>[ {cnae:{id, descricao, codTabelaSimples…}, anexos:[{codTabelaSimples, anexoPrincipal: bool, …}]} ]</code> (um CNAE por chamada)</td>
+<td>Tela "Configurar atividades da nota fiscal" (<code>CnaesParaSelecao</code>): escolhe o <strong>anexo do Simples principal</strong> por CNAE para notas importadas. Pré: <code>GET /api/legado/notafiscal/cnaeanexosmultiplos/list</code>. "Reverter" manda o mesmo item com todos <code>anexoPrincipal:false</code>.</td>
+<td><strong>médio/alto</strong> (muda a tributação)</td>
+</tr>
+<tr>
+<td><code>PUT /api/plataforma/experts/cashflow/notas-fiscais</code></td>
+<td><code>{cnpj, nfsId, expectedPaymentDate: ISO\|null, paymentDate: ISO\|null}</code></td>
+<td>Fluxo de caixa (tela "experts"): informa data prevista e data de recebimento de uma NF. Pré: <code>GET experts/cashflow/notas-fiscais?mes=&amp;ano=</code></td>
+<td>baixo/médio (gerencial)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="111-notas-tomadas-legado-ainda-no-painel">1.11 Notas tomadas (legado, ainda no painel)<a class="headerlink" href="#111-notas-tomadas-legado-ainda-no-painel" title="Permanent link">&para;</a></h3>
+<p>O front <code>/nota-tomada/</code> morreu, mas os chunks <code>registrar-nota</code> e <code>listagem-notas</code> do painel
+usam <code>/api/legado/notafiscaltomada/*</code>:
+<code>POST notafiscaltomada/verificarNotaTomadaExiste</code> → <code>{exists, mes, ano}</code> (mensagem <em>"Nota tomada
+já registrada na competência de MM/AAAA!"</em>), <code>POST notafiscaltomada/salvarnota</code> com
+<code>{dataEmissao (timestamp), descricaoServico, numeroNota, numeroSerie|null, prestador, servico,
+categoria, valorTotalServico, valorCofins:0, valorCsll:0, valorIr:0, valorPagar:0, valorPis:0}</code>,
+<code>DELETE notafiscaltomada/removernota/{id}</code>. Pré: <code>listarservicos</code>, <code>listarcategorias</code>,
+<code>registroempresa/localizarempresa/{cnpj}</code>, <code>validarmesinclusao/{…}</code>. Fora do catálogo. Risco médio.</p>
+<h3 id="recomendacao-para-a-cli-notas">Recomendação para a CLI (notas)<a class="headerlink" href="#recomendacao-para-a-cli-notas" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>ctbz notas simular  --tomador &lt;doc|id&gt; --valor 1500 --atividade &lt;idCnaeEmpresa&gt; [--iss-retido 2%]   # resumo-impostos
+ctbz notas emitir   --tomador &lt;doc|id&gt;|--sem-tomador --valor 1500.00 --descricao "..." \
+                    --atividade &lt;idCnaeEmpresa&gt; [--codigo-servico &lt;codNacional&gt; --nbs &lt;nbs&gt; --cclass &lt;c&gt; \
+                    --ctribmun &lt;c&gt; --cindop &lt;c&gt;] [--iss-retido --aliquota-iss 2] [--exterior --moeda USD --valor-moeda 300 --data-invoice 2026-10-01] \
+                    [--enviar-email] [--dry-run] [--yes] [--aguardar]
+ctbz notas replicar &lt;idNota&gt; [--valor ...] [--yes]
+ctbz notas cancelar &lt;idNota&gt; [--yes]          # confirmar sempre; avisar custo após o dia 5 do mês seguinte
+</code></pre></div>
+<ul>
+<li>Defaults iguais ao front: atividade principal, trilha <code>preferencia</code>/<code>principal</code> de
+  <code>trilhas-empresa</code>; <code>cIndOp</code> automático quando <code>cindop</code> devolve só uma opção.</li>
+<li><code>--dry-run</code> = <code>resumo-impostos</code> + corpo montado, sem POST. A emissão <strong>exige <code>--yes</code> ou
+  confirmação interativa</strong> mostrando tomador, valor, atividade, retenções e líquido.</li>
+<li><code>--aguardar</code>: ler a listagem do mês até <code>numero</code> ou <code>errosNotaFiscal</code>.</li>
+<li>Sem replicar ou cancelar em lote. Não implementar <code>cancelarAPI</code> nem <code>registro-de-notas</code> na 1.x.</li>
+</ul>
+<hr />
+<h2 id="2-tomadores-clientes">2. Tomadores (clientes)<a class="headerlink" href="#2-tomadores-clientes" title="Permanent link">&para;</a></h2>
+<p>Serviço <code>0de2</code> (<code>app.9feb0a2a.js</code> ~1313–1580), tela <code>clients.65fc33d5.js</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Método/caminho</th>
+<th>Corpo</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /api/plataforma/novo-emissor/clientes/salvar-cliente-nacional</code></td>
+<td><code>{cpfCnpj: só dígitos (CNPJ alfanumérico em maiúsculas), razaoSocialOuNome, telefone: ""\|str, email: ""\|str, inscricaoMunicipal: str\|null (PF: sempre null), endereco:{bairro, cep: dígitos, codIbge, complemento, logradouro, estado: UF, numero, cepInvalido: bool}}</code></td>
+<td><strong>Cria e também edita</strong>: não manda <code>id</code>, a chave é o documento (upsert). Resposta <code>{cpfCnpj, …}</code>; o front segue para <code>emitir-nota</code> com <code>documentoTomador = cpfCnpj</code>.</td>
+</tr>
+<tr>
+<td><code>POST /api/plataforma/novo-emissor/clientes/salvar-cliente-exterior</code></td>
+<td><code>{razaoSocialOuNome, email, endereco:{complemento, logradouro, numero, cidade, pais, descricaoPais, simboloPais}, id? (só na edição)}</code></td>
+<td>Resposta com <code>cpfCnpj</code> (para estrangeiro é o identificador interno, incerto). A emissão usa <code>tomador.id</code> como <code>cpfCnpj</code>.</td>
+</tr>
+<tr>
+<td><code>DELETE /api/plataforma/autopilot/clientes/{documento\|id}</code></td>
+<td>—</td>
+<td>Excluir cliente. <code>{documento}</code> = CNPJ ou CPF sem máscara; estrangeiro usa <code>id</code>. Bug no front: <code>delete(a).data</code> não espera a promise, mas a requisição sai.</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Pré-leituras: <code>GET novo-emissor/novo-cliente/init</code>,
+  <code>GET novo-emissor/cadastro-clientes/{clientId}</code> (204 = <em>"Cliente não encontrado."</em>; 200 →
+  <code>{tipoCliente: NACIONAL|EXTERIOR, clienteNacionalDTO|clienteExteriorDTO}</code>),
+  <code>GET novo-emissor/clientes/consulta/{cnpj}</code> (Receita; sem dados mostra <em>"Nenhum dado foi
+  encontrado para este CNPJ. Por favor, preencha os campos manualmente."</em>),
+  <code>GET novo-emissor/cep/logradouro?cep=</code>, <code>GET notafiscal/emitir/buscarPaisesParaEmissao/</code>.</li>
+<li>Textos: erro <em>"Cliente não cadastrado. Não foi possível salvar os dados do cliente. Tente
+  novamente."</em>; sucesso, já na tela de emissão: <em>"Cadastramos o novo cliente. Os dados dele
+  ficarão salvos para as próximas emissões."</em> / <em>"As informações deste cliente foram
+  atualizadas e você já pode emitir a nota fiscal."</em>; exclusão: <em>"Deseja mesmo excluir este
+  cliente?"</em>, <em>"Esta ação não pode ser desfeita."</em>, <em>"… Não faz mais parte da sua lista de
+  clientes"</em>.</li>
+<li><strong>O que é "autopilot"</strong>: nome antigo do serviço de clientes do BFF (há um front <code>/autopilot/#/</code>
+  e um "Piloto Automático" na integração bancária). O <code>app</code> ainda tem uma store Vuex morta com
+  <code>GET /autopilot/clientes</code> (lista), <code>GET /autopilot/clientes/{cnpj}</code>,
+  <code>GET /autopilot/clientes/consulta/{cnpj}</code> e <strong><code>POST /autopilot/clientes</code></strong> com corpo
+  <code>{cpfCnpj, razaoSocial, endereco:{uf, municipio, cep, logradouro, bairro, numero, complemento,
+  codigoIbge, pais, cepInvalido}, contato:{email, telefone}, exterior}</code>. Nenhuma tela despacha
+  <code>saveCustomer</code>; só o DELETE continua em uso.</li>
+<li>Reversibilidade: excluir não tem desfazer (recadastrar). Notas já emitidas não mudam (incerto).
+  Risco <strong>baixo/médio</strong>: dados cadastrais que vão para notas futuras.</li>
+</ul>
+<h3 id="recomendacao-para-a-cli-tomadores">Recomendação para a CLI (tomadores)<a class="headerlink" href="#recomendacao-para-a-cli-tomadores" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>ctbz tomadores criar   --cnpj 00000000000000 [--im ...] [--email ...]   # preenche pela consulta da Receita + CEP
+ctbz tomadores criar   --exterior --nome "..." --pais US --cidade ... --logradouro ...
+ctbz tomadores editar  &lt;documento&gt; --email ...      # GET cadastro-clientes + merge + POST salvar-cliente-*
+ctbz tomadores excluir &lt;documento|id&gt; [--yes]
+</code></pre></div>
+<hr />
+<h2 id="3-notas-de-entrada-nf-e-de-compra-base-apiemissor">3. Notas de entrada (NF-e de compra), base <code>/api/emissor/</code><a class="headerlink" href="#3-notas-de-entrada-nf-e-de-compra-base-apiemissor" title="Permanent link">&para;</a></h2>
+<p>Front <code>ne/app.f55c7140b16fca43db90.js</code>; serviços em ~3165–3345, telas em ~1760–2720.</p>
+<h3 id="31-manifestacao-do-destinatario">3.1 Manifestação do destinatário<a class="headerlink" href="#31-manifestacao-do-destinatario" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Caminho</strong></td>
+<td><code>POST /api/emissor/notasentrada/manifestar/</code></td>
+</tr>
+<tr>
+<td><strong>Corpo</strong></td>
+<td><code>{tipoManifestacao: "CIENCIA"\|"CONFIRMACAO"\|"DESCONHECIMENTO"\|"NAO_REALIZADO", origem: "PLATAFORMA", idNotas: [id, …], justificativa?: string}</code> (<code>justificativa</code> só em <code>NAO_REALIZADO</code>)</td>
+</tr>
+<tr>
+<td><strong>Filtro do front</strong></td>
+<td>só entram notas com <code>situacao.id</code> <code>PENDENTE</code> ou <code>CIENCIA</code>; sem nenhuma: <em>"Não é possível alterar o status das notas selecionadas."</em></td>
+</tr>
+<tr>
+<td><strong>Resposta</strong></td>
+<td>array <code>[{id, situacao{id, …}}]</code> que o front aplica nas linhas; toast <em>"Estamos comunicando a Manifestação para a Receita Federal. Em alguns minutos a Nota Fiscal estará manifestada."</em></td>
+</tr>
+<tr>
+<td><strong>Pré</strong></td>
+<td><code>GET notasentrada/listar/0?mes&amp;ano&amp;empresa&amp;qtdPagina&amp;cursor</code> (ids e situação)</td>
+</tr>
+<tr>
+<td><strong>Tela</strong></td>
+<td><code>#/manifestacao</code> (botões "Informar recebimento", "Não recebi", "Desconheço"). Diálogo "Informe a justificativa" com <em>"Por favor, escreva o que aconteceu para você não ter recebido os produtos…"</em> e exemplo <em>"Mercadoria foi extraviada antes da entrega"</em>.</td>
+</tr>
+<tr>
+<td><strong>Ciência automática</strong></td>
+<td>Baixar XML ou DANFE de nota <code>PENDENTE</code> pede <em>"Declara ciência da nota fiscal para baixar?"</em> e manda <code>CIENCIA</code> antes do download. Download permitido em <code>PENDENTE</code>, <code>CIENCIA</code> e <code>CONFIRMADA</code>; <code>GET notasentrada/download/{id}</code> responde <code>{xml: "&lt;…&gt;"}</code>.</td>
+</tr>
+<tr>
+<td><strong>Risco</strong></td>
+<td><strong>alto</strong>: evento fiscal enviado à SEFAZ. Os eventos conclusivos (confirmação, desconhecimento, operação não realizada) não têm desfazer no front. Pela regra da SEFAZ (não do código), a justificativa de "operação não realizada" deve ter 15–255 caracteres; o front não valida, a CLI deve validar.</td>
+</tr>
+</tbody>
+</table>
+<p>Variante na aba de classificação ("Desconheço / Não recebi"):
+<code>POST /api/emissor/notasentrada/manifestar</code> (<strong>sem</strong> barra final) com
+<code>{chaves:[chave], idNotas:[id], justificativa, cnpj: &lt;cnpj da empresa&gt;, tipoManifestacao:
+"DESCONHECIMENTO"|"NAO_REALIZADO", origem:"PLATAFORMA"}</code>. Sucesso: <em>"Desconhecimento efetuado com
+sucesso!"</em>; erro: <em>"Erro ao efetuar o desconhecimento"</em>.</p>
+<h3 id="32-classificacao">3.2 Classificação<a class="headerlink" href="#32-classificacao" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método/caminho</th>
+<th>Corpo</th>
+<th>Semântica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /api/emissor/classificacaonotas/salvarloteclassificacao/{tipo}</code></td>
+<td><strong>array das notas selecionadas</strong> (os objetos da listagem <code>tipo=0</code>, como vieram)</td>
+<td>Classifica a nota inteira. <code>tipo</code> ∈ <code>ESTOQUE</code>, <code>INSUMO</code>, <code>USO_CONSUMO</code>, <code>ATIVO_IMOBILIZADO</code>, <code>PRESTACAO_SERVICO</code>. Sucesso <em>"Nota classificada com sucesso!"</em>; erro <em>"Erro ao classificar nota: " + bodyText</em>.</td>
+</tr>
+<tr>
+<td><code>POST /api/emissor/classificacaonotas/salvarclassificacao/</code></td>
+<td>array de produtos de <code>GET classificacaonotas/listarprodutos/{idNota}</code>: <code>[{id, descricao, ncm, valor, quantidadeTotal, quantidadeEstoque, quantidadeInsumo, quantidadeAtivo, quantidadeConsumo, quantidadePrestacao}]</code></td>
+<td>"Por produto". Regras: nenhuma quantidade negativa (<em>"A classificação não pode ser negativa!"</em>) e soma = <code>quantidadeTotal</code> (<em>"Quantidade total deve ser totalmente distribuida entre as opções para cada produto!"</em>). Sucesso <em>"Classificação efetuada com sucesso!"</em>.</td>
+</tr>
+<tr>
+<td><code>POST /api/emissor/classificacaonotas/reclassificar?idNfe={idNota}</code></td>
+<td>mesmo array de produtos</td>
+<td>Reclassifica nota já classificada. Atalho do front: tudo num balde (<code>ESTOQUE</code>, <code>INSUMO</code>, <code>ATIVO</code>, <code>CONSUMO</code>, <code>PRESTACAO_SERVICO</code> → zera os outros, põe <code>quantidadeTotal</code> num só). A nota passa a <code>tipoClassificacao: "PROCESSANDO"</code>; toast <em>"Reclassficação da nota para: X está sendo processada"</em>.</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Origem das opções</strong>: fixas no front, sem endpoint. Note os nomes diferentes por nível:
+  lote usa <code>USO_CONSUMO</code>/<code>ATIVO_IMOBILIZADO</code>, produto usa <code>quantidadeConsumo</code>/<code>quantidadeAtivo</code>
+  e o atalho de reclassificação usa <code>CONSUMO</code>/<code>ATIVO</code>.</li>
+<li>Prazo (texto do painel): <em>"Você tem até o dia 05 do mês seguinte à emissão da Nota Fiscal de
+  Entrada para classifica-la, após esse prazo, o sistema irá confirmar a pré-classificação
+  sugerida."</em>.</li>
+<li><strong>Versão nova no painel</strong> (chunk <code>nota-entrada.687b417a.js</code>, rota <code>#/nota-entrada/classificacao</code>):
+  <code>GET /api/plataforma/nota-entrada/classificacao/init/</code>,
+  <code>GET /api/plataforma/nota-entrada/classificacao/listar/?mes&amp;ano&amp;empresa&amp;offset&amp;limite=10&amp;tipo=0</code>,
+  <code>POST /api/plataforma/nota-entrada/classificacao/salvarloteclassificacao/{tipo}</code> (array das
+  notas marcadas). No painel só o lote fica ativo; "Por Produto" e "Desconheço / Não Recebi" vêm
+  desabilitados. Nenhum desses caminhos está no catálogo.</li>
+<li>Risco <strong>médio</strong> (contábil, reclassificável).</li>
+</ul>
+<h3 id="33-outros-com-efeito">3.3 Outros com efeito<a class="headerlink" href="#33-outros-com-efeito" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>GET /api/emissor/classificacaonotas/agendarExportarArquivos/{mes}/{ano}?tipo=&amp;email=</code>: agenda
+  e-mail com os XMLs (GET com efeito colateral).</li>
+<li><code>POST /api/plataforma/parametrosEmpresa/create</code> <code>{cnpj, chave, valor}</code> e <code>…/update</code>
+  <code>{id, cnpj, chave, valor}</code>: parâmetros da empresa (ex.: tutorial visto). Baixo risco.</li>
+</ul>
+<h3 id="recomendacao-para-a-cli-notas-de-entrada">Recomendação para a CLI (notas de entrada)<a class="headerlink" href="#recomendacao-para-a-cli-notas-de-entrada" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>ctbz entradas manifestar &lt;id&gt;... --ciencia|--confirmar|--desconhecer|--nao-realizada --justificativa "..." [--yes]
+ctbz entradas classificar &lt;id&gt;... --como estoque|insumo|uso-consumo|ativo-imobilizado|prestacao-servico [--yes]
+ctbz entradas produtos &lt;id&gt;                       # listarprodutos (leitura)
+</code></pre></div>
+<p>Validar a justificativa (15–255) e o filtro de situação (<code>PENDENTE</code>/<code>CIENCIA</code>) antes do POST.
+Deixar classificação por produto e reclassificação para depois.</p>
+<hr />
+<h2 id="4-pro-labore">4. Pró-labore<a class="headerlink" href="#4-pro-labore" title="Permanent link">&para;</a></h2>
+<p>Serviços: central <code>b7c5</code> (<code>app</code> ~23700–23930), assessor <code>7a0e</code> (<code>app</code> ~21680–22150), init e
+motor <code>1ecf</code> (<code>chunk-d4950f1a</code>), dashboard (<code>chunk-b88c6b8a</code>), questionário
+(<code>informe-de-rendimentos</code>).</p>
+<h3 id="41-central-do-socio-sociocentral-socioeditar-gestaosocioid">4.1 Central do sócio (<code>#/socio/central</code>, <code>#/socio/editar-gestao/:socioId</code>)<a class="headerlink" href="#41-central-do-socio-sociocentral-socioeditar-gestaosocioid" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método/caminho</th>
+<th>Corpo</th>
+<th>Semântica / tela</th>
+<th>Risco</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PUT /api/plataforma/prolabore/central/gestao/{socioId}</code></td>
+<td><code>{tipoGerenciamento, valorProlabore, valorProlaboreMinimo, modoEdicaoProlaboreMin, sairGestaoInteligente}</code></td>
+<td><strong>Alterar o pró-labore de um sócio</strong> (<code>chunk-e3a42f36</code> ~1715–1790).</td>
+<td><strong>alto</strong> (INSS/IRRF e Fator R)</td>
+</tr>
+<tr>
+<td><code>PATCH /api/plataforma/prolabore/central/empresa/zerar-prolabore</code></td>
+<td><code>{zerarProlabore: bool}</code></td>
+<td>Chave da empresa <em>"Não quero ter pró-labore cadastrado em meses sem faturamento."</em> Com mais de um sócio pede confirmação. Erro <em>"Não foi possível zerar o pró-labore. Tente novamente mais tarde."</em> Reversível (<code>false</code>).</td>
+<td>alto</td>
+</tr>
+<tr>
+<td><code>PUT /api/plataforma/prolabore/central/empresa/gestao-inteligente</code></td>
+<td>—</td>
+<td>Ativa a "Gestão Inteligente" (motor) para a empresa. Erro <em>"Não foi possível ativar a gestão inteligente…"</em></td>
+<td>alto</td>
+</tr>
+</tbody>
+</table>
+<p>Detalhes do <code>PUT gestao/{socioId}</code>:</p>
+<ul>
+<li><code>tipoGerenciamento</code> ∈ <code>INTELIGENTE</code> | <code>SALARIO_MINIMO</code> | <code>TETO_INSS</code> | <code>PERSONALIZADO</code>
+  (rótulos: "Gestão Inteligente", "Salário Mínimo", "Teto INSS", "Personalizado").</li>
+<li><code>valorProlabore</code>: <code>TETO_INSS</code> → <code>valorMaximoProlabore</code> do GET; <code>SALARIO_MINIMO</code> →
+  <code>salarioMinimo</code> do GET; <code>PERSONALIZADO</code> → valor digitado ("Pró-labore desejado", validação
+  <em>"Valor deve ser maior ou igual ao salário mínimo vigente: …"</em>); <code>INTELIGENTE</code> → o valor
+  passado (normalmente <code>null</code>).</li>
+<li><code>valorProlaboreMinimo</code>: piso opcional na gestão inteligente ("Definir valor mínimo de
+  pró-labore" / "Confirmar sem valor mínimo").</li>
+<li><code>modoEdicaoProlaboreMin</code>: <code>true</code> se já havia mínimo.</li>
+<li><code>sairGestaoInteligente</code>: <code>tipo != INTELIGENTE &amp;&amp; qtdSocioGestaoInteligente &lt;= 1</code>. Com mais
+  sócios na GI aparece o modal <em>"Sua empresa permanecerá na Gestão Inteligente"</em> / "Confirmar
+  alteração para Tradicional".</li>
+<li>Pré: <code>GET prolabore/central/init</code> (sócios e ids), <code>GET prolabore/central/gestao/{socioId}</code> →
+  <code>{tipoGerenciamentoProlabore, valorProlaboreMinimo, valorMaximoProlabore, salarioMinimo,
+  qtdSocioGestaoInteligente, elegivelNoMotor, …}</code>.</li>
+<li>Sucesso volta para <code>central-socios</code>; erro <em>"Não foi possível salvar as alterações. Tente
+  novamente mais tarde."</em>.</li>
+</ul>
+<h3 id="42-motor-calculo-automatico-dashboard-e-questionario">4.2 Motor (cálculo automático), dashboard e questionário<a class="headerlink" href="#42-motor-calculo-automatico-dashboard-e-questionario" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Método/caminho</th>
+<th>Corpo</th>
+<th>Semântica</th>
+<th>Risco</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PUT /api/plataforma/prolabore/excluir-empresa-motor-fator-r</code></td>
+<td>—</td>
+<td>"Sair do cálculo automático". Modal: <em>"Você não faz mais parte do cálculo automático de pró-labore — A partir de agora, você deve ajustar o valor do seu pró-labore todos os meses. O ajuste deve ser feito até o penúltimo dia do mês para ser aplicado no mês seguinte."</em> Desfazer: reativar gestão inteligente ou questionário (incerto).</td>
+<td>alto</td>
+</tr>
+<tr>
+<td><code>POST /api/plataforma/prolabore/viu-dialog-informacao-prolabore</code></td>
+<td>—</td>
+<td>"Não mostrar novamente" do aviso <em>"O ajuste no pró-labore deve ser feito até o dia 25 do mês para ser aplicado no mês seguinte…"</em></td>
+<td>baixo</td>
+</tr>
+<tr>
+<td><code>PATCH /api/plataforma/prolabore/central/empresa/zerar-prolabore-gt</code></td>
+<td>—</td>
+<td>Painel lateral "OfertaZeramentoGTAside" (empresa em GI sem faturamento): <em>"Seu pró-labore será removido — Sua preferência já começa a valer a partir deste mês."</em> / <em>"Você escolheu não ter pró-labore a partir deste mês… Essa configuração não altera os meses passados."</em> Desfazer: provavelmente <code>zerar-prolabore {false}</code> (incerto).</td>
+<td>alto</td>
+</tr>
+<tr>
+<td><code>POST /api/plataforma/dashboard/v2/prolabore/salvar-decisao</code></td>
+<td><code>{acao: "MANTER"\|"REMOVER"}</code></td>
+<td>Card <em>"Sem faturamento este mês — Você pode manter o pró-labore para contribuir com o INSS, ou remover e economizar nos impostos."</em> Registra a decisão; se de fato remove é incerto (o front também liga <code>desejaAlterar</code>).</td>
+<td>médio/alto</td>
+</tr>
+<tr>
+<td><code>POST /api/plataforma/questionario-preferencia-prolabore/salvar-resposta</code></td>
+<td>o item da pergunta vindo de <code>GET …/init</code> + <code>resposta</code></td>
+<td>Perguntas <code>PREVISAO_FATURAMENTO[_MULTIPLOS_SOCIOS]</code> (<code>PROXIMOS_MESES</code>, <code>NAO_SEI</code>, <code>NAO_VOU_MAIS_FATURAR</code>) e <code>CONTRIBUICAO_INSS[_MULTIPLOS_SOCIOS]</code> (<code>TODOS_OS_MESES</code>, <code>ECONOMIZAR_NOS_IMPOSTOS</code>, <code>NAO_QUERO_CONTRIBUIR</code>). O front não espera a resposta.</td>
+<td>médio</td>
+</tr>
+<tr>
+<td><code>POST /api/plataforma/questionario-preferencia-prolabore/decisao-preferencia</code></td>
+<td><code>{escolha: &lt;cenario de GET decisao-preferencia&gt; \| "SAIR_MOTOR_FATOR_R"}</code></td>
+<td>Escolhe o cenário recomendado ou desliga o "cálculo inteligente" (<em>"Tem certeza que deseja desativar o cálculo inteligente?"</em>). Texto: <em>"O pró-labore será ajustado de acordo com suas preferências a partir do próximo mês."</em></td>
+<td>alto</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-assessor-de-pro-labore-assistente-socioassessor">4.3 Assessor de pró-labore (assistente <code>#/socio/assessor/*</code>)<a class="headerlink" href="#43-assessor-de-pro-labore-assistente-socioassessor" title="Permanent link">&para;</a></h3>
+<p>Fluxo em passos (<code>ESCOLHA_SOCIO → ZERAMENTO|GERENCIAR_PROLABORE → DUPLO_VINCULO → DEPENDENTES →
+SIMULAR_PROLABORE → sucesso</code>), estados <code>NAO_INICIADO|EM_ANDAMENTO|CONCLUIDO|EM_EDICAO|BLOQUEADO</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Método/caminho</th>
+<th>Corpo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PUT prolabore/assessor/escolher-socio/{cpf}</code></td>
+<td>— (o CPF do sócio vai no caminho)</td>
+</tr>
+<tr>
+<td><code>GET prolabore/assessor/passo/{cpf}/{PASSO}</code></td>
+<td>leitura</td>
+</tr>
+<tr>
+<td><code>PUT prolabore/assessor/passo</code></td>
+<td><code>{cpf, passo, subpassoAtual\|null, emEdicao, passoConcluido, respostas:{tipo: &lt;PASSO&gt;, …}}</code>. Respostas por passo: ZERAMENTO <code>{zerarProlabore}</code>; GERENCIAR_PROLABORE <code>{tipoGerenciamentoProlabore: PERSONALIZADO\|TETO_INSS\|SALARIO_MINIMO\|OTIMIZACAO_INTELIGENTE, valorPersonalizado}</code>; DEPENDENTES <code>{possuiDependentes}</code>; DUPLO_VINCULO <code>{tipoVinculo (CLT\|PJ\|SERVIDOR_PUBLICO\|…), valoresFormulario:[{campo: cnpj\|tipo_remuneracao\|base_calculo\|inss, valor, status}], statusExtracao}</code>; SIMULAR_PROLABORE <code>{faturamentoEmpresa}</code></td>
+</tr>
+<tr>
+<td><code>POST prolabore/assessor/socio/{cpf}/upload</code></td>
+<td>multipart <code>tipo</code> (<code>HOLERITE</code>|<code>DEMONSTRATIVO_PAGAMENTO</code>), <code>formato</code>, <code>nome</code>, <code>documento</code> (arquivo). Também <code>GET …/upload/{id}</code>, <code>GET …/upload/status/{id}</code> (<code>SUCESSO</code>, <code>SUCESSO_PARCIAL</code>, <code>FALHA</code>, <code>ERRO</code>, <code>EM_PROCESSAMENTO</code>), <code>DELETE …/upload/{id}</code></td>
+</tr>
+<tr>
+<td><code>POST prolabore/assessor/socio/{cpf}/dependente</code> / <code>DELETE …/dependente/{id}</code></td>
+<td>corpo do POST incerto</td>
+</tr>
+<tr>
+<td><code>GET prolabore/assessor/socio/{cpf}/simular</code></td>
+<td>leitura</td>
+</tr>
+<tr>
+<td><code>POST prolabore/assessor/socio/{cpf}/finalizar</code></td>
+<td>— (grava o resultado do assistente)</td>
+</tr>
+<tr>
+<td><code>POST prolabore/assessor/rollout</code></td>
+<td>— → <code>{destino}</code></td>
+</tr>
+<tr>
+<td><code>POST prolabore/assessor/abandonar-fluxo</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Mensagens: <em>"Selecione um sócio para continuar."</em>, <em>"Salvando sua preferência"</em>, <em>"Ocorreu um
+erro ao salvar suas preferências. Tente novamente."</em>.</p>
+<p><strong>Fora do catálogo</strong> (caminho montado com <code>.concat</code>), base <code>prolabore/central/socios</code>:
+<code>GET {socioId}/dependentes</code>, <code>GET|PUT|DELETE {socioId}/dependente/{id}</code>, <code>POST {socioId}/dependente</code>
+(multipart <code>nome</code>, <code>cpf</code>, <code>dataNascimento</code>, <code>tipoDependenteESocial</code>, opcionais <code>tipoDocumento=
+DECLARACAO_MATRICULA</code>, <code>nomeDocumento</code>, <code>declaracaoMatricula</code>), <code>GET {socioId}/duplo-vinculos</code>,
+<code>POST {socioId}/duplo-vinculo</code>, <code>PUT|DELETE {socioId}/duplo-vinculo/{id}</code> (multipart). Tratam
+dados pessoais de terceiros: <strong>fora do escopo da CLI</strong>.</p>
+<h3 id="44-quando-vale-a-mudanca-competencia">4.4 Quando vale a mudança (competência)<a class="headerlink" href="#44-quando-vale-a-mudanca-competencia" title="Permanent link">&para;</a></h3>
+<p>Os textos do front não batem entre si; o que eles dizem:</p>
+<ul>
+<li>Gestão manual: <em>"Você pode escolher o valor do pró-labore </em><em>deste mês</em><em> até o dia 25."</em> /
+  <em>"Você pode alterar este valor até o dia 25"</em>. Depois disso: <em>"O pró-labore do mês está
+  fechado. Qualquer alteração de pró-labore terá efeito a partir do próximo mês."</em></li>
+<li>Aviso geral: <em>"O ajuste no pró-labore deve ser feito até o dia 25 do mês para ser aplicado no
+  </em><em>mês seguinte</em><em>."</em></li>
+<li>Fora do motor: ajuste <em>"até o penúltimo dia do mês para ser aplicado no mês seguinte"</em>.</li>
+<li>Gestão inteligente: <em>"Iremos calcular o pró-labore até o dia 07 deste mês."</em>; preferências do
+  questionário valem <em>"a partir do próximo mês"</em>.</li>
+<li>Zerar (GT) e remover: <em>"já começa a valer a partir deste mês"</em>; <em>"não altera os meses passados"</em>.</li>
+</ul>
+<p>Nenhum PUT/PATCH manda competência: o servidor decide pela data. A CLI deve ler
+<code>dashboard/prolabore</code> (<code>podeAlterar</code>, <code>gerado</code>) antes e mostrar "vale para MM/AAAA" vindo da
+resposta ou de um GET posterior, sem calcular localmente.</p>
+<h3 id="recomendacao-para-a-cli-pro-labore">Recomendação para a CLI (pró-labore)<a class="headerlink" href="#recomendacao-para-a-cli-pro-labore" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>ctbz prolabore definir --socio &lt;id&gt; --tipo personalizado --valor 1518.00 [--yes]
+ctbz prolabore definir --socio &lt;id&gt; --tipo salario-minimo|teto-inss|inteligente [--minimo 1518] [--yes]
+ctbz prolabore zerar-sem-faturamento on|off [--yes]       # PATCH zerar-prolabore
+</code></pre></div>
+<p>Ler <code>prolabore/central/gestao/{id}</code> antes (salário mínimo, teto, qtd. sócios em GI) e recusar
+valor abaixo do mínimo. Não implementar o assessor, uploads, dependentes, saída do motor nem o
+questionário (fluxos guiados com efeitos difíceis de prever).</p>
+<hr />
+<h2 id="5-distribuicao-de-lucros-e-informe-de-rendimentos">5. Distribuição de lucros e informe de rendimentos<a class="headerlink" href="#5-distribuicao-de-lucros-e-informe-de-rendimentos" title="Permanent link">&para;</a></h2>
+<p>Chunk <code>informe-de-rendimentos.44e0d6a0.js</code> (serviços ~3300–3375).</p>
+<table>
+<thead>
+<tr>
+<th>Método/caminho</th>
+<th>Corpo</th>
+<th>Semântica</th>
+<th>Risco</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /api/plataforma/informerendimento/salvarconfiguracaocliente</code></td>
+<td><code>[ {idSocio, percentual: "NN.NN" (string, 2 casas), valor: "NNNN.NN" (string, 2 casas)} … ]</code>, um item por sócio; com "não distribuir", <code>percentual</code> e <code>valor</code> = <code>0</code></td>
+<td><strong>Registrar a distribuição de lucros</strong> do exercício aberto. Não manda ano nem datas: o exercício é o <code>ano</code> do GET.</td>
+<td><strong>alto</strong> (informe de rendimentos e IRPF dos sócios)</td>
+</tr>
+<tr>
+<td><code>POST /api/plataforma/informerendimento/historico</code></td>
+<td><code>{tipoEvento: "VISUALIZOU_IR"\|"BAIXOU_IR", anoExercicio}</code></td>
+<td>Log de auditoria ao abrir ou baixar o informe</td>
+<td>baixo</td>
+</tr>
+<tr>
+<td><code>POST /api/plataforma/informerendimento/aceitar-carta-responsabilidade/{ano}</code></td>
+<td>—</td>
+<td>Aceite da carta de responsabilidade, exigido para ver o informe (<em>"Para visualizar o informe você precisa aceitar os termos da Carta de Responsabilidade."</em>)</td>
+<td>médio (aceite legal)</td>
+</tr>
+<tr>
+<td><code>POST /api/plataforma/informerendimento/aceitar-termo-debitos/{ano}</code></td>
+<td><code>{aceite: &lt;fluxoAceiteTermoDeCiencia&gt;}</code> (ex.: <code>ESTOU_CIENTE</code>, incerto)</td>
+<td>Ciência de débitos federais</td>
+<td>médio</td>
+</tr>
+<tr>
+<td><code>POST /api/plataforma/informerendimento/aceite/{ano}</code></td>
+<td><code>{tipoAceite: "REGULARIZAR_PENDENCIA_DOCUMENTAL"\|"NAO_REGULARIZAR_PENDENCIA_DOCUMENTAL"}</code></td>
+<td>Escolha diante de pendência documental</td>
+<td>médio</td>
+</tr>
+<tr>
+<td><code>POST /api/plataforma/informerendimento/reabrir-balanco/{ano}</code></td>
+<td>—</td>
+<td>Reabre o exercício contábil (403 para admin: <em>"Usuário admin não pode fazer a reabertura do exercício contábil para um cliente."</em>). Pode levar a "contratar serviço adicional".</td>
+<td><strong>alto</strong></td>
+</tr>
+<tr>
+<td><code>POST /api/plataforma/simulador-impostos-avancado/simular</code></td>
+<td><code>{motorFatorR: bool (de GET …/init), notasFiscais:[{identificador, idCnaeEmpresa, valor}]}</code></td>
+<td><strong>Simulação só de leitura</strong>. Resposta <code>{notasFiscais[{identificador, aliquota}], faturamento, impostosCalculados{valorDas, valorDarf}, prolabore, totalizadores{faturamentoLiquido, totalImpostos}, necessariaAnaliseManualProlabore, deveExibirAlertaDividendos, deveExibirAlertaIrrf}</code>. O front recusa soma acima de R$ 400.000 (texto com erro de digitação "R$ 400.00,00").</td>
+<td>nenhum</td>
+</tr>
+</tbody>
+</table>
+<p>Detalhes do <code>salvarconfiguracaocliente</code>:</p>
+<ul>
+<li>Pré: <code>GET informerendimento/recuperardadosdistribuicaocliente</code> → <code>ano</code>, <code>saldo</code>,
+  <code>totalDistribuido</code>, <code>limitePermitidoDistribuicaoLucros</code>, <code>lucrosSocios[{id, porcentagem,
+  valor}]</code>, <code>podeAlterar</code>, <code>motivoNaoPodeAlterar</code>, <code>dataLimite</code>, <code>perfil</code>. O front calcula
+  <code>saldos.total = saldo + totalDistribuido</code>.</li>
+<li>Trava: só salva se <code>saldos.empresa == 0</code> e soma dos sócios == total (com 3 casas), senão
+  <em>"Verifique se o lucro foi dividido por completo entre os sócios"</em>. Exceção:
+  <code>desabilitarTravaDistLucroTotal</code>.</li>
+<li>Sucesso: <em>"Valores de lucro atualizado com sucesso! Seu Informe atualizado está pronto"</em>.</li>
+<li>Reversível: reenviar enquanto <code>podeAlterar</code> e antes de <code>dataLimite</code>.</li>
+</ul>
+<h3 id="recomendacao-para-a-cli-lucros">Recomendação para a CLI (lucros)<a class="headerlink" href="#recomendacao-para-a-cli-lucros" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>ctbz lucros distribuir --socio &lt;id&gt;=&lt;valor&gt; [--socio &lt;id&gt;=&lt;valor&gt; ...] [--dry-run] [--yes]
+ctbz lucros simular-impostos --nota &lt;idCnaeEmpresa&gt;=&lt;valor&gt; ...      # simulador-impostos-avancado/simular
+</code></pre></div>
+<p><code>distribuir</code> lê o GET, calcula percentuais, exige soma = total distribuível e <code>podeAlterar</code>, e
+mostra o antes e depois. <code>simular</code> pode sair já na 1.x porque é só leitura. Não automatizar
+aceites, carta de responsabilidade nem reabertura de balanço.</p>
+<hr />
+<h2 id="6-endpoints-de-escrita-ausentes-do-catalogomd">6. Endpoints de escrita ausentes do <code>catalogo.md</code><a class="headerlink" href="#6-endpoints-de-escrita-ausentes-do-catalogomd" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>POST /api/plataforma/novo-emissor/v2/emissao/emitir?origem=EMISSOR_SIMPLIFICADO_EMISSAO
+POST /api/plataforma/novo-emissor/v2/emissao/emitir-async?origem=EMISSOR_SIMPLIFICADO_EMISSAO
+POST /api/plataforma/novo-emissor/v2/emissao/replicar?origem=EMISSOR_SIMPLIFICADO_REPLICACAO
+POST /api/plataforma/novo-emissor/v2/registro-de-notas/registrar
+POST /api/plataforma/novo-emissor/v2/registro-de-notas/replicar
+POST /api/plataforma/novo-emissor/v2/calculo/resumo-impostos          (só leitura)
+POST /api/plataforma/novo-emissor/emissao/nova-nota?origem=…          (legado v1)
+POST /api/plataforma/novo-emissor/emissao/replicar/{id}?origem=…      (legado v1)
+POST /api/plataforma/novo-emissor/clientes/salvar-cliente-nacional
+POST /api/plataforma/novo-emissor/clientes/salvar-cliente-exterior
+POST /api/plataforma/autopilot/clientes                               (store morta)
+POST /api/plataforma/nota-entrada/classificacao/salvarloteclassificacao/{tipo}
+POST /api/legado/notafiscaltomada/{verificarNotaTomadaExiste,salvarnota}; DELETE …/removernota/{id}
+POST|PUT|DELETE /api/plataforma/prolabore/central/socios/{id}/dependente[/{id}]
+POST|PUT|DELETE /api/plataforma/prolabore/central/socios/{id}/duplo-vinculo[/{id}]
+POST /api/plataforma/prolabore/assessor/socio/{cpf}/{upload,dependente,finalizar}; DELETE …/upload/{id}, …/dependente/{id}
+POST /api/plataforma/questionario-preferencia-prolabore/{salvar-resposta,decisao-preferencia}  (já listados)
+POST /api/emissor/notasentrada/manifestar        (variante sem barra, com chaves/cnpj)
+POST /api/plataforma/parametrosEmpresa/{create,update}
+</code></pre></div>
+<p>Leituras novas úteis: <code>novo-emissor/v2/emissao/init[?idNotaReplicada=&amp;isRegistro=]</code>,
+<code>novo-emissor/v2/emissor-async</code>, <code>novo-emissor/tomador/{doc}</code>,
+<code>novo-emissor/cadastro-clientes/{id}</code>, <code>novo-emissor/cep/logradouro?cep=</code>,
+<code>banco-central/moeda[/{m}/data-referencia/{d}]</code>, <code>prolabore/central/gestao/{socioId}</code>,
+<code>/api/legado/notafiscal/buscarNotaEmpresa?numero=</code>, <code>nota{perfil}/obtercodverificacao/{codigo}</code>,
+<code>/api/plataforma/nota-entrada/classificacao/{init,listar}/</code>.</p>
+<h2 id="7-observacoes-gerais-para-o-roadmap">7. Observações gerais para o roadmap<a class="headerlink" href="#7-observacoes-gerais-para-o-roadmap" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Todo comando de escrita precisa de confirmação (<code>--yes</code>), de <code>--dry-run</code> quando houver
+   cálculo e de idempotência mínima (antes de emitir, procurar na listagem do dia uma nota igual
+   para o mesmo tomador e valor).</li>
+<li>Nenhum endpoint de escrita devolve recibo estruturado conhecido: a CLI deve reler o GET
+   correspondente para confirmar.</li>
+<li>Erros vêm em formatos diferentes: <code>{identificador, mensagemAmigavel}</code> (emissor v2),
+   <code>{error:{errorClassName, errorMessage}}</code> (cancelamento), <code>{errorMessage}</code> (cancelamento de
+   nota importada) e <code>bodyText</code> (front de notas de entrada). Vale um decodificador tolerante.</li>
+<li>GETs com efeito colateral, que nunca podem entrar em testes de contrato:
+   <code>notafiscal/cancelarAPI</code> e <code>classificacaonotas/agendarExportarArquivos</code>.</li>
+<li>Em notas de entrada, baixar o XML de nota <code>PENDENTE</code> pelo front <strong>manifesta ciência</strong>. A CLI
+   deve baixar só notas já em <code>CIENCIA</code> ou <code>CONFIRMADA</code>, ou avisar.</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
