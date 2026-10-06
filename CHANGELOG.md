@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-10-04
+
+Extratos, contas bancárias e documentos: cadastrar contas, importar e excluir extratos,
+enviar documentos e declarar a ausência deles.
+
 ### Added
 
 - `ctbz contas-bancarias bancos`, `adicionar` e `editar`: bancos aceitos, cadastro de conta PJ
@@ -249,7 +254,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/edusouza/ctbz-cli/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/edusouza/ctbz-cli/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/edusouza/ctbz-cli/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/edusouza/ctbz-cli/compare/v1.1.0...v1.2.0

@@ -37,7 +37,7 @@ escritas, `risco: baixo|médio|alto`.
 | **v1.2** | Caixa e classificação de lançamentos | [#180](https://github.com/edusouza/ctbz-cli/issues/180) | 7 | concluída |
 | **v1.3** | Impostos: confirmar pagamento, recálculo e parcelamento | [#188](https://github.com/edusouza/ctbz-cli/issues/188) | 4 | concluída |
 | **v1.4** | Pendências, termos e conciliação | [#193](https://github.com/edusouza/ctbz-cli/issues/193) | 5 | concluída |
-| **v1.5** | Extratos, contas bancárias e documentos | [#199](https://github.com/edusouza/ctbz-cli/issues/199) | 6 | planejada |
+| **v1.5** | Extratos, contas bancárias e documentos | [#199](https://github.com/edusouza/ctbz-cli/issues/199) | 6 | concluída |
 | **v1.6** | Notas fiscais: tomadores e notas de entrada | [#206](https://github.com/edusouza/ctbz-cli/issues/206) | 4 | planejada |
 | **v1.7** | Pró-labore, distribuição de lucros e informe de rendimentos | [#211](https://github.com/edusouza/ctbz-cli/issues/211) | 6 | planejada |
 | **v1.8** | Conta, usuários e acessos | [#218](https://github.com/edusouza/ctbz-cli/issues/218) | 4 | planejada |
@@ -259,12 +259,12 @@ Enviar o que a Contabilizei pede todo mês (extratos, documentos e declarações
 
 | | Issue | Funcionalidade | Tipo | Risco |
 |---|---|---|---|---|
-| ⬜ | [#200](https://github.com/edusouza/ctbz-cli/issues/200) | Cadastrar e editar conta bancária | funcionalidade | médio |
-| ⬜ | [#201](https://github.com/edusouza/ctbz-cli/issues/201) | Remover conta bancária | funcionalidade | alto |
-| ⬜ | [#202](https://github.com/edusouza/ctbz-cli/issues/202) | Importar extrato bancário (OFX ou PDF) | funcionalidade | médio |
-| ⬜ | [#203](https://github.com/edusouza/ctbz-cli/issues/203) | Excluir extrato importado | funcionalidade | alto |
-| ⬜ | [#204](https://github.com/edusouza/ctbz-cli/issues/204) | Enviar documento para uma pendência | funcionalidade | médio |
-| ⬜ | [#205](https://github.com/edusouza/ctbz-cli/issues/205) | Declarar ausência de documento ou de aplicação financeira | funcionalidade | alto |
+| ✅ | [#200](https://github.com/edusouza/ctbz-cli/issues/200) | Cadastrar e editar conta bancária | funcionalidade | médio |
+| ✅ | [#201](https://github.com/edusouza/ctbz-cli/issues/201) | Remover conta bancária | funcionalidade | alto |
+| ✅ | [#202](https://github.com/edusouza/ctbz-cli/issues/202) | Importar extrato bancário (OFX ou PDF) | funcionalidade | médio |
+| ✅ | [#203](https://github.com/edusouza/ctbz-cli/issues/203) | Excluir extrato importado | funcionalidade | alto |
+| ✅ | [#204](https://github.com/edusouza/ctbz-cli/issues/204) | Enviar documento para uma pendência | funcionalidade | médio |
+| ✅ | [#205](https://github.com/edusouza/ctbz-cli/issues/205) | Declarar ausência de documento ou de aplicação financeira | funcionalidade | alto |
 
 Fora de escopo: Open Finance e BS2; certificado digital (fora do roadmap de escrita).
 
