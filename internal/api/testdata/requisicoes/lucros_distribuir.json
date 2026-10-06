@@ -1,0 +1,19 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/informerendimento/salvarconfiguracaocliente",
+    "content_type": "application/json",
+    "corpo": [
+      {
+        "idSocio": 1000000000000001,
+        "percentual": "60.00",
+        "valor": "30000.00"
+      },
+      {
+        "idSocio": 1000000000000002,
+        "percentual": "40.00",
+        "valor": "20000.00"
+      }
+    ]
+  }
+]

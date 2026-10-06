@@ -25,11 +25,18 @@ type DistribuicaoLucros struct {
 	PodeAlterar                       bool     `json:"podeAlterar"`
 	MotivoNaoPodeAlterar              any      `json:"motivoNaoPodeAlterar"`
 	DataLimite                        any      `json:"dataLimite"`
-	// Itens lidos pelo front ({socio, valor}); a conta verificada não tinha distribuição.
-	LucrosSocios []struct {
-		Socio string   `json:"socio" contract:"optional"`
-		Valor *float64 `json:"valor" contract:"optional"`
-	} `json:"lucrosSocios"`
+	// Um item por sócio; a conta verificada não tinha distribuição (ver LucroSocio).
+	LucrosSocios []LucroSocio `json:"lucrosSocios"`
+}
+
+// LucroSocio é a parte de um sócio na distribuição. O front lê {socio, valor} na tela e
+// {id, porcentagem, valor} ao salvar; os campos ficam opcionais até haver uma distribuição
+// real (#147).
+type LucroSocio struct {
+	ID          any      `json:"id" contract:"optional"` // o idSocio de salvarconfiguracaocliente
+	Socio       string   `json:"socio" contract:"optional"`
+	Porcentagem any      `json:"porcentagem" contract:"optional"`
+	Valor       *float64 `json:"valor" contract:"optional"`
 }
 
 // BuscarDistribuicaoLucros lê a distribuição de lucros.

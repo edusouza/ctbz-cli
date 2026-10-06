@@ -61,6 +61,7 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz login`](ctbz_login.md) | Autentica na Contabilizei (usuário, senha e código por e-mail) |
 | [`ctbz logout`](ctbz_logout.md) | Apaga a sessão local |
 | [`ctbz lucros`](ctbz_lucros.md) | Mostra a distribuição de lucros do exercício e o que a impede |
+| [`ctbz lucros distribuir`](ctbz_lucros_distribuir.md) | Registra quanto do lucro do exercício cabe a cada sócio |
 | [`ctbz lucros informe`](ctbz_lucros_informe.md) | Mostra os valores do informe de rendimentos dos sócios (para o IR) |
 | [`ctbz mensalidade`](ctbz_mensalidade.md) | Mostra a mensalidade atual da Contabilizei (valor, vencimento e situação) |
 | [`ctbz mensalidade historico`](ctbz_mensalidade_historico.md) | Lista os pagamentos anteriores da mensalidade e a situação do débito automático |

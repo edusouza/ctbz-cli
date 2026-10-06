@@ -136,7 +136,7 @@ func reaisOuNil(flag, v string) (*float64, error) {
 	if err != nil {
 		return nil, usageError{fmt.Errorf("%s: %w", flag, err)}
 	}
-	r := float64(c) / 100
+	r := reais(c)
 	return &r, nil
 }
 
