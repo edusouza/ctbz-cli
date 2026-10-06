@@ -112,6 +112,7 @@ func Endpoints() []Endpoint {
 		{Name: "usuarios_empresa", LivePath: PathUsuariosEmpresa, Type: []UsuarioEmpresa{}},         // sintética (ADR-0021)
 		{Name: "status_multiusuario", LivePath: PathStatusMultiusuario, Type: StatusMultiusuario{}}, // sintética (ADR-0021)
 		{Name: "dados_acesso", Type: DadosAcesso{}},                                                 // sintética (ADR-0021); 403 para administrador
+		{Name: "dados_login", LivePath: PathContaUsuario, Type: DadosLogin{}},                       // sintética (ADR-0021)
 		{Name: "socios_informe", LivePath: PathSociosInforme(2025), Type: []SocioInforme{}},
 		// getValoresComprovanteRendimento fica sem contrato: nenhum exemplo real (sem sócios com informe).
 	}

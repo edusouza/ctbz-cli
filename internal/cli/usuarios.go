@@ -118,15 +118,23 @@ desativar. Aceita --yes e --dry-run.`,
 
 // emailConvite valida o e-mail como o front: endereço simples e fora da Contabilizei.
 func emailConvite(v string) (string, error) {
-	a, err := mail.ParseAddress(strings.TrimSpace(v))
-	if err != nil || a.Name != "" || !strings.Contains(a.Address[strings.LastIndex(a.Address, "@")+1:], ".") {
-		return "", usageError{fmt.Errorf("e-mail inválido: %q", v)}
+	email, err := emailValido(v)
+	if err != nil {
+		return "", err
 	}
-	email := strings.ToLower(a.Address)
 	if strings.Contains(email[strings.LastIndex(email, "@"):], "@contabilizei.") {
 		return "", usageError{errors.New("não é possível convidar e-mails da Contabilizei")}
 	}
 	return email, nil
+}
+
+// emailValido aceita um endereço simples (sem nome), com domínio pontuado, em minúsculas.
+func emailValido(v string) (string, error) {
+	a, err := mail.ParseAddress(strings.TrimSpace(v))
+	if err != nil || a.Name != "" || !strings.Contains(a.Address[strings.LastIndex(a.Address, "@")+1:], ".") {
+		return "", usageError{fmt.Errorf("e-mail inválido: %q", v)}
+	}
+	return strings.ToLower(a.Address), nil
 }
 
 func newUsuariosAtivarCmd(ativar bool) *cobra.Command {

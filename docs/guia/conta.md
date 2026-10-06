@@ -63,3 +63,27 @@ ctbz empresa credenciais confirmar-prefeitura
 - A situação da verificação (Pendente, Verificando acesso, Vinculada, Acesso negado) ainda não
   aparece: o campo não foi visto numa resposta real.
 
+## Dados de login: e-mail, telefone e senha
+
+```sh
+ctbz conta                                                     # e-mail e telefone mascarados, método do 2FA
+ctbz conta alterar --email novo@example.com --telefone "(11)98765-4321"
+ctbz conta senha [--via sms]
+```
+
+- Toda troca exige um **código OTP**: depois da confirmação, a Contabilizei envia o código por
+  e-mail ou SMS (`--via`; padrão: o método do 2FA). Com o app autenticador (`APP`), nenhum
+  código é enviado: digite o do app.
+- O código é lido do `--otp-cmd` (ou `CTBZ_OTP_CMD`), como no [login](https://github.com/edusouza/ctbz-cli#login),
+  ou digitado no terminal. Sem terminal, `--otp-cmd` é obrigatório e é conferido antes de
+  qualquer envio. Se um código foi pedido há pouco, a CLI diz quantos segundos esperar.
+- `alterar` pede **e-mail e telefone juntos**: a API recebe os dois e o painel mostra os atuais
+  mascarados, então repita o que não muda. Telefone com DDD e 9 dígitos. Os próximos códigos
+  de login vão para o novo e-mail: atualize `CTBZ_USER`.
+- `senha` pede a nova senha duas vezes, sem eco (em scripts, duas linhas na entrada padrão).
+  Regras do painel: pelo menos 8 caracteres, com minúsculas, maiúsculas, números e um caractere
+  especial. A senha atual não é pedida: a prova é o código. Atualize `CTBZ_PASSWORD`; outras
+  sessões podem ser encerradas.
+- Risco alto: um erro pode tirar seu acesso. Dá para trocar de novo. Código errado não altera
+  nada (a CLI avisa). O `--dry-run` mostra `***` no lugar da senha e do código.
+

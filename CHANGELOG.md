@@ -13,6 +13,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   (multiusuário), com convite de acesso total e revogação por desativação.
 - `ctbz empresa credenciais`, `atualizar` e `confirmar-prefeitura`: dados de acesso a órgãos
   públicos (código do Simples, prefeitura e Dataprev), com segredos mascarados e lidos sem eco.
+- `ctbz conta`, `alterar` e `senha`: e-mail, telefone e senha de login, confirmados com código
+  OTP lido do `--otp-cmd` ou do terminal.
 
 ### Changed
 

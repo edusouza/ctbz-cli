@@ -1,0 +1,13 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/conta-usuario/alterar-dados",
+    "content_type": "application/json",
+    "corpo": {
+      "codigo": "***",
+      "email": "novo@example.com",
+      "metodo": "EMAIL",
+      "telefone": "11900000000"
+    }
+  }
+]

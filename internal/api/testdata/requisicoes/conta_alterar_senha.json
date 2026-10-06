@@ -1,0 +1,12 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/conta-usuario/alterar-senha",
+    "content_type": "application/json",
+    "corpo": {
+      "codigo": "***",
+      "metodo": "SMS",
+      "senha": "***"
+    }
+  }
+]
