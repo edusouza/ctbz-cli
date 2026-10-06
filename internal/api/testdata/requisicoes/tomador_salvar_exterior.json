@@ -1,0 +1,20 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/novo-emissor/clientes/salvar-cliente-exterior",
+    "content_type": "application/json",
+    "corpo": {
+      "email": "contact@example.com",
+      "endereco": {
+        "cidade": "Springfield",
+        "complemento": "",
+        "descricaoPais": "Estados Unidos",
+        "logradouro": "Main St",
+        "numero": "100",
+        "pais": 249,
+        "simboloPais": "US"
+      },
+      "razaoSocialOuNome": "EXAMPLE INC"
+    }
+  }
+]

@@ -72,6 +72,9 @@ func Endpoints() []Endpoint {
 		{Name: "contrato_servico", LivePath: PathContratoServico, Type: ContratoServico{}},
 		{Name: "notas_emitidas", LivePath: PathNotasEmitidas + "?pagina=1&limite=10&ano=2026&mes=10", Type: ListaNotas{}},
 		{Name: "tomadores", LivePath: PathTomadores, Type: Tomadores{}},
+		{Name: "cep", LivePath: PathCEP("01001000"), Type: EnderecoCEP{}},                           // sintética (ADR-0021); CEP público (Praça da Sé)
+		{Name: "paises_emissao", LivePath: PathPaisesEmissao, Type: []PaisEmissao{}},                // sintética (ADR-0021)
+		{Name: "cadastro_cliente", Type: CadastroCliente{}},                                         // sintética (ADR-0021); o id vem de tomadores
 		{Name: "consulta_cnpj", LivePath: PathConsultaCNPJ("00000000000191"), Type: ConsultaCNPJ{}}, // CNPJ público (Banco do Brasil)
 		{Name: "emissor_init", LivePath: PathEmissorInit, Type: EmissorInit{}},
 		{Name: "versao_emissor", LivePath: PathVersaoEmissor, Type: VersaoEmissor{}},

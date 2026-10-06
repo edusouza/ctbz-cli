@@ -122,6 +122,7 @@ ctbz mensalidade historico                     # pagamentos anteriores e débito
 ctbz plano [contrato|proposta] [--texto]       # plano contratado e contrato de serviço
 ctbz notas --de 2026-01 --ate 2026-09          # NFS-e emitidas no período, com total
 ctbz notas tomadores [consulta CNPJ]           # clientes do emissor; cadastro de um CNPJ
+ctbz notas tomadores adicionar|editar ...      # cadastra ou corrige tomador (nacional ou exterior)
 ctbz notas config | ctbz notas aliquotas       # emissor e alíquotas por atividade
 ctbz notas entrada [--lista manifestadas]      # NF-e recebidas (notas de entrada)
 ctbz prolabore [historico --ano 2026]          # pró-labore por sócio e histórico mensal

@@ -40,6 +40,24 @@ ctbz notas tomadores consulta 00.000.000/0001-91   # cadastro de um CNPJ na Rece
   fantasia, abertura, atividade principal, natureza jurídica, situação cadastral, opção pelo
   Simples, endereço e contatos. Serve para conferir um cliente antes de emitir a nota.
 
+### Cadastrar e editar tomadores
+
+```sh
+ctbz notas tomadores adicionar --documento 00.000.000/0001-91 --email financeiro@exemplo.com
+ctbz notas tomadores adicionar --documento 529.982.247-25 --nome "Fulano de Tal" --cep 01001-000 --numero 10
+ctbz notas tomadores adicionar --exterior --nome "Example Inc" --pais US --cidade Springfield \
+  --logradouro "Main St" --numero 100
+ctbz notas tomadores editar 00000000000191 --email novo@exemplo.com
+```
+
+- Com CNPJ, a razão social e o endereço vêm da consulta à Receita; as flags completam ou
+  corrigem. Com CPF, informe nome, CEP e número (logradouro e bairro vêm do CEP).
+- O documento é validado pelos dígitos verificadores, inclusive o CNPJ alfanumérico.
+- O emissor salva o tomador nacional pelo documento: cadastrar um documento que já existe
+  atualiza o cadastro.
+- Tomadores do exterior são editados pelo id (coluna `id` de `ctbz notas tomadores`).
+- Risco médio: os dados vão para as notas futuras; dá para editar de novo.
+
 ## Configuração do emissor e alíquotas
 
 ```sh

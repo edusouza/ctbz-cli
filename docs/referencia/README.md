@@ -70,7 +70,9 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz notas config`](ctbz_notas_config.md) | Mostra a configuração do emissor de notas |
 | [`ctbz notas entrada`](ctbz_notas_entrada.md) | Lista as notas fiscais de entrada (NF-e recebidas pela empresa) |
 | [`ctbz notas tomadores`](ctbz_notas_tomadores.md) | Lista os tomadores (clientes) cadastrados no emissor de notas |
+| [`ctbz notas tomadores adicionar`](ctbz_notas_tomadores_adicionar.md) | Cadastra um tomador (cliente) nacional ou do exterior |
 | [`ctbz notas tomadores consulta`](ctbz_notas_tomadores_consulta.md) | Consulta os dados cadastrais de um CNPJ na Receita |
+| [`ctbz notas tomadores editar`](ctbz_notas_tomadores_editar.md) | Corrige os dados de um tomador cadastrado |
 | [`ctbz pendencias`](ctbz_pendencias.md) | Lista as pendências da empresa (tipo, detalhe, prazo e situação) |
 | [`ctbz pendencias aceitar`](ctbz_pendencias_aceitar.md) | Aceita um termo ou carta pendente da Central de Rotinas |
 | [`ctbz pendencias conciliacao`](ctbz_pendencias_conciliacao.md) | Mostra as pendências de conciliação fiscal (notas e recebimentos) |

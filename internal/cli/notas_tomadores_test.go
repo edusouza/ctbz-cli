@@ -17,9 +17,9 @@ func TestNotasTomadores(t *testing.T) {
 	if code != ExitOK {
 		t.Fatalf("código %d: %s", code, stderr)
 	}
-	want := "nome,documento,email,telefone,inscricao_municipal,municipio,uf,exterior\n" +
-		"ACME LTDA,11222333000181,a@acme.com,,,Curitiba,PR,false\n" +
-		"John Doe,,,,,Lisboa,,true\n"
+	want := "nome,documento,email,telefone,inscricao_municipal,municipio,uf,exterior,id\n" +
+		"ACME LTDA,11222333000181,a@acme.com,,,Curitiba,PR,false,1\n" +
+		"John Doe,,,,,Lisboa,,true,2\n"
 	if out != want {
 		t.Errorf("CSV:\n%s\nesperado:\n%s", out, want)
 	}

@@ -1,0 +1,3 @@
+{"tipoCliente": "NACIONAL", "clienteNacionalDTO": {"cpfCnpj": "00000000000191", "razaoSocialOuNome": "FULANO DE TAL", "telefone": "", "email": "fulano@exemplo.com",
+  "inscricaoMunicipal": null, "endereco": {"bairro": "Centro", "cep": "01001000", "codIbge": "3550308", "complemento": "", "logradouro": "Rua Exemplo", "estado": "SP", "numero": "1", "cepInvalido": false}},
+ "clienteExteriorDTO": null}

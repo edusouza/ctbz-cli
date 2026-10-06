@@ -260,6 +260,15 @@ func Escritas() []Escrita {
 				CompetenciasPendentes: []CompetenciaPendente{{ID: json.RawMessage(`"1000000000000601"`), Mes: 8, Ano: 2026}}})
 			return err
 		}},
+		{Name: "tomador_salvar_nacional", Exemplo: func(ctx context.Context, s Sender) error {
+			im := "12345"
+			return SalvarClienteNacional(ctx, s, ClienteNacional{CPFCNPJ: "00000000000191", RazaoSocialOuNome: "FULANO DE TAL", Email: "fulano@exemplo.com",
+				InscricaoMunicipal: &im, Endereco: EnderecoNacional{Bairro: "Centro", CEP: "01001000", CodIBGE: "3550308", Logradouro: "Rua Exemplo", Estado: "SP", Numero: "1"}})
+		}},
+		{Name: "tomador_salvar_exterior", Exemplo: func(ctx context.Context, s Sender) error {
+			return SalvarClienteExterior(ctx, s, ClienteExterior{RazaoSocialOuNome: "EXAMPLE INC", Email: "contact@example.com",
+				Endereco: EnderecoExterior{Logradouro: "Main St", Numero: "100", Cidade: "Springfield", Pais: json.RawMessage("249"), DescricaoPais: "Estados Unidos", SimboloPais: "US"}})
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

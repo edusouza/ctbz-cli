@@ -35,7 +35,7 @@ tomador), use "ctbz notas tomadores consulta CNPJ".`,
 			return output.Write(s.out, f, tomadoresList(t.Tomadores))
 		},
 	}
-	cmd.AddCommand(newNotasTomadoresConsultaCmd())
+	cmd.AddCommand(newNotasTomadoresConsultaCmd(), newTomadoresAdicionarCmd(), newTomadoresEditarCmd())
 	return cmd
 }
 
@@ -49,6 +49,7 @@ func tomadoresList(ts []api.Tomador) *output.List {
 		{Key: "municipio", Header: "Município"},
 		{Key: "uf", Header: "UF"},
 		{Key: "exterior", Header: "Exterior"},
+		{Key: "id", Header: "ID"},
 	}}
 	for _, t := range ts {
 		var municipio, uf any
@@ -56,7 +57,7 @@ func tomadoresList(ts []api.Tomador) *output.List {
 			municipio, uf = nomeDeValor(t.Endereco.Municipio), nomeDeValor(t.Endereco.UF)
 		}
 		l.Append(t.Nome, documentoTomador(t.CPFCNPJ), nilIfEmpty(t.Email), nilIfEmpty(t.Telefone),
-			nilIfEmpty(t.InscricaoMunicipal), municipio, uf, t.Estrangeiro)
+			nilIfEmpty(t.InscricaoMunicipal), municipio, uf, t.Estrangeiro, rawTexto(t.ID))
 	}
 	return l
 }

@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Added
+
+- `ctbz notas tomadores adicionar` e `editar`: cadastro de tomadores nacionais (CNPJ preenchido
+  pela Receita, CPF validado) e do exterior. `ctbz notas tomadores` mostra o `id`.
+
 ## [1.5.0] - 2026-10-04
 
 Extratos, contas bancárias e documentos: cadastrar contas, importar e excluir extratos,

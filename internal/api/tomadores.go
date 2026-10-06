@@ -1,6 +1,9 @@
 package api
 
-import "context"
+import (
+	"context"
+	"encoding/json"
+)
 
 const PathTomadores = "novo-emissor/tomadores/init"
 
@@ -11,13 +14,13 @@ func PathConsultaCNPJ(cnpj string) string { return "novo-emissor/clientes/consul
 // Tomador é um cliente cadastrado no emissor de notas. Os campos são os lidos pelo front;
 // a conta verificada não tinha tomadores, por isso todos são opcionais.
 type Tomador struct {
-	ID                 any    `json:"id" contract:"optional"`
-	Nome               string `json:"nome" contract:"optional"`
-	CPFCNPJ            string `json:"cpfCnpj" contract:"optional"`
-	Email              string `json:"email" contract:"optional"`
-	Telefone           string `json:"telefone" contract:"optional"`
-	InscricaoMunicipal string `json:"inscricaoMunicipal" contract:"optional"`
-	Estrangeiro        bool   `json:"estrangeiro" contract:"optional"`
+	ID                 json.RawMessage `json:"id" contract:"optional"` // número ou texto
+	Nome               string          `json:"nome" contract:"optional"`
+	CPFCNPJ            string          `json:"cpfCnpj" contract:"optional"`
+	Email              string          `json:"email" contract:"optional"`
+	Telefone           string          `json:"telefone" contract:"optional"`
+	InscricaoMunicipal string          `json:"inscricaoMunicipal" contract:"optional"`
+	Estrangeiro        bool            `json:"estrangeiro" contract:"optional"`
 	Endereco           *struct {
 		Municipio any `json:"municipio" contract:"optional"` // texto ou objeto
 		UF        any `json:"uf" contract:"optional"`
