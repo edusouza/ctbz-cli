@@ -55,7 +55,8 @@ entrada classificar (itens em ctbz notas entrada produtos).`,
 	cmd.Flags().StringVar(&mes, "mes", "", "mês, AAAA-MM (padrão: o mês atual)")
 	cmd.Flags().StringVar(&lista, "lista", api.ListaAManifestar, "a-manifestar, manifestadas, a-classificar ou classificadas")
 	cmd.Flags().StringVar(&emitente, "emitente", "", "filtra pela razão social do emitente")
-	cmd.AddCommand(newNotasEntradaManifestarCmd(), newNotasEntradaClassificarCmd(), newNotasEntradaProdutosCmd())
+	cmd.AddCommand(newNotasEntradaManifestarCmd(), newNotasEntradaClassificarCmd(), newNotasEntradaReclassificarCmd(),
+		newNotasEntradaProdutosCmd())
 	return cmd
 }
 

@@ -16,6 +16,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   desconhecimento ou operação não realizada) das notas de entrada.
 - `ctbz notas entrada classificar --como`: classifica notas de entrada inteiras (estoque,
   insumo, uso e consumo, ativo imobilizado ou prestação de serviço).
+- `ctbz notas entrada classificar --produto`: classificação item a item, com as regras do
+  painel (sem negativos, soma igual à quantidade total).
+- `ctbz notas entrada reclassificar`: muda a classificação de uma nota já classificada.
 - `ctbz notas entrada produtos`: itens de uma nota de entrada e a distribuição entre as
   classificações.
 

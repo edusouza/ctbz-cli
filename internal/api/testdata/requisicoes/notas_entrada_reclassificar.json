@@ -1,0 +1,20 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/emissor/classificacaonotas/reclassificar",
+    "query": "idNfe=1000000000000701",
+    "content_type": "application/json",
+    "corpo": [
+      {
+        "descricao": "Papel A4",
+        "id": 11,
+        "quantidadeAtivo": 0,
+        "quantidadeConsumo": 3,
+        "quantidadeEstoque": 2,
+        "quantidadeInsumo": 0,
+        "quantidadePrestacao": 0,
+        "quantidadeTotal": 5
+      }
+    ]
+  }
+]

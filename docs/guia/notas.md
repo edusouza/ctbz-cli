@@ -131,6 +131,8 @@ ctbz notas entrada manifestar 1000000000000702 --nao-realizada \
 ctbz notas entrada --lista a-classificar --mes 2026-09
 ctbz notas entrada produtos 1000000000000701          # itens da nota e a distribuição atual
 ctbz notas entrada classificar 1000000000000701 1000000000000702 --como uso-consumo --mes 2026-09
+ctbz notas entrada classificar 1000000000000701 --produto 11:estoque=2,uso-consumo=3
+ctbz notas entrada reclassificar 1000000000000701 --como estoque --mes 2026-09
 ```
 
 - A classificação diz à contabilidade para que serve a compra: `estoque`, `insumo`,
@@ -139,6 +141,14 @@ ctbz notas entrada classificar 1000000000000701 1000000000000702 --como uso-cons
   pré-classificação sugerida.
 - `classificar --como` classifica as notas inteiras, num único envio (o lote do painel). Só
   notas da lista "a classificar" do mês (`--mes`, padrão: o mês atual) são aceitas.
+- `classificar --produto ITEM:opcao=qtd,opcao=qtd` distribui a quantidade de cada item de uma
+  nota (um ID por vez; repita `--produto` para outros itens). Os itens não citados ficam como
+  estão, em geral com a pré-classificação sugerida. Quantidades usam ponto decimal (`2.5`).
+- A CLI confere as regras do painel antes de enviar: nenhuma quantidade negativa e, em cada
+  item, a soma igual à quantidade total (a coluna Quantidade de `produtos`).
+- `reclassificar` muda uma nota da lista "classificadas": `--como` põe toda a quantidade de
+  cada item numa só opção; `--produto` funciona como acima. A nota fica `PROCESSANDO` até a
+  Contabilizei aplicar.
 - Depois do envio a CLI relê as listas e mostra a classificação de cada nota; `enviado` quer
   dizer que ela ainda não apareceu nas listas.
 - Risco médio: é contábil e pode ser refeito. Aceita `--yes` e `--dry-run`.

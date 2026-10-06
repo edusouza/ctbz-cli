@@ -1,0 +1,19 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/emissor/classificacaonotas/salvarclassificacao/",
+    "content_type": "application/json",
+    "corpo": [
+      {
+        "descricao": "Papel A4",
+        "id": 11,
+        "quantidadeAtivo": 0,
+        "quantidadeConsumo": 3,
+        "quantidadeEstoque": 2,
+        "quantidadeInsumo": 0,
+        "quantidadePrestacao": 0,
+        "quantidadeTotal": 5
+      }
+    ]
+  }
+]

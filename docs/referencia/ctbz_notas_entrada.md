@@ -26,9 +26,10 @@ ctbz notas entrada [flags]
 
 ## Subcomandos
 
-- [`ctbz notas entrada classificar`](ctbz_notas_entrada_classificar.md): Classifica notas de entrada inteiras (estoque, insumo, uso e consumo…)
+- [`ctbz notas entrada classificar`](ctbz_notas_entrada_classificar.md): Classifica notas de entrada (estoque, insumo, uso e consumo…), inteiras ou por produto
 - [`ctbz notas entrada manifestar`](ctbz_notas_entrada_manifestar.md): Envia a manifestação do destinatário das notas de entrada à SEFAZ
 - [`ctbz notas entrada produtos`](ctbz_notas_entrada_produtos.md): Lista os itens de uma nota de entrada e como estão classificados
+- [`ctbz notas entrada reclassificar`](ctbz_notas_entrada_reclassificar.md): Muda a classificação de uma nota de entrada já classificada
 
 ## Flags
 

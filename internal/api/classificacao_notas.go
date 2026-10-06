@@ -67,3 +67,54 @@ func ListarProdutosNota(ctx context.Context, g Getter, idNota string) ([]Produto
 	}
 	return out, nil
 }
+
+// Quantidades é a distribuição da quantidade de um produto entre as classificações.
+type Quantidades struct {
+	Estoque, Insumo, Consumo, Ativo, Prestacao float64
+}
+
+// Soma é o total distribuído; o front exige que seja igual a quantidadeTotal.
+func (q Quantidades) Soma() float64 {
+	return q.Estoque + q.Insumo + q.Consumo + q.Ativo + q.Prestacao
+}
+
+// Negativa diz se alguma quantidade é negativa (o front recusa).
+func (q Quantidades) Negativa() bool {
+	return q.Estoque < 0 || q.Insumo < 0 || q.Consumo < 0 || q.Ativo < 0 || q.Prestacao < 0
+}
+
+// Quantidades é a distribuição atual do produto.
+func (p ProdutoNota) Quantidades() Quantidades {
+	return Quantidades{Estoque: p.QuantidadeEstoque, Insumo: p.QuantidadeInsumo, Consumo: p.QuantidadeConsumo,
+		Ativo: p.QuantidadeAtivo, Prestacao: p.QuantidadePrestacao}
+}
+
+// ComQuantidades devolve o produto bruto com as chaves de quantidade trocadas por q; os
+// demais campos seguem como vieram (ADR-0022).
+func (p ProdutoBruto) ComQuantidades(q Quantidades) (json.RawMessage, error) {
+	var campos map[string]json.RawMessage
+	if err := json.Unmarshal(p.Bruto, &campos); err != nil {
+		return nil, fmt.Errorf("produto %v: %w", p.ID, err)
+	}
+	for k, v := range map[string]float64{"quantidadeEstoque": q.Estoque, "quantidadeInsumo": q.Insumo,
+		"quantidadeConsumo": q.Consumo, "quantidadeAtivo": q.Ativo, "quantidadePrestacao": q.Prestacao} {
+		b, err := json.Marshal(v)
+		if err != nil {
+			return nil, err
+		}
+		campos[k] = b
+	}
+	return json.Marshal(campos)
+}
+
+// ClassificarProdutos salva a classificação por produto de uma nota ainda não classificada.
+// O corpo são todos os produtos da nota (ListarProdutosNota) com as quantidades distribuídas.
+func ClassificarProdutos(ctx context.Context, s Sender, produtos []json.RawMessage) error {
+	return s.Send(ctx, "POST", PathClassificarNota, produtos, nil)
+}
+
+// ReclassificarNota troca a classificação de uma nota já classificada; o corpo é o mesmo de
+// ClassificarProdutos. A nota fica PROCESSANDO até a Contabilizei aplicar.
+func ReclassificarNota(ctx context.Context, s Sender, idNota string, produtos []json.RawMessage) error {
+	return s.Send(ctx, "POST", PathReclassificarNota+"?idNfe="+url.QueryEscape(idNota), produtos, nil)
+}

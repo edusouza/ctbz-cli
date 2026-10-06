@@ -283,6 +283,12 @@ func Escritas() []Escrita {
 			return ClassificarNotasLote(ctx, s, ClassificacaoUsoConsumo, []json.RawMessage{
 				json.RawMessage(`{"id":1,"razaoSocial":"Fornecedor Fictício","valor":150.25}`)})
 		}},
+		{Name: "notas_entrada_classificar_produtos", Exemplo: func(ctx context.Context, s Sender) error {
+			return ClassificarProdutos(ctx, s, exemploProdutos())
+		}},
+		{Name: "notas_entrada_reclassificar", Exemplo: func(ctx context.Context, s Sender) error {
+			return ReclassificarNota(ctx, s, "1000000000000701", exemploProdutos())
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},
@@ -294,4 +300,11 @@ func exemploDocumento(idPendencia string, mes int) DocumentoPendente {
 		IDPendencia: json.RawMessage(`"` + idPendencia + `"`), IDContaBancaria: json.RawMessage("7"), TipoInvestimento: json.RawMessage(`"RENDA_FIXA"`),
 		Competencia: &CompetenciaDocumento{Mes: mes, Ano: 2026},
 	}}
+}
+
+// exemploProdutos são os produtos de uma nota com a quantidade distribuída.
+func exemploProdutos() []json.RawMessage {
+	return []json.RawMessage{
+		json.RawMessage(`{"id":11,"descricao":"Papel A4","quantidadeTotal":5,"quantidadeEstoque":2,"quantidadeInsumo":0,"quantidadeAtivo":0,"quantidadeConsumo":3,"quantidadePrestacao":0}`),
+	}
 }
