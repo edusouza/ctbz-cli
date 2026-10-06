@@ -1,0 +1,6 @@
+[
+  {
+    "metodo": "PUT",
+    "caminho": "/api/plataforma/escritorio-virtual/autorizar-recebimento/true"
+  }
+]

@@ -113,6 +113,8 @@ func Endpoints() []Endpoint {
 		{Name: "status_multiusuario", LivePath: PathStatusMultiusuario, Type: StatusMultiusuario{}}, // sintética (ADR-0021)
 		{Name: "dados_acesso", Type: DadosAcesso{}},                                                 // sintética (ADR-0021); 403 para administrador
 		{Name: "dados_login", LivePath: PathContaUsuario, Type: DadosLogin{}},                       // sintética (ADR-0021)
+		{Name: "correspondencias", Type: PaginaCorrespondencias{}},                                  // sintética (ADR-0021); 560 sem o serviço
+		{Name: "endereco_entrega", Type: EnderecoEntrega{}},                                         // sintética (ADR-0021); CEP público (Praça da Sé)
 		{Name: "socios_informe", LivePath: PathSociosInforme(2025), Type: []SocioInforme{}},
 		// getValoresComprovanteRendimento fica sem contrato: nenhum exemplo real (sem sócios com informe).
 	}

@@ -87,3 +87,25 @@ ctbz conta senha [--via sms]
 - Risco alto: um erro pode tirar seu acesso. Dá para trocar de novo. Código errado não altera
   nada (a CLI avisa). O `--dry-run` mostra `***` no lugar da senha e do código.
 
+## Escritório virtual (correspondências)
+
+```sh
+ctbz correspondencias                                   # correspondências recebidas
+ctbz correspondencias baixar 501 --dir ~/Documentos     # salva correspondencia-501.pdf
+ctbz correspondencias endereco                          # endereço de envio
+ctbz correspondencias endereco --cep 01310-100 --numero 1000 [--complemento "sala 1"]
+ctbz correspondencias autorizar on|off
+```
+
+- Para quem contrata o escritório virtual. Sem o serviço, a listagem avisa e termina com
+  código 0, e os demais comandos explicam que ele não foi contratado.
+- A lista mostra data, remetente, descrição, situação e o **valor do envio**: o envio de
+  correspondências pode ser cobrado.
+- `endereco` com `--cep` e `--numero` troca o endereço de envio: logradouro, bairro e cidade
+  vêm do CEP, e a CLI mostra o endereço de antes e o novo. A mudança vale só para o envio das
+  correspondências.
+- `autorizar` liga ou desliga "Autorizo o recebimento de correspondências e documentos
+  entregues no endereço informado".
+- Trocar o endereço e a autorização são de risco médio e reversíveis.
+- Os formatos vêm do código do painel: a conta usada no desenvolvimento não tinha o serviço.
+

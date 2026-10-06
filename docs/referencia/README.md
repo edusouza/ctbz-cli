@@ -26,6 +26,10 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz contas-bancarias bancos`](ctbz_contas-bancarias_bancos.md) | Lista os bancos aceitos no cadastro de contas bancárias |
 | [`ctbz contas-bancarias editar`](ctbz_contas-bancarias_editar.md) | Corrige os dados de uma conta bancária cadastrada |
 | [`ctbz contas-bancarias remover`](ctbz_contas-bancarias_remover.md) | Exclui permanentemente uma conta bancária |
+| [`ctbz correspondencias`](ctbz_correspondencias.md) | Lista as correspondências recebidas no escritório virtual |
+| [`ctbz correspondencias autorizar`](ctbz_correspondencias_autorizar.md) | Autoriza ou não o recebimento de correspondências no endereço informado |
+| [`ctbz correspondencias baixar`](ctbz_correspondencias_baixar.md) | Baixa uma correspondência do escritório virtual |
+| [`ctbz correspondencias endereco`](ctbz_correspondencias_endereco.md) | Mostra ou troca o endereço de envio das correspondências |
 | [`ctbz documentos`](ctbz_documentos.md) | Lista os tipos de documento aceitos e os documentos enviados |
 | [`ctbz documentos enviar`](ctbz_documentos_enviar.md) | Envia o documento pedido por uma ou mais pendências |
 | [`ctbz documentos pendentes`](ctbz_documentos_pendentes.md) | Lista os documentos pedidos pelas pendências da Central de Rotinas |

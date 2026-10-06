@@ -1,0 +1,12 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/escritorio-virtual/salvar-endereco-correspondencia",
+    "content_type": "application/json",
+    "corpo": {
+      "cep": "01001000",
+      "complemento": "sala 1",
+      "numero": "100"
+    }
+  }
+]
