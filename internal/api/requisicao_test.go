@@ -71,8 +71,9 @@ func (h httpSender) do(ctx context.Context, method, path string, body []byte, ct
 	return DecodeResponse(resp.Body, v)
 }
 
-// gravar roda exemplo contra um servidor que grava as requisições e responde "{}".
-func gravar(t *testing.T, exemplo func(context.Context, Sender) error) []requisicao {
+// gravar roda exemplo contra um servidor que grava as requisições e responde resposta
+// (padrão "{}").
+func gravar(t *testing.T, exemplo func(context.Context, Sender) error, resposta string) []requisicao {
 	t.Helper()
 	var mu sync.Mutex
 	var reqs []requisicao
@@ -84,7 +85,10 @@ func gravar(t *testing.T, exemplo func(context.Context, Sender) error) []requisi
 		mu.Lock()
 		reqs = append(reqs, req)
 		mu.Unlock()
-		io.WriteString(w, "{}")
+		if resposta == "" {
+			resposta = "{}"
+		}
+		io.WriteString(w, resposta)
 	}))
 	defer srv.Close()
 	if err := exemplo(context.Background(), httpSender{ctbz.NewClient(srv.URL)}); err != nil {
@@ -148,7 +152,7 @@ func goldenRequisicoes(name string) string {
 func TestRequisicoes(t *testing.T) {
 	for _, e := range Escritas() {
 		t.Run(e.Name, func(t *testing.T) {
-			compararGolden(t, goldenRequisicoes(e.Name), gravar(t, e.Exemplo))
+			compararGolden(t, goldenRequisicoes(e.Name), gravar(t, e.Exemplo, e.Resposta))
 		})
 	}
 }
@@ -217,7 +221,7 @@ func TestGravacao(t *testing.T) {
 			{Nome: "competencia", Valor: "2026-09"},
 			{Nome: "arquivo", Arquivo: "a.pdf", Conteudo: []byte("%PDF-1.4")},
 		}, nil)
-	})
+	}, "")
 	got, _ := json.Marshal(reqs)
 	want := `[{"metodo":"POST","caminho":"/api/plataforma/caixa/lancamentousuario/novo/","query":"x=1","content_type":"application/json","corpo":{"valor":-150.25}},` +
 		`{"metodo":"PUT","caminho":"/api/plataforma/movimentacao-financeira/classificar","content_type":"application/json","corpo":"{\"id\":7}"},` +

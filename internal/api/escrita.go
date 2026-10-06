@@ -126,6 +126,8 @@ func DecodeResponse(data []byte, v any) error {
 type Escrita struct {
 	Name    string
 	Exemplo func(ctx context.Context, s Sender) error
+	// Resposta é o corpo devolvido pelo servidor de teste (padrão: "{}").
+	Resposta string
 }
 
 // Escritas lista todas as escritas tipadas, na ordem do roadmap. Toda escrita nova entra
@@ -272,6 +274,11 @@ func Escritas() []Escrita {
 		{Name: "tomador_excluir", Exemplo: func(ctx context.Context, s Sender) error {
 			return ExcluirCliente(ctx, s, "00000000000191")
 		}},
+		{Name: "notas_entrada_manifestar", Exemplo: func(ctx context.Context, s Sender) error {
+			_, err := Manifestar(ctx, s, Manifestacao{TipoManifestacao: ManifestacaoNaoRealizada, IDNotas: []any{1, 2},
+				Justificativa: "Mercadoria foi extraviada antes da entrega"})
+			return err
+		}, Resposta: `[{"id":1,"situacao":{"id":"NAO_REALIZADA"}}]`},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

@@ -7,7 +7,7 @@ entrada": a manifestar (padrão), manifestadas, a classificar e classificadas. M
 emitente, CNPJ do emitente, valor, situação, chave de acesso e o ID.
 
 --mes escolhe o mês (AAAA-MM; padrão: o mês atual) e --emitente filtra pela razão social do
-emitente. Manifestar ou classificar continua sendo feito pelo painel.
+emitente. Para manifestar: ctbz notas entrada manifestar.
 
 ## Uso
 
@@ -22,6 +22,10 @@ ctbz notas entrada [flags]
   ctbz notas entrada --lista manifestadas --mes 2026-09 -o csv
   ctbz notas entrada --lista a-classificar --emitente "ACME"
 ```
+
+## Subcomandos
+
+- [`ctbz notas entrada manifestar`](ctbz_notas_entrada_manifestar.md): Envia a manifestação do destinatário das notas de entrada à SEFAZ
 
 ## Flags
 

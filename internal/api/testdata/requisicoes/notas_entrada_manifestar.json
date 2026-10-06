@@ -1,0 +1,16 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/emissor/notasentrada/manifestar/",
+    "content_type": "application/json",
+    "corpo": {
+      "idNotas": [
+        1,
+        2
+      ],
+      "justificativa": "Mercadoria foi extraviada antes da entrega",
+      "origem": "PLATAFORMA",
+      "tipoManifestacao": "NAO_REALIZADO"
+    }
+  }
+]

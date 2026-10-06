@@ -69,6 +69,7 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz notas aliquotas`](ctbz_notas_aliquotas.md) | Lista as alíquotas e os códigos de serviço por atividade |
 | [`ctbz notas config`](ctbz_notas_config.md) | Mostra a configuração do emissor de notas |
 | [`ctbz notas entrada`](ctbz_notas_entrada.md) | Lista as notas fiscais de entrada (NF-e recebidas pela empresa) |
+| [`ctbz notas entrada manifestar`](ctbz_notas_entrada_manifestar.md) | Envia a manifestação do destinatário das notas de entrada à SEFAZ |
 | [`ctbz notas tomadores`](ctbz_notas_tomadores.md) | Lista os tomadores (clientes) cadastrados no emissor de notas |
 | [`ctbz notas tomadores adicionar`](ctbz_notas_tomadores_adicionar.md) | Cadastra um tomador (cliente) nacional ou do exterior |
 | [`ctbz notas tomadores consulta`](ctbz_notas_tomadores_consulta.md) | Consulta os dados cadastrais de um CNPJ na Receita |

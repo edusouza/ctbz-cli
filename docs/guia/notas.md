@@ -100,9 +100,31 @@ ctbz notas entrada --lista a-classificar --emitente "ACME"
   `a-classificar` e `classificadas`.
 - Colunas: emissão, emitente, CNPJ do emitente, valor, situação (ex.: Ciência), chave de
   acesso e ID.
-- Manifestar (ciência, desconhecimento) e classificar (estoque, insumo, uso e consumo)
-  continuam sendo feitos pelo painel.
+- Classificar (estoque, insumo, uso e consumo) continua sendo feito pelo painel.
 - Notas de serviço **tomadas** não estão disponíveis: a tela antiga foi removida do site.
+
+### Manifestar notas de entrada
+
+```sh
+ctbz notas entrada manifestar 1000000000000701 --confirmar --mes 2026-09
+ctbz notas entrada manifestar 1000000000000702 --nao-realizada \
+  --justificativa "Mercadoria extraviada antes da entrega"
+```
+
+- É a manifestação do destinatário: o evento que diz à SEFAZ se a empresa reconhece a compra.
+  Escolha uma: `--ciencia` (ciência da operação, preliminar), `--confirmar` ("recebi"),
+  `--desconhecer` ("desconheço") ou `--nao-realizada` ("não recebi", com `--justificativa`
+  de 15 a 255 caracteres, regra da SEFAZ).
+- Os IDs vêm da coluna ID de `ctbz notas entrada`; `--mes` diz em que mês procurar (padrão:
+  o mês atual). Vários IDs vão num único envio.
+- Só notas **PENDENTE** ou **CIENCIA** são manifestadas, como no painel; as demais aparecem
+  como ignoradas e não são enviadas.
+- Confirmar, desconhecer e não realizada são eventos fiscais **sem desfazer**: a CLI mostra o
+  resumo e pede que você digite `confirmo`. A ciência é de risco médio (`[s/N]`).
+- A Contabilizei comunica o evento à Receita Federal; em alguns minutos a nota aparece em
+  `ctbz notas entrada --lista manifestadas`. No painel, baixar o XML ou o DANFE de uma nota
+  pendente manifesta ciência automaticamente.
+- Aceita `--yes` e `--dry-run` (ver [Escrita](escrita.md)).
 
 ## PDF e XML das notas
 

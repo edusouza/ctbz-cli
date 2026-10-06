@@ -24,7 +24,7 @@ entrada": a manifestar (padrão), manifestadas, a classificar e classificadas. M
 emitente, CNPJ do emitente, valor, situação, chave de acesso e o ID.
 
 --mes escolhe o mês (AAAA-MM; padrão: o mês atual) e --emitente filtra pela razão social do
-emitente. Manifestar ou classificar continua sendo feito pelo painel.`,
+emitente. Para manifestar: ctbz notas entrada manifestar.`,
 		Example: `  ctbz notas entrada
   ctbz notas entrada --lista manifestadas --mes 2026-09 -o csv
   ctbz notas entrada --lista a-classificar --emitente "ACME"`,
@@ -56,6 +56,7 @@ emitente. Manifestar ou classificar continua sendo feito pelo painel.`,
 	cmd.Flags().StringVar(&mes, "mes", "", "mês, AAAA-MM (padrão: o mês atual)")
 	cmd.Flags().StringVar(&lista, "lista", api.ListaAManifestar, "a-manifestar, manifestadas, a-classificar ou classificadas")
 	cmd.Flags().StringVar(&emitente, "emitente", "", "filtra pela razão social do emitente")
+	cmd.AddCommand(newNotasEntradaManifestarCmd())
 	return cmd
 }
 

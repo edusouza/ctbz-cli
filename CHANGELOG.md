@@ -12,6 +12,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz notas tomadores adicionar` e `editar`: cadastro de tomadores nacionais (CNPJ preenchido
   pela Receita, CPF validado) e do exterior. `ctbz notas tomadores` mostra o `id`.
 - `ctbz notas tomadores remover`: exclui um tomador da lista de clientes.
+- `ctbz notas entrada manifestar`: manifestação do destinatário (ciência, confirmação,
+  desconhecimento ou operação não realizada) das notas de entrada.
 
 ## [1.5.0] - 2026-10-04
 
