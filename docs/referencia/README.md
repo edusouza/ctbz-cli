@@ -9,6 +9,7 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz api`](ctbz_api.md) | Chama uma URL da plataforma com a sessão atual |
 | [`ctbz balancete`](ctbz_balancete.md) | Mostra o balancete de verificação de um mês |
 | [`ctbz balanco`](ctbz_balanco.md) | Mostra o balanço patrimonial (ativo, passivo e patrimônio líquido) |
+| [`ctbz balanco reabrir`](ctbz_balanco_reabrir.md) | Reabre o balanço de um ano para regularizar a pendência documental do informe |
 | [`ctbz caixa`](ctbz_caixa.md) | Lista os lançamentos do caixa de um mês |
 | [`ctbz caixa adicionar`](ctbz_caixa_adicionar.md) | Adiciona um recebimento ou pagamento no caixa de uma competência |
 | [`ctbz caixa contas`](ctbz_caixa_contas.md) | Lista as classificações aceitas nos lançamentos do caixa de uma competência |

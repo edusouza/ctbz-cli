@@ -69,14 +69,15 @@ func parseMes(s string) (time.Time, error) {
 }
 
 func newBalancoCmd() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "balanco AAAA[-MM]",
 		Short: "Mostra o balanço patrimonial (ativo, passivo e patrimônio líquido)",
 		Long: `Mostra o balanço patrimonial: as contas de ativo, passivo e patrimônio líquido com o saldo
 do exercício e o do exercício anterior, recuadas por nível na tabela. As contas de resultado
 ficam de fora, como no painel.
 
-Só com o ano, o balanço é o de dezembro (fechamento do exercício).`,
+Só com o ano, o balanço é o de dezembro (fechamento do exercício). Para reabrir o
+exercício e regularizar a pendência documental do informe: ctbz balanco reabrir.`,
 		Example: `  ctbz balanco 2025
   ctbz balanco 2026-09 -o csv`,
 		Args: exactArgs(1, "o ano (AAAA) ou o mês (AAAA-MM)"),
@@ -100,6 +101,8 @@ Só com o ano, o balanço é o de dezembro (fechamento do exercício).`,
 			return output.Write(s.out, f, balancoList(contas))
 		},
 	}
+	cmd.AddCommand(newBalancoReabrirCmd())
+	return cmd
 }
 
 // classificacaoResultado são as contas de resultado, que o balanço não mostra.

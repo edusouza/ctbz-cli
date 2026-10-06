@@ -16,6 +16,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz prolabore gestao-inteligente ativar|sair`: põe a empresa no cálculo automático do
   pró-labore ou a tira dele.
 - `ctbz prolabore` mostra o `id` de cada sócio, usado em `--socio`.
+- `ctbz balanco reabrir`: reabre o exercício contábil de um ano para regularizar a pendência
+  documental do informe de rendimentos.
 - `ctbz lucros informe restricoes` e `carta`: o que bloqueia o informe de rendimentos de um ano
   e o texto da carta de responsabilidade.
 - `ctbz lucros informe aceitar carta-responsabilidade|termo-debitos` e `decidir`: aceites e

@@ -39,6 +39,25 @@ Conta  Descrição            Nível  Grupo            Saldo  Exercício anterio
 - Ativo, passivo e patrimônio líquido, com o saldo do exercício e o do exercício anterior.
 - As contas de resultado (receitas e despesas) ficam de fora, como no painel.
 
+### Reabrir o balanço
+
+```sh
+ctbz lucros informe restricoes --ano 2025   # confira a pendência e o caminho de regularização
+ctbz balanco reabrir --ano 2025
+```
+
+- É o "Regularizar pendências" do informe de rendimentos: reabre o exercício contábil do ano
+  para que as pendências documentais sejam acertadas.
+- A CLI só envia quando o informe do ano tem pendência documental, a regularização indicada é
+  a reabertura do balanço (`REABERTURA_BALANCO`) e não há outra reabertura em andamento.
+- Quando o período já foi fechado e a regularização é um **serviço adicional pago**, a CLI
+  recusa e mostra o custo: contrate pelo painel.
+- Risco alto e **sem desfazer**: o informe de rendimentos fica indisponível até a análise da
+  Contabilizei, e a distribuição de lucros do ano depende dela. Uma sessão de administrador é
+  recusada pela Contabilizei.
+- Depois do envio, a CLI relê o status da reabertura (`EM_ANDAMENTO`, `ANALISANDO`); o
+  andamento aparece na Central de Rotinas (`ctbz pendencias`).
+
 ## Razão
 
 ```sh

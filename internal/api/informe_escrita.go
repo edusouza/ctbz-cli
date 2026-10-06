@@ -57,3 +57,16 @@ func RegistrarAceiteInforme(ctx context.Context, s Sender, ano int, tipoAceite s
 		TipoAceite string `json:"tipoAceite"`
 	}{tipoAceite}, nil)
 }
+
+// Fluxos de regularização da pendência documental do informe.
+const (
+	FluxoReaberturaBalanco         = "REABERTURA_BALANCO"
+	FluxoContratarServicoAdicional = "CONTRATAR_SERVICO_ADICIONAL"
+)
+
+// ReabrirBalanco reabre o exercício contábil do ano para regularizar as pendências
+// documentais do informe; o informe fica indisponível até a análise. Sem desfazer pela API;
+// 403 para usuário administrador. Ver docs/api/escrita/contabilidade-e-documentos.md, 3.1.
+func ReabrirBalanco(ctx context.Context, s Sender, ano int) error {
+	return s.Send(ctx, "POST", fmt.Sprintf("informerendimento/reabrir-balanco/%d", ano), nil, nil)
+}
