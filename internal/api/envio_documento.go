@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"strings"
 )
@@ -144,4 +145,65 @@ func EnviarDocumentoConsolidado(ctx context.Context, s Sender, ds []DocumentoPen
 		{Nome: "tipoDocumento", Valor: tipo},
 		{Nome: "documentos", Valor: jsonTexto(itens)},
 	}, nil)
+}
+
+// TiposSemArquivo são os documentos que aceitam a declaração "não tenho" (sem arquivo).
+var TiposSemArquivo = map[string]bool{"ESTOQUE": true, "CONTROLE_DE_INTERMEDIACOES": true, "CONTRATO_DE_AFAC": true}
+
+// PathEnviarSemArquivo fecha pendências declarando que o documento não existe.
+const PathEnviarSemArquivo = "documentos/envio-documento/enviar/sem-arquivo"
+
+// PendenciaSemArquivo é um item do corpo de PathEnviarSemArquivo.
+type PendenciaSemArquivo struct {
+	IDPendencia json.RawMessage `json:"idPendencia"`
+	Tipo        string          `json:"tipo"`
+}
+
+// EnviarSemArquivo declara a ausência do documento (fecha a pendência, sem desfazer).
+func EnviarSemArquivo(ctx context.Context, s Sender, itens []PendenciaSemArquivo) error {
+	return s.Send(ctx, "POST", PathEnviarSemArquivo, itens, nil)
+}
+
+// TipoExtratoAplicacao é o extrato de aplicação financeira, que tem declaração própria.
+const TipoExtratoAplicacao = "EXTRATO_APLICACAO_FINANCEIRA"
+
+// PathSemAplicacao declara "não tenho aplicação nesta conta" para as competências pendentes.
+const PathSemAplicacao = "upload-documentos/extrato-aplicacao-financeira/enviar/sem-aplicacao-financeira"
+
+// CompetenciaPendente é uma competência da declaração sem aplicação.
+type CompetenciaPendente struct {
+	ID  json.RawMessage `json:"id"` // id da pendência
+	Mes int             `json:"mes"`
+	Ano int             `json:"ano"`
+}
+
+// DeclaracaoSemAplicacao é o corpo de PathSemAplicacao.
+type DeclaracaoSemAplicacao struct {
+	TipoDocumento         string                `json:"tipoDocumento"`
+	CompetenciasPendentes []CompetenciaPendente `json:"competenciasPendentes"`
+	IDContaBancaria       json.RawMessage       `json:"idContaBancaria"`
+	TipoPendencia         string                `json:"tipoPendencia"`
+}
+
+// ResultadoSemAplicacao traz as competências que falharam (sucesso parcial).
+type ResultadoSemAplicacao struct {
+	CompetenciasComErro []competenciaJSON `json:"competenciasComErro"`
+}
+
+// CompetenciasComErroTexto formata as competências que falharam como MM/AAAA.
+func (r ResultadoSemAplicacao) CompetenciasComErroTexto() []string {
+	var out []string
+	for _, c := range r.CompetenciasComErro {
+		out = append(out, fmt.Sprintf("%02d/%d", c.Mes, c.Ano))
+	}
+	return out
+}
+
+// DeclararSemAplicacao declara que não houve aplicação na conta nas competências.
+func DeclararSemAplicacao(ctx context.Context, s Sender, d DeclaracaoSemAplicacao) (*ResultadoSemAplicacao, error) {
+	var r ResultadoSemAplicacao
+	if err := s.Send(ctx, "POST", PathSemAplicacao, d, &r); err != nil {
+		return nil, err
+	}
+	return &r, nil
 }

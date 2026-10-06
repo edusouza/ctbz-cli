@@ -18,6 +18,9 @@ type WriteError struct {
 	// Identificador é o código do erro de negócio (detalhes[0].identificador, ex.:
 	// "exception/movimentacao-financeira-901"), quando a resposta traz.
 	Identificador string
+	// Body é o corpo da resposta, para erros com dados estruturados (ex.: sucesso parcial).
+	// Nunca entra em Error().
+	Body []byte
 }
 
 func (e *WriteError) Error() string {
@@ -30,7 +33,7 @@ func NewWriteError(method, path string, resp *Response) *WriteError {
 	if detalhe := errorDetail(resp.Status, resp.Body); detalhe != "" {
 		msg += ": " + detalhe
 	}
-	return &WriteError{Method: method, Path: path, Status: resp.Status, Message: msg, Identificador: identificador(resp.Body)}
+	return &WriteError{Method: method, Path: path, Status: resp.Status, Message: msg, Identificador: identificador(resp.Body), Body: resp.Body}
 }
 
 func identificador(body []byte) string {

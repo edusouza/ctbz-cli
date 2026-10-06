@@ -25,6 +25,8 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz documentos`](ctbz_documentos.md) | Lista os tipos de documento aceitos e os documentos enviados |
 | [`ctbz documentos enviar`](ctbz_documentos_enviar.md) | Envia o documento pedido por uma ou mais pendências |
 | [`ctbz documentos pendentes`](ctbz_documentos_pendentes.md) | Lista os documentos pedidos pelas pendências da Central de Rotinas |
+| [`ctbz documentos sem-aplicacao`](ctbz_documentos_sem-aplicacao.md) | Declara que não houve aplicação financeira numa conta nas competências pendentes |
+| [`ctbz documentos sem-arquivo`](ctbz_documentos_sem-arquivo.md) | Declara que o documento pedido por pendências não existe |
 | [`ctbz empresa`](ctbz_empresa.md) | Mostra os dados da empresa selecionada |
 | [`ctbz empresa atividades`](ctbz_empresa_atividades.md) | Lista os CNAEs da empresa e os anexos do Simples Nacional |
 | [`ctbz empresa certificado`](ctbz_empresa_certificado.md) | Mostra a situação do certificado digital da empresa e da renovação |

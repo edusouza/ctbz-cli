@@ -43,7 +43,7 @@ Enviar documentos continua sendo feito pelo painel.`,
 		},
 	}
 	cmd.Flags().StringVar(&tipo, "tipo", "", "tipo de documento (veja a coluna tipo de \"ctbz documentos\")")
-	cmd.AddCommand(newDocumentosPendentesCmd(), newDocumentosEnviarCmd())
+	cmd.AddCommand(newDocumentosPendentesCmd(), newDocumentosEnviarCmd(), newDocumentosSemArquivoCmd(), newDocumentosSemAplicacaoCmd())
 	return cmd
 }
 

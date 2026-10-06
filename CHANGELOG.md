@@ -17,6 +17,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz extratos excluir`: exclui o extrato importado de um mês (risco alto), quando o painel permite.
 - `ctbz documentos pendentes` e `ctbz documentos enviar`: documentos pedidos pelas pendências e
   o envio do arquivo (um por pendência ou único para várias), com tipo e metadados da pendência.
+- `ctbz documentos sem-arquivo` e `ctbz documentos sem-aplicacao`: declaram que não há estoque,
+  intermediações, contrato de AFAC ou aplicação financeira, fechando as pendências.
 
 ## [1.4.0] - 2026-10-04
 

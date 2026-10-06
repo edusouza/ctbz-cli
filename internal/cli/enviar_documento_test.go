@@ -87,3 +87,40 @@ func TestDocumentosEnviarErros(t *testing.T) {
 		t.Errorf("erro com prefixo: código %d, %s", code, stderr)
 	}
 }
+
+func TestDocumentosSemArquivo(t *testing.T) {
+	f := documentoFake(t)
+	f.gets["/api/plataforma/documentos/envio-documento/init?id=1000000000000603"] = fixture(t, "envio_documento_init")
+	f.onWrite = func(f *escritaFake) {
+		f.gets["/api/plataforma/documentos/envio-documento/init?id=1000000000000603"] = `{"documentos":[]}`
+	}
+	out, stderr, code := execCLI(t, "", "documentos", "sem-arquivo", "--pendencia", "1000000000000603", "--yes", "-o", "json")
+	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != `POST /api/plataforma/documentos/envio-documento/enviar/sem-arquivo [{"idPendencia":"1000000000000603","tipo":"ESTOQUE"}]` {
+		t.Fatalf("código %d, %q\n%s", code, f.writes, stderr)
+	}
+	if !strings.Contains(out, `"situacao": "declarado"`) || !strings.Contains(stderr, "inconsistências na declaração anual") || !strings.Contains(stderr, "(risco alto)") {
+		t.Errorf("saída:\n%s\n%s", out, stderr)
+	}
+	if _, stderr, code := execCLI(t, "", "documentos", "sem-arquivo", "--pendencia", "1000000000000601", "--yes"); code != ExitUsage || !strings.Contains(stderr, "não aceitam a declaração sem arquivo") {
+		t.Errorf("tipo errado: código %d, %s", code, stderr)
+	}
+}
+
+func TestDocumentosSemAplicacao(t *testing.T) {
+	f := documentoFake(t)
+	out, stderr, code := execCLI(t, "", "documentos", "sem-aplicacao", "--conta-bancaria", "7", "--pendencia", "1000000000000601", "--pendencia", "1000000000000602", "--yes", "-o", "json")
+	want := `POST /api/plataforma/upload-documentos/extrato-aplicacao-financeira/enviar/sem-aplicacao-financeira {"tipoDocumento":"EXTRATO_APLICACAO_FINANCEIRA","competenciasPendentes":[{"id":"1000000000000601","mes":8,"ano":2026},{"id":"1000000000000602","mes":9,"ano":2026}],"idContaBancaria":7,"tipoPendencia":"EXTRATO_APLICACAO_FINANCEIRA"}`
+	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != want || !strings.Contains(out, `"situacao": "declarado"`) {
+		t.Fatalf("código %d, %q\n%s\n%s", code, f.writes, out, stderr)
+	}
+	// Sucesso parcial (resposta de erro com competenciasComErro): lista e termina com 1.
+	f.status = 400
+	f.resposta = `{"competenciasComErro":[{"mes":9,"ano":2026}]}`
+	out, stderr, code = execCLI(t, "", "documentos", "sem-aplicacao", "--conta-bancaria", "7", "--pendencia", "1000000000000601", "--pendencia", "1000000000000602", "--yes", "-o", "json")
+	if code != ExitError || !strings.Contains(out, `"situacao": "parcial"`) || !strings.Contains(stderr, "não aceitou 1 competência(s): 09/2026") {
+		t.Errorf("parcial: código %d\n%s\n%s", code, out, stderr)
+	}
+	if _, stderr, code := execCLI(t, "", "documentos", "sem-aplicacao", "--conta-bancaria", "8", "--pendencia", "1000000000000601", "--yes"); code != ExitUsage || !strings.Contains(stderr, "é de outra conta") {
+		t.Errorf("outra conta: código %d, %s", code, stderr)
+	}
+}

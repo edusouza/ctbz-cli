@@ -42,6 +42,22 @@ Pendência         Tipo                          Competência  Conta            
 - Risco médio: o documento entra na contabilidade e resolve a pendência; não há exclusão pela API.
 - Extratos de movimentação bancária usam `ctbz extratos importar`.
 
+### Declarar que o documento não existe
+
+```sh
+ctbz documentos sem-arquivo --pendencia 1000000000000603      # estoque, intermediações, AFAC
+ctbz documentos sem-aplicacao --conta-bancaria 7 --pendencia 1000000000000601 --pendencia 1000000000000602
+```
+
+- `sem-arquivo` vale para `ESTOQUE` ("não tive estoque"), `CONTROLE_DE_INTERMEDIACOES` ("não tive
+  intermediações") e `CONTRATO_DE_AFAC` ("já enviei o contrato"); o tipo é lido da pendência.
+- `sem-aplicacao` declara que a conta não teve aplicação financeira nas competências das
+  pendências de extrato de aplicação. Se só parte for aceita, a CLI lista as competências que
+  falharam e termina com código 1.
+- **Risco alto:** são declarações que fecham as pendências, sem desfazer pela API. No estoque, o
+  painel avisa que, para empresas de comércio, a falta do documento pode gerar inconsistências na
+  declaração anual.
+
 ## Certificado digital
 
 ```sh

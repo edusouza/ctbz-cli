@@ -1,0 +1,13 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/documentos/envio-documento/enviar/sem-arquivo",
+    "content_type": "application/json",
+    "corpo": [
+      {
+        "idPendencia": "1000000000000603",
+        "tipo": "ESTOQUE"
+      }
+    ]
+  }
+]

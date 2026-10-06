@@ -26,6 +26,8 @@ ctbz documentos [flags]
 
 - [`ctbz documentos enviar`](ctbz_documentos_enviar.md): Envia o documento pedido por uma ou mais pendências
 - [`ctbz documentos pendentes`](ctbz_documentos_pendentes.md): Lista os documentos pedidos pelas pendências da Central de Rotinas
+- [`ctbz documentos sem-aplicacao`](ctbz_documentos_sem-aplicacao.md): Declara que não houve aplicação financeira numa conta nas competências pendentes
+- [`ctbz documentos sem-arquivo`](ctbz_documentos_sem-arquivo.md): Declara que o documento pedido por pendências não existe
 
 ## Flags
 

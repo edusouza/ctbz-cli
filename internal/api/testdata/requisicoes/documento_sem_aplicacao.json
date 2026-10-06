@@ -1,0 +1,19 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/upload-documentos/extrato-aplicacao-financeira/enviar/sem-aplicacao-financeira",
+    "content_type": "application/json",
+    "corpo": {
+      "competenciasPendentes": [
+        {
+          "ano": 2026,
+          "id": "1000000000000601",
+          "mes": 8
+        }
+      ],
+      "idContaBancaria": 7,
+      "tipoDocumento": "EXTRATO_APLICACAO_FINANCEIRA",
+      "tipoPendencia": "EXTRATO_APLICACAO_FINANCEIRA"
+    }
+  }
+]

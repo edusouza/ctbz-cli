@@ -251,6 +251,15 @@ func Escritas() []Escrita {
 			return EnviarDocumentoConsolidado(ctx, s, []DocumentoPendente{exemploDocumento("1000000000000601", 8), exemploDocumento("1000000000000602", 9)},
 				"aplicacoes.pdf", []byte("%PDF-1.4"))
 		}},
+		{Name: "documento_sem_arquivo", Exemplo: func(ctx context.Context, s Sender) error {
+			return EnviarSemArquivo(ctx, s, []PendenciaSemArquivo{{IDPendencia: json.RawMessage(`"1000000000000603"`), Tipo: "ESTOQUE"}})
+		}},
+		{Name: "documento_sem_aplicacao", Exemplo: func(ctx context.Context, s Sender) error {
+			_, err := DeclararSemAplicacao(ctx, s, DeclaracaoSemAplicacao{TipoDocumento: TipoExtratoAplicacao, TipoPendencia: TipoExtratoAplicacao,
+				IDContaBancaria:       json.RawMessage("7"),
+				CompetenciasPendentes: []CompetenciaPendente{{ID: json.RawMessage(`"1000000000000601"`), Mes: 8, Ano: 2026}}})
+			return err
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},
