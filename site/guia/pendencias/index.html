@@ -1,0 +1,2779 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Opere a Contabilizei pela linha de comando.">
+      
+      
+      
+      
+        <link rel="prev" href="../impostos/">
+      
+      
+        <link rel="next" href="../mensalidade/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Pendências, rotinas e atendimento - ctbz — CLI para a Contabilizei</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pendencias-rotinas-e-atendimento" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../.." title="ctbz — CLI para a Contabilizei" class="md-header__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ctbz — CLI para a Contabilizei
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Pendências, rotinas e atendimento
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ctbz — CLI para a Contabilizei" class="md-nav__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ctbz — CLI para a Contabilizei
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de uso
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guia de uso
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../impostos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências, rotinas e atendimento
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências, rotinas e atendimento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#resumo-o-que-precisa-de-atencao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resumo: o que precisa de atenção
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pendencias-da-empresa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pendências da empresa
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pendências da empresa">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#alertas-de-prazo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alertas de prazo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#termos-e-cartas-para-aceitar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Termos e cartas para aceitar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#procuracao-do-e-cac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Procuração do e-CAC
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conciliacao-fiscal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conciliação fiscal
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conciliação fiscal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resolver-pendencias-de-conciliacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolver pendências de conciliação
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#primeiros-passos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primeiros passos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rotinas-e-obrigacoes-do-mes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rotinas e obrigações do mês
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rotinas e obrigações do mês">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reclassificar-lancamentos-pedidos-pela-rotina" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reclassificar lançamentos pedidos pela rotina
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chamados-de-atendimento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chamados de atendimento
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mensalidade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mensalidade e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prolabore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pró-labore e lucros
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contabil/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../documentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentos e certificado
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ações que alteram dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../referencia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência de comandos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Autenticação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Autenticação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/01-credenciais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credenciais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/02-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Código OTP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/03-selecao-de-empresa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Seleção de empresa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../autenticacao/04-sessao-e-cookies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessão e cookies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../otp-automatico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OTP automático
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/endpoints-verificados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Endpoints verificados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/catalogo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catálogo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/notas-fiscais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_5" id="__nav_6_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Escrita
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Escrita
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/escrita/pendencias-e-conta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências e conta
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/escrita/impostos-e-pagamentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/escrita/contabilidade-e-documentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade e documentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/escrita/notas-e-prolabore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas e pró-labore
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../frontend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Front-end
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Desenvolvimento
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Desenvolvimento
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura da CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contratos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testes de contrato
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../monitoramento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoramento da API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribuindo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contribuindo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../metodologia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metodologia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisões (ADRs)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0001-registrar-decisoes-em-adrs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0001 Registrar decisões
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0002-somente-leitura-ate-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0002 Somente leitura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0003-versionamento-e-changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0003 Versionamento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0004-branches-empilhadas-e-prs-por-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0004 Branches e PRs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0005-documentacao-em-github-pages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0005 Documentação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0006-saida-padronizada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0006 Saída padronizada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0007-login-sessao-e-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0007 Login e sessão
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0008-cobra-para-a-arvore-de-comandos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0008 Cobra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0009-camada-api-tipada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0009 Camada api
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0010-testes-de-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0010 Contratos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0011-fixtures-podadas-ao-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0011 Fixtures podadas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0012-prazos-e-alertas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0012 Prazos e alertas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0013-sem-retentativa-com-fonte-alternativa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0013 Sem retentativa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0014-ci-no-github-actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0014 CI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0015-releases-com-goreleaser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0015 Releases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0016-monitoramento-agendado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0016 Monitoramento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0017-contrato-publico-da-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0017 Contrato da 1.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0018-escrita-com-confirmacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0018 Escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0019-camada-de-escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0019 Camada de escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0020-confirmacao-e-simulacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0020 Confirmação e simulação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0021-tipos-e-fixtures-sinteticos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0021 Fixtures sintéticas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adr/0022-classificacao-de-notas-de-entrada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0022 Classificação de notas de entrada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#resumo-o-que-precisa-de-atencao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resumo: o que precisa de atenção
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pendencias-da-empresa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pendências da empresa
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pendências da empresa">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#alertas-de-prazo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alertas de prazo
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#termos-e-cartas-para-aceitar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Termos e cartas para aceitar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#procuracao-do-e-cac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Procuração do e-CAC
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conciliacao-fiscal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conciliação fiscal
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conciliação fiscal">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resolver-pendencias-de-conciliacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resolver pendências de conciliação
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#primeiros-passos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primeiros passos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rotinas-e-obrigacoes-do-mes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rotinas e obrigações do mês
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rotinas e obrigações do mês">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reclassificar-lancamentos-pedidos-pela-rotina" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reclassificar lançamentos pedidos pela rotina
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chamados-de-atendimento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chamados de atendimento
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="pendencias-rotinas-e-atendimento">Pendências, rotinas e atendimento<a class="headerlink" href="#pendencias-rotinas-e-atendimento" title="Permanent link">&para;</a></h1>
+<h2 id="resumo-o-que-precisa-de-atencao">Resumo: o que precisa de atenção<a class="headerlink" href="#resumo-o-que-precisa-de-atencao" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>resumo
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Seção        Item                                   Prazo       Valor        Situação     Alerta
+impostos     DARF Unificado 07/2026                 06/10/2026  R$ 1.000,00  RECALCULADA  próxima
+pendencias   Cadastre o PIS para ativar o pró-la…   21/07/2026               Pendente     vencida
+rotinas      Importar extrato bancário de setembro  05/10/2026               EM_ABERTO    próxima
+mensalidade  Mensalidade da Contabilizei            15/10/2026  R$ 15,90     EM_ABERTO
+painel       Certificado digital                                             crítica      crítica
+</code></pre></div>
+<p>Uma lista só com o que exige ação, montada a partir de três consultas feitas em paralelo:</p>
+<table>
+<thead>
+<tr>
+<th>Seção</th>
+<th>De onde vem</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>impostos</code></td>
+<td>guias em atraso (sempre <code>vencida</code>) e do mês, como em <code>ctbz impostos</code></td>
+</tr>
+<tr>
+<td><code>pendencias</code></td>
+<td>pendências abertas, como em <code>ctbz pendencias</code></td>
+</tr>
+<tr>
+<td><code>rotinas</code></td>
+<td>rotinas da empresa do mês ainda não realizadas (sem os impostos, que já aparecem acima)</td>
+</tr>
+<tr>
+<td><code>mensalidade</code></td>
+<td>a mensalidade do mês, paga ou não</td>
+</tr>
+<tr>
+<td><code>painel</code></td>
+<td>indicadores do painel: <code>crítica</code> (pendências críticas) ou <code>aviso</code> (outras pendências)</td>
+</tr>
+</tbody>
+</table>
+<p>Se nada precisa de atenção, a tabela sai vazia e o stderr diz <code>Nada precisa de atenção.</code></p>
+<p>Para um alerta diário em cron, <code>--fail-on-atencao</code> termina com <strong>código 4</strong> quando há algo
+<code>vencida</code> ou <code>crítica</code>:</p>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>resumo<span class="w"> </span>--fail-on-atencao<span class="w"> </span>-o<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span>notify-send<span class="w"> </span><span class="s2">"Contabilizei precisa de atenção"</span>
+</code></pre></div>
+<p>Se qualquer uma das consultas falhar, o comando falha (código 1) em vez de mostrar um resumo
+incompleto.</p>
+<h2 id="pendencias-da-empresa">Pendências da empresa<a class="headerlink" href="#pendencias-da-empresa" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>pendencias
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>ID                Tipo                                                Detalhe                                                       Criada em   Prazo       Situação  Alerta
+1000000000000001  Cadastre o PIS para ativar o pró-labore automático  O pró-labore influencia no valor do imposto, por isso assi…  21/07/2026  21/07/2026  Pendente  vencida
+</code></pre></div>
+<ul>
+<li>São as pendências do card da tela inicial do painel: tipo, detalhe, criação, prazo e situação.</li>
+<li>Por padrão aparecem só as <strong>abertas</strong>; <code>--todas</code> inclui as finalizadas.</li>
+<li>O detalhe vem da API em HTML; a CLI tira as tags. Na tabela ele é cortado em 60
+  caracteres; use <code>-o json</code> para ler o texto completo.</li>
+</ul>
+<h3 id="alertas-de-prazo">Alertas de prazo<a class="headerlink" href="#alertas-de-prazo" title="Permanent link">&para;</a></h3>
+<p>A coluna <code>alerta</code> só é preenchida para pendências abertas
+(<a href="../../adr/0012-prazos-e-alertas/">ADR-0012</a>):</p>
+<table>
+<thead>
+<tr>
+<th><code>alerta</code></th>
+<th>Quando</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vencida</code></td>
+<td>o prazo já passou</td>
+</tr>
+<tr>
+<td><code>próxima</code></td>
+<td>o prazo é hoje ou nos próximos 7 dias</td>
+</tr>
+<tr>
+<td>vazio (<code>null</code> no JSON)</td>
+<td>prazo distante, sem prazo ou pendência finalizada</td>
+</tr>
+</tbody>
+</table>
+<p><code>--fail-on-vencidas</code> faz o comando terminar com <strong>código 4</strong> quando há pendência vencida:</p>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>pendencias<span class="w"> </span>--fail-on-vencidas<span class="w"> </span>-o<span class="w"> </span>csv<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span>notify-send<span class="w"> </span><span class="s2">"Há pendências vencidas"</span>
+ctbz<span class="w"> </span>pendencias<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">'.[] | select(.alerta != null) | "\(.prazo) \(.tipo)"'</span>
+</code></pre></div>
+<h2 id="termos-e-cartas-para-aceitar">Termos e cartas para aceitar<a class="headerlink" href="#termos-e-cartas-para-aceitar" title="Permanent link">&para;</a></h2>
+<p>A Central de Rotinas pede aceites periódicos: a carta de responsabilidade da administração,
+o termo de ciência sobre retiradas de lucros e o termo de adesão ao TotalPass. Leia antes de
+aceitar:</p>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>pendencias<span class="w"> </span>termos<span class="w">                       </span><span class="c1"># os pendentes (--todos inclui os demais)</span>
+ctbz<span class="w"> </span>pendencias<span class="w"> </span>termo<span class="w"> </span>carta-responsabilidade<span class="w"> </span><span class="c1"># texto completo</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Chave                   Termo                                                      Pendente  Aceite tácito em (dias)
+carta-responsabilidade  Carta de Responsabilidade da Administração                 sim
+termo-debitos           Termo de Ciência e Responsabilidade (retiradas de lucros)  sim       15
+</code></pre></div>
+<ul>
+<li>O termo de débitos tem <strong>aceite tácito</strong>: se não houver resposta no prazo, a Contabilizei
+  entende que não há impedimento para as retiradas de lucros.</li>
+<li>O texto vem em HTML e é convertido para texto, sem caracteres de controle.</li>
+</ul>
+<p>Para aceitar:</p>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>pendencias<span class="w"> </span>aceitar<span class="w"> </span>carta-responsabilidade
+ctbz<span class="w"> </span>pendencias<span class="w"> </span>aceitar<span class="w"> </span>termo-debitos
+ctbz<span class="w"> </span>pendencias<span class="w"> </span>aceitar<span class="w"> </span>termo-totalpass
+</code></pre></div>
+<ul>
+<li><strong>Risco alto:</strong> são declarações legais e contábeis, sem como revogar. O texto completo é
+  sempre impresso (no stderr) antes da confirmação, e no terminal é preciso digitar <code>confirmo</code>.
+  Em scripts, use <code>--yes</code> (o texto continua indo para o stderr, para ficar no log).</li>
+<li>Sem aceite pendente, a CLI avisa "nada a aceitar" e termina com código 0.</li>
+<li>Se a sessão for de um administrador da Contabilizei, a API recusa (HTTP 403): os aceites só
+  podem ser feitos pelo próprio cliente.</li>
+</ul>
+<h2 id="procuracao-do-e-cac">Procuração do e-CAC<a class="headerlink" href="#procuracao-do-e-cac" title="Permanent link">&para;</a></h2>
+<p>A Contabilizei precisa de uma procuração eletrônica no e-CAC da Receita. A CLI mostra se há
+pendência e para quem outorgar:</p>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>pendencias<span class="w"> </span>procuracao
+<span class="c1"># Crie ou renove no e-CAC (https://cav.receita.fazenda.gov.br) uma procuração eletrônica ao CNPJ …</span>
+</code></pre></div>
+<p>Depois de criar (ou renovar) a procuração no e-CAC, declare:</p>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>pendencias<span class="w"> </span>procuracao<span class="w"> </span>--ja-criei
+</code></pre></div>
+<ul>
+<li>A procuração em si é feita no e-CAC, fora da Contabilizei; <code>--ja-criei</code> é só a declaração
+  ("Já criei a procuração" no painel), de risco médio. Se a procuração não existir, a pendência
+  deve voltar.</li>
+<li>A CLI usa o caminho da origem da pendência: a Central de Rotinas ou a etapa
+  <code>GERAR_PROCURACAO_VIRTUAL</code> dos primeiros passos.</li>
+</ul>
+<h2 id="conciliacao-fiscal">Conciliação fiscal<a class="headerlink" href="#conciliacao-fiscal" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>pendencias<span class="w"> </span>conciliacao
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Competência de referência:        09/2026
+Notas fiscais sem recebimento:    0
+Recebimentos sem nota fiscal:     0
+Conciliações automáticas no mês:  0
+</code></pre></div>
+<ul>
+<li><strong>Notas sem recebimento</strong>: notas fiscais emitidas que não foram ligadas a um crédito no extrato.</li>
+<li><strong>Recebimentos sem nota</strong>: créditos no extrato sem nota fiscal correspondente.</li>
+<li>A competência de referência é o mês anterior, o mesmo que o painel mostra.</li>
+<li><code>--listar notas</code> ou <code>--listar recebimentos</code> lista os itens pendentes dos últimos 12 meses.
+  O formato desses itens ainda não foi verificado (a conta de desenvolvimento não tinha
+  pendências), por isso os campos saem como a API os devolve.</li>
+<li><code>--fail-on-pendencias</code> termina com código 4 quando há algo a conciliar.</li>
+</ul>
+<h3 id="resolver-pendencias-de-conciliacao">Resolver pendências de conciliação<a class="headerlink" href="#resolver-pendencias-de-conciliacao" title="Permanent link">&para;</a></h3>
+<p>Uma pendência se resolve vinculando o item ao seu par (a nota ao recebimento, ou o contrário)
+ou justificando com um motivo:</p>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>pendencias<span class="w"> </span>conciliacao<span class="w"> </span>candidatos<span class="w"> </span>--notas<span class="w">                 </span><span class="c1"># notas para vincular a recebimentos</span>
+ctbz<span class="w"> </span>pendencias<span class="w"> </span>conciliacao<span class="w"> </span>resolver<span class="w"> </span><span class="m">123</span><span class="w"> </span>--vincular<span class="w"> </span>NOTAFISCAL:987
+ctbz<span class="w"> </span>pendencias<span class="w"> </span>conciliacao<span class="w"> </span>motivos<span class="w">                            </span><span class="c1"># motivos aceitos</span>
+ctbz<span class="w"> </span>pendencias<span class="w"> </span>conciliacao<span class="w"> </span>resolver<span class="w"> </span><span class="m">123</span><span class="w"> </span>--motivo<span class="w"> </span>CAIXA_OU_PESSOA_FISICA
+ctbz<span class="w"> </span>pendencias<span class="w"> </span>conciliacao<span class="w"> </span>detalhes<span class="w"> </span>--recebimento<span class="w"> </span><span class="m">123</span><span class="w">         </span><span class="c1"># como uma pendência foi resolvida</span>
+</code></pre></div>
+<ul>
+<li><strong>Risco alto:</strong> a resolução define a natureza fiscal do recebimento (receita tributável,
+  empréstimo, capital…). Ela pode ser refeita depois, mas não apagada. No terminal, a CLI pede
+  para digitar <code>confirmo</code>.</li>
+<li><code>--vincular ORIGEM:ID</code> aceita <code>NOTAFISCAL</code> (para pendências de recebimento) e <code>MOVIMENTACAO</code>
+  (para pendências de nota). Com <code>--vincular</code> e <code>--motivo</code> juntos, a conciliação fica com a
+  diferença justificada.</li>
+<li>Motivos que envolvem sócio (AFAC, empréstimo do sócio, integralização de capital, devolução
+  de lucros antecipados) exigem <code>--socio ID</code>. Essa lista foi deduzida do painel e pode mudar.</li>
+<li>No painel, algumas opções só valem para itens abaixo de R$ 1.000,00. A CLI não conhece a lista
+  exata, e a Contabilizei recusa o pedido quando a regra não é atendida.</li>
+<li><code>candidatos</code> e <code>detalhes</code> mostram os campos como a API devolve: o formato ainda não foi
+  verificado com pendências reais. <code>detalhes</code> usa POST, mas é só leitura.</li>
+</ul>
+<h2 id="primeiros-passos">Primeiros passos<a class="headerlink" href="#primeiros-passos" title="Permanent link">&para;</a></h2>
+<p>O card "Primeiros passos" do painel tem tarefas de configuração da conta:</p>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>primeiros-passos
+ctbz<span class="w"> </span>primeiros-passos<span class="w"> </span>concluir<span class="w"> </span>REUNIAO_BOAS_VINDAS
+ctbz<span class="w"> </span>primeiros-passos<span class="w"> </span>dispensar<span class="w">     </span><span class="c1"># oculta o card; reativar volta a mostrar</span>
+</code></pre></div>
+<ul>
+<li>Só dá para concluir à mão as tarefas que o painel deixa concluir (reunião de boas-vindas e
+  as lives); as demais o sistema conclui quando a ação é feita. A coluna "Concluir pela CLI"
+  indica quais.</li>
+<li>Concluir não tem volta; <code>dispensar</code> e <code>reativar</code> desfazem um ao outro. Todas são de risco
+  baixo, com confirmação (<code>--yes</code> em scripts).</li>
+<li>A procuração do e-CAC tem comando próprio: <code>ctbz pendencias procuracao</code>.</li>
+</ul>
+<h2 id="rotinas-e-obrigacoes-do-mes">Rotinas e obrigações do mês<a class="headerlink" href="#rotinas-e-obrigacoes-do-mes" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>rotinas
+ctbz<span class="w"> </span>rotinas<span class="w"> </span>--mes<span class="w"> </span><span class="m">2026</span>-11
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Responsável   Rotina                                 Prazo       Status     Valor     Alerta   Pendências
+empresa       Importar extrato bancário de setembro  05/10/2026  EM_ABERTO            próxima
+empresa       DARF Unificada (Ativação do fator R)   06/10/2026  EM_ABERTO            próxima
+empresa       Mensalidade da Contabilizei            15/10/2026  EM_ABERTO  R$ 15,90
+contabilizei  eSocial                                15/10/2026  EM_ABERTO
+contabilizei  DCTFWeb                                15/10/2026  EM_ABERTO
+</code></pre></div>
+<ul>
+<li><code>responsavel</code> separa o que a <strong>empresa</strong> precisa fazer do que a <strong>Contabilizei</strong> entrega
+  (eSocial, DCTFWeb, EFD-Reinf…).</li>
+<li>O filtro é pelo mês do prazo. A API não aceita competência nem mês: devolve sempre o mês
+  anterior, o atual e o próximo, e a CLI filtra. Fora dessa janela, a lista sai vazia.</li>
+<li><code>alerta</code> segue a mesma regra das pendências: <code>vencida</code> ou <code>próxima</code> para rotinas não
+  realizadas (<a href="../../adr/0012-prazos-e-alertas/">ADR-0012</a>).</li>
+<li><code>--fail-on-vencidas</code> (código 4) considera só as rotinas da <strong>empresa</strong>: atraso numa
+  obrigação da Contabilizei não é algo que você resolve sozinho.</li>
+<li><code>pendencias</code> traz os ids das pendências de uma rotina, como os lançamentos que ela pede para
+  reclassificar (ver abaixo).</li>
+</ul>
+<h3 id="reclassificar-lancamentos-pedidos-pela-rotina">Reclassificar lançamentos pedidos pela rotina<a class="headerlink" href="#reclassificar-lancamentos-pedidos-pela-rotina" title="Permanent link">&para;</a></h3>
+<p>Algumas rotinas pedem para confirmar ou alterar a classificação de um lançamento bancário
+(financiamento, investimento anjo e outros). Sem <code>--classificacao</code>, a CLI só mostra as opções:</p>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>rotinas<span class="w"> </span>reclassificar<span class="w"> </span><span class="m">1000000000000501</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>Pendência         Lançamento          Valor        Classificação atual           ID                Opção                         Sócios
+1000000000000501  TED RECEBIDA BANCO  R$ 50.000,00 Empréstimos e Financiamentos  1000000000000041  Empréstimos e Financiamentos
+1000000000000501  TED RECEBIDA BANCO  R$ 50.000,00 Empréstimos e Financiamentos  1000000000000042  Aporte de Capital             1000000000000031 FULANO DE TAL
+</code></pre></div>
+<p>Com a opção escolhida (id ou nome), a classificação é gravada e a rotina é <strong>concluída</strong> (risco
+médio: a rotina não reabre, mas a classificação ainda pode ser trocada com
+<code>ctbz extratos classificar</code> enquanto o período estiver aberto):</p>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>rotinas<span class="w"> </span>reclassificar<span class="w"> </span><span class="m">1000000000000501</span><span class="w"> </span>--classificacao<span class="w"> </span><span class="s2">"Aporte de Capital"</span>
+</code></pre></div>
+<ul>
+<li>Opções com sócio exigem <code>--socio</code>; com um único sócio, ele é escolhido sozinho, como no painel.</li>
+<li>Vários ids podem ir de uma vez, com a mesma classificação para todos.</li>
+<li>Pede confirmação (<code>--yes</code> em scripts) e aceita <code>--dry-run</code> (<a href="../escrita/">Ações que alteram dados</a>).</li>
+</ul>
+<h2 id="chamados-de-atendimento">Chamados de atendimento<a class="headerlink" href="#chamados-de-atendimento" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>ctbz<span class="w"> </span>chamados<span class="w">                  </span><span class="c1"># em andamento</span>
+ctbz<span class="w"> </span>chamados<span class="w"> </span>--finalizados<span class="w">    </span><span class="c1"># já resolvidos</span>
+</code></pre></div>
+<ul>
+<li>Colunas: <code>id</code>, <code>assunto</code>, <code>status</code>, <code>canal</code>, <code>criado</code>, <code>atualizado</code>, <code>previsao_retorno</code> e
+  <code>link</code> (a página do chamado na central de ajuda).</li>
+<li>Em contas com muitos chamados, a Contabilizei não consegue listar os finalizados (o
+  servidor responde com erro sempre, não adianta repetir). A CLI então mostra os finalizados
+  entre os <strong>100 chamados mais recentes</strong> da empresa e avisa no stderr
+  (<a href="../../adr/0013-sem-retentativa-com-fonte-alternativa/">ADR-0013</a>). Nessa fonte não há
+  canal, data de atualização nem previsão de retorno.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,3307 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Opere a Contabilizei pela linha de comando.">
+      
+      
+      
+      
+        <link rel="prev" href="../pendencias-e-conta/">
+      
+      
+        <link rel="next" href="../contabilidade-e-documentos/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Impostos e pagamentos - ctbz — CLI para a Contabilizei</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#escrita-impostos-e-pagamentos" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../../.." title="ctbz — CLI para a Contabilizei" class="md-header__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ctbz — CLI para a Contabilizei
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Impostos e pagamentos
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="ctbz — CLI para a Contabilizei" class="md-nav__button md-logo" aria-label="ctbz — CLI para a Contabilizei" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ctbz — CLI para a Contabilizei
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/edusouza/ctbz-cli" title="Ir para repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de uso
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guia de uso
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/impostos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/pendencias/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências, rotinas e atendimento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/mensalidade/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Mensalidade e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/notas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/prolabore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pró-labore e lucros
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/contabil/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/documentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentos e certificado
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guia/escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ações que alteram dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../referencia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Referência de comandos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Autenticação
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Autenticação
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/01-credenciais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Credenciais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/02-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Código OTP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/03-selecao-de-empresa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Seleção de empresa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../autenticacao/04-sessao-e-cookies/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sessão e cookies
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../otp-automatico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OTP automático
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../endpoints-verificados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Endpoints verificados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../catalogo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Catálogo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../notas-fiscais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas fiscais
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6_5" id="__nav_6_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Escrita
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Escrita
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pendencias-e-conta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pendências e conta
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Impostos e pagamentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-impostos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Impostos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Impostos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-confirmar-negar-pagamento-de-guia-ja-paguei-nao-paguei-desmarcar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Confirmar / negar pagamento de guia ("Já paguei" / "Não paguei" / "Desmarcar")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-marcar-guia-como-a-confirmar-efeito-colateral-de-baixar-boleto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Marcar guia como "A confirmar" (efeito colateral de baixar boleto)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-recalculo-de-guia-vencida-servico-pago" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Recálculo de guia vencida (serviço pago)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-memoria-de-calculo-visualizada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 "Memória de cálculo visualizada"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-parcelamentos-contratar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 Parcelamentos (contratar)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16-pagar-impostos-com-cartao-de-credito-adyen-via-fintech" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.6 Pagar impostos com cartão de crédito (Adyen, via fintech)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#17-debito-automatico-de-impostos-pagamento-recorrente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.7 Débito automático de impostos ("pagamento recorrente")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#18-outras-chamadas-relacionadas-sem-escrita" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.8 Outras chamadas relacionadas (sem escrita)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-impostos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI — Impostos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-mensalidade-pagamentos-da-contabilizei" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Mensalidade / pagamentos da Contabilizei
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Mensalidade / pagamentos da Contabilizei">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-cartoes-de-credito-da-mensalidade-gestao-adyen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Cartões de crédito da mensalidade — gestão (Adyen)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-pagar-fatura-mensalidade-com-cartao-fluxo-legado-iugu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Pagar fatura (mensalidade) com cartão — fluxo legado Iugu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-botao-do-card-fatura-do-dashboard-dashboardfatura-botaoacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Botão do card "Fatura" do dashboard (dashboard/fatura → botaoAcao)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-troca-de-plano-upsell-multibeneficios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Troca de plano (upsell Multibenefícios)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-oferta-plano-manutencao-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 Oferta "Plano Manutenção" (dashboard)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-retencao-solicitar-mais-dias-de-cobertura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 Retenção — "Solicitar mais dias de cobertura"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#27-fora-do-escopo-vistos-de-passagem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.7 Fora do escopo, vistos de passagem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-mensalidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI — Mensalidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-resumo-rapido-tabela" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Resumo rápido (tabela)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contabilidade-e-documentos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contabilidade e documentos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notas-e-prolabore/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Notas e pró-labore
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../frontend/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Front-end
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Desenvolvimento
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Desenvolvimento
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura da CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contratos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testes de contrato
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../monitoramento/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoramento da API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contribuindo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contribuindo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metodologia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metodologia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisões (ADRs)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Índice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0001-registrar-decisoes-em-adrs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0001 Registrar decisões
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0002-somente-leitura-ate-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0002 Somente leitura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0003-versionamento-e-changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0003 Versionamento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0004-branches-empilhadas-e-prs-por-issue/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0004 Branches e PRs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0005-documentacao-em-github-pages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0005 Documentação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0006-saida-padronizada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0006 Saída padronizada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0007-login-sessao-e-otp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0007 Login e sessão
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0008-cobra-para-a-arvore-de-comandos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0008 Cobra
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0009-camada-api-tipada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0009 Camada api
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0010-testes-de-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0010 Contratos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0011-fixtures-podadas-ao-contrato/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0011 Fixtures podadas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0012-prazos-e-alertas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0012 Prazos e alertas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0013-sem-retentativa-com-fonte-alternativa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0013 Sem retentativa
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0014-ci-no-github-actions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0014 CI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0015-releases-com-goreleaser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0015 Releases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0016-monitoramento-agendado/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0016 Monitoramento
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0017-contrato-publico-da-1-0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0017 Contrato da 1.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0018-escrita-com-confirmacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0018 Escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0019-camada-de-escrita/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0019 Camada de escrita
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0020-confirmacao-e-simulacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0020 Confirmação e simulação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0021-tipos-e-fixtures-sinteticos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0021 Fixtures sintéticas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../adr/0022-classificacao-de-notas-de-entrada/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0022 Classificação de notas de entrada
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-impostos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Impostos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Impostos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#11-confirmar-negar-pagamento-de-guia-ja-paguei-nao-paguei-desmarcar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.1 Confirmar / negar pagamento de guia ("Já paguei" / "Não paguei" / "Desmarcar")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#12-marcar-guia-como-a-confirmar-efeito-colateral-de-baixar-boleto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.2 Marcar guia como "A confirmar" (efeito colateral de baixar boleto)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#13-recalculo-de-guia-vencida-servico-pago" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.3 Recálculo de guia vencida (serviço pago)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#14-memoria-de-calculo-visualizada" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.4 "Memória de cálculo visualizada"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#15-parcelamentos-contratar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.5 Parcelamentos (contratar)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#16-pagar-impostos-com-cartao-de-credito-adyen-via-fintech" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.6 Pagar impostos com cartão de crédito (Adyen, via fintech)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#17-debito-automatico-de-impostos-pagamento-recorrente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.7 Débito automático de impostos ("pagamento recorrente")
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#18-outras-chamadas-relacionadas-sem-escrita" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.8 Outras chamadas relacionadas (sem escrita)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-impostos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI — Impostos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-mensalidade-pagamentos-da-contabilizei" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Mensalidade / pagamentos da Contabilizei
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Mensalidade / pagamentos da Contabilizei">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-cartoes-de-credito-da-mensalidade-gestao-adyen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Cartões de crédito da mensalidade — gestão (Adyen)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-pagar-fatura-mensalidade-com-cartao-fluxo-legado-iugu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Pagar fatura (mensalidade) com cartão — fluxo legado Iugu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-botao-do-card-fatura-do-dashboard-dashboardfatura-botaoacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 Botão do card "Fatura" do dashboard (dashboard/fatura → botaoAcao)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-troca-de-plano-upsell-multibeneficios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Troca de plano (upsell Multibenefícios)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-oferta-plano-manutencao-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.5 Oferta "Plano Manutenção" (dashboard)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#26-retencao-solicitar-mais-dias-de-cobertura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.6 Retenção — "Solicitar mais dias de cobertura"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#27-fora-do-escopo-vistos-de-passagem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.7 Fora do escopo, vistos de passagem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recomendacao-para-a-cli-mensalidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recomendação para a CLI — Mensalidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-resumo-rapido-tabela" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Resumo rápido (tabela)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="escrita-impostos-e-pagamentos">Escrita: impostos e pagamentos<a class="headerlink" href="#escrita-impostos-e-pagamentos" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Análise <strong>estática</strong> dos chunks JS do painel (<code>/painel-de-controle/</code>, versão 2.0.88).
+Nenhuma requisição de rede foi feita. Itens não confirmados no código estão marcados <strong>(incerto)</strong>.
+Sem dados pessoais. Chaves/IDs públicos embutidos no bundle (Iugu account id, client keys) foram omitidos de propósito.</p>
+</blockquote>
+<p>Convenções:</p>
+<ul>
+<li>Base <code>X["c"]</code> = <code>/api/plataforma/</code> (todas as chamadas abaixo usam essa base, salvo indicação).
+  O módulo axios é o <code>d5c2</code> (exports <code>a</code>–<code>f</code>, ver <code>docs/frontend/README.md</code>).</li>
+<li><code>X["f"]</code> = <code>/api/fintech/</code>.</li>
+<li>Ids de guia (<code>{idGuia}</code>) vêm de <code>GET impostos/v5/impostos-a-pagar/guias</code> (campo <code>id</code>, mais <code>origem</code> e <code>tipo</code>),
+  de <code>GET impostos/v3/impostos-a-pagar/init</code> (<code>impostos[]</code>) ou de <code>GET impostos/v2/historico-impostos/guias</code>.</li>
+<li>Risco: <strong>baixo</strong> (só estado de UI / preferências), <strong>médio</strong> (estado fiscal informativo, reversível),
+  <strong>alto</strong> (efeito financeiro, contratual ou fiscal difícil de desfazer).</li>
+</ul>
+<hr />
+<h2 id="1-impostos">1. Impostos<a class="headerlink" href="#1-impostos" title="Permanent link">&para;</a></h2>
+<h3 id="11-confirmar-negar-pagamento-de-guia-ja-paguei-nao-paguei-desmarcar">1.1 Confirmar / negar pagamento de guia ("Já paguei" / "Não paguei" / "Desmarcar")<a class="headerlink" href="#11-confirmar-negar-pagamento-de-guia-ja-paguei-nao-paguei-desmarcar" title="Permanent link">&para;</a></h3>
+<p>Existem três versões do mesmo endpoint, uma por geração de tela. Todas são <code>PUT</code> com o mesmo body.</p>
+<table>
+<thead>
+<tr>
+<th>Versão</th>
+<th>Método + caminho</th>
+<th>Chunk / tela</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v5 (atual, rollout <code>v5</code>)</td>
+<td><code>PUT /api/plataforma/impostos/v5/impostos-a-pagar/guia/{idGuia}/confirmar-pagamento</code></td>
+<td><code>app.*.js</code> (componente <code>DrawerDetalhesImposto</code>, usado em <code>impostosv5</code>, <code>pagamentosFintech</code>, histórico v5)</td>
+</tr>
+<tr>
+<td>v3 (tela antiga "Impostos a pagar", ainda carregada se rollout ≠ v5)</td>
+<td><code>PUT /api/plataforma/impostos/v3/impostos-a-pagar/guia/{idGuia}/confirmar-pagamento</code></td>
+<td><code>impostos.*.js</code> (abas "Este mês" / "Em atraso"), módulo <code>f344</code> compartilhado por <code>impostos-hub</code>, <code>historico-impostos-hub</code>, <code>impostos-parcelamentos</code></td>
+</tr>
+<tr>
+<td>v2 histórico (tela antiga de histórico)</td>
+<td><code>PUT /api/plataforma/impostos/v2/historico-impostos/guia/{idGuia}/confirmar-pagamento</code></td>
+<td><code>historico-impostos.*.js</code></td>
+</tr>
+</tbody>
+</table>
+<p>Body (idêntico nas três):</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"tipo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GUIA"</span><span class="p">,</span><span class="w">              </span><span class="c1">// string — campo `tipo` da guia na listagem (ex.: "GUIA", "PARCELA")</span>
+<span class="w">  </span><span class="nt">"origem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GUIAS"</span><span class="p">,</span><span class="w">           </span><span class="c1">// string — campo `origem` da guia (default do drawer v5: "GUIAS")</span>
+<span class="w">  </span><span class="nt">"pagamentoConfirmado"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">  </span><span class="c1">// boolean — true = "Já paguei"/"Confirmar pagamento"; false = "Não paguei"/"Desmarcar"</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Origem dos valores: v5 usa <code>detalhes.origem</code>/<code>detalhes.tipo</code> vindos de
+<code>GET impostos/v5/impostos-a-pagar/guia/{id}</code> (fallback nas props <code>origem="GUIAS"</code>, <code>tipo="GUIA"</code>);
+v3/v2 usam <code>guia.tipo</code>, <code>guia.origem</code> da listagem.</p>
+<p>Resposta / tratamento:</p>
+<ul>
+<li><strong>v5</strong>: o front lê só <code>movidaPara</code> (ex.: <code>"AGUARDANDO_PAGAMENTO"</code>, <code>"ESTE_MES"</code>), emite <code>pagamento-atualizado</code>
+  e recarrega a lista. Toast de sucesso: <strong>"{nome da guia} foi marcada como paga"</strong>.
+  Erro: "Não foi possível confirmar o pagamento. Tente novamente." / "Não foi possível atualizar o pagamento. Tente novamente."</li>
+<li><strong>v3</strong>: a resposta é a <strong>guia atualizada</strong> (objeto completo com <code>aba</code>, <code>confirmacaoDePagamento{confirmado: "CONFIRMADO"|"NAO_CONFIRMADO"|"NENHUM", tipo: "MANUAL"…, desabilitado}</code>, <code>acaoBotao{id: "PAGAR"|"RECALCULAR"|"GERENCIAR"|"BAIXAR_GUIA"…}</code>, <code>vencimento{badge, venceMesAtual}</code>); o front faz <code>Object.assign</code> na linha e chama <code>previsao</code> de novo. Erro: toast "Erro ao registrar informação. Por favor, tente outra vez."</li>
+<li><strong>v2 histórico</strong>: resposta é a guia atualizada (<code>confirmacaoPagamento: boolean</code>). Erro: "Não foi possível confirmar o pagamento da guia".</li>
+</ul>
+<p>Textos da UI (semântica):</p>
+<ul>
+<li>"Confirmação de pagamento — Se você já pagou esta guia e mesmo assim ela continua aparecendo como disponível, clique no botão de Confirmar pagamento. Ao confirmar, vamos marcá-la como paga para não haver risco de duplicidade."</li>
+<li>Guia vencida: "Esta guia venceu. Confirme o pagamento somente se você já tiver pago e ela ainda continuar como vencida. Se ainda não pagou, peça o recálculo para evitar o acúmulo de juros e multas."</li>
+<li>Após confirmar: "A guia fica com o status de Paga. Se o mês de vencimento ainda estiver aberto, ela continua em Contas a pagar. Se já tiver fechado, ela vai direto para o Histórico."</li>
+<li>Após negar: "Você marcou como não paga … Ela volta para contas a pagar com o status Disponível."</li>
+<li>"<strong>Auditorias</strong> — Essa confirmação não serve como comprovante oficial. Fazemos auditorias periódicas e podemos atualizar o status com dados oficiais do governo."</li>
+<li>v3: "As opções de pagamento, recálculo e/ou parcelamento, serão habilitadas após você confirmar que o pagamento não foi feito." / "Preencha a Confirmação de pagamento. Você só pode recalcular impostos marcados como não pago."</li>
+</ul>
+<p>Pré-condições: guia existente; o botão "Não paguei" (<code>permitirNegar</code>) só aparece quando a guia está <code>A_CONFIRMAR</code>
+no modo detalhado; pendências críticas (Central de Rotinas) bloqueiam confirmação/recálculo ("Resolva as pendências").</p>
+<p>Semântica: <strong>declaração do cliente</strong> de que a guia foi (ou não) paga; muda status/aba na plataforma; não paga nada.</p>
+<p>Reversível: <strong>sim</strong> — mesma chamada com <code>pagamentoConfirmado</code> invertido (o drawer v5 tem o botão "Desmarcar", que chama
+exatamente <code>pagamentoConfirmado:false</code>).</p>
+<p>Risco: <strong>médio</strong> — sem efeito financeiro direto, mas uma confirmação falsa pode esconder um imposto não pago
+(a auditoria mensal da Contabilizei corrige depois: "Nossa auditoria não identificou o pagamento desta guia").</p>
+<h3 id="12-marcar-guia-como-a-confirmar-efeito-colateral-de-baixar-boleto">1.2 Marcar guia como "A confirmar" (efeito colateral de baixar boleto)<a class="headerlink" href="#12-marcar-guia-como-a-confirmar-efeito-colateral-de-baixar-boleto" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>POST /api/plataforma/impostos/v5/impostos-a-pagar/guia/registrar-a-confirmar/{idGuia}</code> — <strong>sem body</strong>.</li>
+<li>Chunk: <code>pagamentosFintech.*.js</code> (componente <code>BaixarGuia</code> do checkout), método <code>marcarGuiaAConfirmar</code>.</li>
+<li>Quando: só com rollout <code>v5</code>, <strong>depois</strong> que o usuário baixa a guia (<code>GET impostos/v3/impostos-a-pagar/guia/{id}/baixar-guia</code>) ou copia o código de barras, se o status ≠ <code>A_CONFIRMAR</code>. Erros são engolidos (<code>.catch(()=&gt;{})</code>).</li>
+<li>Texto: "Você pode baixar a guia e pagar em qualquer caixa eletrônico… O status do pagamento será atualizado na plataforma após a compensação do pagamento, o que pode levar até 3 dias."</li>
+<li>Semântica: muda o status da guia para <code>A_CONFIRMAR</code> ("pagamento provavelmente feito, aguardando compensação").</li>
+<li>Reversível: indiretamente, via <code>confirmar-pagamento</code> com <code>false</code> (incerto se volta exatamente ao status anterior).</li>
+<li>Risco: <strong>baixo/médio</strong>. Observação: <code>ctbz impostos baixar</code> (que usa só o GET <code>baixar-guia</code>) <strong>não</strong> dispara esse POST — comportamento seguro hoje.</li>
+</ul>
+<h3 id="13-recalculo-de-guia-vencida-servico-pago">1.3 Recálculo de guia vencida (serviço pago)<a class="headerlink" href="#13-recalculo-de-guia-vencida-servico-pago" title="Permanent link">&para;</a></h3>
+<p>Pré-carga (GET sem efeito):
+<code>GET /api/plataforma/impostos/v2/impostos-a-pagar/recalculo/init?idGuia={id}&amp;origem={origem}&amp;tipo={tipo}</code>
+→ <code>descricao, mesCompetencia, anoCompetencia, vencimento, valorOriginal, valorRecalculo, dataRecomendada (AAAA-MM-DD), finalDoMes, datasIndisponiveis[], cobrarRecalculo (bool), motivoSemCobranca</code>.</p>
+<p>Escrita:</p>
+<ul>
+<li><code>PUT /api/plataforma/impostos/v2/impostos-a-pagar/guia/{idGuia}/v2/recalcular</code> (note o <code>/v2/</code> repetido no fim)</li>
+<li>Chunk: <code>meus-impostos-a-pagar.*.js</code>, componente <code>RecalculoDeImposto</code>, rota <code>#/meus-impostos-a-pagar/recalculo-de-imposto?idGuia=&amp;origem=&amp;tipo=</code>
+  (as telas v3 e v5 navegam para essa rota ao clicar "Pedir recálculo"/"Recalcular").</li>
+<li>Body:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"tipo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GUIA"</span><span class="p">,</span><span class="w">                 </span><span class="c1">// da guia</span>
+<span class="w">  </span><span class="nt">"origem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"GUIAS"</span><span class="p">,</span><span class="w">              </span><span class="c1">// da guia</span>
+<span class="w">  </span><span class="nt">"dataVencimento"</span><span class="p">:</span><span class="w"> </span><span class="s2">"DD/MM/AAAA"</span><span class="w">  </span><span class="c1">// novo vencimento escolhido no DatePicker (default = dataRecomendada); front converte AAAA-MM-DD → DD/MM/AAAA</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li>Resposta: <code>{ modalSucessoRecalculo, guia: { dataVencimento }, ofertaDebitoAutomatico }</code>; o front volta à lista e mostra
+  "Recebemos seu pedido para recalcular a guia, com novo vencimento em …" / "A guia será recalculada em até 3 dias úteis. Avisaremos por e-mail quando o novo valor, já atualizado com juros e multas, estiver disponível."</li>
+<li>Erro: exibe <code>response.data.detalhes[0].detalhe</code>, ou "Ocorreu um erro inesperado. Por favor, tente novamente".</li>
+<li>Textos: "O recálculo de guia de imposto é um serviço adicional, que será <strong>cobrado na sua próxima mensalidade</strong>." /
+  "Contratação de serviço adicional: Recálculo de guia" (quando <code>cobrarRecalculo=true</code>; senão mostra <code>motivoSemCobranca</code>).
+  "Ao definir a data de vencimento para o próximo mês, você vai pagar um valor maior em juros e multas."</li>
+<li>Pré-condições: guia vencida e marcada como <strong>não paga</strong> (ver 1.1); sem pendências críticas; data fora de <code>datasIndisponiveis</code>.</li>
+<li>Reversível: <strong>não</strong> (não há endpoint de cancelamento).</li>
+<li>Risco: <strong>alto</strong> — gera cobrança adicional na mensalidade e nova guia com juros/multa.</li>
+</ul>
+<p>Variante morta: <code>PUT impostos/v2/historico-impostos/guia/{id}/recalcular</code> com o mesmo body existe em
+<code>historico-impostos.*.js</code> (<code>recalcularGuia</code>) mas <strong>não é chamada</strong> por nenhum componente (código morto).</p>
+<h3 id="14-memoria-de-calculo-visualizada">1.4 "Memória de cálculo visualizada"<a class="headerlink" href="#14-memoria-de-calculo-visualizada" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>POST /api/plataforma/impostos/impostos-a-pagar/memoria-de-calculo-visualizada</code> — <strong>sem body</strong>.</li>
+<li>Chunks: <code>impostosv5</code>, <code>impostos</code> (v3), <code>impostos-hub</code>, <code>historico-impostos-hub</code>.</li>
+<li>Quando: ao fechar/confirmar o modal de memória de cálculo exibido quando <code>GET impostos/v5/impostos-a-pagar/init</code> traz <code>exibirMemoriaDeCalculo</code>/<code>exibeMemoriaDeCalculo=true</code> (<code>dadosMemoriaDeCalculo</code>).</li>
+<li>Semântica: registra que o usuário viu o modal (não exibe de novo). Resposta ignorada.</li>
+<li>Reversível: não; Risco: <strong>baixo</strong>.</li>
+</ul>
+<h3 id="15-parcelamentos-contratar">1.5 Parcelamentos (contratar)<a class="headerlink" href="#15-parcelamentos-contratar" title="Permanent link">&para;</a></h3>
+<p>Todos em <code>impostos.*.js</code> (módulo <code>5367</code>), rotas <code>#/impostos/parcelamento/{tipo}/contratar</code>. Simulação = GET <code>…/init</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Tipo</th>
+<th>Simulação (GET)</th>
+<th>Contratação</th>
+<th>Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Simples Nacional (parcelamento digital, Receita)</td>
+<td><code>impostos/parcelamento/negociacao-automatica/simples-nacional/init</code></td>
+<td><code>POST impostos/parcelamento/negociacao-automatica/simples-nacional/contratar</code></td>
+<td><strong>nenhum</strong></td>
+</tr>
+<tr>
+<td>PGFN Simples Nacional (dívida ativa)</td>
+<td><code>…/pgfn-simples-nacional/init</code></td>
+<td><code>POST …/negociacao-automatica/pgfn-simples-nacional/contratar</code></td>
+<td><code>{"quantidadeParcelas": &lt;int&gt;}</code></td>
+</tr>
+<tr>
+<td>PGFN previdenciário</td>
+<td><code>…/pgfn-previdenciario/init</code></td>
+<td><code>POST …/negociacao-automatica/pgfn-previdenciario/contratar</code></td>
+<td><code>{"quantidadeParcelas": &lt;int&gt;}</code></td>
+</tr>
+<tr>
+<td>PGFN não previdenciário</td>
+<td><code>…/pgfn-nao-previdenciario/init</code></td>
+<td><code>POST …/negociacao-automatica/pgfn-nao-previdenciario/contratar</code></td>
+<td><code>{"quantidadeParcelas": &lt;int&gt;}</code></td>
+</tr>
+<tr>
+<td>Especializado (feito por especialista)</td>
+<td><code>impostos/parcelamento/negociacao-especializada/init?tipoNegociacao=</code></td>
+<td><code>POST impostos/parcelamento/negociacao-especializada/contratar</code></td>
+<td><code>{"tipoNegociacao": "VENCIDOS" \| "DIVIDA_ATIVA" \| "DIVIDA_ATIVA_E_VENCIDOS"}</code></td>
+</tr>
+</tbody>
+</table>
+<p>Detalhes:</p>
+<ul>
+<li>Todos com base <code>/api/plataforma/</code>.</li>
+<li><code>quantidadeParcelas</code> vem da opção escolhida em <code>init.parcelas[]</code> (cada item: <code>quantidade, valorEntrada, valorDemaisParcelas</code>;
+  default = <code>parcelas[0]</code>). Tabela "Valor primeira parcela + Valor demais parcelas".</li>
+<li><code>init</code> também traz <code>cobrarServicoAdicional, valorServicoAdicional, valorEmissaoGuia, taxaReparcelamento, resumoParcelamento{quantidadeParcelas, valorEntrada, valorDemaisParcelas}, negociacao.impostos[]</code>.
+  Sem dívidas, o <code>init</code> responde 560 "Empresa não possui guias para simulação" (já verificado).</li>
+<li>Resposta: especializado retorna <code>{ idTicket }</code> (vira pedido de atendimento); automáticos: resposta ignorada, abre modal de sucesso
+  ("Recebemos seu pedido de parcelamento!").</li>
+<li>Erro: toast "Não foi possível contratar o parcelamento. Por favor, tente outra vez."</li>
+<li>Detalhes pós-contratação: <code>GET …/{tipo}/detalhes/init/{idParcelamento}</code> (ou <code>…/negociacao-especializada/detalhes/init/{idTicket}</code>).</li>
+<li>Textos: "Após a contratação, o prazo para efetivar o parcelamento e liberar as parcelas é de …", "Se a primeira parcela não for paga, o parcelamento será cancelado automaticamente e você terá que fazer uma nova contratação", "O valor das parcelas é corrigido mensalmente pela taxa Selic + 1% de juros", "Contratação de Serviços adicionais: … Emissão de guia de parcelamento: …" ("Cobrado na sua próxima mensalidade apenas se você aceitar a proposta…"), taxa de reparcelamento ("1ª parcela deverá cobrir de 10% a 20% do valor total").</li>
+<li>Reversível: <strong>não</strong> pela API (cancelamento só por falta de pagamento ou atendimento).</li>
+<li>Risco: <strong>alto</strong> — ato perante Receita/PGFN, com custo e consequências legais (confissão de dívida).</li>
+</ul>
+<h3 id="16-pagar-impostos-com-cartao-de-credito-adyen-via-fintech">1.6 Pagar impostos com cartão de crédito (Adyen, via fintech)<a class="headerlink" href="#16-pagar-impostos-com-cartao-de-credito-adyen-via-fintech" title="Permanent link">&para;</a></h3>
+<p>Fluxo <code>#/pagar-impostos/checkout?ano=AAAA&amp;mes=M[&amp;idGuia=]</code> (<code>pagamentosFintech.*.js</code>):</p>
+<ol>
+<li><code>GET /api/plataforma/api/pagamentos-fintech/initial-data/{ano}/{mes}[?idGuia=]</code> → <code>ticket[] (guias: id, descricao, tipoImposto, valorCentavos, status, barcode), subtotal, operationCost, total, payAllButtonEnabled, maisDiasParaPagar, cartao (bool), paymentDetails{parcelamentos[{valorTotalComTaxa, valorParcela}], ultimoDiaPagamentoDisponivel}, paymentMethodsResponse{storedPaymentMethods[{id, name, lastFour, brand}]}, impostosAdicionaisPagamentoCartao, pagamentoRecorrenteHabilitado/Ativado</code>.</li>
+<li><code>GET /api/plataforma/api/card-payment/adyen/originKeys/domain</code> → <code>originKeys{&lt;origin&gt;: key}</code> (chave do Adyen Checkout).</li>
+<li><strong><code>POST /api/fintech/pagamento-cartao/adyen/payments</code></strong> (instância <code>X["f"]</code>):</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"idGuias"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">123</span><span class="p">,</span><span class="w"> </span><span class="mi">456</span><span class="p">],</span><span class="w">          </span><span class="c1">// ids de ticket[] (todas as guias listadas no checkout)</span>
+<span class="w">  </span><span class="nt">"installments"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">              </span><span class="c1">// nº de parcelas do cartão (paymentDetails.parcelamentos)</span>
+<span class="w">  </span><span class="nt">"storePaymentMethod"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">    </span><span class="c1">// salvar cartão (só cartão novo)</span>
+<span class="w">  </span><span class="nt">"paymentMethod"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">              </span><span class="c1">// gerado pelo Adyen Secured Fields (criptografado no navegador)</span>
+<span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"scheme"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"encryptedCardNumber"</span><span class="p">:</span><span class="w"> </span><span class="s2">"adyenjs_…"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"encryptedExpiryMonth"</span><span class="p">:</span><span class="w"> </span><span class="s2">"adyenjs_…"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"encryptedExpiryYear"</span><span class="p">:</span><span class="w"> </span><span class="s2">"adyenjs_…"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"encryptedSecurityCode"</span><span class="p">:</span><span class="w"> </span><span class="s2">"adyenjs_…"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"holderName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"…"</span><span class="p">,</span><span class="w">               </span><span class="c1">// só cartão novo</span>
+<span class="w">    </span><span class="nt">"storedPaymentMethodId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"…"</span><span class="w">     </span><span class="c1">// só cartão salvo</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"browserInfo"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">…</span><span class="w"> </span><span class="p">}</span><span class="w">              </span><span class="c1">// objeto do Adyen (3DS2)</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li>Existe uma versão alternativa não usada pela tela atual: <code>POST /api/plataforma/api/card-payment/adyen/payments</code> (mesmo body).</li>
+<li>Sucesso → rota <code>PagamentoSucesso</code>; erro → <code>PagamentoError</code>. Há "custo de operação" (taxa de conveniência) somado ao total.</li>
+<li><strong>Dados de cartão nunca vão em claro à Contabilizei</strong>: o Adyen Web SDK (chunk <code>cadastroCartaoCredito~impostos-pagamento-recorrente~pagamentosFintech</code>) cifra no navegador (CSE). Uma CLI não consegue gerar <code>encrypted*</code> sem reimplementar a cifra do Adyen.</li>
+<li>Reversível: não (estorno só por atendimento). Risco: <strong>alto</strong> (débito no cartão, pagamento de tributo).</li>
+</ul>
+<h3 id="17-debito-automatico-de-impostos-pagamento-recorrente">1.7 Débito automático de impostos ("pagamento recorrente")<a class="headerlink" href="#17-debito-automatico-de-impostos-pagamento-recorrente" title="Permanent link">&para;</a></h3>
+<p>Tela <code>#/impostos-a-pagar/debito-automatico</code> (<code>impostos-pagamento-recorrente.*.js</code>). O botão "Gerenciar débito automático"
+aparece quando <code>GET impostos/v5/impostos-a-pagar/init</code> traz <code>podeGerenciarDebitoAutomatico=true</code>.
+Estado: <code>GET /api/plataforma/payments/recorrencia/init</code> → <code>habilitado, habilitadoConta, ativado (cartão), ativadoConta (saldo conta PJ), aceiteConta, aceiteContaVigente, cartoesSalvos[{id, bandeira, principal…}], adyenClientKey{&lt;origin&gt;}, temContaPj, prazoParaDesativar, temLotesEmProcessamento, competencia, dataProximaTentativa, pagamentosAgendados/Concluido/Recusado, tentativaFalhou</code>.
+Histórico: <code>GET payments/recorrencia/historico</code> → <code>pagamentos</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Ação</th>
+<th>Método + caminho (base <code>/api/plataforma/</code>)</th>
+<th>Body</th>
+<th>Notas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Aceitar termo (cartão)</td>
+<td><code>POST payments/aceite-termo-recorrencia</code></td>
+<td><code>{"tipo":"DEBITO_CARTAO"}</code></td>
+<td>Erro: "Falha ao aceitar os termos do serviço…"</td>
+</tr>
+<tr>
+<td>Aceitar termo + ativar débito em conta</td>
+<td><code>POST payments/recorrencia/ativar-conta-com-termo</code></td>
+<td>nenhum</td>
+<td>Sucesso: "Termos do débito automático aceitos com sucesso." Ativa <code>DEBITO_CONTA</code></td>
+</tr>
+<tr>
+<td>Ativar</td>
+<td><code>POST payments/recorrencia/ativar</code></td>
+<td><code>{"tipo":"DEBITO_CARTAO"}</code> ou <code>{"tipo":"DEBITO_CONTA"}</code></td>
+<td>400 com mensagem de termo ("termo de aceite", "precisa aceitar"…) → front abre modal de termo e repete. Botão "Ativar débito automático"</td>
+</tr>
+<tr>
+<td>Desativar</td>
+<td><code>POST payments/recorrencia/desativar</code></td>
+<td><code>{"motivo":"&lt;texto livre&gt;","tipo":"DEBITO_CARTAO"\|"DEBITO_CONTA"}</code></td>
+<td>Modal: "Ao desativar, você não terá mais agendamento de impostos e vai precisar pagá-los manualmente todo mês." / "A desativação dos pagamentos precisa de N dias para ser efetivada." Sucesso: "Débito automático de impostos desativado com sucesso."</td>
+</tr>
+<tr>
+<td>Adicionar cartão</td>
+<td><code>POST payments/cartao/adicionar</code></td>
+<td><code>{"browserInfo":{…},"paymentMethod":{…campos encrypted* do Adyen…,"holderName":"…"},"principal":true}</code></td>
+<td>Resposta = cartão salvo (<code>id, bandeira, principal</code>). 400 → <code>message</code></td>
+</tr>
+<tr>
+<td>Excluir cartão</td>
+<td><code>DELETE payments/cartao/{idCartao}/excluir</code></td>
+<td>—</td>
+<td>id de <code>cartoesSalvos[].id</code>. 400 → <code>message</code> ("Houve um erro ao excluir o seu cartão.")</td>
+</tr>
+<tr>
+<td>Aceite da conta digital</td>
+<td><code>POST fintech/conta-digital/aceite?origem=pagamento-recorrente</code> (base plataforma)</td>
+<td>nenhum</td>
+<td>Abertura de conta PJ (fora do escopo; listado por completude)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Reversível: ativar ↔ desativar (desativação pode levar <code>prazoParaDesativar</code> dias); adicionar ↔ excluir cartão.</li>
+<li>Risco: ativar/desativar <strong>alto</strong> (passa a debitar tributos automaticamente / deixa de pagar);
+  aceite de termo <strong>médio</strong> (contratual); cartão <strong>médio</strong> (exige Adyen CSE, inviável na CLI).</li>
+</ul>
+<h3 id="18-outras-chamadas-relacionadas-sem-escrita">1.8 Outras chamadas relacionadas (sem escrita)<a class="headerlink" href="#18-outras-chamadas-relacionadas-sem-escrita" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>GET fintech/metodos-pagamento-impostos/init</code> (base plataforma; chunk <code>impostos-metodos-de-pagamento</code>) é <strong>só leitura</strong>
+  (tela informativa "Métodos de pagamento": boleto, débito automático no cartão, cartão de crédito). Nenhum POST.</li>
+<li><code>GET api/pagamentos-fintech/card-impostos</code> (dashboard) — leitura.</li>
+</ul>
+<h3 id="recomendacao-para-a-cli-impostos">Recomendação para a CLI — Impostos<a class="headerlink" href="#recomendacao-para-a-cli-impostos" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>ctbz impostos confirmar &lt;idGuia&gt; [--nao-paguei] [--yes]
+    → PUT impostos/v5/impostos-a-pagar/guia/{id}/confirmar-pagamento {tipo, origem, pagamentoConfirmado}
+      (buscar tipo/origem antes via GET impostos/v5/impostos-a-pagar/guia/{id}; fallback v3 se rollout != v5)
+ctbz impostos desmarcar &lt;idGuia&gt;     (alias de --nao-paguei)
+ctbz impostos recalcular &lt;idGuia&gt; [--vencimento DD/MM/AAAA] --yes
+    → GET recalculo/init (mostrar valorOriginal, valorRecalculo, cobrarRecalculo, dataRecomendada)
+      → PUT impostos/v2/impostos-a-pagar/guia/{id}/v2/recalcular; exigir confirmação explícita (cobrança na mensalidade)
+ctbz impostos parcelamento simular &lt;tipo&gt;        (só GET init; seguro)
+ctbz impostos parcelamento contratar &lt;tipo&gt; --parcelas N --yes   (alto risco; talvez só com --i-understand)
+ctbz impostos debito-automatico status|historico (GETs)
+</code></pre></div>
+<p>Não implementar: pagamento com cartão (Adyen CSE), cadastro de cartão. Ativar/desativar débito automático só com
+confirmação dupla. A data de pagamento <strong>não</strong> faz parte do body de "confirmar pagamento" — não há <code>--data</code>.</p>
+<hr />
+<h2 id="2-mensalidade-pagamentos-da-contabilizei">2. Mensalidade / pagamentos da Contabilizei<a class="headerlink" href="#2-mensalidade-pagamentos-da-contabilizei" title="Permanent link">&para;</a></h2>
+<h3 id="21-cartoes-de-credito-da-mensalidade-gestao-adyen">2.1 Cartões de crédito da mensalidade — gestão (Adyen)<a class="headerlink" href="#21-cartoes-de-credito-da-mensalidade-gestao-adyen" title="Permanent link">&para;</a></h3>
+<p>Tela <code>#/formas-pagamento</code> (só se <code>GET /api/plataforma/cartoes-de-credito/init</code> → <code>cobrancaViaAdyen=true</code>; senão redireciona ao front legado <code>/pagto-formas</code>). Chunk <code>cadastroCartaoCredito.*.js</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Ação</th>
+<th>Método + caminho (base <code>/api/plataforma/</code>)</th>
+<th>Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Listar</td>
+<td><code>GET cartoes-de-credito/gestao-pagamentos</code></td>
+<td>→ lista <code>{id, digitosCartao, nomeCartaoCliente, dataExpiracaoCartao, cartaoPrincipal, bandeira}</code></td>
+</tr>
+<tr>
+<td>Chave Adyen</td>
+<td><code>GET billing/gestao-pagamentos/get-client-key</code></td>
+<td>→ <code>{clientKey}</code></td>
+</tr>
+<tr>
+<td>Cadastrar (<code>#/cadastrar-cartao</code>)</td>
+<td><code>POST cartoes-de-credito/gestao-pagamentos</code></td>
+<td><code>{"browserInfo":{…},"dadosDoCartao":{"encryptedCardNumber","encryptedExpiryMonth","encryptedExpiryYear","encryptedSecurityCode","holderName"},"cartaoPrincipal":true}</code></td>
+</tr>
+<tr>
+<td>Definir como principal / editar</td>
+<td><code>PUT cartoes-de-credito/gestao-pagamentos/{idCartao}</code></td>
+<td><code>{"cartaoPrincipal": true\|false}</code> (único campo editável)</td>
+</tr>
+<tr>
+<td>Excluir</td>
+<td><code>DELETE cartoes-de-credito/gestao-pagamentos/{idCartao}</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Sucesso no cadastro → rota "SucessoCadastroCartaoCredito"; erro: "Ocorreu um erro ao cadastrar o cartão de crédito."; PUT/DELETE erro: "Houve um erro ao acessar esta funcionalidade."</li>
+<li>Tokenização: Adyen Secured Fields (CSE no navegador) — o número do cartão <strong>não</strong> chega em claro.</li>
+<li>Reversível: cadastrar ↔ excluir; principal ↔ outro principal. Risco: PUT/DELETE <strong>médio</strong> (muda a forma de cobrança da mensalidade); POST inviável na CLI.</li>
+</ul>
+<h3 id="22-pagar-fatura-mensalidade-com-cartao-fluxo-legado-iugu">2.2 Pagar fatura (mensalidade) com cartão — fluxo legado Iugu<a class="headerlink" href="#22-pagar-fatura-mensalidade-com-cartao-fluxo-legado-iugu" title="Permanent link">&para;</a></h3>
+<p>Tela <code>#/pagar-com-cartao</code> (<code>pagamentoCartaoCredito.*.js</code>):</p>
+<ol>
+<li><code>GET /api/plataforma/pagamento-cartao-credito/faturas</code> → <code>{statusLabel ("Em aberto"|"Pendente"|"Atrasada"|"Paga"), vencimento, total, …}</code>; só permite pagar se <code>statusLabel ∈ {Pendente, Atrasada}</code>.</li>
+<li>O número do cartão vai <strong>para a Iugu</strong> (<code>window.Iugu.createPaymentToken</code>, account id embutido no bundle em <code>VUE_APP_BILLING_GATEWAY_ACCOUNT_ID</code>, base64), que devolve um token.</li>
+<li><code>POST /api/plataforma/pagamento-cartao-credito/pagar</code></li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"> </span><span class="nt">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;token Iugu&gt;"</span><span class="p">,</span><span class="w"> </span><span class="nt">"descricao"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1234"</span><span class="w"> </span><span class="cm">/* últimos 4 dígitos */</span><span class="p">,</span><span class="w"> </span><span class="nt">"principal"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="cm">/* switch "usar como cobrança recorrente" */</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<ul>
+<li>Sucesso → <code>#/pagar-com-cartao/sucesso</code>. Erro: <code>response.data</code> (texto) ou "Ocorreu algum problema com o pagamento, tente novamente ou entre em contato com a operadora do seu cartão."</li>
+<li>Reversível: não. Risco: <strong>alto</strong> (cobrança no cartão) e exige tokenização Iugu — não recomendado para a CLI.</li>
+</ul>
+<h3 id="23-botao-do-card-fatura-do-dashboard-dashboardfatura-botaoacao">2.3 Botão do card "Fatura" do dashboard (<code>dashboard/fatura</code> → <code>botaoAcao</code>)<a class="headerlink" href="#23-botao-do-card-fatura-do-dashboard-dashboardfatura-botaoacao" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>GET /api/plataforma/dashboard/fatura</code> traz <code>botaoTitulo/botaoAcao</code> e <code>botaoAdicionalTitulo/botaoAdicionalAcao</code>.</li>
+<li>Formato de <code>botaoAcao</code>: <code>"&lt;tipo&gt;:&lt;valor&gt;"</code>.</li>
+<li><code>redirect:&lt;rota&gt;</code> → navegação interna (sem rede).</li>
+<li>qualquer outro tipo → <strong><code>GET /api/plataforma/&lt;valor&gt;</code></strong> (o caminho vem do servidor) → <code>{url}</code> aberto em nova aba.
+    Toast: "Seu boleto para pagamento será aberto em uma nova aba. Os boletos gerados são registrados, por isso caso tenha dificuldades no pagamento, recomendamos tentar novamente após 2 horas."</li>
+<li>Semântica: <strong>GET com efeito colateral</strong> — gera/registra boleto da mensalidade. O caminho exato não está no bundle <strong>(incerto)</strong>; precisa ser lido da resposta real de <code>dashboard/fatura</code>.</li>
+<li>Risco: <strong>baixo/médio</strong> (registra boleto; não cobra). CLI pode expor <code>ctbz mensalidade boleto</code> lendo <code>botaoAcao</code> dinamicamente.</li>
+</ul>
+<h3 id="24-troca-de-plano-upsell-multibeneficios">2.4 Troca de plano (upsell Multibenefícios)<a class="headerlink" href="#24-troca-de-plano-upsell-multibeneficios" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>PUT /api/plataforma/home/pagtoplano/atualizar-plano</code> (com <code>/</code> inicial; axios trata igual).</li>
+<li>Chunk <code>landing-beneficios.*.js</code>, tela <code>#/beneficios/landing-upsell</code>, modal <code>ModalUpsell</code> ("Confirmar alteração de plano?").</li>
+<li>Body: <code>{"idPagtoPlano": &lt;id&gt;, "gerarContrato": true}</code> — <code>idPagtoPlano</code> = <code>comparacaoPlanos.planoUpgrade.id</code>, vindo de
+  <code>GET cross-sell/multibeneficios/cms/v1/landing-upsell</code> (provável origem de <code>landingData</code>, <strong>incerto</strong>).</li>
+<li>Pré-condição: checkbox "Li e aceito o contrato…" (contrato via <code>GET /contrato/buscarContratoServico</code> → <code>html</code>).</li>
+<li>Sucesso: "Parabéns, seu novo plano está ativo!" / "A troca foi feito com sucesso! O novo valor entrará em vigor a partir da próxima fatura." Erro: "Não foi possível trocar seu plano".</li>
+<li>Efeitos paralelos: envia lead/eventos ao HubSpot (<code>X["a"]</code>, base <code>/api/leads/hubspot/</code>: <code>POST send</code>, <code>POST track-event</code>).</li>
+<li>Reversível: não pela API. Risco: <strong>alto</strong> (altera contrato e valor da mensalidade).</li>
+</ul>
+<h3 id="25-oferta-plano-manutencao-dashboard">2.5 Oferta "Plano Manutenção" (dashboard)<a class="headerlink" href="#25-oferta-plano-manutencao-dashboard" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>POST /api/plataforma/planos/aceite-plano-manutencao</code>, body <code>{"aceite": true|false}</code>.</li>
+<li>Chunks: <code>chunk-b88c6b8a</code> (dashboard v2) e <code>chunk-ecc0fd76</code> (dashboard v1), módulo <code>8ae59</code>.</li>
+<li>Quando: <code>dashboard/v2/init</code> → <code>mensalidade.ofertaPlanoManutencao.exibir=true</code> (v1: <code>mensalidadeAlertas.ofertaPlanoManutencao</code>).
+  Botões "aceitar novo plano" (<code>true</code>) / "manter plano atual" (<code>false</code>).</li>
+<li>Textos: "Plano Manutenção — O jeito mais econômico para sua empresa permanecer regularizada enquanto não estiver faturando";
+  checkboxes "Estou ciente de que o plano Manutenção só é válido enquanto minha empresa não estiver faturando."; após aceitar:
+  "O plano Manutenção somente será ativado após a regularização das mensalidades pendentes." → botão "Regularizar" (<code>#/pagto-pendente</code>).</li>
+<li>Erro: "Não foi possível salvar sua opção, tente novamente mais tarde."</li>
+<li>Reversível: não (incerto). Risco: <strong>alto</strong> com <code>true</code> (troca de plano); <code>false</code> = só registra recusa (baixo).</li>
+</ul>
+<h3 id="26-retencao-solicitar-mais-dias-de-cobertura">2.6 Retenção — "Solicitar mais dias de cobertura"<a class="headerlink" href="#26-retencao-solicitar-mais-dias-de-cobertura" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>POST /api/plataforma/retencao/paywall/salvar-interacao</code>, body <code>{}</code>.</li>
+<li>Chunks: <code>chunk-vendors</code> (app-shell), <code>chunk-b88c6b8a</code>, <code>chunk-2371324a</code>.</li>
+<li>Quando: modal "Sua mensalidade está atrasada." → botão "Solicitar mais dias de cobertura", e só se <code>competenciaAnteriorAtrasada=true</code>.
+  Em seguida abre o modal "prolongamos o prazo de regularização da mensalidade até o final do mês".</li>
+<li>Semântica: registra a interação / concede prorrogação do paywall (incerto se o servidor efetivamente estende o prazo ou só registra).</li>
+<li>Reversível: não; Risco: <strong>baixo</strong>.</li>
+</ul>
+<h3 id="27-fora-do-escopo-vistos-de-passagem">2.7 Fora do escopo, vistos de passagem<a class="headerlink" href="#27-fora-do-escopo-vistos-de-passagem" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>POST loans/aceite-oferta-dash/OFERTA_LOANS_FINTECH</code> com <code>{aceite: …}</code> (oferta de crédito no dashboard) — risco alto, relatar em outro contexto.</li>
+<li><code>POST dashboard/v2/termo-exclusao</code>, <code>PUT fintech/conta-digital/desistir</code>, <code>POST fintech/conta-digital/aceite?origem=…</code>.</li>
+</ul>
+<h3 id="recomendacao-para-a-cli-mensalidade">Recomendação para a CLI — Mensalidade<a class="headerlink" href="#recomendacao-para-a-cli-mensalidade" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>ctbz mensalidade status                 → GET dashboard/fatura, pagamento-cartao-credito/faturas (leitura)
+ctbz mensalidade boleto                 → segue botaoAcao (GET dinâmico) e imprime a URL (avisar que registra boleto)
+ctbz mensalidade cartoes                → GET cartoes-de-credito/gestao-pagamentos
+ctbz mensalidade cartoes principal &lt;id&gt; → PUT cartoes-de-credito/gestao-pagamentos/{id} {"cartaoPrincipal":true}
+ctbz mensalidade cartoes remover &lt;id&gt; --yes → DELETE cartoes-de-credito/gestao-pagamentos/{id}
+</code></pre></div>
+<p>Não implementar: cadastro/pagamento com cartão (Adyen CSE / Iugu), troca de plano, aceite de Plano Manutenção
+(efeito contratual), salvar-interacao (sem utilidade fora da UI).</p>
+<hr />
+<h2 id="3-resumo-rapido-tabela">3. Resumo rápido (tabela)<a class="headerlink" href="#3-resumo-rapido-tabela" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Método</th>
+<th>Caminho (base <code>/api/plataforma/</code> salvo indicação)</th>
+<th>Body</th>
+<th>Risco</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PUT</td>
+<td><code>impostos/v5/impostos-a-pagar/guia/{id}/confirmar-pagamento</code></td>
+<td><code>{tipo, origem, pagamentoConfirmado}</code></td>
+<td>médio</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>impostos/v3/impostos-a-pagar/guia/{id}/confirmar-pagamento</code></td>
+<td>idem</td>
+<td>médio</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>impostos/v2/historico-impostos/guia/{id}/confirmar-pagamento</code></td>
+<td>idem</td>
+<td>médio</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>impostos/v5/impostos-a-pagar/guia/registrar-a-confirmar/{id}</code></td>
+<td>—</td>
+<td>baixo</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>impostos/v2/impostos-a-pagar/guia/{id}/v2/recalcular</code></td>
+<td><code>{tipo, origem, dataVencimento:"DD/MM/AAAA"}</code></td>
+<td>alto (cobrado)</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>impostos/v2/historico-impostos/guia/{id}/recalcular</code> (código morto)</td>
+<td>idem</td>
+<td>alto</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>impostos/impostos-a-pagar/memoria-de-calculo-visualizada</code></td>
+<td>—</td>
+<td>baixo</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>impostos/parcelamento/negociacao-automatica/simples-nacional/contratar</code></td>
+<td>—</td>
+<td>alto</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>impostos/parcelamento/negociacao-automatica/pgfn-{simples-nacional,previdenciario,nao-previdenciario}/contratar</code></td>
+<td><code>{quantidadeParcelas}</code></td>
+<td>alto</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>impostos/parcelamento/negociacao-especializada/contratar</code></td>
+<td><code>{tipoNegociacao}</code></td>
+<td>alto</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/fintech/pagamento-cartao/adyen/payments</code></td>
+<td><code>{idGuias[], installments, storePaymentMethod, paymentMethod(Adyen), browserInfo}</code></td>
+<td>alto</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>api/card-payment/adyen/payments</code> (não usado)</td>
+<td>idem</td>
+<td>alto</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>payments/aceite-termo-recorrencia</code></td>
+<td><code>{tipo:"DEBITO_CARTAO"}</code></td>
+<td>médio</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>payments/recorrencia/ativar</code></td>
+<td><code>{tipo}</code></td>
+<td>alto</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>payments/recorrencia/ativar-conta-com-termo</code></td>
+<td>—</td>
+<td>alto</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>payments/recorrencia/desativar</code></td>
+<td><code>{motivo, tipo}</code></td>
+<td>alto</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>payments/cartao/adicionar</code></td>
+<td><code>{browserInfo, paymentMethod(Adyen), principal}</code></td>
+<td>médio</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>payments/cartao/{id}/excluir</code></td>
+<td>—</td>
+<td>médio</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>cartoes-de-credito/gestao-pagamentos</code></td>
+<td><code>{browserInfo, dadosDoCartao(Adyen), cartaoPrincipal}</code></td>
+<td>médio</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>cartoes-de-credito/gestao-pagamentos/{id}</code></td>
+<td><code>{cartaoPrincipal}</code></td>
+<td>médio</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>cartoes-de-credito/gestao-pagamentos/{id}</code></td>
+<td>—</td>
+<td>médio</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>pagamento-cartao-credito/pagar</code></td>
+<td><code>{token(Iugu), descricao, principal}</code></td>
+<td>alto</td>
+</tr>
+<tr>
+<td>GET*</td>
+<td><code>&lt;caminho de dashboard/fatura.botaoAcao&gt;</code></td>
+<td>— (gera boleto)</td>
+<td>baixo/médio</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>home/pagtoplano/atualizar-plano</code></td>
+<td><code>{idPagtoPlano, gerarContrato:true}</code></td>
+<td>alto</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>planos/aceite-plano-manutencao</code></td>
+<td><code>{aceite}</code></td>
+<td>alto/baixo</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>retencao/paywall/salvar-interacao</code></td>
+<td><code>{}</code></td>
+<td>baixo</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
