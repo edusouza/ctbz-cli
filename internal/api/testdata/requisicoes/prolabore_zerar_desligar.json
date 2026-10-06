@@ -1,0 +1,10 @@
+[
+  {
+    "metodo": "PATCH",
+    "caminho": "/api/plataforma/prolabore/central/empresa/zerar-prolabore",
+    "content_type": "application/json",
+    "corpo": {
+      "zerarProlabore": false
+    }
+  }
+]

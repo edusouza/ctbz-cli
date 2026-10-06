@@ -47,6 +47,25 @@ ctbz prolabore definir --socio ID --tipo inteligente [--minimo 1518,00]
   a gestão relida ainda não é a pedida.
 - Aceita `--yes` e `--dry-run` (ver [Escrita](escrita.md)).
 
+## Pró-labore zerado nos meses sem faturamento
+
+```sh
+ctbz prolabore zerar-sem-faturamento on
+ctbz prolabore zerar-sem-faturamento off
+```
+
+- É a chave "Não quero ter pró-labore cadastrado em meses sem faturamento" da central de
+  pró-labore, que vale para todos os sócios. O estado atual aparece em `ctbz prolabore -o json`
+  (`zerar` na resposta deste comando).
+- Ligada, nos meses sem faturamento os sócios ficam sem pró-labore e **não contribuem para o
+  INSS**, o que conta para aposentadoria e auxílios. Por isso `on` é de risco alto (`confirmo`)
+  e `off`, de risco médio.
+- Numa empresa na gestão inteligente, `on` usa a variante do painel que vale a partir deste
+  mês e não altera os meses passados.
+- Se a preferência já estiver no estado pedido, nada é enviado.
+- Ainda não se sabe se `off` desfaz a variante da gestão inteligente; confira com
+  `ctbz prolabore` depois.
+
 ## Histórico
 
 ```sh

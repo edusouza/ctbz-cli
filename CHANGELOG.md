@@ -11,6 +11,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 - `ctbz prolabore definir`: muda a gestão do pró-labore de um sócio (salário mínimo, teto do
   INSS, valor personalizado ou gestão inteligente com piso opcional).
+- `ctbz prolabore zerar-sem-faturamento on|off`: preferência de não ter pró-labore nos meses
+  sem faturamento.
 - `ctbz prolabore` mostra o `id` de cada sócio, usado em `--socio`.
 
 ## [1.6.0] - 2026-10-04

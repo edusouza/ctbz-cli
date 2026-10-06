@@ -293,6 +293,13 @@ func Escritas() []Escrita {
 		{Name: "prolabore_definir_salario_minimo", Exemplo: exemploGestao(GerenciamentoSalarioMinimo, nil, nil)},
 		{Name: "prolabore_definir_personalizado", Exemplo: exemploGestao(GerenciamentoPersonalizado, ptr(3000.0), nil)},
 		{Name: "prolabore_definir_inteligente", Exemplo: exemploGestao(GerenciamentoInteligente, nil, ptr(2000.0))},
+		{Name: "prolabore_zerar_ligar", Exemplo: func(ctx context.Context, s Sender) error {
+			return DefinirZerarProlabore(ctx, s, true)
+		}},
+		{Name: "prolabore_zerar_desligar", Exemplo: func(ctx context.Context, s Sender) error {
+			return DefinirZerarProlabore(ctx, s, false)
+		}},
+		{Name: "prolabore_zerar_gestao_inteligente", Exemplo: ZerarProlaboreGestaoInteligente},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

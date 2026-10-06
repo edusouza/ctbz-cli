@@ -103,3 +103,23 @@ func NovaAlteracaoGestao(g GestaoSocio, tipo string, valor, minimo *float64) (Al
 func AlterarGestaoSocio(ctx context.Context, s Sender, idSocio int64, a AlteracaoGestao) error {
 	return s.Send(ctx, "PUT", PathGestaoSocio(idSocio), a, nil)
 }
+
+// Preferência da empresa "Não quero ter pró-labore cadastrado em meses sem faturamento"
+// (seções 4.1 e 4.2). O estado atual está em ProlaboreCentral.ZerarProlabore.
+const (
+	PathZerarProlabore   = "prolabore/central/empresa/zerar-prolabore"
+	PathZerarProlaboreGT = "prolabore/central/empresa/zerar-prolabore-gt"
+)
+
+// DefinirZerarProlabore liga ou desliga a preferência; vale para todos os sócios.
+func DefinirZerarProlabore(ctx context.Context, s Sender, zerar bool) error {
+	return s.Send(ctx, "PATCH", PathZerarProlabore, struct {
+		ZerarProlabore bool `json:"zerarProlabore"`
+	}{zerar}, nil)
+}
+
+// ZerarProlaboreGestaoInteligente liga a preferência numa empresa na gestão inteligente:
+// vale a partir deste mês e não altera os meses passados.
+func ZerarProlaboreGestaoInteligente(ctx context.Context, s Sender) error {
+	return s.Send(ctx, "PATCH", PathZerarProlaboreGT, nil, nil)
+}

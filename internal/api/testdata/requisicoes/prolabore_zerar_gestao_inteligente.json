@@ -1,0 +1,6 @@
+[
+  {
+    "metodo": "PATCH",
+    "caminho": "/api/plataforma/prolabore/central/empresa/zerar-prolabore-gt"
+  }
+]

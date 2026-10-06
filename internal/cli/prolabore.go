@@ -42,7 +42,8 @@ ctbz prolabore definir.`,
 			return output.Write(s.out, f, prolaboreRecord(c, d))
 		},
 	}
-	cmd.AddCommand(newProlaboreHistoricoCmd(), newProlaboreParametrosCmd(), newProlaboreFatorRCmd(), newProlaboreDefinirCmd())
+	cmd.AddCommand(newProlaboreHistoricoCmd(), newProlaboreParametrosCmd(), newProlaboreFatorRCmd(), newProlaboreDefinirCmd(),
+		newProlaboreZerarCmd())
 	return cmd
 }
 
