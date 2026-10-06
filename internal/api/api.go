@@ -81,6 +81,7 @@ func Endpoints() []Endpoint {
 		{Name: "aliquotas_emissor", LivePath: PathAliquotasEmissor, Type: AliquotasEmissor{}},
 		{Name: "notas_entrada", LivePath: PathNotasEntradaManifestacao + "0?mes=9&ano=2026&empresa=&qtdPagina=10&cursor=", Type: ListaNotasEntrada{}},
 		{Name: "notas_entrada_classificacao", LivePath: PathNotasEntradaClassificacao + "?mes=9&ano=2026&empresa=&tipo=0&limite=10&cursor=&offset=0", Type: ListaNotasEntrada{}},
+		{Name: "produtos_nota", Type: []ProdutoNota{}}, // sintética (ADR-0021); o ID vem de notas_entrada_classificacao
 		{Name: "prolabore_central", LivePath: PathProlaboreCentral, Type: ProlaboreCentral{}},
 		{Name: "prolabore_dashboard", LivePath: PathProlaboreDashboard, Type: ProlaboreDashboard{}},
 		{Name: "prolabore_historico", Type: []ProlaboreMes{}}, // o id do sócio vem de prolabore_central

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 11,
+    "descricao": "Papel A4 500 folhas",
+    "ncm": "48025610",
+    "valor": 120.5,
+    "quantidadeTotal": 5,
+    "quantidadeEstoque": 0,
+    "quantidadeInsumo": 0,
+    "quantidadeAtivo": 0,
+    "quantidadeConsumo": 5,
+    "quantidadePrestacao": 0
+  },
+  {
+    "id": 12,
+    "descricao": "Toner para impressora",
+    "ncm": "84439933",
+    "valor": 29.75,
+    "quantidadeTotal": 1,
+    "quantidadeEstoque": 1,
+    "quantidadeInsumo": 0,
+    "quantidadeAtivo": 0,
+    "quantidadeConsumo": 0,
+    "quantidadePrestacao": 0
+  }
+]

@@ -86,3 +86,4 @@ nav:
       - "0019 Camada de escrita": adr/0019-camada-de-escrita.md
       - "0020 Confirmação e simulação": adr/0020-confirmacao-e-simulacao.md
       - "0021 Fixtures sintéticas": adr/0021-tipos-e-fixtures-sinteticos.md
+      - "0022 Classificação de notas de entrada": adr/0022-classificacao-de-notas-de-entrada.md

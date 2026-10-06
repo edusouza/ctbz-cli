@@ -14,6 +14,14 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz notas tomadores remover`: exclui um tomador da lista de clientes.
 - `ctbz notas entrada manifestar`: manifestação do destinatário (ciência, confirmação,
   desconhecimento ou operação não realizada) das notas de entrada.
+- `ctbz notas entrada classificar --como`: classifica notas de entrada inteiras (estoque,
+  insumo, uso e consumo, ativo imobilizado ou prestação de serviço).
+- `ctbz notas entrada produtos`: itens de uma nota de entrada e a distribuição entre as
+  classificações.
+
+### Changed
+
+- `ctbz notas entrada` ganha a coluna `classificacao`, no fim.
 
 ## [1.5.0] - 2026-10-04
 

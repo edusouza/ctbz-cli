@@ -99,8 +99,7 @@ ctbz notas entrada --lista a-classificar --emitente "ACME"
   de entrada". `--lista` escolhe a aba: `a-manifestar` (padrão), `manifestadas`,
   `a-classificar` e `classificadas`.
 - Colunas: emissão, emitente, CNPJ do emitente, valor, situação (ex.: Ciência), chave de
-  acesso e ID.
-- Classificar (estoque, insumo, uso e consumo) continua sendo feito pelo painel.
+  acesso, ID e classificação (nas listas de classificação).
 - Notas de serviço **tomadas** não estão disponíveis: a tela antiga foi removida do site.
 
 ### Manifestar notas de entrada
@@ -125,6 +124,25 @@ ctbz notas entrada manifestar 1000000000000702 --nao-realizada \
   `ctbz notas entrada --lista manifestadas`. No painel, baixar o XML ou o DANFE de uma nota
   pendente manifesta ciência automaticamente.
 - Aceita `--yes` e `--dry-run` (ver [Escrita](escrita.md)).
+
+### Classificar notas de entrada
+
+```sh
+ctbz notas entrada --lista a-classificar --mes 2026-09
+ctbz notas entrada produtos 1000000000000701          # itens da nota e a distribuição atual
+ctbz notas entrada classificar 1000000000000701 1000000000000702 --como uso-consumo --mes 2026-09
+```
+
+- A classificação diz à contabilidade para que serve a compra: `estoque`, `insumo`,
+  `uso-consumo`, `ativo-imobilizado` ou `prestacao-servico`.
+- O prazo é o **dia 05 do mês seguinte** à emissão; depois dele a Contabilizei confirma a
+  pré-classificação sugerida.
+- `classificar --como` classifica as notas inteiras, num único envio (o lote do painel). Só
+  notas da lista "a classificar" do mês (`--mes`, padrão: o mês atual) são aceitas.
+- Depois do envio a CLI relê as listas e mostra a classificação de cada nota; `enviado` quer
+  dizer que ela ainda não apareceu nas listas.
+- Risco médio: é contábil e pode ser refeito. Aceita `--yes` e `--dry-run`.
+- Por que a CLI usa a base `/api/emissor/` e reenvia as notas como vieram: [ADR-0022](../adr/0022-classificacao-de-notas-de-entrada.md).
 
 ## PDF e XML das notas
 

@@ -7,7 +7,8 @@ entrada": a manifestar (padrão), manifestadas, a classificar e classificadas. M
 emitente, CNPJ do emitente, valor, situação, chave de acesso e o ID.
 
 --mes escolhe o mês (AAAA-MM; padrão: o mês atual) e --emitente filtra pela razão social do
-emitente. Para manifestar: ctbz notas entrada manifestar.
+emitente. Para manifestar: ctbz notas entrada manifestar; para classificar: ctbz notas
+entrada classificar (itens em ctbz notas entrada produtos).
 
 ## Uso
 
@@ -25,7 +26,9 @@ ctbz notas entrada [flags]
 
 ## Subcomandos
 
+- [`ctbz notas entrada classificar`](ctbz_notas_entrada_classificar.md): Classifica notas de entrada inteiras (estoque, insumo, uso e consumo…)
 - [`ctbz notas entrada manifestar`](ctbz_notas_entrada_manifestar.md): Envia a manifestação do destinatário das notas de entrada à SEFAZ
+- [`ctbz notas entrada produtos`](ctbz_notas_entrada_produtos.md): Lista os itens de uma nota de entrada e como estão classificados
 
 ## Flags
 

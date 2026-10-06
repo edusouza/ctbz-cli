@@ -279,6 +279,10 @@ func Escritas() []Escrita {
 				Justificativa: "Mercadoria foi extraviada antes da entrega"})
 			return err
 		}, Resposta: `[{"id":1,"situacao":{"id":"NAO_REALIZADA"}}]`},
+		{Name: "notas_entrada_classificar_lote", Exemplo: func(ctx context.Context, s Sender) error {
+			return ClassificarNotasLote(ctx, s, ClassificacaoUsoConsumo, []json.RawMessage{
+				json.RawMessage(`{"id":1,"razaoSocial":"Fornecedor Fictício","valor":150.25}`)})
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

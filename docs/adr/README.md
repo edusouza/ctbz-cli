@@ -26,3 +26,4 @@ decisão nova, copie o [modelo](template.md) e use o próximo número (ver [ADR-
 | [0019](0019-camada-de-escrita.md) | Camada de escrita com `Sender`, conferência prévia da sessão e erro traduzido | aceita |
 | [0020](0020-confirmacao-e-simulacao.md) | Confirmação e simulação num helper único, com o `--dry-run` como um `Sender` | aceita |
 | [0021](0021-tipos-e-fixtures-sinteticos.md) | Tipos e fixtures sintéticos para endpoints sem captura real | aceita |
+| [0022](0022-classificacao-de-notas-de-entrada.md) | Classificar notas de entrada pela base `/api/emissor/`, reenviando os objetos como vieram | aceita |

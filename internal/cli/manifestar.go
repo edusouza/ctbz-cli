@@ -22,7 +22,7 @@ const avisoManifestacao = "A Contabilizei comunica a manifestação à Receita F
 func notasDoMes(cmd *cobra.Command, g api.Getter, mes time.Time) (map[string]api.NotaEntrada, error) {
 	notas := map[string]api.NotaEntrada{}
 	for _, lista := range []string{api.ListaAManifestar, api.ListaManifestadas} {
-		ns, err := api.BuscarNotasEntrada(cmd.Context(), g, api.FiltroNotasEntrada{Lista: lista, Ano: mes.Year(), Mes: int(mes.Month())})
+		ns, err := api.BuscarNotasEntrada(cmd.Context(), g, filtroEntrada(lista, mes))
 		if err != nil {
 			return nil, err
 		}
@@ -87,12 +87,9 @@ Aceita --yes e --dry-run.`,
 			} else if justificativa != "" {
 				return usageError{errors.New("--justificativa só vale com --nao-realizada")}
 			}
-			ref := now()
-			if mes != "" {
-				var err error
-				if ref, err = time.Parse("2006-01", mes); err != nil {
-					return usageError{fmt.Errorf("--mes deve ser AAAA-MM: %q", mes)}
-				}
+			ref, err := mesDaFlag(mes)
+			if err != nil {
+				return err
 			}
 			f, err := outputFormat(cmd, "")
 			if err != nil {

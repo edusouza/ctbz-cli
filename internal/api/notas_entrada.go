@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
 )
@@ -33,6 +34,9 @@ type NotaEntrada struct {
 		ID        string `json:"id" contract:"optional"`
 		Descricao string `json:"descricao" contract:"optional"`
 	} `json:"situacao" contract:"optional"`
+	// TipoClassificacao, nas listas de classificação: ESTOQUE, INSUMO… ou PROCESSANDO
+	// enquanto uma reclassificação é aplicada (citado no front).
+	TipoClassificacao string `json:"tipoClassificacao" contract:"optional"`
 }
 
 // ListaNotasEntrada é uma página das listagens de notas de entrada.
@@ -54,14 +58,35 @@ const tamanhoPaginaEntrada = 10
 
 // BuscarNotasEntrada lê todas as páginas de uma lista de notas de entrada.
 func BuscarNotasEntrada(ctx context.Context, g Getter, f FiltroNotasEntrada) ([]NotaEntrada, error) {
-	var out []NotaEntrada
+	brutas, err := BuscarNotasEntradaBrutas(ctx, g, f)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]NotaEntrada, len(brutas))
+	for i, b := range brutas {
+		if err := json.Unmarshal(b, &out[i]); err != nil {
+			return nil, fmt.Errorf("nota de entrada: %w", err)
+		}
+	}
+	return out, nil
+}
+
+// BuscarNotasEntradaBrutas é BuscarNotasEntrada com cada nota como veio do servidor: a
+// classificação em lote reenvia os objetos inteiros (ADR-0022).
+func BuscarNotasEntradaBrutas(ctx context.Context, g Getter, f FiltroNotasEntrada) ([]json.RawMessage, error) {
+	type pagina struct {
+		List   []json.RawMessage `json:"list"`
+		Total  int               `json:"total"`
+		Cursor *string           `json:"cursor"`
+	}
+	var out []json.RawMessage
 	cursor := ""
-	for pagina := 0; pagina < maxPaginas; pagina++ {
+	for n := 0; n < maxPaginas; n++ {
 		path, err := pathNotasEntrada(f, cursor, len(out))
 		if err != nil {
 			return nil, err
 		}
-		l, err := get[ListaNotasEntrada](ctx, g, path)
+		l, err := get[pagina](ctx, g, path)
 		if err != nil {
 			return nil, err
 		}

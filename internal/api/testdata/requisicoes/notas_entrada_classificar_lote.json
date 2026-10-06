@@ -1,0 +1,14 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/emissor/classificacaonotas/salvarloteclassificacao/USO_CONSUMO",
+    "content_type": "application/json",
+    "corpo": [
+      {
+        "id": 1,
+        "razaoSocial": "Fornecedor Fictício",
+        "valor": 150.25
+      }
+    ]
+  }
+]

@@ -16,9 +16,9 @@ func TestNotasEntrada(t *testing.T) {
 	if code != ExitOK {
 		t.Fatalf("código %d: %s", code, stderr)
 	}
-	want := "emissao,emitente,cnpj_emitente,valor,situacao,chave,id\n" +
-		"2026-09-04,Empresa Fictícia - ME,11122233000188,4000.00,Ciência,41170911198802000174551200000006991580485674,5684961520648192\n" +
-		",Outra,,10.50,,,2\n"
+	want := "emissao,emitente,cnpj_emitente,valor,situacao,chave,id,classificacao\n" +
+		"2026-09-04,Empresa Fictícia - ME,11122233000188,4000.00,Ciência,41170911198802000174551200000006991580485674,5684961520648192,\n" +
+		",Outra,,10.50,,,2,\n"
 	if out != want {
 		t.Errorf("CSV:\n%s\nesperado:\n%s", out, want)
 	}

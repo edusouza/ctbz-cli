@@ -126,6 +126,7 @@ ctbz notas tomadores adicionar|editar|remover ...  # cadastra, corrige ou exclui
 ctbz notas config | ctbz notas aliquotas       # emissor e alíquotas por atividade
 ctbz notas entrada [--lista manifestadas]      # NF-e recebidas (notas de entrada)
 ctbz notas entrada manifestar ID --confirmar   # manifestação do destinatário (SEFAZ)
+ctbz notas entrada classificar ID --como estoque  # classifica a nota (ver produtos ID)
 ctbz prolabore [historico --ano 2026]          # pró-labore por sócio e histórico mensal
 ctbz prolabore parametros                      # salário mínimo, INSS e IRRF usados no cálculo
 ctbz prolabore fator-r                         # Fator R, motor do Fator R e anexos por atividade
