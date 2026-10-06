@@ -7,7 +7,8 @@ gerenciamento (ex.: INTELIGENTE, quando a Contabilizei calcula o valor ideal), t
 competências do card do painel e, para cada sócio, valor, se recebe pró-labore, se é o
 responsável na Receita, data da última atualização e quantidade de dependentes.
 
-O histórico mensal está em "ctbz prolabore historico".
+O histórico mensal está em "ctbz prolabore historico"; para mudar a gestão de um sócio:
+ctbz prolabore definir.
 
 ## Uso
 
@@ -24,6 +25,7 @@ ctbz prolabore
 
 ## Subcomandos
 
+- [`ctbz prolabore definir`](ctbz_prolabore_definir.md): Muda como o pró-labore de um sócio é definido (salário mínimo, teto, valor ou automático)
 - [`ctbz prolabore fator-r`](ctbz_prolabore_fator-r.md): Mostra a situação do Fator R e os anexos possíveis de cada atividade
 - [`ctbz prolabore historico`](ctbz_prolabore_historico.md): Lista o histórico mensal de pró-labore dos sócios
 - [`ctbz prolabore parametros`](ctbz_prolabore_parametros.md): Mostra os valores usados no cálculo do pró-labore (INSS e IRRF)

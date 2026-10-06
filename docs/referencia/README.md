@@ -96,6 +96,7 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz primeiros-passos dispensar`](ctbz_primeiros-passos_dispensar.md) | Oculta o card de primeiros passos do painel |
 | [`ctbz primeiros-passos reativar`](ctbz_primeiros-passos_reativar.md) | Volta a mostrar as tarefas dos primeiros passos |
 | [`ctbz prolabore`](ctbz_prolabore.md) | Mostra o pró-labore vigente por sócio e o tipo de gerenciamento |
+| [`ctbz prolabore definir`](ctbz_prolabore_definir.md) | Muda como o pró-labore de um sócio é definido (salário mínimo, teto, valor ou automático) |
 | [`ctbz prolabore fator-r`](ctbz_prolabore_fator-r.md) | Mostra a situação do Fator R e os anexos possíveis de cada atividade |
 | [`ctbz prolabore historico`](ctbz_prolabore_historico.md) | Lista o histórico mensal de pró-labore dos sócios |
 | [`ctbz prolabore parametros`](ctbz_prolabore_parametros.md) | Mostra os valores usados no cálculo do pró-labore (INSS e IRRF) |

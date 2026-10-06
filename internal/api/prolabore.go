@@ -52,6 +52,9 @@ type ProlaboreDashboard struct {
 	CompetenciaAnterior any      `json:"competenciaAnterior"`
 	PresenteMotor       bool     `json:"presenteMotor"`
 	Calculando          bool     `json:"calculando"`
+	// PodeAlterar diz se o pró-labore deste mês ainda aceita mudança (citado no front; ausente
+	// na conta verificada).
+	PodeAlterar *bool `json:"podeAlterar" contract:"optional"`
 }
 
 // BuscarProlaboreDashboard lê o card de pró-labore.

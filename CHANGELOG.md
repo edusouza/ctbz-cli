@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Added
+
+- `ctbz prolabore definir`: muda a gestão do pró-labore de um sócio (salário mínimo, teto do
+  INSS, valor personalizado ou gestão inteligente com piso opcional).
+- `ctbz prolabore` mostra o `id` de cada sócio, usado em `--socio`.
+
 ## [1.6.0] - 2026-10-04
 
 Notas fiscais: cadastrar, editar e excluir tomadores; manifestar e classificar as notas de

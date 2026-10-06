@@ -1,0 +1,14 @@
+[
+  {
+    "metodo": "PUT",
+    "caminho": "/api/plataforma/prolabore/central/gestao/1000000000000001",
+    "content_type": "application/json",
+    "corpo": {
+      "modoEdicaoProlaboreMin": false,
+      "sairGestaoInteligente": true,
+      "tipoGerenciamento": "SALARIO_MINIMO",
+      "valorProlabore": 1518,
+      "valorProlaboreMinimo": null
+    }
+  }
+]

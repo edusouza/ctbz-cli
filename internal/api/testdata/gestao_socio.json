@@ -1,0 +1,8 @@
+{
+  "tipoGerenciamentoProlabore": "INTELIGENTE",
+  "valorProlaboreMinimo": null,
+  "valorMaximoProlabore": 8157.41,
+  "salarioMinimo": 1518,
+  "qtdSocioGestaoInteligente": 1,
+  "elegivelNoMotor": true
+}

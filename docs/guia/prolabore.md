@@ -20,7 +20,32 @@ Sócios:
   que leva ao menor imposto (inclusive o Fator R).
 - O valor e as competências do card do painel (`valor_card`, `competencia_atual`,
   `competencia_anterior`) aparecem quando a Contabilizei já calculou o mês.
-- Em JSON, os sócios vêm em `socios`; em CSV, a lista de sócios sai como JSON na célula.
+- Em JSON, os sócios vêm em `socios`, com o `id` que os comandos `--socio` pedem; em CSV, a
+  lista de sócios sai como JSON na célula.
+
+## Mudar a gestão do pró-labore de um sócio
+
+```sh
+ctbz prolabore definir --socio ID --tipo salario-minimo
+ctbz prolabore definir --socio ID --tipo teto-inss
+ctbz prolabore definir --socio ID --tipo personalizado --valor 3000,00
+ctbz prolabore definir --socio ID --tipo inteligente [--minimo 1518,00]
+```
+
+- É o "Editar gestão" da central do sócio. `salario-minimo` e `teto-inss` usam os valores
+  vigentes que a Contabilizei informa; `personalizado` aceita qualquer valor a partir do
+  salário mínimo; `inteligente` deixa a Contabilizei calcular o valor todo mês, com um piso
+  opcional (`--minimo`).
+- Se o sócio era o último na gestão inteligente, a empresa sai dela; com outros sócios nela,
+  a empresa continua. A CLI avisa no resumo.
+- **A partir de quando vale**: a Contabilizei decide pela data (a CLI não manda competência).
+  Até o fechamento do mês (em geral o dia 25) a mudança vale para o mês atual; depois, para o
+  seguinte. Quando o painel diz que o mês está fechado, a CLI avisa.
+- Risco alto: muda o INSS, o IRRF e o Fator R. A CLI mostra o antes e o depois e pede que
+  você digite `confirmo`. Dá para mudar de novo enquanto o mês estiver aberto.
+- Depois do envio, a CLI relê a central e mostra a gestão e o valor; `enviado` quer dizer que
+  a gestão relida ainda não é a pedida.
+- Aceita `--yes` e `--dry-run` (ver [Escrita](escrita.md)).
 
 ## Histórico
 

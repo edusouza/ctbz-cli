@@ -19,7 +19,8 @@ gerenciamento (ex.: INTELIGENTE, quando a Contabilizei calcula o valor ideal), t
 competências do card do painel e, para cada sócio, valor, se recebe pró-labore, se é o
 responsável na Receita, data da última atualização e quantidade de dependentes.
 
-O histórico mensal está em "ctbz prolabore historico".`,
+O histórico mensal está em "ctbz prolabore historico"; para mudar a gestão de um sócio:
+ctbz prolabore definir.`,
 		Example: `  ctbz prolabore
   ctbz prolabore -o json | jq '.socios[] | {nome, valor}'`,
 		Args: exactArgs(0, "nenhum argumento"),
@@ -41,7 +42,7 @@ O histórico mensal está em "ctbz prolabore historico".`,
 			return output.Write(s.out, f, prolaboreRecord(c, d))
 		},
 	}
-	cmd.AddCommand(newProlaboreHistoricoCmd(), newProlaboreParametrosCmd(), newProlaboreFatorRCmd())
+	cmd.AddCommand(newProlaboreHistoricoCmd(), newProlaboreParametrosCmd(), newProlaboreFatorRCmd(), newProlaboreDefinirCmd())
 	return cmd
 }
 
@@ -58,6 +59,7 @@ func prolaboreRecord(c *api.ProlaboreCentral, d *api.ProlaboreDashboard) *output
 		r.Add("gestao", "Gestão", nilIfEmpty(s.InsightGestao))
 		r.Add("atualizado", "Atualizado em", atualizado)
 		r.Add("dependentes", "Dependentes", len(s.NomesDependentes))
+		r.Add("id", "ID", fmt.Sprint(s.ID))
 		socios = append(socios, r)
 	}
 	rec := &output.Record{}

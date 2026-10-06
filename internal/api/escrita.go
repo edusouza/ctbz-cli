@@ -289,6 +289,10 @@ func Escritas() []Escrita {
 		{Name: "notas_entrada_reclassificar", Exemplo: func(ctx context.Context, s Sender) error {
 			return ReclassificarNota(ctx, s, "1000000000000701", exemploProdutos())
 		}},
+		{Name: "prolabore_definir_teto_inss", Exemplo: exemploGestao(GerenciamentoTetoINSS, nil, nil)},
+		{Name: "prolabore_definir_salario_minimo", Exemplo: exemploGestao(GerenciamentoSalarioMinimo, nil, nil)},
+		{Name: "prolabore_definir_personalizado", Exemplo: exemploGestao(GerenciamentoPersonalizado, ptr(3000.0), nil)},
+		{Name: "prolabore_definir_inteligente", Exemplo: exemploGestao(GerenciamentoInteligente, nil, ptr(2000.0))},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},
@@ -308,3 +312,18 @@ func exemploProdutos() []json.RawMessage {
 		json.RawMessage(`{"id":11,"descricao":"Papel A4","quantidadeTotal":5,"quantidadeEstoque":2,"quantidadeInsumo":0,"quantidadeAtivo":0,"quantidadeConsumo":3,"quantidadePrestacao":0}`),
 	}
 }
+
+// exemploGestao altera a gestão de pró-labore de um sócio a partir de uma gestão atual
+// fictícia (o último sócio na gestão inteligente).
+func exemploGestao(tipo string, valor, minimo *float64) func(context.Context, Sender) error {
+	return func(ctx context.Context, s Sender) error {
+		atual := GestaoSocio{ValorMaximoProlabore: ptr(8157.41), SalarioMinimo: ptr(1518.0), QtdSocioGestaoInteligente: 1, ElegivelNoMotor: true}
+		a, err := NovaAlteracaoGestao(atual, tipo, valor, minimo)
+		if err != nil {
+			return err
+		}
+		return AlterarGestaoSocio(ctx, s, 1000000000000001, a)
+	}
+}
+
+func ptr[T any](v T) *T { return &v }
