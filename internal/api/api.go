@@ -108,6 +108,7 @@ func Endpoints() []Endpoint {
 		{Name: "documentos_enviados", LivePath: PathDocumentosEnviados("EXTRATO_BANCARIO_MOVIMENTACOES", 12, 0), Type: PaginaDocumentos{}},
 		{Name: "distribuicao_lucros", LivePath: PathDistribuicaoLucros, Type: DistribuicaoLucros{}},
 		{Name: "restricoes_informe", LivePath: PathRestricoesInforme(2025), Type: RestricoesInforme{}},
+		{Name: "carta_responsabilidade_informe", Type: CartaResponsabilidadeInforme{}}, // sintética (ADR-0021)
 		{Name: "socios_informe", LivePath: PathSociosInforme(2025), Type: []SocioInforme{}},
 		// getValoresComprovanteRendimento fica sem contrato: nenhum exemplo real (sem sócios com informe).
 	}

@@ -16,6 +16,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz prolabore gestao-inteligente ativar|sair`: põe a empresa no cálculo automático do
   pró-labore ou a tira dele.
 - `ctbz prolabore` mostra o `id` de cada sócio, usado em `--socio`.
+- `ctbz lucros informe restricoes` e `carta`: o que bloqueia o informe de rendimentos de um ano
+  e o texto da carta de responsabilidade.
+- `ctbz lucros informe aceitar carta-responsabilidade|termo-debitos` e `decidir`: aceites e
+  decisões que liberam o informe (regularizar ou não a pendência documental, não distribuir
+  lucros).
 - `ctbz lucros distribuir`: registra a distribuição de lucros do exercício, em percentual ou
   em reais, com a soma conferida em centavos.
 - `ctbz lucros` mostra o `id` e o percentual de cada sócio; o `id` é o que `--socio` pede.

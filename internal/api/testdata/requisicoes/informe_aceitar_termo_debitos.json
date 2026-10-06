@@ -1,0 +1,10 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/informerendimento/aceitar-termo-debitos/2025",
+    "content_type": "application/json",
+    "corpo": {
+      "aceite": "PRIMEIRA_VEZ"
+    }
+  }
+]

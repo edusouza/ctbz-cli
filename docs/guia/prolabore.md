@@ -214,3 +214,31 @@ Ano   Sócio          CPF             Rendimentos tributáveis  Previdência (IN
 - O painel monta o PDF do comprovante no navegador a partir desses valores; a API não
   oferece o PDF, por isso a CLI entrega os números (use `-o csv` ou `-o json` para guardar).
 - O formato vem do código do painel: a conta usada no desenvolvimento não tinha informes.
+
+### Restrições e aceites do informe
+
+```sh
+ctbz lucros informe restricoes --ano 2025      # o que bloqueia o informe e o que falta aceitar
+ctbz lucros informe carta --ano 2025           # texto da carta de responsabilidade
+ctbz lucros informe aceitar carta-responsabilidade --ano 2025
+ctbz lucros informe aceitar termo-debitos --ano 2025
+ctbz lucros informe decidir --ano 2025 --regularizar-pendencia
+```
+
+- `restricoes` mostra se a carta de responsabilidade ainda precisa ser aceita, os débitos
+  federais e a pendência documental (com o caminho de regularização e o custo, quando é um
+  serviço adicional) e o andamento da reabertura do balanço.
+- `aceitar carta-responsabilidade` mostra a carta inteira antes de pedir `confirmo`; o painel
+  exige esse aceite para ver o informe. `aceitar termo-debitos` registra a ciência dos débitos
+  federais e só é enviado quando o informe aponta débitos.
+- `decidir` registra a escolha diante das restrições:
+  - `--regularizar-pendencia`: a CLI mostra o formulário de atendimento onde enviar os
+    documentos;
+  - `--nao-regularizar-pendencia`: **não haverá distribuição de lucros** no informe;
+  - `--nao-distribuir-lucros`: o informe fica sem distribuição isenta (diante de débitos
+    federais).
+- Todos são de risco alto e **sem desfazer**: não há endpoint para revogar um aceite, e não se
+  sabe se um novo aceite substitui o anterior. O padrão de `--ano` é o ano anterior.
+- O termo de débitos vai sempre como aceite "na primeira apresentação" (`PRIMEIRA_VEZ`): a CLI
+  não sabe se você adiou o termo no painel.
+

@@ -137,6 +137,7 @@ ctbz prolabore gestao-inteligente ativar|sair  # cálculo automático do pró-la
 ctbz lucros                                    # distribuição de lucros do exercício
 ctbz lucros distribuir --socio ID=60% ...      # registra a parte de cada sócio
 ctbz lucros informe --ano 2025                 # valores do informe de rendimentos dos sócios (IR)
+ctbz lucros informe restricoes|aceitar|decidir # restrições e aceites do informe
 ctbz balancete 2026-08                         # balancete do mês (árvore de contas)
 ctbz balanco 2025                              # balanço patrimonial do exercício
 ctbz razao --conta 1.01 --de 2026-01           # lançamentos do razão por conta

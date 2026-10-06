@@ -63,6 +63,10 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz lucros`](ctbz_lucros.md) | Mostra a distribuição de lucros do exercício e o que a impede |
 | [`ctbz lucros distribuir`](ctbz_lucros_distribuir.md) | Registra quanto do lucro do exercício cabe a cada sócio |
 | [`ctbz lucros informe`](ctbz_lucros_informe.md) | Mostra os valores do informe de rendimentos dos sócios (para o IR) |
+| [`ctbz lucros informe aceitar`](ctbz_lucros_informe_aceitar.md) | Aceita a carta de responsabilidade ou o termo de débitos federais do informe |
+| [`ctbz lucros informe carta`](ctbz_lucros_informe_carta.md) | Mostra a carta de responsabilidade do informe de rendimentos de um ano |
+| [`ctbz lucros informe decidir`](ctbz_lucros_informe_decidir.md) | Decide o que fazer com a pendência documental ou os débitos do informe |
+| [`ctbz lucros informe restricoes`](ctbz_lucros_informe_restricoes.md) | Mostra o que bloqueia o informe de rendimentos de um ano e o que falta aceitar |
 | [`ctbz mensalidade`](ctbz_mensalidade.md) | Mostra a mensalidade atual da Contabilizei (valor, vencimento e situação) |
 | [`ctbz mensalidade historico`](ctbz_mensalidade_historico.md) | Lista os pagamentos anteriores da mensalidade e a situação do débito automático |
 | [`ctbz mensalidade situacao`](ctbz_mensalidade_situacao.md) | Indica se a empresa está em dia com a Contabilizei |
