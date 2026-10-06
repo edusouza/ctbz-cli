@@ -33,3 +33,33 @@ ctbz usuarios ativar 102
 - Não se sabe se desativar um convite ainda não aceito o cancela; a CLI avisa no resumo.
 - O e-mail convidado não vai para o registro de ações (`ctbz acoes`), que só guarda o comando
   e o resultado.
+
+## Dados de acesso a órgãos públicos
+
+```sh
+ctbz empresa credenciais
+ctbz empresa credenciais atualizar --prefeitura
+ctbz empresa credenciais atualizar --codigo-simples --dataprev
+ctbz empresa credenciais confirmar-prefeitura
+```
+
+- São as credenciais que a Contabilizei usa para entregar declarações: o código de acesso do
+  Simples Nacional e o usuário e a senha da prefeitura e do Dataprev.
+- `ctbz empresa credenciais` mostra o código e as senhas só como `preenchido`; `--mostrar`
+  exibe os valores, apenas num terminal e na tabela. A API devolve as senhas em texto claro, e
+  a CLI nunca as grava nem as registra.
+- `atualizar` pede os novos valores **sem eco** no terminal, nunca por argumento: o código do
+  Simples tem 12 dígitos; usuário e senha precisam de pelo menos 3 caracteres (Enter no
+  usuário mantém o atual). As credenciais não escolhidas seguem como estão. Em scripts, sem
+  terminal, os valores são lidos da entrada padrão, uma linha por pergunta, e é preciso `--yes`.
+- Risco alto: credencial errada faz falhar a entrega de declarações (multas e juros). Depois
+  de salvar, a Contabilizei verifica o acesso e avisa por e-mail se ele for negado.
+- O `--dry-run` mostra `***` no lugar das senhas e do código. O registro de ações guarda só o
+  comando e o resultado.
+- `confirmar-prefeitura` é o "Sim, já atualizei a senha" do alerta "Redefina a senha da
+  prefeitura": declara que a senha cadastrada está correta (risco médio). Só é enviado quando o
+  painel mostra o alerta.
+- Usuários administradores não acessam os dados de acesso (a Contabilizei responde 403).
+- A situação da verificação (Pendente, Verificando acesso, Vinculada, Acesso negado) ainda não
+  aparece: o campo não foi visto numa resposta real.
+

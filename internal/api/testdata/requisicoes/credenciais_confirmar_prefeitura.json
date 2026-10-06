@@ -1,0 +1,6 @@
+[
+  {
+    "metodo": "PUT",
+    "caminho": "/api/plataforma/empresa/dadosacesso/confirmar-credencial-prefeitura-valida"
+  }
+]

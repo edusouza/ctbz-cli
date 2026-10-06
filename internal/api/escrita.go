@@ -332,6 +332,16 @@ func Escritas() []Escrita {
 		{Name: "usuarios_desativar", Exemplo: func(ctx context.Context, s Sender) error {
 			return AtivarUsuarioEmpresa(ctx, s, 102, false)
 		}},
+		{Name: "credenciais_atualizar", Exemplo: func(ctx context.Context, s Sender) error {
+			// Segredos fictícios e mascarados: o golden nunca guarda uma senha.
+			f, err := NovoFormularioDadosAcesso(json.RawMessage(`{"id":1000000000000001,"chaveAcessoSimples":"***","usuarioPrefeitura":"usuario-exemplo","senhaPrefeitura":"***","usuarioDataprev":null,"senhaDataprev":null,"dataValidadeSenhaPrefeituraCuritiba":null}`),
+				nil, map[string]string{CampoSenhaPrefeitura: "***-nova"})
+			if err != nil {
+				return err
+			}
+			return AtualizarDadosAcesso(ctx, s, f)
+		}},
+		{Name: "credenciais_confirmar_prefeitura", Exemplo: ConfirmarCredencialPrefeitura},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

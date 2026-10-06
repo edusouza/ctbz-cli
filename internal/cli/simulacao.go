@@ -60,7 +60,7 @@ func decodificar(data []byte) any {
 }
 
 // chavesSecretas identificam campos mostrados como *** no --dry-run (ADR-0018).
-var chavesSecretas = []string{"senha", "password", "secret", "token", "otp"}
+var chavesSecretas = []string{"senha", "password", "secret", "token", "otp", "chaveacesso"}
 
 func secreta(chave string) bool {
 	k := strings.ToLower(chave)

@@ -23,8 +23,9 @@ divergir, e o `--dry-run` mostraria algo diferente do que é enviado.
   Riscos baixo e médio aceitam `s`, `sim`, `y` ou `yes`; o risco alto exige `confirmo`.
   Qualquer outra resposta cancela (código 1). Sem terminal e sem `--yes`: erro de uso
   (código 2). O `--dry-run` não pede confirmação.
-- **Segredos no `--dry-run`:** campos cujo nome contém `senha`, `password`, `secret`, `token`
-  ou `otp`, ou se chama `codigo`/`code`, aparecem como `***`. Arquivos aparecem por nome e tamanho.
+- **Segredos no `--dry-run`:** campos cujo nome contém `senha`, `password`, `secret`, `token`,
+  `otp` ou `chaveAcesso` (código do Simples, acrescentado na v1.8), ou se chama
+  `codigo`/`code`, aparecem como `***`. Arquivos aparecem por nome e tamanho.
 - **Saída do `--dry-run`:** texto no formato `table` (parecido com uma requisição HTTP);
   lista com `metodo`, `caminho`, `content_type`, `corpo` e `campos` em JSON e CSV.
 - **Resultado:** `resultadoEscrita(acao, situacao, id)` começa o registro de saída com as

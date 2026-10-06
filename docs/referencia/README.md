@@ -31,6 +31,9 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz empresa`](ctbz_empresa.md) | Mostra os dados da empresa selecionada |
 | [`ctbz empresa atividades`](ctbz_empresa_atividades.md) | Lista os CNAEs da empresa e os anexos do Simples Nacional |
 | [`ctbz empresa certificado`](ctbz_empresa_certificado.md) | Mostra a situação do certificado digital da empresa e da renovação |
+| [`ctbz empresa credenciais`](ctbz_empresa_credenciais.md) | Mostra os dados de acesso a órgãos públicos (código do Simples, prefeitura, Dataprev) |
+| [`ctbz empresa credenciais atualizar`](ctbz_empresa_credenciais_atualizar.md) | Troca o código do Simples ou o usuário e a senha da prefeitura ou do Dataprev |
+| [`ctbz empresa credenciais confirmar-prefeitura`](ctbz_empresa_credenciais_confirmar-prefeitura.md) | Responde "Sim, já atualizei a senha" ao alerta da senha da prefeitura |
 | [`ctbz empresa socios`](ctbz_empresa_socios.md) | Lista os sócios da empresa |
 | [`ctbz empresa usar`](ctbz_empresa_usar.md) | Troca a empresa da sessão |
 | [`ctbz empresas`](ctbz_empresas.md) | Lista as empresas do usuário, marcando a atual |

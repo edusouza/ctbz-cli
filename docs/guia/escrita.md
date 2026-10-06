@@ -52,7 +52,7 @@ $ ctbz caixa remover 123 --competencia 2026-09 --dry-run
 DELETE /api/plataforma/caixa/lancamentousuario/remover/2026/9/123
 ```
 
-- Senhas, códigos e tokens aparecem como `***`.
+- Senhas, códigos (inclusive o código de acesso do Simples) e tokens aparecem como `***`.
 - Em uploads (multipart), aparecem os campos e o nome e o tamanho de cada arquivo, nunca o
   conteúdo.
 - Com `-o json` ou `-o csv`, sai uma lista com `metodo`, `caminho`, `content_type`, `corpo` e

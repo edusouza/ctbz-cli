@@ -1,0 +1,12 @@
+{
+  "formulario": {
+    "id": 1000000000000001,
+    "chaveAcessoSimples": "000000000000",
+    "usuarioPrefeitura": "usuario-exemplo",
+    "senhaPrefeitura": "***",
+    "usuarioDataprev": null,
+    "senhaDataprev": null,
+    "dataValidadeSenhaPrefeituraCuritiba": null
+  },
+  "alertaPendenciaCredencial": true
+}
