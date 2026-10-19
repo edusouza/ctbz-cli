@@ -23,6 +23,7 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   lucros).
 - `ctbz lucros distribuir`: registra a distribuição de lucros do exercício, em percentual ou
   em reais, com a soma conferida em centavos.
+- `ctbz lucros` mostra o `id` e o percentual de cada sócio; o `id` é o que `--socio` pede.
 
 ## [1.6.0] - 2026-10-04
 
