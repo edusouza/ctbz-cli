@@ -1,8 +1,13 @@
 package cli
 
 import (
+	"fmt"
 	"io"
+	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 )
 
@@ -113,5 +118,50 @@ func TestContaValidacoes(t *testing.T) {
 		if code != ExitUsage || !strings.Contains(stderr, tc.want) || len(f.writes) != 0 {
 			t.Errorf("%v: código %d, %d escritas, %q (quero %q)", tc.args, code, len(f.writes), stderr, tc.want)
 		}
+	}
+}
+
+func TestContaAlterarReleituraFalha(t *testing.T) {
+	// alterar-dados aceito e a releitura falha: aviso, "enviado", código 0 e nenhum re-login (#833).
+	for _, st := range []int{http.StatusUnauthorized, http.StatusServiceUnavailable} {
+		var mu sync.Mutex
+		var writes []string
+		writeServer(t, http.StatusOK, func(w http.ResponseWriter, r *http.Request) {
+			mu.Lock()
+			defer mu.Unlock()
+			if r.Method == http.MethodGet && r.URL.Path == pathDadosLogin {
+				if len(writes) == 2 {
+					w.WriteHeader(st)
+					return
+				}
+				io.WriteString(w, fixture(t, "dados_login"))
+				return
+			}
+			writes = append(writes, r.URL.Path)
+			io.WriteString(w, `{"tempo":60}`)
+		})
+		t.Setenv("CTBZ_OTP_CMD", "echo 999999") // um re-login apareceria no stderr
+		out, stderr, code := execCLI(t, "", "conta", "alterar", "--email", "novo@example.com", "--telefone", "11987654321", "--otp-cmd", "echo 123456", "--yes", "-o", "csv")
+		mu.Lock()
+		n := len(writes)
+		mu.Unlock()
+		if code != ExitOK || n != 2 || out != "acao,situacao,id\nalterar,enviado,\n" ||
+			!strings.Contains(stderr, "aviso: a alteração foi enviada, mas não foi possível reler os dados") || strings.Contains(stderr, "Sessão expirada") {
+			t.Errorf("HTTP %d: código %d, %d escritas, %q\n%s", st, code, n, out, stderr)
+		}
+	}
+}
+
+func TestContaOTPDesdeOPedido(t *testing.T) {
+	// O --otp-cmd recebe o instante do pedido do código, com poucos segundos de folga (#834).
+	contaFake(t)
+	fixNow(t, "2026-10-04")
+	arq := filepath.Join(t.TempDir(), "since")
+	_, stderr, code := execCLI(t, "", "conta", "alterar", "--email", "novo@example.com", "--telefone", "11987654321",
+		"--otp-cmd", `echo "$CTBZ_OTP_SINCE" > `+arq+`; echo 123456`, "--yes")
+	b, err := os.ReadFile(arq)
+	want := fmt.Sprint(now().Add(-folgaOTPConta).Unix())
+	if code != ExitOK || err != nil || strings.TrimSpace(string(b)) != want {
+		t.Errorf("código %d, since %q (quero %s), %v\n%s", code, b, want, err, stderr)
 	}
 }

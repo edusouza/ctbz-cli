@@ -24,8 +24,8 @@ func newEmpresaCredenciaisCmd() *cobra.Command {
 Simples Nacional, usuário e senha da prefeitura e do Dataprev, e se o painel pede para
 redefinir a senha da prefeitura.
 
-O código e as senhas aparecem só como "preenchido"; --mostrar exibe os valores, apenas num
-terminal e na tabela. Para usuário administrador a Contabilizei recusa (403).
+O código e as senhas aparecem só como "preenchido"; --mostrar exibe os valores, apenas na
+tabela e com a entrada e a saída num terminal (nunca redirecionada a arquivo ou pipe). Para usuário administrador a Contabilizei recusa (403).
 
 Para trocar: ctbz empresa credenciais atualizar; para responder ao alerta da prefeitura:
 ctbz empresa credenciais confirmar-prefeitura.`,
@@ -38,12 +38,12 @@ ctbz empresa credenciais confirmar-prefeitura.`,
 				return err
 			}
 			s := streamsOf(cmd)
-			if mostrar && (!s.interactive || f != output.FormatTable) {
+			if mostrar && (!s.interactive || !s.outTerminal || f != output.FormatTable) {
 				return usageError{errors.New("--mostrar só funciona num terminal e na tabela")}
 			}
 			d, err := api.BuscarDadosAcesso(cmd.Context(), sessionGetter{s})
 			if err != nil {
-				return err
+				return erroCredenciais(err)
 			}
 			fo := d.Formulario
 			segredo := func(v *string) any {
@@ -105,7 +105,7 @@ Risco alto: credencial errada faz falhar a entrega de declarações (multas e ju
 			g := sessionGetter{s}
 			d, err := api.BuscarDadosAcesso(cmd.Context(), g)
 			if err != nil {
-				return err
+				return erroCredenciais(err)
 			}
 			mudancas := map[string]string{}
 			var nomes []string
@@ -159,13 +159,21 @@ Risco alto: credencial errada faz falhar a entrega de declarações (multas e ju
 			op := operacao{Risco: riscoAlto, Resumo: "Atualizar os dados de acesso: " + strings.Join(nomes, ", "),
 				Consequencia: "Credencial errada faz falhar a entrega de declarações (multas e juros). As demais credenciais seguem como estão."}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
-				return erroAdmin(api.AtualizarDadosAcesso(cmd.Context(), snd, corpo))
+				return erroCredenciais(api.AtualizarDadosAcesso(cmd.Context(), snd, corpo))
 			})
 			if err != nil || !enviado {
 				return err
 			}
+			situacao := "enviado"
+			if relido, err := api.BuscarDadosAcesso(cmd.Context(), g); err != nil {
+				fmt.Fprintln(s.err, "aviso: dados de acesso enviados, mas não foi possível relê-los:", erroCredenciais(err))
+			} else if !camposGravados(relido.Formulario, mudancas) {
+				fmt.Fprintln(s.err, "aviso: os dados de acesso relidos ainda não mostram a mudança; confira com ctbz empresa credenciais")
+			} else {
+				situacao = "atualizada"
+			}
 			fmt.Fprintln(s.err, "Verificação de acesso iniciada: se o acesso for negado, a Contabilizei avisa por e-mail.")
-			return output.Write(s.out, f, resultadoEscrita("atualizar credenciais", "enviado", nil).Add("campos", "Campos", strings.Join(nomes, ", ")))
+			return output.Write(s.out, f, resultadoEscrita("atualizar credenciais", situacao, nil).Add("campos", "Campos", strings.Join(nomes, ", ")))
 		},
 	}
 	cmd.Flags().BoolVar(&simples, "codigo-simples", false, "troca o código de acesso do Simples Nacional")
@@ -196,7 +204,7 @@ Risco médio: se a declaração for falsa, as obrigações municipais falham. Ac
 			g := sessionGetter{s}
 			d, err := api.BuscarDadosAcesso(cmd.Context(), g)
 			if err != nil {
-				return err
+				return erroCredenciais(err)
 			}
 			if !d.AlertaPendenciaCredencial {
 				fmt.Fprintln(s.err, "O painel não pede para redefinir a senha da prefeitura; nada foi enviado.")
@@ -204,7 +212,7 @@ Risco médio: se a declaração for falsa, as obrigações municipais falham. Ac
 			}
 			op := operacao{Risco: riscoMedio, Resumo: "Declarar que a senha da prefeitura cadastrada está correta"}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
-				return erroAdmin(api.ConfirmarCredencialPrefeitura(cmd.Context(), snd))
+				return erroCredenciais(api.ConfirmarCredencialPrefeitura(cmd.Context(), snd))
 			})
 			if err != nil || !enviado {
 				return err
@@ -219,4 +227,27 @@ Risco médio: se a declaração for falsa, as obrigações municipais falham. Ac
 	}
 	addWriteFlags(cmd)
 	return cmd
+}
+
+// erroCredenciais traduz o 403 dos dados de acesso, que a Contabilizei nega a administradores.
+func erroCredenciais(err error) error {
+	return erroAdminCom(err, "os dados de acesso só podem ser lidos ou alterados pelo próprio cliente")
+}
+
+// camposGravados diz se o formulário relido tem os valores enviados. Compara sem imprimir
+// nada: as senhas e o código nunca saem da memória.
+func camposGravados(fo api.FormularioDadosAcesso, mudancas map[string]string) bool {
+	campos := map[string]*string{
+		api.CampoChaveAcessoSimples: fo.ChaveAcessoSimples,
+		api.CampoUsuarioPrefeitura:  fo.UsuarioPrefeitura,
+		api.CampoSenhaPrefeitura:    fo.SenhaPrefeitura,
+		api.CampoUsuarioDataprev:    fo.UsuarioDataprev,
+		api.CampoSenhaDataprev:      fo.SenhaDataprev,
+	}
+	for k, v := range mudancas {
+		if atual := campos[k]; atual == nil || *atual != v {
+			return false
+		}
+	}
+	return true
 }

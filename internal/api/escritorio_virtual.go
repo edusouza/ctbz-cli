@@ -94,8 +94,10 @@ func SalvarEnderecoCorrespondencia(ctx context.Context, s Sender, cep, numero, c
 }
 
 // AutorizacaoRecebimento diz se a empresa autoriza receber correspondências no endereço.
+// Autoriza é ponteiro: sem o campo (formato sintético, ADR-0021) o estado é desconhecido, e
+// nunca vira "não autorizado" (#840).
 type AutorizacaoRecebimento struct {
-	Autoriza bool `json:"autoriza" contract:"optional"`
+	Autoriza *bool `json:"autoriza" contract:"optional"`
 }
 
 // BuscarAutorizacaoRecebimento lê a autorização de recebimento.

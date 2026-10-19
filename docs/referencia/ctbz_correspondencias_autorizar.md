@@ -6,7 +6,8 @@ Liga (on) ou desliga (off) "Autorizo o recebimento de correspondências e docume
 entregues no endereço informado". O envio de correspondências pode ser cobrado (a lista mostra
 o valor do envio).
 
-Risco médio e reversível. Aceita --yes e --dry-run.
+on é de risco alto (o envio pode ser cobrado; pede "confirmo"), off é de risco médio; os dois
+são reversíveis. Aceita --yes e --dry-run.
 
 ## Uso
 
