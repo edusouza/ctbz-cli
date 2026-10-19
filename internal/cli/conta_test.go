@@ -1,8 +1,11 @@
 package cli
 
 import (
+	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"testing"
@@ -146,5 +149,19 @@ func TestContaAlterarReleituraFalha(t *testing.T) {
 			!strings.Contains(stderr, "aviso: a alteração foi enviada, mas não foi possível reler os dados") || strings.Contains(stderr, "Sessão expirada") {
 			t.Errorf("HTTP %d: código %d, %d escritas, %q\n%s", st, code, n, out, stderr)
 		}
+	}
+}
+
+func TestContaOTPDesdeOPedido(t *testing.T) {
+	// O --otp-cmd recebe o instante do pedido do código, com poucos segundos de folga (#834).
+	contaFake(t)
+	fixNow(t, "2026-10-04")
+	arq := filepath.Join(t.TempDir(), "since")
+	_, stderr, code := execCLI(t, "", "conta", "alterar", "--email", "novo@example.com", "--telefone", "11987654321",
+		"--otp-cmd", `echo "$CTBZ_OTP_SINCE" > `+arq+`; echo 123456`, "--yes")
+	b, err := os.ReadFile(arq)
+	want := fmt.Sprint(now().Add(-folgaOTPConta).Unix())
+	if code != ExitOK || err != nil || strings.TrimSpace(string(b)) != want {
+		t.Errorf("código %d, since %q (quero %s), %v\n%s", code, b, want, err, stderr)
 	}
 }

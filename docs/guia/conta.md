@@ -82,6 +82,8 @@ ctbz conta senha [--via sms]
 - O código é lido do `--otp-cmd` (ou `CTBZ_OTP_CMD`), como no [login](https://github.com/edusouza/ctbz-cli#login),
   ou digitado no terminal. Sem terminal, `--otp-cmd` é obrigatório e é conferido antes de
   qualquer envio. Se um código foi pedido há pouco, a CLI diz quantos segundos esperar.
+  Para o `--otp-cmd`, `CTBZ_OTP_SINCE` é o instante do pedido do código da conta (com 5
+  segundos de folga), para que um código de login recebido pouco antes não seja usado.
 - `alterar` pede **e-mail e telefone juntos**: a API recebe os dois e o painel mostra os atuais
   mascarados, então repita o que não muda. Telefone com DDD e 9 dígitos. Os próximos códigos
   de login vão para o novo e-mail: atualize `CTBZ_USER`. Depois do envio, a CLI relê os dados
