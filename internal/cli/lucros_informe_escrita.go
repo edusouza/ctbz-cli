@@ -173,13 +173,13 @@ func aceitarCartaInforme(cmd *cobra.Command, f output.Format, g api.Getter, ano 
 	if err != nil || !enviado {
 		return err
 	}
-	relida, err := api.BuscarCartaResponsabilidadeInforme(cmd.Context(), g, ano)
-	if err != nil {
-		return err
-	}
-	situacao := "enviado"
-	if !relida.DeveAssinarCartaResponsabilidade {
-		situacao = "aceita"
+	situacao := "aceita"
+	if relida, err := api.BuscarCartaResponsabilidadeInforme(cmd.Context(), g, ano); err != nil {
+		fmt.Fprintln(s.err, "aviso: aceite enviado, mas não foi possível reler a carta:", err)
+		situacao = "enviado"
+	} else if relida.DeveAssinarCartaResponsabilidade {
+		fmt.Fprintln(s.err, "aviso: a carta ainda aparece como pendente; confira com ctbz lucros informe carta")
+		situacao = "enviado"
 	}
 	return output.Write(s.out, f, resultadoEscrita(acao, situacao, fmt.Sprint(ano)))
 }

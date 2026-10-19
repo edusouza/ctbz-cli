@@ -170,9 +170,19 @@ CHAVE: ` + slugsTermos() + `.`,
 // erroAdmin traduz o 403 dos aceites e declarações: a sessão é de um administrador da
 // Contabilizei personificando o cliente.
 func erroAdmin(err error) error {
+	return erroAdminCom(err, "aceites e declarações só podem ser feitos pelo próprio cliente")
+}
+
+// erroAdminCom traduz o 403 de uma leitura ou escrita que só o próprio cliente pode fazer;
+// porque diz o quê.
+func erroAdminCom(err error, porque string) error {
 	var we *ctbz.WriteError
 	if errors.As(err, &we) && we.Status == http.StatusForbidden {
-		return fmt.Errorf("a Contabilizei recusou porque a sessão é de administrador (%s): aceites e declarações só podem ser feitos pelo próprio cliente", we.Message)
+		return fmt.Errorf("a Contabilizei recusou porque a sessão é de administrador (%s): %s", we.Message, porque)
+	}
+	var he *ctbz.HTTPError
+	if errors.As(err, &he) && he.Status == http.StatusForbidden {
+		return fmt.Errorf("a Contabilizei recusou porque a sessão é de administrador (HTTP 403): %s", porque)
 	}
 	return err
 }

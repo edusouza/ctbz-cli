@@ -133,11 +133,16 @@ func erroEnvioOTP(err error) error {
 	return err
 }
 
+// folgaOTPConta é quanto antes do pedido o código da conta pode ter chegado (diferença de relógio).
+const folgaOTPConta = 5 * time.Second
+
 func obterCodigo(cmd *cobra.Command, s streams, o otpOpts, metodo string, desde time.Time) (string, error) {
 	destino := map[string]string{api.MetodoOTPEmail: "por e-mail", api.MetodoOTPSMS: "por SMS", api.MetodoOTPApp: "no app autenticador"}[metodo]
 	if o.cmd != "" {
 		fmt.Fprintf(s.err, "Código enviado %s; aguardando via --otp-cmd…\n", destino)
-		return (&otp.Command{Cmd: o.cmd, Since: desde.Add(-time.Minute), Timeout: o.timeout, Log: verboseWriter(s)}).Fetch(cmd.Context())
+		// Folga curta, só para o relógio: um minuto (como no login) deixaria passar o código de
+		// um login feito há pouco (#834).
+		return (&otp.Command{Cmd: o.cmd, Since: desde.Add(-folgaOTPConta), Timeout: o.timeout, Log: verboseWriter(s)}).Fetch(cmd.Context())
 	}
 	for range 3 {
 		fmt.Fprintf(s.err, "Código %s: ", destino)
@@ -202,9 +207,10 @@ erro pode tirar seu acesso. Dá para alterar de novo. Aceita --yes e --dry-run.`
 			if err != nil || !enviado {
 				return err
 			}
-			d, err := api.BuscarDadosLogin(cmd.Context(), g)
+			d, err := api.BuscarDadosLogin(cmd.Context(), releituraGetter{s})
 			if err != nil {
-				return err
+				fmt.Fprintf(s.err, "aviso: a alteração foi enviada, mas não foi possível reler os dados: %v; atualize CTBZ_USER e confira com ctbz conta (pode ser preciso ctbz login com o novo e-mail)\n", err)
+				return output.Write(s.out, f, resultadoEscrita("alterar", "enviado", nil))
 			}
 			rec := resultadoEscrita("alterar", "alterado", nil)
 			for _, c := range dadosLoginRecord(d).Fields {

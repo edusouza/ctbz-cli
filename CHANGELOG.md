@@ -39,6 +39,7 @@ os aceites do informe e reabrir o balanço.
 - `ctbz prolabore` mostra o `id` de cada sócio, usado em `--socio`.
 - `ctbz lucros distribuir`: registra a distribuição de lucros do exercício, em percentual ou
   em reais, com a soma conferida em centavos.
+- `ctbz lucros` mostra o `id` e o percentual de cada sócio; o `id` é o que `--socio` pede.
 - `ctbz lucros informe restricoes` e `carta`: o que bloqueia o informe de rendimentos de um ano
   e o texto da carta de responsabilidade.
 - `ctbz lucros informe aceitar carta-responsabilidade|termo-debitos` e `decidir`: aceites e

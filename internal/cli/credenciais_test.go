@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"io"
+	"net/http"
 	"strings"
 	"testing"
 )
@@ -29,8 +31,32 @@ func TestCredenciaisMascaradas(t *testing.T) {
 	}
 }
 
+func TestCredenciaisMostrarSoNoTerminal(t *testing.T) {
+	// Com a entrada num terminal e a saída redirecionada, --mostrar recusa sem imprimir segredo (#825).
+	credenciaisFake(t, fixture(t, "dados_acesso"))
+	oldIn, oldOut := isTerminal, isTerminalOut
+	t.Cleanup(func() { isTerminal, isTerminalOut = oldIn, oldOut })
+	isTerminal = func(io.Reader) bool { return true }
+	isTerminalOut = func(io.Writer) bool { return false }
+	out, stderr, code := execCLI(t, "", "empresa", "credenciais", "--mostrar")
+	if code != ExitUsage || out != "" || !strings.Contains(stderr, "só funciona num terminal") {
+		t.Errorf("saída redirecionada: código %d, %q, %s", code, out, stderr)
+	}
+	isTerminalOut = func(io.Writer) bool { return true }
+	out, stderr, code = execCLI(t, "", "empresa", "credenciais", "--mostrar")
+	if code != ExitOK || !strings.Contains(out, "000000000000") {
+		t.Errorf("terminal: código %d, %q, %s", code, out, stderr)
+	}
+}
+
+// gravaDadosAcesso faz a releitura mostrar os valores enviados.
+func gravaDadosAcesso(f *escritaFake) {
+	f.gets[pathDadosAcesso] = strings.NewReplacer(`"000000000000"`, `"123456789012"`, `"senhaPrefeitura": "***"`, `"senhaPrefeitura": "nova senha"`).Replace(f.gets[pathDadosAcesso])
+}
+
 func TestCredenciaisAtualizar(t *testing.T) {
 	f := credenciaisFake(t, fixture(t, "dados_acesso"))
+	f.onWrite = gravaDadosAcesso
 	// Uma linha por pergunta: código, usuário da prefeitura (Enter mantém) e senha.
 	out, stderr, code := execCLI(t, "123456789012\n\nnova senha\n", "empresa", "credenciais", "atualizar", "--codigo-simples", "--prefeitura", "--yes", "-o", "csv")
 	want := `POST /api/plataforma/empresa/dadosacesso/atualizarDadosAcesso {"chaveAcessoSimples":"123456789012","dataValidadeSenhaPrefeituraCuritiba":null,"id":1000000000000001,` +
@@ -45,8 +71,26 @@ func TestCredenciaisAtualizar(t *testing.T) {
 		!strings.Contains(stderr, "Usuário da prefeitura [Enter mantém usuario-exemplo]: ") || !strings.Contains(stderr, "Verificação de acesso iniciada") {
 		t.Errorf("stderr:\n%s", stderr)
 	}
-	if out != "acao,situacao,id,campos\natualizar credenciais,enviado,,\"código do Simples, usuário e senha da prefeitura\"\n" {
+	if out != "acao,situacao,id,campos\natualizar credenciais,atualizada,,\"código do Simples, usuário e senha da prefeitura\"\n" {
 		t.Errorf("saída:\n%s", out)
+	}
+}
+
+func TestCredenciaisAtualizarReleitura(t *testing.T) {
+	// A releitura não confirma ou falha: "enviado" com aviso, código 0 e sem segredo na saída (#826).
+	for nome, onWrite := range map[string]func(*escritaFake){
+		"diverge": func(*escritaFake) {},
+		"falha":   func(f *escritaFake) { delete(f.gets, pathDadosAcesso) },
+	} {
+		f := credenciaisFake(t, fixture(t, "dados_acesso"))
+		f.onWrite = onWrite
+		out, stderr, code := execCLI(t, "123456789012\n\nnova senha\n", "empresa", "credenciais", "atualizar", "--codigo-simples", "--prefeitura", "--yes", "-o", "csv")
+		if code != ExitOK || len(f.writes) != 1 || !strings.Contains(out, "atualizar credenciais,enviado,") || !strings.Contains(stderr, "aviso: ") {
+			t.Errorf("%s: código %d, %d escritas, %q\n%s", nome, code, len(f.writes), out, stderr)
+		}
+		if strings.Contains(stderr+out, "nova senha") || strings.Contains(stderr+out, "123456789012") {
+			t.Errorf("%s: segredo na saída:\n%s\n%s", nome, stderr, out)
+		}
 	}
 }
 
@@ -87,5 +131,30 @@ func TestCredenciaisConfirmarPrefeitura(t *testing.T) {
 	_, stderr, code = execCLI(t, "", "empresa", "credenciais", "confirmar-prefeitura", "--yes")
 	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(stderr, "não pede para redefinir") {
 		t.Errorf("sem alerta: código %d, %d escritas, %s", code, len(f.writes), stderr)
+	}
+}
+
+func TestCredenciaisAdministrador(t *testing.T) {
+	// 403 na leitura e na escrita: a mensagem fala de dados de acesso, não de aceites (#828).
+	writeServer(t, http.StatusOK, func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+		io.WriteString(w, `{"mensagem":"Usuário admin não pode acessar."}`)
+	})
+	for _, args := range [][]string{
+		{"empresa", "credenciais"},
+		{"empresa", "credenciais", "atualizar", "--codigo-simples", "--yes"},
+		{"empresa", "credenciais", "confirmar-prefeitura", "--yes"},
+	} {
+		_, stderr, code := execCLI(t, "123456789012\n", args...)
+		if code != ExitError || !strings.Contains(stderr, "sessão é de administrador") || !strings.Contains(stderr, "dados de acesso só podem ser lidos ou alterados pelo próprio cliente") ||
+			strings.Contains(stderr, "aceites e declarações") {
+			t.Errorf("leitura %v: código %d, %s", args, code, stderr)
+		}
+	}
+	f := credenciaisFake(t, fixture(t, "dados_acesso"))
+	f.status, f.resposta = http.StatusForbidden, `{"mensagem":"Usuário admin não pode alterar."}`
+	_, stderr, code := execCLI(t, "", "empresa", "credenciais", "confirmar-prefeitura", "--yes")
+	if code != ExitError || !strings.Contains(stderr, "sessão é de administrador") || strings.Contains(stderr, "aceites e declarações") {
+		t.Errorf("escrita: código %d, %s", code, stderr)
 	}
 }
