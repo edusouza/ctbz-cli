@@ -164,8 +164,8 @@ Pendência documental:    não
 Débitos federais:        não
 Reabertura do balanço:   NENHUM
 Por sócio:
-  Sócio          Valor
-  FULANO DE TAL  R$ 3.000,00
+  Sócio          Valor        Percentual  ID
+  FULANO DE TAL  R$ 3.000,00  100         1000000000000001
 ```
 
 - O exercício é o que a Contabilizei tem aberto para distribuição; a API não aceita outro
@@ -181,9 +181,9 @@ ctbz lucros distribuir --socio 1000000000000001=60% --socio 1000000000000002=40%
 ctbz lucros distribuir --socio 1000000000000001=30000,00 --socio 1000000000000002=20000,00
 ```
 
-- Diz quanto do lucro do exercício cabe a cada sócio no informe de rendimentos. Os IDs estão
-  em `ctbz empresa socios`; cada `--socio` aceita um percentual (`60%`, `33,33%`) ou um valor
-  em reais. Os sócios não citados ficam com zero.
+- Diz quanto do lucro do exercício cabe a cada sócio no informe de rendimentos. Os IDs são o
+  `id` de cada sócio em `ctbz lucros`; cada `--socio` aceita um percentual (`60%`, `33,33%`)
+  ou um valor em reais. Os sócios não citados ficam com zero.
 - A soma precisa ser o **lucro total** do exercício: o saldo na empresa mais o já distribuído
   (a regra do painel). A CLI calcula em centavos; quando os percentuais não fecham por
   arredondamento, o centavo de diferença vai para o último sócio citado em percentual.

@@ -7,9 +7,9 @@ rendimentos dos sócios. Cada --socio ID=parte diz a parte de um sócio, em perc
 em reais (30000,00); os sócios não citados ficam com zero. A soma precisa ser o lucro total
 (saldo na empresa + o já distribuído), como no painel.
 
-Os IDs dos sócios estão em ctbz empresa socios. A distribuição só é aceita enquanto o painel
-deixa alterar (até a data limite) e sem restrições no informe (pendência documental ou
-débitos federais, ver ctbz lucros).
+Os IDs dos sócios são o id de cada sócio em ctbz lucros. A distribuição só é aceita
+enquanto o painel deixa alterar (até a data limite) e sem restrições no informe (pendência
+documental ou débitos federais, também em ctbz lucros).
 
 Risco alto: define os rendimentos isentos que os sócios declaram no IRPF. Dá para refazer
 enquanto a distribuição puder ser alterada. Aceita --yes e --dry-run.
