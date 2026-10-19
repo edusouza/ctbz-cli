@@ -56,7 +56,9 @@ ctbz balanco reabrir --ano 2025
   Contabilizei, e a distribuição de lucros do ano depende dela. Uma sessão de administrador é
   recusada pela Contabilizei.
 - Depois do envio, a CLI relê o status da reabertura (`EM_ANDAMENTO`, `ANALISANDO`); o
-  andamento aparece na Central de Rotinas (`ctbz pendencias`).
+  andamento aparece na Central de Rotinas (`ctbz pendencias`). Se a releitura falhar ou ainda
+  não mostrar o status, a saída é `enviado` (com um aviso): a reabertura já foi pedida e não
+  deve ser repetida.
 
 ## Razão
 

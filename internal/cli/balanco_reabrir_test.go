@@ -32,6 +32,17 @@ func TestBalancoReabrir(t *testing.T) {
 	}
 }
 
+func TestBalancoReabrirReleituraFalha(t *testing.T) {
+	// O POST já foi aceito: a falha na releitura vira aviso, e a saída diz "enviado" com código 0 (#807).
+	f := reabrirFake(t, restricoesReabertura("REABERTURA_BALANCO", "NENHUM"))
+	f.onWrite = func(f *escritaFake) { delete(f.gets, pathRestricoes) }
+	out, stderr, code := execCLI(t, "", "balanco", "reabrir", "--ano", "2025", "--yes", "-o", "csv")
+	if code != ExitOK || len(f.writes) != 1 || out != "acao,situacao,id\nreabrir,enviado,2025\n" ||
+		!strings.Contains(stderr, "aviso: reabertura enviada, mas não foi possível reler as restrições") {
+		t.Errorf("código %d, %d escritas, %q\n%s", code, len(f.writes), out, stderr)
+	}
+}
+
 func TestBalancoReabrirRecusas(t *testing.T) {
 	for _, tc := range []struct {
 		nome, restricoes string
