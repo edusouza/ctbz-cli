@@ -33,7 +33,7 @@ desativar|ativar.`,
 				return err
 			}
 			s := streamsOf(cmd)
-			us, err := api.BuscarUsuariosEmpresa(cmd.Context(), sessionGetter{s})
+			us, err := usuariosEmpresa(cmd, sessionGetter{s})
 			if err != nil {
 				return err
 			}
@@ -84,7 +84,7 @@ desativar. Aceita --yes e --dry-run.`,
 			if !st.Ativo {
 				return errors.New("o serviço de multiusuário está indisponível no momento")
 			}
-			us, err := api.BuscarUsuariosEmpresa(cmd.Context(), g)
+			us, err := usuariosEmpresa(cmd, g)
 			if err != nil {
 				return err
 			}
@@ -192,7 +192,7 @@ Risco médio: reversível com ativar ou desativar. Aceita --yes e --dry-run.`,
 
 // usuarioPor acha um usuário da empresa.
 func usuarioPor(cmd *cobra.Command, g api.Getter, achou func(api.UsuarioEmpresa) bool) (*api.UsuarioEmpresa, error) {
-	us, err := api.BuscarUsuariosEmpresa(cmd.Context(), g)
+	us, err := usuariosEmpresa(cmd, g)
 	if err != nil {
 		return nil, err
 	}
@@ -202,4 +202,15 @@ func usuarioPor(cmd *cobra.Command, g api.Getter, achou func(api.UsuarioEmpresa)
 		}
 	}
 	return nil, errors.New("usuário não encontrado (veja ctbz usuarios)")
+}
+
+// usuariosEmpresa lê os usuários sem caracteres de controle nos textos: o nome é escolhido por
+// quem aceitou o convite e aparece no resumo que o usuário confirma (#816).
+func usuariosEmpresa(cmd *cobra.Command, g api.Getter) ([]api.UsuarioEmpresa, error) {
+	us, err := api.BuscarUsuariosEmpresa(cmd.Context(), g)
+	for i := range us {
+		u := &us[i]
+		u.Nome, u.Email, u.Tipo, u.Status = semControle(u.Nome), semControle(u.Email), semControle(u.Tipo), semControle(u.Status)
+	}
+	return us, err
 }

@@ -103,3 +103,22 @@ func TestUsuariosAtivarDesativar(t *testing.T) {
 		}
 	}
 }
+
+func TestUsuariosSemControle(t *testing.T) {
+	// Textos da API sem caracteres de controle no resumo, nos avisos e na tabela (#816).
+	f := usuariosFake(t, fixture(t, "status_multiusuario"))
+	f.gets[pathUsuarios] = `[{"id":102,"nome":"\u001b[2K\rFORJADO","email":"b@example.com\u001b[1A","tipo":"USUARIO_SECUNDARIO","status":"INATIVO\u0007"}]`
+	f.onWrite = nil
+	out, stderr, code := execCLI(t, "", "usuarios", "-o", "csv")
+	if code != ExitOK || strings.ContainsAny(out, "\x1b\r\a") || !strings.Contains(out, "102,[2KFORJADO,b@example.com[1A,USUARIO_SECUNDARIO,INATIVO\n") {
+		t.Errorf("lista: código %d, %q\n%s", code, out, stderr)
+	}
+	_, stderr, code = execCLI(t, "", "usuarios", "ativar", "102", "--yes")
+	if code != ExitOK || len(f.writes) != 1 || strings.ContainsAny(stderr, "\x1b\r\a") || !strings.Contains(stderr, "Ativar o acesso de [2KFORJADO (b@example.com[1A, INATIVO)") {
+		t.Errorf("ativar: código %d, %q", code, stderr)
+	}
+	_, stderr, code = execCLI(t, "", "usuarios", "desativar", "102", "--yes")
+	if code != ExitOK || len(f.writes) != 1 || strings.ContainsAny(stderr, "\x1b\r\a") || !strings.Contains(stderr, "já está INATIVO") {
+		t.Errorf("desativar: código %d, %q", code, stderr)
+	}
+}
