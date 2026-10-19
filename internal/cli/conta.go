@@ -202,9 +202,10 @@ erro pode tirar seu acesso. Dá para alterar de novo. Aceita --yes e --dry-run.`
 			if err != nil || !enviado {
 				return err
 			}
-			d, err := api.BuscarDadosLogin(cmd.Context(), g)
+			d, err := api.BuscarDadosLogin(cmd.Context(), releituraGetter{s})
 			if err != nil {
-				return err
+				fmt.Fprintf(s.err, "aviso: a alteração foi enviada, mas não foi possível reler os dados: %v; atualize CTBZ_USER e confira com ctbz conta (pode ser preciso ctbz login com o novo e-mail)\n", err)
+				return output.Write(s.out, f, resultadoEscrita("alterar", "enviado", nil))
 			}
 			rec := resultadoEscrita("alterar", "alterado", nil)
 			for _, c := range dadosLoginRecord(d).Fields {

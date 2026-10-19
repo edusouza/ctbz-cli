@@ -84,7 +84,9 @@ ctbz conta senha [--via sms]
   qualquer envio. Se um código foi pedido há pouco, a CLI diz quantos segundos esperar.
 - `alterar` pede **e-mail e telefone juntos**: a API recebe os dois e o painel mostra os atuais
   mascarados, então repita o que não muda. Telefone com DDD e 9 dígitos. Os próximos códigos
-  de login vão para o novo e-mail: atualize `CTBZ_USER`.
+  de login vão para o novo e-mail: atualize `CTBZ_USER`. Depois do envio, a CLI relê os dados
+  sem refazer o login: se a releitura falhar, a saída é `enviado` (com um aviso), a troca já
+  foi feita e pode ser preciso `ctbz login` com o novo e-mail.
 - `senha` pede a nova senha duas vezes, sem eco (em scripts, duas linhas na entrada padrão).
   Regras do painel: pelo menos 8 caracteres, com minúsculas, maiúsculas, números e um caractere
   especial. A senha atual não é pedida: a prova é o código. Atualize `CTBZ_PASSWORD`; outras

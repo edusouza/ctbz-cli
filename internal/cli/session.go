@@ -18,6 +18,11 @@ import (
 // authedAPI faz uma chamada com a sessão salva. Se a sessão tiver expirado e
 // CTBZ_OTP_CMD estiver configurado, refaz o login sozinho e repete a chamada.
 func authedAPI(ctx context.Context, s streams, method, path string, body []byte) (*ctbz.Response, error) {
+	return chamarComSessao(ctx, s, method, path, body, true)
+}
+
+// chamarComSessao é authedAPI com o re-login opcional.
+func chamarComSessao(ctx context.Context, s streams, method, path string, body []byte, relogar bool) (*ctbz.Response, error) {
 	store, err := ctbz.DefaultStore()
 	if err != nil {
 		return nil, err
@@ -28,7 +33,7 @@ func authedAPI(ctx context.Context, s streams, method, path string, body []byte)
 	}
 	c := sess.Client()
 	resp, err := c.API(ctx, method, path, bodyReader(body))
-	if errors.Is(err, ctbz.ErrUnauthorized) && os.Getenv("CTBZ_OTP_CMD") != "" {
+	if relogar && errors.Is(err, ctbz.ErrUnauthorized) && os.Getenv("CTBZ_OTP_CMD") != "" {
 		sess, err = relogin(ctx, store, s, sess)
 		if err != nil {
 			return nil, err
@@ -65,7 +70,11 @@ func relogin(ctx context.Context, store *ctbz.Store, s streams, expirada *ctbz.S
 
 // getJSON chama um endpoint com GET e decodifica a resposta em v.
 func getJSON(ctx context.Context, s streams, path string, v any) error {
-	resp, err := authedAPI(ctx, s, "GET", path, nil)
+	return getJSONCom(ctx, s, path, v, true)
+}
+
+func getJSONCom(ctx context.Context, s streams, path string, v any, relogar bool) error {
+	resp, err := chamarComSessao(ctx, s, "GET", path, nil, relogar)
 	if err != nil {
 		return err
 	}
@@ -83,6 +92,15 @@ type sessionGetter struct{ s streams }
 
 func (g sessionGetter) GetJSON(ctx context.Context, path string, v any) error {
 	return getJSON(ctx, g.s, path, v)
+}
+
+// releituraGetter implementa api.Getter sem re-login: depois de uma escrita que pode ter
+// encerrado a sessão (troca do e-mail de login), um 401 na releitura não dispara outro OTP de
+// login (#833).
+type releituraGetter struct{ s streams }
+
+func (g releituraGetter) GetJSON(ctx context.Context, path string, v any) error {
+	return getJSONCom(ctx, g.s, path, v, false)
 }
 
 // GetText implementa api.TextGetter: devolve o corpo de um GET como texto.
