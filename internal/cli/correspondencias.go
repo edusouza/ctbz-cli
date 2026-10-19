@@ -197,7 +197,8 @@ func newCorrespondenciasAutorizarCmd() *cobra.Command {
 entregues no endereço informado". O envio de correspondências pode ser cobrado (a lista mostra
 o valor do envio).
 
-Risco médio e reversível. Aceita --yes e --dry-run.`,
+on é de risco alto (o envio pode ser cobrado; pede "confirmo"), off é de risco médio; os dois
+são reversíveis. Aceita --yes e --dry-run.`,
 		Example:   `  ctbz correspondencias autorizar on`,
 		Args:      exactArgs(1, "on ou off"),
 		ValidArgs: []string{"on", "off"},
@@ -225,7 +226,9 @@ Risco médio e reversível. Aceita --yes e --dry-run.`,
 			}
 			op := operacao{Risco: riscoMedio, Resumo: "Deixar de autorizar o recebimento de correspondências no endereço informado"}
 			if autoriza {
-				op.Resumo = "Autorizar o recebimento de correspondências no endereço informado; o envio pode ser cobrado"
+				// Risco alto pela cobrança (ADR-0018, regra 3), embora reversível com off (#841).
+				op = operacao{Risco: riscoAlto, Resumo: "Autorizar o recebimento de correspondências no endereço informado; o envio pode ser cobrado",
+					Consequencia: `Aceita o termo "Autorizo o recebimento de correspondências e documentos entregues no endereço informado". O envio de cada correspondência pode ser cobrado (veja o valor do envio em ctbz correspondencias). Dá para desligar com autorizar off.`}
 			}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.AutorizarRecebimento(cmd.Context(), snd, autoriza) })
 			if err != nil || !enviado {

@@ -116,6 +116,8 @@ ctbz correspondencias autorizar on|off
 - `autorizar` liga ou desliga "Autorizo o recebimento de correspondências e documentos
   entregues no endereço informado". Se a Contabilizei não informar o estado atual, a CLI avisa
   e envia o pedido mesmo assim, em vez de concluir que não há nada a fazer.
-- Trocar o endereço e a autorização são de risco médio e reversíveis.
+- `autorizar on` é de risco alto: o envio pode ser cobrado, e a CLI mostra o termo e pede
+  `confirmo`. `autorizar off` e a troca do endereço são de risco médio; todos são reversíveis
+  (o endereço, regravando-o).
 - Os formatos vêm do código do painel: a conta usada no desenvolvimento não tinha o serviço.
 

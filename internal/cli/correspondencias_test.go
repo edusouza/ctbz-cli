@@ -89,6 +89,27 @@ func TestCorrespondenciasAutorizar(t *testing.T) {
 	}
 }
 
+func TestCorrespondenciasAutorizarRiscoAlto(t *testing.T) {
+	// on tem cobrança: risco alto com a consequência e "confirmo" no terminal (#841).
+	f := correspondenciasFake(t)
+	old := isTerminal
+	t.Cleanup(func() { isTerminal = old })
+	isTerminal = func(io.Reader) bool { return true }
+	_, stderr, code := execCLI(t, "s\n", "correspondencias", "autorizar", "on")
+	if code == ExitOK || len(f.writes) != 0 || !strings.Contains(stderr, "(risco alto)") || !strings.Contains(stderr, "pode ser cobrado") {
+		t.Errorf("s não basta: código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+	_, stderr, code = execCLI(t, "confirmo\n", "correspondencias", "autorizar", "on")
+	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(f.writes[0], "/true") {
+		t.Errorf("confirmo: código %d, %q\n%s", code, f.writes, stderr)
+	}
+	isTerminal = func(io.Reader) bool { return false }
+	f = correspondenciasFake(t)
+	if _, _, code := execCLI(t, "", "correspondencias", "autorizar", "on"); code != ExitUsage || len(f.writes) != 0 {
+		t.Errorf("sem terminal e sem --yes: código %d, %d escritas", code, len(f.writes))
+	}
+}
+
 func TestCorrespondenciasAutorizarSemCampo(t *testing.T) {
 	// Leitura sem "autoriza": o estado é desconhecido e o off é enviado, nunca "nada foi enviado" (#840).
 	f := correspondenciasFake(t)
