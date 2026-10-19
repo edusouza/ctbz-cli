@@ -89,6 +89,26 @@ func TestCorrespondenciasAutorizar(t *testing.T) {
 	}
 }
 
+func TestCorrespondenciasAutorizarSemCampo(t *testing.T) {
+	// Leitura sem "autoriza": o estado é desconhecido e o off é enviado, nunca "nada foi enviado" (#840).
+	f := correspondenciasFake(t)
+	f.gets[pathAutorizacao] = `{}`
+	f.onWrite = nil
+	out, stderr, code := execCLI(t, "", "correspondencias", "autorizar", "off", "--yes", "-o", "csv")
+	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != "PUT /api/plataforma/escritorio-virtual/autorizar-recebimento/false " ||
+		strings.Contains(stderr, "nada foi enviado") || !strings.Contains(stderr, "não informou se o recebimento está autorizado") ||
+		out != "acao,situacao,id,autoriza\nautorizar,enviado,,false\n" {
+		t.Errorf("sem campo: código %d, %q\n%s\n%s", code, f.writes, stderr, out)
+	}
+	// Autorizado e off: envia.
+	f = correspondenciasFake(t)
+	f.gets[pathAutorizacao] = `{"autoriza":true}`
+	_, stderr, code = execCLI(t, "", "correspondencias", "autorizar", "off", "--yes")
+	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(f.writes[0], "/false") {
+		t.Errorf("off: código %d, %q\n%s", code, f.writes, stderr)
+	}
+}
+
 func TestCorrespondenciasBaixar(t *testing.T) {
 	pdf := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { io.WriteString(w, "%PDF-correspondencia") }))
 	t.Cleanup(pdf.Close)

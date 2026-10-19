@@ -114,7 +114,8 @@ ctbz correspondencias autorizar on|off
   vêm do CEP, e a CLI mostra o endereço de antes e o novo. A mudança vale só para o envio das
   correspondências.
 - `autorizar` liga ou desliga "Autorizo o recebimento de correspondências e documentos
-  entregues no endereço informado".
+  entregues no endereço informado". Se a Contabilizei não informar o estado atual, a CLI avisa
+  e envia o pedido mesmo assim, em vez de concluir que não há nada a fazer.
 - Trocar o endereço e a autorização são de risco médio e reversíveis.
 - Os formatos vêm do código do painel: a conta usada no desenvolvimento não tinha o serviço.
 

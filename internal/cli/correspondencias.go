@@ -217,7 +217,9 @@ Risco médio e reversível. Aceita --yes e --dry-run.`,
 				return semEscritorioVirtual(err)
 			}
 			estado := map[bool]string{true: "autorizado", false: "não autorizado"}
-			if atual.Autoriza == autoriza {
+			if atual.Autoriza == nil {
+				fmt.Fprintln(s.err, "aviso: a Contabilizei não informou se o recebimento está autorizado; a CLI vai enviar o pedido mesmo assim")
+			} else if *atual.Autoriza == autoriza {
 				fmt.Fprintf(s.err, "O recebimento já está %s; nada foi enviado.\n", estado[autoriza])
 				return output.Write(s.out, f, resultadoEscrita("autorizar", "sem mudança", nil).Add("autoriza", "Autoriza", autoriza))
 			}
@@ -231,7 +233,7 @@ Risco médio e reversível. Aceita --yes e --dry-run.`,
 			}
 			relida, err := api.BuscarAutorizacaoRecebimento(cmd.Context(), g)
 			situacao := "enviado"
-			if err == nil && relida.Autoriza == autoriza {
+			if err == nil && relida.Autoriza != nil && *relida.Autoriza == autoriza {
 				situacao = estado[autoriza]
 			}
 			return output.Write(s.out, f, resultadoEscrita("autorizar", situacao, nil).Add("autoriza", "Autoriza", autoriza))
