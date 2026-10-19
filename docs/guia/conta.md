@@ -56,6 +56,9 @@ ctbz empresa credenciais confirmar-prefeitura
   terminal, os valores são lidos da entrada padrão, uma linha por pergunta, e é preciso `--yes`.
 - Risco alto: credencial errada faz falhar a entrega de declarações (multas e juros). Depois
   de salvar, a Contabilizei verifica o acesso e avisa por e-mail se ele for negado.
+- Depois do envio, a CLI relê os dados de acesso e compara os campos trocados, sem mostrá-los:
+  `atualizada` quando os valores relidos são os enviados, `enviado` (com um aviso) quando
+  ainda não são ou a releitura falha.
 - O `--dry-run` mostra `***` no lugar das senhas e do código. O registro de ações guarda só o
   comando e o resultado.
 - `confirmar-prefeitura` é o "Sim, já atualizei a senha" do alerta "Redefina a senha da

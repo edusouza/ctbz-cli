@@ -49,8 +49,14 @@ func TestCredenciaisMostrarSoNoTerminal(t *testing.T) {
 	}
 }
 
+// gravaDadosAcesso faz a releitura mostrar os valores enviados.
+func gravaDadosAcesso(f *escritaFake) {
+	f.gets[pathDadosAcesso] = strings.NewReplacer(`"000000000000"`, `"123456789012"`, `"senhaPrefeitura": "***"`, `"senhaPrefeitura": "nova senha"`).Replace(f.gets[pathDadosAcesso])
+}
+
 func TestCredenciaisAtualizar(t *testing.T) {
 	f := credenciaisFake(t, fixture(t, "dados_acesso"))
+	f.onWrite = gravaDadosAcesso
 	// Uma linha por pergunta: código, usuário da prefeitura (Enter mantém) e senha.
 	out, stderr, code := execCLI(t, "123456789012\n\nnova senha\n", "empresa", "credenciais", "atualizar", "--codigo-simples", "--prefeitura", "--yes", "-o", "csv")
 	want := `POST /api/plataforma/empresa/dadosacesso/atualizarDadosAcesso {"chaveAcessoSimples":"123456789012","dataValidadeSenhaPrefeituraCuritiba":null,"id":1000000000000001,` +
@@ -65,8 +71,26 @@ func TestCredenciaisAtualizar(t *testing.T) {
 		!strings.Contains(stderr, "Usuário da prefeitura [Enter mantém usuario-exemplo]: ") || !strings.Contains(stderr, "Verificação de acesso iniciada") {
 		t.Errorf("stderr:\n%s", stderr)
 	}
-	if out != "acao,situacao,id,campos\natualizar credenciais,enviado,,\"código do Simples, usuário e senha da prefeitura\"\n" {
+	if out != "acao,situacao,id,campos\natualizar credenciais,atualizada,,\"código do Simples, usuário e senha da prefeitura\"\n" {
 		t.Errorf("saída:\n%s", out)
+	}
+}
+
+func TestCredenciaisAtualizarReleitura(t *testing.T) {
+	// A releitura não confirma ou falha: "enviado" com aviso, código 0 e sem segredo na saída (#826).
+	for nome, onWrite := range map[string]func(*escritaFake){
+		"diverge": func(*escritaFake) {},
+		"falha":   func(f *escritaFake) { delete(f.gets, pathDadosAcesso) },
+	} {
+		f := credenciaisFake(t, fixture(t, "dados_acesso"))
+		f.onWrite = onWrite
+		out, stderr, code := execCLI(t, "123456789012\n\nnova senha\n", "empresa", "credenciais", "atualizar", "--codigo-simples", "--prefeitura", "--yes", "-o", "csv")
+		if code != ExitOK || len(f.writes) != 1 || !strings.Contains(out, "atualizar credenciais,enviado,") || !strings.Contains(stderr, "aviso: ") {
+			t.Errorf("%s: código %d, %d escritas, %q\n%s", nome, code, len(f.writes), out, stderr)
+		}
+		if strings.Contains(stderr+out, "nova senha") || strings.Contains(stderr+out, "123456789012") {
+			t.Errorf("%s: segredo na saída:\n%s\n%s", nome, stderr, out)
+		}
 	}
 }
 
