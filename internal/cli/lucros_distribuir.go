@@ -3,6 +3,7 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -196,8 +197,9 @@ func nomesSocios(cmd *cobra.Command, g api.Getter, d *api.DistribuicaoLucros) (m
 }
 
 // montarDistribuicao calcula, em centavos, o valor e o percentual de cada sócio da
-// distribuição (os não citados ficam com zero) e confere que a soma é o total. A diferença
-// de arredondamento dos percentuais vai para o último sócio citado em percentual.
+// distribuição (os não citados ficam com zero) e confere que a soma é o total. O centavo de
+// arredondamento dos percentuais vai para o último sócio citado em percentual; os percentuais
+// enviados saem dos valores finais e somam 100,00%.
 func montarDistribuicao(lucros []api.LucroSocio, nomes map[string]string, partes []parteSocio, total int64) ([]api.DistribuicaoSocio, string, error) {
 	naDistribuicao := map[string]bool{}
 	for _, l := range lucros {
@@ -227,21 +229,44 @@ func montarDistribuicao(lucros []api.LucroSocio, nomes map[string]string, partes
 	if soma != total {
 		return nil, "", usageError{fmt.Errorf("a soma das partes (%s) deve ser igual ao lucro total do exercício (%s)", formatarCentavos(soma), formatarCentavos(total))}
 	}
+	cents := make([]int64, len(lucros))
+	for i, l := range lucros {
+		if p, ok := porID[idTexto(l.ID)]; ok {
+			cents[i] = p.centavos
+		}
+	}
+	pcts := percentuaisDe(cents, total)
 	itens := make([]api.DistribuicaoSocio, 0, len(lucros))
 	var resumo []string
-	for _, l := range lucros {
+	for i, l := range lucros {
 		id := idTexto(l.ID)
-		var cent, pct int64
-		if p, ok := porID[id]; ok {
-			cent, pct = p.centavos, p.centesimos
-			if !p.percentual {
-				pct = (p.centavos*10000 + total/2) / total
-			}
-		}
+		cent, pct := cents[i], pcts[i]
 		itens = append(itens, api.NovaDistribuicaoSocio(l.ID, cent, pct))
 		resumo = append(resumo, fmt.Sprintf("%s %s%% (%s)", firstNonEmpty(nomes[id], id), strings.Replace(fmt.Sprintf("%d.%02d", pct/100, pct%100), ".", ",", 1), formatarCentavos(cent)))
 	}
 	return itens, strings.Join(resumo, "; "), nil
+}
+
+// percentuaisDe calcula, em centésimos de ponto, o percentual de cada valor sobre o total
+// (a soma dos valores é o total) pelo método do maior resto: os percentuais somam
+// exatamente 100,00% e cada um fica coerente com o valor enviado (#789).
+func percentuaisDe(cents []int64, total int64) []int64 {
+	pcts := make([]int64, len(cents))
+	restos := make([]int64, len(cents))
+	falta := int64(10000)
+	for i, c := range cents {
+		pcts[i], restos[i] = c*10000/total, c*10000%total
+		falta -= pcts[i]
+	}
+	ordem := make([]int, len(cents))
+	for i := range ordem {
+		ordem[i] = i
+	}
+	sort.SliceStable(ordem, func(a, b int) bool { return restos[ordem[a]] > restos[ordem[b]] })
+	for _, i := range ordem[:falta] {
+		pcts[i]++
+	}
+	return pcts
 }
 
 // sociosDaDistribuicao lista os ids aceitos em --socio, com o nome quando há.

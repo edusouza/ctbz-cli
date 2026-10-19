@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -63,6 +64,43 @@ func TestLucrosDistribuirValorEArredondamento(t *testing.T) {
 	_, _, code = execCLI(t, "", "lucros", "distribuir", "--socio", "2=100%", "--yes")
 	if code != ExitOK || len(f.writes) != 3 || !strings.Contains(f.writes[2], `{"idSocio":1,"percentual":"0.00","valor":"0.00"},{"idSocio":2,"percentual":"100.00","valor":"1000.01"}`) {
 		t.Errorf("um sócio: código %d, %q", code, f.writes)
+	}
+}
+
+func TestLucrosDistribuirPercentuaisSomam100(t *testing.T) {
+	tres := `{"ano":2025,"saldo":3000,"totalDistribuido":0,"podeAlterar":true,"dataLimite":"2026-12-31",
+"lucrosSocios":[{"id":1,"valor":0},{"id":2,"valor":0},{"id":3,"valor":0}]}`
+	f := distribuirFake(t, tres, fixture(t, "restricoes_informe"))
+	_, stderr, code := execCLI(t, "", "lucros", "distribuir", "--socio", "1=1000,00", "--socio", "2=1000,00", "--socio", "3=1000,00", "--yes")
+	want := `[{"idSocio":1,"percentual":"33.34","valor":"1000.00"},{"idSocio":2,"percentual":"33.33","valor":"1000.00"},{"idSocio":3,"percentual":"33.33","valor":"1000.00"}]`
+	if code != ExitOK || len(f.writes) != 1 || !strings.HasSuffix(f.writes[0], want) {
+		t.Fatalf("código %d, %q\n%s", code, f.writes, stderr)
+	}
+	if !strings.Contains(stderr, "FULANO 33,34% (R$ 1.000,00)") {
+		t.Errorf("o resumo deve mostrar o percentual enviado:\n%s", stderr)
+	}
+}
+
+func TestPercentuaisDe(t *testing.T) {
+	for _, tc := range []struct {
+		cents []int64
+		total int64
+		want  []int64
+	}{
+		{[]int64{100000, 100000, 100000}, 300000, []int64{3334, 3333, 3333}},
+		{[]int64{33330, 66671}, 100001, []int64{3333, 6667}},
+		{[]int64{50001, 50000}, 100001, []int64{5000, 5000}},
+		{[]int64{0, 100001}, 100001, []int64{0, 10000}},
+		{[]int64{1, 1, 1}, 3, []int64{3334, 3333, 3333}},
+	} {
+		got := percentuaisDe(tc.cents, tc.total)
+		var soma int64
+		for _, p := range got {
+			soma += p
+		}
+		if fmt.Sprint(got) != fmt.Sprint(tc.want) || soma != 10000 {
+			t.Errorf("percentuaisDe(%v, %d) = %v (soma %d), quero %v", tc.cents, tc.total, got, soma, tc.want)
+		}
 	}
 }
 

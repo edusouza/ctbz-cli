@@ -186,7 +186,10 @@ ctbz lucros distribuir --socio 1000000000000001=30000,00 --socio 100000000000000
   ou um valor em reais. Os sócios não citados ficam com zero.
 - A soma precisa ser o **lucro total** do exercício: o saldo na empresa mais o já distribuído
   (a regra do painel). A CLI calcula em centavos; quando os percentuais não fecham por
-  arredondamento, o centavo de diferença vai para o último sócio citado em percentual.
+  arredondamento, o centavo de diferença vai para o último sócio citado em percentual. Os
+  percentuais enviados são calculados a partir dos valores finais e sempre somam 100,00%
+  (com três partes iguais, um sócio fica com 33,34%); o resumo mostra os percentuais
+  enviados.
 - A CLI recusa sem exercício aberto, quando o painel não deixa alterar (com o motivo), depois
   da data limite e com restrições no informe (pendência documental ou débitos federais).
 - Risco alto: são os rendimentos isentos que os sócios declaram no IRPF. A CLI mostra a parte
