@@ -26,8 +26,9 @@ ctbz usuarios ativar 102
 - O convite dá **acesso total**: a pessoa pode fazer todas as ações e ver todas as informações
   da empresa, inclusive financeiras. Não há como revogar o convite antes do aceite; depois, só
   desativando o usuário. Por isso o convite é de risco alto (`confirmo`).
-- A CLI recusa e-mails da Contabilizei, e-mails que já estão na lista e convites quando o
-  serviço está indisponível ou o limite de usuários secundários ativos foi atingido.
+- A CLI recusa e-mails da Contabilizei (inclusive de subdomínios), e-mails que já estão na
+  lista e convites quando o serviço está indisponível ou o limite de usuários secundários
+  ativos foi atingido.
 - `desativar` é a única forma de revogar um acesso; o administrador não pode ser desativado.
   `ativar` devolve o acesso. Os dois são de risco médio e reversíveis.
 - Não se sabe se desativar um convite ainda não aceito o cancela; a CLI avisa no resumo.
@@ -46,7 +47,8 @@ ctbz empresa credenciais confirmar-prefeitura
 - São as credenciais que a Contabilizei usa para entregar declarações: o código de acesso do
   Simples Nacional e o usuário e a senha da prefeitura e do Dataprev.
 - `ctbz empresa credenciais` mostra o código e as senhas só como `preenchido`; `--mostrar`
-  exibe os valores, apenas num terminal e na tabela. A API devolve as senhas em texto claro, e
+  exibe os valores, apenas na tabela e com a entrada e a saída num terminal (a CLI recusa com
+  a saída redirecionada a um arquivo ou pipe). A API devolve as senhas em texto claro, e
   a CLI nunca as grava nem as registra.
 - `atualizar` pede os novos valores **sem eco** no terminal, nunca por argumento: o código do
   Simples tem 12 dígitos; usuário e senha precisam de pelo menos 3 caracteres (Enter no
@@ -54,6 +56,9 @@ ctbz empresa credenciais confirmar-prefeitura
   terminal, os valores são lidos da entrada padrão, uma linha por pergunta, e é preciso `--yes`.
 - Risco alto: credencial errada faz falhar a entrega de declarações (multas e juros). Depois
   de salvar, a Contabilizei verifica o acesso e avisa por e-mail se ele for negado.
+- Depois do envio, a CLI relê os dados de acesso e compara os campos trocados, sem mostrá-los:
+  `atualizada` quando os valores relidos são os enviados, `enviado` (com um aviso) quando
+  ainda não são ou a releitura falha.
 - O `--dry-run` mostra `***` no lugar das senhas e do código. O registro de ações guarda só o
   comando e o resultado.
 - `confirmar-prefeitura` é o "Sim, já atualizei a senha" do alerta "Redefina a senha da

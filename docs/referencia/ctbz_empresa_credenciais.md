@@ -6,8 +6,8 @@ Mostra as credenciais que a Contabilizei usa nos órgãos públicos: código de 
 Simples Nacional, usuário e senha da prefeitura e do Dataprev, e se o painel pede para
 redefinir a senha da prefeitura.
 
-O código e as senhas aparecem só como "preenchido"; --mostrar exibe os valores, apenas num
-terminal e na tabela. Para usuário administrador a Contabilizei recusa (403).
+O código e as senhas aparecem só como "preenchido"; --mostrar exibe os valores, apenas na
+tabela e com a entrada e a saída num terminal (nunca redirecionada a arquivo ou pipe). Para usuário administrador a Contabilizei recusa (403).
 
 Para trocar: ctbz empresa credenciais atualizar; para responder ao alerta da prefeitura:
 ctbz empresa credenciais confirmar-prefeitura.

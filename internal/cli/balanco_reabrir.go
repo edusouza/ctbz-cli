@@ -51,13 +51,10 @@ distribuição de lucros, sem desfazer pela API. Aceita --yes e --dry-run.`,
 			if err != nil || !enviado {
 				return err
 			}
-			relida, err := api.BuscarRestricoesInforme(cmd.Context(), g, ano)
-			if err != nil {
-				return err
-			}
-			status := relida.ProcessoReabertura.Status
 			situacao := "enviado"
-			if status != "" && status != "NENHUM" {
+			if relida, err := api.BuscarRestricoesInforme(cmd.Context(), g, ano); err != nil {
+				fmt.Fprintln(s.err, "aviso: reabertura enviada, mas não foi possível reler as restrições:", err)
+			} else if status := relida.ProcessoReabertura.Status; status != "" && status != "NENHUM" {
 				situacao = status
 			}
 			fmt.Fprintln(s.err, "Acompanhe na Central de Rotinas: ctbz pendencias.")
