@@ -2,6 +2,7 @@ package cli
 
 import (
 	"io"
+	"net/http"
 	"strings"
 	"testing"
 )
@@ -106,5 +107,30 @@ func TestCredenciaisConfirmarPrefeitura(t *testing.T) {
 	_, stderr, code = execCLI(t, "", "empresa", "credenciais", "confirmar-prefeitura", "--yes")
 	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(stderr, "não pede para redefinir") {
 		t.Errorf("sem alerta: código %d, %d escritas, %s", code, len(f.writes), stderr)
+	}
+}
+
+func TestCredenciaisAdministrador(t *testing.T) {
+	// 403 na leitura e na escrita: a mensagem fala de dados de acesso, não de aceites (#828).
+	writeServer(t, http.StatusOK, func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+		io.WriteString(w, `{"mensagem":"Usuário admin não pode acessar."}`)
+	})
+	for _, args := range [][]string{
+		{"empresa", "credenciais"},
+		{"empresa", "credenciais", "atualizar", "--codigo-simples", "--yes"},
+		{"empresa", "credenciais", "confirmar-prefeitura", "--yes"},
+	} {
+		_, stderr, code := execCLI(t, "123456789012\n", args...)
+		if code != ExitError || !strings.Contains(stderr, "sessão é de administrador") || !strings.Contains(stderr, "dados de acesso só podem ser lidos ou alterados pelo próprio cliente") ||
+			strings.Contains(stderr, "aceites e declarações") {
+			t.Errorf("leitura %v: código %d, %s", args, code, stderr)
+		}
+	}
+	f := credenciaisFake(t, fixture(t, "dados_acesso"))
+	f.status, f.resposta = http.StatusForbidden, `{"mensagem":"Usuário admin não pode alterar."}`
+	_, stderr, code := execCLI(t, "", "empresa", "credenciais", "confirmar-prefeitura", "--yes")
+	if code != ExitError || !strings.Contains(stderr, "sessão é de administrador") || strings.Contains(stderr, "aceites e declarações") {
+		t.Errorf("escrita: código %d, %s", code, stderr)
 	}
 }
