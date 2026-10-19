@@ -59,6 +59,25 @@ func TestInformeAceitarCarta(t *testing.T) {
 	}
 }
 
+func TestInformeAceitarCartaReleitura(t *testing.T) {
+	// A releitura falha depois do aceite: avisa, emite "enviado" e sai com 0, sem repetir o POST (#797).
+	f := informeFake(t, restricoesComTudo)
+	f.onWrite = func(f *escritaFake) { delete(f.gets, pathCartaInforme) }
+	out, stderr, code := execCLI(t, "", "lucros", "informe", "aceitar", "carta-responsabilidade", "--yes", "-o", "csv")
+	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(stderr, "aviso: aceite enviado, mas não foi possível reler a carta") ||
+		out != "acao,situacao,id\naceitar carta-responsabilidade,enviado,2025\n" {
+		t.Errorf("releitura com erro: código %d, %d escritas, %q\n%s", code, len(f.writes), out, stderr)
+	}
+	// A releitura ainda pede o aceite: avisa e não afirma que foi aceita.
+	f = informeFake(t, restricoesComTudo)
+	f.onWrite = nil
+	out, stderr, code = execCLI(t, "", "lucros", "informe", "aceitar", "carta-responsabilidade", "--yes", "-o", "csv")
+	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(stderr, "aviso: a carta ainda aparece como pendente") ||
+		out != "acao,situacao,id\naceitar carta-responsabilidade,enviado,2025\n" {
+		t.Errorf("ainda pendente: código %d, %d escritas, %q\n%s", code, len(f.writes), out, stderr)
+	}
+}
+
 func TestInformeAceitarTermoDebitos(t *testing.T) {
 	f := informeFake(t, restricoesComTudo)
 	_, stderr, code := execCLI(t, "", "lucros", "informe", "aceitar", "termo-debitos", "--yes")

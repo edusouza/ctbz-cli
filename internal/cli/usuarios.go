@@ -33,7 +33,7 @@ desativar|ativar.`,
 				return err
 			}
 			s := streamsOf(cmd)
-			us, err := api.BuscarUsuariosEmpresa(cmd.Context(), sessionGetter{s})
+			us, err := usuariosEmpresa(cmd, sessionGetter{s})
 			if err != nil {
 				return err
 			}
@@ -58,8 +58,9 @@ func newUsuariosConvidarCmd() *cobra.Command {
 		Long: `Envia um convite por e-mail para uma pessoa acessar a empresa no painel. O acesso é
 total: todas as ações e todas as informações, inclusive financeiras.
 
-A CLI recusa e-mails da Contabilizei, e-mails que já têm acesso ou convite, e convites quando o
-serviço está indisponível ou o limite de usuários secundários ativos foi atingido.
+A CLI recusa e-mails da Contabilizei (inclusive de subdomínios), e-mails que já têm acesso
+ou convite, e convites quando o serviço está indisponível ou o limite de usuários secundários
+ativos foi atingido.
 
 Risco alto: não há como revogar o convite antes do aceite; depois, só com ctbz usuarios
 desativar. Aceita --yes e --dry-run.`,
@@ -83,7 +84,7 @@ desativar. Aceita --yes e --dry-run.`,
 			if !st.Ativo {
 				return errors.New("o serviço de multiusuário está indisponível no momento")
 			}
-			us, err := api.BuscarUsuariosEmpresa(cmd.Context(), g)
+			us, err := usuariosEmpresa(cmd, g)
 			if err != nil {
 				return err
 			}
@@ -116,14 +117,19 @@ desativar. Aceita --yes e --dry-run.`,
 	return cmd
 }
 
-// emailConvite valida o e-mail como o front: endereço simples e fora da Contabilizei.
+// emailConvite valida o e-mail como o front: endereço simples (sem aspas nem domínio entre
+// colchetes) e fora da Contabilizei, inclusive em subdomínios (#820).
 func emailConvite(v string) (string, error) {
 	a, err := mail.ParseAddress(strings.TrimSpace(v))
-	if err != nil || a.Name != "" || !strings.Contains(a.Address[strings.LastIndex(a.Address, "@")+1:], ".") {
+	if err != nil || a.Name != "" || strings.ContainsAny(v, `"[]`) || strings.ContainsAny(a.Address, " \t") {
 		return "", usageError{fmt.Errorf("e-mail inválido: %q", v)}
 	}
 	email := strings.ToLower(a.Address)
-	if strings.Contains(email[strings.LastIndex(email, "@"):], "@contabilizei.") {
+	dominio := email[strings.LastIndex(email, "@")+1:]
+	if !strings.Contains(dominio, ".") {
+		return "", usageError{fmt.Errorf("e-mail inválido: %q", v)}
+	}
+	if strings.Contains("."+dominio+".", ".contabilizei.") {
 		return "", usageError{errors.New("não é possível convidar e-mails da Contabilizei")}
 	}
 	return email, nil
@@ -186,7 +192,7 @@ Risco médio: reversível com ativar ou desativar. Aceita --yes e --dry-run.`,
 
 // usuarioPor acha um usuário da empresa.
 func usuarioPor(cmd *cobra.Command, g api.Getter, achou func(api.UsuarioEmpresa) bool) (*api.UsuarioEmpresa, error) {
-	us, err := api.BuscarUsuariosEmpresa(cmd.Context(), g)
+	us, err := usuariosEmpresa(cmd, g)
 	if err != nil {
 		return nil, err
 	}
@@ -196,4 +202,15 @@ func usuarioPor(cmd *cobra.Command, g api.Getter, achou func(api.UsuarioEmpresa)
 		}
 	}
 	return nil, errors.New("usuário não encontrado (veja ctbz usuarios)")
+}
+
+// usuariosEmpresa lê os usuários sem caracteres de controle nos textos: o nome é escolhido por
+// quem aceitou o convite e aparece no resumo que o usuário confirma (#816).
+func usuariosEmpresa(cmd *cobra.Command, g api.Getter) ([]api.UsuarioEmpresa, error) {
+	us, err := api.BuscarUsuariosEmpresa(cmd.Context(), g)
+	for i := range us {
+		u := &us[i]
+		u.Nome, u.Email, u.Tipo, u.Status = semControle(u.Nome), semControle(u.Email), semControle(u.Tipo), semControle(u.Status)
+	}
+	return us, err
 }
