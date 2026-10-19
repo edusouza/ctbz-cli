@@ -24,8 +24,8 @@ func newEmpresaCredenciaisCmd() *cobra.Command {
 Simples Nacional, usuário e senha da prefeitura e do Dataprev, e se o painel pede para
 redefinir a senha da prefeitura.
 
-O código e as senhas aparecem só como "preenchido"; --mostrar exibe os valores, apenas num
-terminal e na tabela. Para usuário administrador a Contabilizei recusa (403).
+O código e as senhas aparecem só como "preenchido"; --mostrar exibe os valores, apenas na
+tabela e com a entrada e a saída num terminal (nunca redirecionada a arquivo ou pipe). Para usuário administrador a Contabilizei recusa (403).
 
 Para trocar: ctbz empresa credenciais atualizar; para responder ao alerta da prefeitura:
 ctbz empresa credenciais confirmar-prefeitura.`,
@@ -38,7 +38,7 @@ ctbz empresa credenciais confirmar-prefeitura.`,
 				return err
 			}
 			s := streamsOf(cmd)
-			if mostrar && (!s.interactive || f != output.FormatTable) {
+			if mostrar && (!s.interactive || !s.outTerminal || f != output.FormatTable) {
 				return usageError{errors.New("--mostrar só funciona num terminal e na tabela")}
 			}
 			d, err := api.BuscarDadosAcesso(cmd.Context(), sessionGetter{s})

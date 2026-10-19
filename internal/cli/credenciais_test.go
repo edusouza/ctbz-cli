@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"io"
 	"strings"
 	"testing"
 )
@@ -26,6 +27,24 @@ func TestCredenciaisMascaradas(t *testing.T) {
 	}
 	if _, stderr, code := execCLI(t, "", "empresa", "credenciais", "--mostrar"); code != ExitUsage || !strings.Contains(stderr, "só funciona num terminal") {
 		t.Errorf("--mostrar sem terminal: código %d, %s", code, stderr)
+	}
+}
+
+func TestCredenciaisMostrarSoNoTerminal(t *testing.T) {
+	// Com a entrada num terminal e a saída redirecionada, --mostrar recusa sem imprimir segredo (#825).
+	credenciaisFake(t, fixture(t, "dados_acesso"))
+	oldIn, oldOut := isTerminal, isTerminalOut
+	t.Cleanup(func() { isTerminal, isTerminalOut = oldIn, oldOut })
+	isTerminal = func(io.Reader) bool { return true }
+	isTerminalOut = func(io.Writer) bool { return false }
+	out, stderr, code := execCLI(t, "", "empresa", "credenciais", "--mostrar")
+	if code != ExitUsage || out != "" || !strings.Contains(stderr, "só funciona num terminal") {
+		t.Errorf("saída redirecionada: código %d, %q, %s", code, out, stderr)
+	}
+	isTerminalOut = func(io.Writer) bool { return true }
+	out, stderr, code = execCLI(t, "", "empresa", "credenciais", "--mostrar")
+	if code != ExitOK || !strings.Contains(out, "000000000000") {
+		t.Errorf("terminal: código %d, %q, %s", code, out, stderr)
 	}
 }
 

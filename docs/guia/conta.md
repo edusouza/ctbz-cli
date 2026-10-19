@@ -47,7 +47,8 @@ ctbz empresa credenciais confirmar-prefeitura
 - São as credenciais que a Contabilizei usa para entregar declarações: o código de acesso do
   Simples Nacional e o usuário e a senha da prefeitura e do Dataprev.
 - `ctbz empresa credenciais` mostra o código e as senhas só como `preenchido`; `--mostrar`
-  exibe os valores, apenas num terminal e na tabela. A API devolve as senhas em texto claro, e
+  exibe os valores, apenas na tabela e com a entrada e a saída num terminal (a CLI recusa com
+  a saída redirecionada a um arquivo ou pipe). A API devolve as senhas em texto claro, e
   a CLI nunca as grava nem as registra.
 - `atualizar` pede os novos valores **sem eco** no terminal, nunca por argumento: o código do
   Simples tem 12 dígitos; usuário e senha precisam de pelo menos 3 caracteres (Enter no
