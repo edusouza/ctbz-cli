@@ -19,7 +19,9 @@ Convenções do dia a dia. Decisões maiores estão nos [ADRs](adr/README.md).
 - [ ] Escrita nova registrada em `api.Escritas()` com golden de requisição revisado
   ([Requisições de escrita](contratos.md#requisicoes-de-escrita))
 - [ ] Documentação de usuário atualizada (`README.md` e/ou página em `docs/`, com entrada no `mkdocs.yml`)
-- [ ] Referência de comandos regenerada, se a CLI mudou (`go run ./tools/gendocs`)
+- [ ] Referência de comandos regenerada, se a CLI mudou (`go run ./tools/gendocs`), e o mapa das
+  skills também (`python3 scripts/gerar-comandos-skill.py`); campos JSON e passos das skills em
+  `skills/` atualizados à mão ([Skills para agentes](guia/agentes.md))
 - [ ] Linha no `CHANGELOG.md` em `[Unreleased]` quando o usuário perceber a mudança ([ADR-0003](adr/0003-versionamento-e-changelog.md))
 - [ ] ADR novo, se houve decisão com alternativas razoáveis
 - [ ] Nenhum dado pessoal real (CPF, CNPJ, nomes, e-mails, endereços, valores) em código, testes ou docs

@@ -182,6 +182,20 @@ confirmação (`confirmo` nas ações de risco alto). Em scripts, use `--yes`; s
 `--yes`, nada é enviado (código `2`). `--dry-run` mostra a requisição sem enviar. Detalhes em
 [docs/guia/escrita.md](docs/guia/escrita.md).
 
+## Skills para agentes (Claude Code)
+
+O repositório é também um plugin do Claude Code: skills que fazem um agente operar a
+Contabilizei pelo `ctbz` como um assessor contábil (checkup do CNPJ, fechamento do mês,
+impostos, Fator R, lucros e informe de rendimentos, notas e acessos), com `--dry-run` e
+confirmação antes de qualquer escrita.
+
+```text
+/plugin marketplace add edusouza/ctbz-cli
+/plugin install ctbz@ctbz-cli
+```
+
+Detalhes em [docs/guia/agentes.md](docs/guia/agentes.md).
+
 ## Formatos de saída
 
 Todo comando que imprime dados aceita `-o`/`--output` (antes ou depois do comando) ou a
