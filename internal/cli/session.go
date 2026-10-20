@@ -78,7 +78,7 @@ func getJSONCom(ctx context.Context, s streams, path string, v any, relogar bool
 	if err != nil {
 		return err
 	}
-	if resp.Status != 200 {
+	if !sucesso(resp.Status) {
 		return &ctbz.HTTPError{Step: path, Status: resp.Status, Body: resp.Body}
 	}
 	if err := json.Unmarshal(resp.Body, v); err != nil {
@@ -109,11 +109,15 @@ func (g sessionGetter) GetText(ctx context.Context, path string) (string, error)
 	if err != nil {
 		return "", err
 	}
-	if resp.Status != 200 {
+	if !sucesso(resp.Status) {
 		return "", &ctbz.HTTPError{Step: path, Status: resp.Status, Body: resp.Body}
 	}
 	return string(resp.Body), nil
 }
+
+// sucesso diz se um status de leitura é de sucesso. Como o painel, aceita qualquer 2xx: a
+// Central de Rotinas às vezes responde 206 com a resposta completa.
+func sucesso(status int) bool { return status >= 200 && status < 300 }
 
 // saveCookies persiste cookies renovados pelo servidor durante as chamadas.
 func saveCookies(store *ctbz.Store, sess *ctbz.Session, c *ctbz.Client, errOut io.Writer) {
