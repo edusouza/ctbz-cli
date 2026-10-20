@@ -1,0 +1,6 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/informerendimento/reabrir-balanco/2025"
+  }
+]

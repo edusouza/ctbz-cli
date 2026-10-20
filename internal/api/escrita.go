@@ -323,6 +323,9 @@ func Escritas() []Escrita {
 		{Name: "informe_nao_regularizar_pendencia", Exemplo: func(ctx context.Context, s Sender) error {
 			return RegistrarAceiteInforme(ctx, s, 2025, AceiteNaoRegularizarPendencia)
 		}},
+		{Name: "balanco_reabrir", Exemplo: func(ctx context.Context, s Sender) error {
+			return ReabrirBalanco(ctx, s, 2025)
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

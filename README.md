@@ -140,6 +140,7 @@ ctbz lucros informe --ano 2025                 # valores do informe de rendiment
 ctbz lucros informe restricoes|aceitar|decidir # restrições e aceites do informe
 ctbz balancete 2026-08                         # balancete do mês (árvore de contas)
 ctbz balanco 2025                              # balanço patrimonial do exercício
+ctbz balanco reabrir --ano 2025                # reabre o exercício (pendência documental)
 ctbz razao --conta 1.01 --de 2026-01           # lançamentos do razão por conta
 ctbz caixa 2026-09                             # lançamentos do caixa do mês, com total
 ctbz caixa contas --competencia 2026-09        # classificações aceitas no caixa (e vínculos)
