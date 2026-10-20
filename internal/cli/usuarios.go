@@ -120,19 +120,25 @@ desativar. Aceita --yes e --dry-run.`,
 // emailConvite valida o e-mail como o front: endereço simples (sem aspas nem domínio entre
 // colchetes) e fora da Contabilizei, inclusive em subdomínios (#820).
 func emailConvite(v string) (string, error) {
-	a, err := mail.ParseAddress(strings.TrimSpace(v))
-	if err != nil || a.Name != "" || strings.ContainsAny(v, `"[]`) || strings.ContainsAny(a.Address, " \t") {
-		return "", usageError{fmt.Errorf("e-mail inválido: %q", v)}
+	email, err := emailValido(v)
+	if err != nil {
+		return "", err
 	}
-	email := strings.ToLower(a.Address)
-	dominio := email[strings.LastIndex(email, "@")+1:]
-	if !strings.Contains(dominio, ".") {
-		return "", usageError{fmt.Errorf("e-mail inválido: %q", v)}
-	}
-	if strings.Contains("."+dominio+".", ".contabilizei.") {
+	if dominio := email[strings.LastIndex(email, "@")+1:]; strings.Contains("."+dominio+".", ".contabilizei.") {
 		return "", usageError{errors.New("não é possível convidar e-mails da Contabilizei")}
 	}
 	return email, nil
+}
+
+// emailValido aceita um endereço simples (sem nome, aspas nem domínio entre colchetes), com
+// domínio pontuado, em minúsculas.
+func emailValido(v string) (string, error) {
+	a, err := mail.ParseAddress(strings.TrimSpace(v))
+	if err != nil || a.Name != "" || strings.ContainsAny(v, `"[]`) || strings.ContainsAny(a.Address, " \t") ||
+		!strings.Contains(a.Address[strings.LastIndex(a.Address, "@")+1:], ".") {
+		return "", usageError{fmt.Errorf("e-mail inválido: %q", v)}
+	}
+	return strings.ToLower(a.Address), nil
 }
 
 func newUsuariosAtivarCmd(ativar bool) *cobra.Command {

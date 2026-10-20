@@ -16,6 +16,7 @@ Dados vão para stdout no formato escolhido com -o; mensagens e progresso vão p
 - [`ctbz caixa`](ctbz_caixa.md): Lista os lançamentos do caixa de um mês
 - [`ctbz certificado`](ctbz_certificado.md): Mostra a situação do certificado digital da empresa e da renovação
 - [`ctbz chamados`](ctbz_chamados.md): Lista os chamados de atendimento (em andamento ou finalizados)
+- [`ctbz conta`](ctbz_conta.md): Mostra os dados de login do usuário (e-mail, telefone e método do 2FA)
 - [`ctbz contas`](ctbz_contas.md): Lista o plano de contas usado para classificar os lançamentos
 - [`ctbz contas-bancarias`](ctbz_contas-bancarias.md): Lista as contas bancárias cadastradas da empresa
 - [`ctbz documentos`](ctbz_documentos.md): Lista os tipos de documento aceitos e os documentos enviados

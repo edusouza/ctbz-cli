@@ -17,6 +17,9 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz caixa remover`](ctbz_caixa_remover.md) | Exclui permanentemente um lançamento manual do caixa |
 | [`ctbz certificado`](ctbz_certificado.md) | Mostra a situação do certificado digital da empresa e da renovação |
 | [`ctbz chamados`](ctbz_chamados.md) | Lista os chamados de atendimento (em andamento ou finalizados) |
+| [`ctbz conta`](ctbz_conta.md) | Mostra os dados de login do usuário (e-mail, telefone e método do 2FA) |
+| [`ctbz conta alterar`](ctbz_conta_alterar.md) | Troca o e-mail e o telefone de login (com código OTP) |
+| [`ctbz conta senha`](ctbz_conta_senha.md) | Troca a senha de login (com código OTP) |
 | [`ctbz contas`](ctbz_contas.md) | Lista o plano de contas usado para classificar os lançamentos |
 | [`ctbz contas-bancarias`](ctbz_contas-bancarias.md) | Lista as contas bancárias cadastradas da empresa |
 | [`ctbz contas-bancarias adicionar`](ctbz_contas-bancarias_adicionar.md) | Cadastra uma conta bancária PJ |

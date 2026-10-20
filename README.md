@@ -163,6 +163,7 @@ ctbz documentos sem-arquivo | sem-aplicacao ...         # declara que o document
 ctbz certificado                               # certificado digital: validade e renovação
 ctbz usuarios [convidar EMAIL | desativar ID | ativar ID]  # quem acessa a empresa
 ctbz empresa credenciais [atualizar --prefeitura]   # código do Simples, prefeitura, Dataprev
+ctbz conta [alterar --email --telefone | senha]  # login: e-mail, telefone e senha (com OTP)
 ctbz acoes --desde 2026-10-01                  # escritas enviadas por esta CLI (registro local)
 ctbz api menu/get        # qualquer endpoint; caminho relativo → /api/plataforma/
 ctbz api -X POST -d @corpo.json /api/plataforma/algum/endpoint

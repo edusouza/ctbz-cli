@@ -342,6 +342,16 @@ func Escritas() []Escrita {
 			return AtualizarDadosAcesso(ctx, s, f)
 		}},
 		{Name: "credenciais_confirmar_prefeitura", Exemplo: ConfirmarCredencialPrefeitura},
+		{Name: "conta_enviar_otp", Exemplo: func(ctx context.Context, s Sender) error {
+			_, err := EnviarOTPConta(ctx, s, MetodoOTPEmail)
+			return err
+		}, Resposta: `{"tempo":60}`},
+		{Name: "conta_alterar_dados", Exemplo: func(ctx context.Context, s Sender) error {
+			return AlterarDadosConta(ctx, s, "novo@example.com", "11900000000", "***", MetodoOTPEmail)
+		}},
+		{Name: "conta_alterar_senha", Exemplo: func(ctx context.Context, s Sender) error {
+			return AlterarSenhaConta(ctx, s, "***", "***", MetodoOTPSMS)
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},
