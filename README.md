@@ -135,6 +135,7 @@ ctbz prolabore definir --socio ID --tipo ...   # salário mínimo, teto, valor o
 ctbz prolabore zerar-sem-faturamento on|off    # sem pró-labore nos meses sem faturamento
 ctbz prolabore gestao-inteligente ativar|sair  # cálculo automático do pró-labore
 ctbz lucros                                    # distribuição de lucros do exercício
+ctbz lucros distribuir --socio ID=60% ...      # registra a parte de cada sócio
 ctbz lucros informe --ano 2025                 # valores do informe de rendimentos dos sócios (IR)
 ctbz balancete 2026-08                         # balancete do mês (árvore de contas)
 ctbz balanco 2025                              # balanço patrimonial do exercício

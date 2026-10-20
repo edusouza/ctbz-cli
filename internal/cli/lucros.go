@@ -16,7 +16,7 @@ func newLucrosCmd() *cobra.Command {
 		Long: `Mostra a distribuição de lucros como a tela de informe de rendimentos do painel: exercício,
 saldo disponível na empresa, total distribuído aos sócios, adiantamentos, limite permitido,
 se o exercício está fechado, se a distribuição ainda pode ser alterada (e até quando) e o
-valor por sócio.
+valor por sócio, com o id que ctbz lucros distribuir pede em --socio.
 
 Também mostra as restrições do exercício: pendências documentais, débitos federais e
 reabertura do balanço. A API não recebe ano: o exercício é o que a Contabilizei tem aberto
@@ -46,7 +46,7 @@ reabertura do balanço. A API não recebe ano: o exercício é o que a Contabili
 			return output.Write(s.out, f, lucrosRecord(d, ano, r))
 		},
 	}
-	cmd.AddCommand(newLucrosInformeCmd())
+	cmd.AddCommand(newLucrosInformeCmd(), newLucrosDistribuirCmd())
 	return cmd
 }
 
@@ -56,6 +56,8 @@ func lucrosRecord(d *api.DistribuicaoLucros, ano int, r *api.RestricoesInforme) 
 		rec := output.Record{}
 		rec.Add("socio", "Sócio", s.Socio)
 		rec.Add("valor", "Valor", moneyOrNil(s.Valor))
+		rec.Add("porcentagem", "Percentual", numeroDeValor(s.Porcentagem))
+		rec.Add("id", "ID", nilIfEmpty(idTexto(s.ID)))
 		socios = append(socios, rec)
 	}
 	rec := &output.Record{}
@@ -73,6 +75,14 @@ func lucrosRecord(d *api.DistribuicaoLucros, ano int, r *api.RestricoesInforme) 
 	rec.Add("reabertura_balanco", "Reabertura do balanço", nilIfEmpty(r.ProcessoReabertura.Status))
 	rec.Add("socios", "Por sócio", socios)
 	return rec
+}
+
+// numeroDeValor mostra um número de formato não verificado: número fica número; o resto, texto.
+func numeroDeValor(v any) any {
+	if f, ok := v.(float64); ok {
+		return f
+	}
+	return textoDeValor(v)
 }
 
 // textoDeValor mostra um campo de formato não verificado como texto (nulo continua nulo).

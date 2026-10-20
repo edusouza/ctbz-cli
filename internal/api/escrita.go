@@ -302,6 +302,12 @@ func Escritas() []Escrita {
 		{Name: "prolabore_zerar_gestao_inteligente", Exemplo: ZerarProlaboreGestaoInteligente},
 		{Name: "prolabore_gestao_inteligente_ativar", Exemplo: AtivarGestaoInteligente},
 		{Name: "prolabore_gestao_inteligente_sair", Exemplo: SairGestaoInteligente},
+		{Name: "lucros_distribuir", Exemplo: func(ctx context.Context, s Sender) error {
+			return SalvarDistribuicaoLucros(ctx, s, []DistribuicaoSocio{
+				NovaDistribuicaoSocio(1000000000000001, 3000000, 6000),
+				NovaDistribuicaoSocio(1000000000000002, 2000000, 4000),
+			})
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},
