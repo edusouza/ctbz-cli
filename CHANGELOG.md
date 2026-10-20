@@ -11,6 +11,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 - `ctbz usuarios`, `convidar`, `desativar` e `ativar`: quem acessa a empresa no painel
   (multiusuário), com convite de acesso total e revogação por desativação.
+- `ctbz empresa credenciais`, `atualizar` e `confirmar-prefeitura`: dados de acesso a órgãos
+  públicos (código do Simples, prefeitura e Dataprev), com segredos mascarados e lidos sem eco.
+
+### Changed
+
+- O `--dry-run` também mascara o código de acesso do Simples (`chaveAcesso*`).
 
 ## [1.7.0] - 2026-10-04
 

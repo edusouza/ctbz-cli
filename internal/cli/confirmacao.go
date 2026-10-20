@@ -99,9 +99,14 @@ func confirmar(s streams, op operacao, yes bool) error {
 	return errCancelada
 }
 
-// lerResposta lê uma linha byte a byte, sem buffer, para que perguntas seguidas na mesma
-// entrada não percam as respostas seguintes.
+// lerResposta lê uma resposta curta (sim, não, "confirmo"), sem espaços e em minúsculas.
 func lerResposta(s streams) string {
+	return strings.ToLower(strings.TrimSpace(lerLinha(s)))
+}
+
+// lerLinha lê uma linha byte a byte, sem buffer, para que perguntas seguidas na mesma
+// entrada não percam as respostas seguintes. Não apara espaços (senhas podem tê-los).
+func lerLinha(s streams) string {
 	var b strings.Builder
 	buf := make([]byte, 1)
 	for {
@@ -116,7 +121,7 @@ func lerResposta(s streams) string {
 			break
 		}
 	}
-	return strings.ToLower(strings.TrimSpace(b.String()))
+	return strings.TrimSuffix(b.String(), "\r")
 }
 
 func respostaSim(r string) bool { return r == "s" || r == "sim" || r == "y" || r == "yes" }

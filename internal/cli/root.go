@@ -163,7 +163,8 @@ type streams struct {
 	in          io.Reader
 	out         io.Writer
 	err         io.Writer
-	interactive bool
+	interactive bool // a entrada é um terminal
+	outTerminal bool // a saída é um terminal (para o que não pode ir a arquivo ou pipe)
 }
 
 func streamsOf(cmd *cobra.Command) streams {
@@ -173,7 +174,14 @@ func streamsOf(cmd *cobra.Command) streams {
 		out:         cmd.OutOrStdout(),
 		err:         cmd.ErrOrStderr(),
 		interactive: isTerminal(in),
+		outTerminal: isTerminalOut(cmd.OutOrStdout()),
 	}
+}
+
+// isTerminalOut diz se a saída é um terminal (trocada nos testes).
+var isTerminalOut = func(out io.Writer) bool {
+	f, ok := out.(*os.File)
+	return ok && term.IsTerminal(int(f.Fd()))
 }
 
 // isTerminal diz se a entrada é um terminal (trocada nos testes de confirmação).

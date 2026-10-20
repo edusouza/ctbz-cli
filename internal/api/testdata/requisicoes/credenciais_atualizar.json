@@ -1,0 +1,16 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/empresa/dadosacesso/atualizarDadosAcesso",
+    "content_type": "application/json",
+    "corpo": {
+      "chaveAcessoSimples": "***",
+      "dataValidadeSenhaPrefeituraCuritiba": null,
+      "id": 1000000000000001,
+      "senhaDataprev": null,
+      "senhaPrefeitura": "***-nova",
+      "usuarioDataprev": null,
+      "usuarioPrefeitura": "usuario-exemplo"
+    }
+  }
+]
