@@ -308,6 +308,21 @@ func Escritas() []Escrita {
 				NovaDistribuicaoSocio(1000000000000002, 2000000, 4000),
 			})
 		}},
+		{Name: "informe_aceitar_carta", Exemplo: func(ctx context.Context, s Sender) error {
+			return AceitarCartaResponsabilidadeInforme(ctx, s, 2025)
+		}},
+		{Name: "informe_aceitar_termo_debitos", Exemplo: func(ctx context.Context, s Sender) error {
+			return AceitarTermoDebitos(ctx, s, 2025, AceiteTermoPrimeiraVez)
+		}},
+		{Name: "informe_nao_distribuir_lucros", Exemplo: func(ctx context.Context, s Sender) error {
+			return RegistrarAceiteInforme(ctx, s, 2025, AceiteNaoDistribuirLucros)
+		}},
+		{Name: "informe_regularizar_pendencia", Exemplo: func(ctx context.Context, s Sender) error {
+			return RegistrarAceiteInforme(ctx, s, 2025, AceiteRegularizarPendencia)
+		}},
+		{Name: "informe_nao_regularizar_pendencia", Exemplo: func(ctx context.Context, s Sender) error {
+			return RegistrarAceiteInforme(ctx, s, 2025, AceiteNaoRegularizarPendencia)
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

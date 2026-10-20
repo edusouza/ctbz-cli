@@ -1,0 +1,10 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/informerendimento/aceite/2025",
+    "content_type": "application/json",
+    "corpo": {
+      "tipoAceite": "NAO_REGULARIZAR_PENDENCIA_DOCUMENTAL"
+    }
+  }
+]

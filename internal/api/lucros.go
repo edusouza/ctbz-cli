@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 )
 
@@ -49,11 +50,15 @@ type RestricoesInforme struct {
 	Restricoes struct {
 		PendenciaDocumental struct {
 			PossuiPendencia    bool   `json:"possuiPendencia"`
-			FluxoRegularizacao string `json:"fluxoRegularizacao"`
+			FluxoRegularizacao string `json:"fluxoRegularizacao"` // ex.: NAO_NECESSARIO, REABERTURA_BALANCO
+			// Itens e custo citados no front; ausentes na conta verificada.
+			Pendencias            []json.RawMessage `json:"pendencias" contract:"optional"`
+			ValorServicoAdicional *float64          `json:"valorServicoAdicional" contract:"optional"`
 		} `json:"pendenciaDocumental"`
 		DebitosFederais struct {
-			PossuiPendencia           bool `json:"possuiPendencia"`
-			DivergenciaContabilFiscal bool `json:"divergenciaContabilFiscal"`
+			PossuiPendencia           bool              `json:"possuiPendencia"`
+			DivergenciaContabilFiscal bool              `json:"divergenciaContabilFiscal"`
+			Debitos                   []json.RawMessage `json:"debitos" contract:"optional"` // citado no front
 		} `json:"debitosFederais"`
 	} `json:"restricoes"`
 	ProcessoReabertura struct {
