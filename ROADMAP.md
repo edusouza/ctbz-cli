@@ -39,7 +39,7 @@ escritas, `risco: baixo|médio|alto`.
 | **v1.4** | Pendências, termos e conciliação | [#193](https://github.com/edusouza/ctbz-cli/issues/193) | 5 | concluída |
 | **v1.5** | Extratos, contas bancárias e documentos | [#199](https://github.com/edusouza/ctbz-cli/issues/199) | 6 | concluída |
 | **v1.6** | Notas fiscais: tomadores e notas de entrada | [#206](https://github.com/edusouza/ctbz-cli/issues/206) | 4 | concluída |
-| **v1.7** | Pró-labore, distribuição de lucros e informe de rendimentos | [#211](https://github.com/edusouza/ctbz-cli/issues/211) | 6 | planejada |
+| **v1.7** | Pró-labore, distribuição de lucros e informe de rendimentos | [#211](https://github.com/edusouza/ctbz-cli/issues/211) | 6 | concluída |
 | **v1.8** | Conta, usuários e acessos | [#218](https://github.com/edusouza/ctbz-cli/issues/218) | 4 | planejada |
 
 ## v0.1 — Login e dados da empresa
@@ -291,12 +291,12 @@ Remuneração dos sócios: alterar o pró-labore, zeramento em meses sem faturam
 
 | | Issue | Funcionalidade | Tipo | Risco |
 |---|---|---|---|---|
-| ⬜ | [#212](https://github.com/edusouza/ctbz-cli/issues/212) | Alterar o pró-labore de um sócio | funcionalidade | alto |
-| ⬜ | [#213](https://github.com/edusouza/ctbz-cli/issues/213) | Zerar pró-labore em meses sem faturamento | funcionalidade | alto |
-| ⬜ | [#214](https://github.com/edusouza/ctbz-cli/issues/214) | Gestão inteligente: ativar e sair do cálculo automático | investigação | alto |
-| ⬜ | [#215](https://github.com/edusouza/ctbz-cli/issues/215) | Registrar distribuição de lucros entre os sócios | funcionalidade | alto |
-| ⬜ | [#216](https://github.com/edusouza/ctbz-cli/issues/216) | Aceites do informe de rendimentos por ano | funcionalidade | alto |
-| ⬜ | [#217](https://github.com/edusouza/ctbz-cli/issues/217) | Reabrir balanço para regularizar pendência documental | funcionalidade | alto |
+| ✅ | [#212](https://github.com/edusouza/ctbz-cli/issues/212) | Alterar o pró-labore de um sócio | funcionalidade | alto |
+| ✅ | [#213](https://github.com/edusouza/ctbz-cli/issues/213) | Zerar pró-labore em meses sem faturamento | funcionalidade | alto |
+| ✅ | [#214](https://github.com/edusouza/ctbz-cli/issues/214) | Gestão inteligente: ativar e sair do cálculo automático | investigação | alto |
+| ✅ | [#215](https://github.com/edusouza/ctbz-cli/issues/215) | Registrar distribuição de lucros entre os sócios | funcionalidade | alto |
+| ✅ | [#216](https://github.com/edusouza/ctbz-cli/issues/216) | Aceites do informe de rendimentos por ano | funcionalidade | alto |
+| ✅ | [#217](https://github.com/edusouza/ctbz-cli/issues/217) | Reabrir balanço para regularizar pendência documental | funcionalidade | alto |
 
 Fora de escopo: Assistente de pró-labore (holerite, dependentes, duplo vínculo); reabertura como serviço pago.
 
