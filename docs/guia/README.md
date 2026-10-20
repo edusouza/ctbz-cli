@@ -12,7 +12,7 @@ comando e flag está em [Referência de comandos](../referencia/README.md).
 | [Pró-labore e lucros](prolabore.md) | Pró-labore por sócio, histórico, parâmetros de cálculo, Fator R, distribuição de lucros e informe de rendimentos |
 | [Contabilidade](contabil.md) | Balancete, balanço, razão, caixa, extratos, contas bancárias e plano de contas |
 | [Documentos e certificado](documentos.md) | Central de documentos e certificado digital |
-| [Conta e acessos](conta.md) | Usuários da empresa e convites, dados de acesso a órgãos públicos, e-mail, telefone e senha de login |
+| [Conta e acessos](conta.md) | Usuários da empresa e convites, dados de acesso a órgãos públicos, e-mail, telefone e senha de login, escritório virtual |
 | [Ações que alteram dados](escrita.md) | Confirmação, `--yes`, `--dry-run`, níveis de risco e códigos de saída das escritas |
 
 Antes de tudo, faça o login (veja o [README](https://github.com/edusouza/ctbz-cli#login)).

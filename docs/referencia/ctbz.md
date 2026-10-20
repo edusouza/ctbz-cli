@@ -19,6 +19,7 @@ Dados vão para stdout no formato escolhido com -o; mensagens e progresso vão p
 - [`ctbz conta`](ctbz_conta.md): Mostra os dados de login do usuário (e-mail, telefone e método do 2FA)
 - [`ctbz contas`](ctbz_contas.md): Lista o plano de contas usado para classificar os lançamentos
 - [`ctbz contas-bancarias`](ctbz_contas-bancarias.md): Lista as contas bancárias cadastradas da empresa
+- [`ctbz correspondencias`](ctbz_correspondencias.md): Lista as correspondências recebidas no escritório virtual
 - [`ctbz documentos`](ctbz_documentos.md): Lista os tipos de documento aceitos e os documentos enviados
 - [`ctbz empresa`](ctbz_empresa.md): Mostra os dados da empresa selecionada
 - [`ctbz empresas`](ctbz_empresas.md): Lista as empresas do usuário, marcando a atual

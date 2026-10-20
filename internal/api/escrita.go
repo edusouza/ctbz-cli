@@ -352,6 +352,13 @@ func Escritas() []Escrita {
 		{Name: "conta_alterar_senha", Exemplo: func(ctx context.Context, s Sender) error {
 			return AlterarSenhaConta(ctx, s, "***", "***", MetodoOTPSMS)
 		}},
+		{Name: "correspondencias_endereco", Exemplo: func(ctx context.Context, s Sender) error {
+			_, err := SalvarEnderecoCorrespondencia(ctx, s, "01001000", "100", "sala 1")
+			return err
+		}, Resposta: `{"cep":"01001000","numero":"100"}`},
+		{Name: "correspondencias_autorizar", Exemplo: func(ctx context.Context, s Sender) error {
+			return AutorizarRecebimento(ctx, s, true)
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

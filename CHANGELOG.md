@@ -15,6 +15,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   públicos (código do Simples, prefeitura e Dataprev), com segredos mascarados e lidos sem eco.
 - `ctbz conta`, `alterar` e `senha`: e-mail, telefone e senha de login, confirmados com código
   OTP lido do `--otp-cmd` ou do terminal.
+- `ctbz correspondencias`, `baixar`, `endereco` e `autorizar`: escritório virtual
+  (correspondências, endereço de envio e autorização de recebimento).
 
 ### Changed
 
