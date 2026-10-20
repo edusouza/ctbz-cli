@@ -32,6 +32,7 @@ quando dá para alterar e o que bloqueia.
 | Restrição | O que significa | Caminhos |
 |---|---|---|
 | `debitos_federais: true` | débitos na Receita/PGFN | regularizar (skill `impostos`: pagar ou parcelar); aceitar o termo de débitos (`lucros informe aceitar termo-debitos`); ou decidir não distribuir (`decidir --nao-distribuir-lucros`) |
+| `divergencia_contabil_fiscal: true` (em `restricoes`) | contabilidade e fiscal não batem | falar com a Contabilizei antes de distribuir |
 | `pendencia_documental: true` | faltam documentos do ano | `decidir --regularizar-pendencia` (mostra onde enviar) e, se o caminho for `REABERTURA_BALANCO`, `balanco reabrir --ano A`; ou `decidir --nao-regularizar-pendencia` (**sem distribuição de lucros** no informe) |
 | carta de responsabilidade pendente | o painel exige o aceite para liberar o informe | ler e aceitar (seção 3) |
 | `reabertura_balanco` em andamento | o balanço está sendo refeito | aguardar; acompanhar em `ctbz pendencias` |

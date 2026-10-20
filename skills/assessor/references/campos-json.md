@@ -12,7 +12,7 @@ em reais são números, datas `AAAA-MM-DD`, horários RFC 3339, CNPJ/CPF só dí
 | `empresa` | objeto | `razao_social`, `cnpj`, `situacao`, `regime_tributario`, `nome_fantasia`, `natureza_juridica`, `abertura`, `inicio_contabilidade`, `inscricao_municipal`, `inscricao_estadual`, `endereco`, `ramos_atividade`, `plano`, `certificado_situacao`, `certificado_validade`, `outras_empresas` |
 | `empresas` | lista | `cnpj`, `razao_social`, `situacao`, `atual` |
 | `empresa socios` | lista | `nome`, `cpf`, `administrador`, `responsavel_receita`, `categoria`, `salario_base`, `entrada`, `situacao` (o `id` de `--socio` vem de `prolabore -o json`) |
-| `empresa atividades` | lista | `cnae`, `descricao`, `principal`, `ramo`, `categoria`, `anexos_simples` |
+| `empresa atividades` | lista | `cnae`, `descricao`, `principal`, `ramo`, `anexos_simples` (ex. `["V","III"]`: depende do Fator R) |
 | `certificado` | objeto | `situacao`, `valido`, `vencimento`, `dias_para_vencer`, `apto_renovacao`, `vencido_no_painel`, `prazo_finalizado`, `renovacao_etapa`, `renovacao_fluxo` |
 | `plano` | objeto | `plano`, `categoria`, `valor`, `ramos_atividade` |
 
@@ -34,8 +34,8 @@ em reais são números, datas `AAAA-MM-DD`, horários RFC 3339, CNPJ/CPF só dí
 
 | Comando | Forma | Campos |
 |---|---|---|
-| `impostos` | lista | `grupo` (`em_atraso`, `este_mes`, `proximo_mes`), `id`, `imposto`, `competencia`, `vencimento`, `valor`, `situacao`, `tipo` |
-| `impostos guia ID` | objeto | `id`, `imposto`, `identificador`, `tipo`, `competencia`, `vencimento`, `valor_total`, `valor_original`, `juros_e_multa`, `valor_estimado`, `valor_em_atraso`, `situacao`, `acoes` (`PAGAR`, `INFORMAR_PAGAMENTO`…), `descricao`, `frequencia`, … |
+| `impostos` | lista | `grupo` (`em_atraso`, `este_mes`, `proximo_mes`), `id`, `imposto`, `competencia`, `vencimento`, `valor`, `situacao` (guias `PAGA` também aparecem), `tipo` |
+| `impostos guia ID` | objeto | `id`, `imposto`, `identificador`, `tipo`, `competencia`, `vencimento`, `valor_total`, `valor_original`, `juros_e_multa`, `valor_estimado`, `valor_em_atraso`, `situacao`, `acoes` (`PAGAR`, `INFORMAR_PAGAMENTO`, `BAIXAR_GUIA`…), `descricao`, `frequencia`, `impacto_do_atraso`. Aqui `situacao` é uma lista (`["PAGA"]`) e `vencimento` pode vir `null` |
 | `impostos calculo` | objeto | `mes`, `faturamento`, `das_imposto_bruto`, `das_deducao_retencao`, `das_total`, `das_inconsistente`, `inss_prolabore`, `inss_aliquota`, `inss_total`, `irrf_base_calculo`, `irrf_aliquota`, `irrf_deducao`, `irrf_total`, `darf_total`, `faturamento_12_meses`, `prolabore_12_meses`, `fator_r` (%) |
 | `impostos tabela-irrf` | lista | `base_calculo`, `aliquota`, `deducao` |
 | `impostos faturamento` | lista | `competencia`, `faturamento`, `prolabore`, `impostos_pagos` (12 meses, do mais antigo ao mais recente; RBT12 e Fator R no stderr) |
@@ -54,10 +54,11 @@ em reais são números, datas `AAAA-MM-DD`, horários RFC 3339, CNPJ/CPF só dí
 |---|---|---|
 | `prolabore` | objeto | `gerenciamento` (`INTELIGENTE`…), `total`, `valor_card`, `competencia_atual`, `competencia_anterior`, `calculando`, `indisponivel`, `socios[]` com `id` (o de `--socio`), `nome`, `cpf`, `valor`, `possui_prolabore`, `responsavel_receita`, `gestao`, `atualizado`, `dependentes` |
 | `prolabore parametros` | objeto | `salario_minimo`, `inss_aliquota`, `inss_contribuicao_maxima`, `prolabore_teto_inss`, `irrf_a_partir_de` |
-| `prolabore fator-r` | objeto | `motor_fator_r`, `fator_r` (%), `prolabore_12_meses`, `faturamento_12_meses`, `simulador`, `atividades[]` com `cnae`, `atividade`, `anexos`, `aliquotas`, `anexo_fixo` |
+| `prolabore fator-r` | objeto | `motor_fator_r`, `fator_r` (%), `prolabore_12_meses`, `faturamento_12_meses`, `simulador`, `atividades[]` com `cnae`, `atividade`, `anexos`, `aliquotas`, `anexo_fixo` (não use para saber se depende do Fator R: veja `empresa atividades`) |
 | `prolabore historico` | lista | `competencia`, `socio`, `prolabore`, `descontos` |
 | `prolabore zerar-sem-faturamento` | objeto | `zerar` (estado atual também em `prolabore -o json`) |
 | `lucros` | objeto | `exercicio`, `saldo`, `total_distribuido`, `total_adiantamentos`, `limite_distribuicao`, `exercicio_fechado`, `pode_alterar`, `data_limite`, `motivo`, `pendencia_documental`, `debitos_federais`, `reabertura_balanco`, `socios[]` com `id`, `socio`, `valor`, `porcentagem` |
+| `lucros informe restricoes` | objeto | `ano`, `carta_pendente`, `debitos_federais`, `debitos`, `divergencia_contabil_fiscal`, `pendencia_documental`, `pendencias`, `fluxo_regularizacao` (`NAO_NECESSARIO`, `REABERTURA_BALANCO`…), `valor_servico_adicional`, `reabertura_balanco` |
 | `lucros informe` | lista | `ano`, `socio`, `cpf`, `rendimentos`, `previdencia`, `irrf_retido`, `decimo_terceiro`, `irrf_decimo_terceiro`, `lucros_isentos` |
 
 ## Notas fiscais
@@ -93,8 +94,8 @@ em reais são números, datas `AAAA-MM-DD`, horários RFC 3339, CNPJ/CPF só dí
 |---|---|---|
 | `documentos` | lista | `tipo`, `nome`, `quantidade`, `modificado` (com `--tipo`: `competencia`, `arquivo`, `enviado`, `descricao`, `valor`, `link`) |
 | `documentos pendentes` | lista | `id_pendencia`, `tipo`, `competencia`, `conta`, `tipo_investimento` |
-| `mensalidade` | objeto | `competencia`, `valor`, `vencimento`, `situacao`, `observacao`, `competencia_anterior_atrasada` |
-| `mensalidade situacao` | objeto | `em_dia`, `situacao` |
+| `mensalidade` | objeto | `competencia`, `valor`, `vencimento` (texto, ex. `"Vencimento 15/10"`), `situacao` (ex. `Atrasada`), `observacao`, `competencia_anterior_atrasada` |
+| `mensalidade situacao` | objeto | `em_dia`, `situacao` (`OK`, `EM_ATRASO`…) |
 | `mensalidade historico` | objeto | `debito_automatico_ativo`, `debito_automatico_habilitado`, `status`, `competencia`, `proximo_pagamento`, `pagamentos[]` (`data`, `competencia`, `valor`, `status`) |
 | `usuarios` | lista | `id`, `nome`, `email`, `tipo`, `status` |
 | `correspondencias` | lista | `id`, `data`, `remetente`, `descricao`, `situacao`, `valor_envio` |

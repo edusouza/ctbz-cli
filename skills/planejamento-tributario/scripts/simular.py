@@ -163,6 +163,9 @@ def brl(v, largura=0):
 
 def main():
     a = argumentos()
+    if a.rbt12 <= 0:
+        print("Sem faturamento nos últimos 12 meses: o Fator R ainda não se aplica, não há o que simular.")
+        return
     # Pró-labore que, mantido por 12 meses, deixa o Fator R em 28% (arredondado para cima).
     necessario = max(math.ceil(round(FATOR_R_MINIMO * a.rbt12 / 12 * 100, 6)) / 100, a.salario_minimo * a.socios)
     minimo = a.salario_minimo * a.socios

@@ -29,9 +29,9 @@ custa 11% + 20%.
 ## Fator R
 
 - Fator R = folha dos 12 meses anteriores (para sócios sem funcionários, o pró-labore) ÷ RBT12.
-- Atividades "V ou III" (veja `ctbz prolabore fator-r`, coluna `anexos`): Fator R ≥ 28% →
+- Atividades com `anexos_simples` V e III (`ctbz empresa atividades`): Fator R ≥ 28% →
   Anexo III; abaixo → Anexo V.
-- Atividade com `anexo_fixo: sim` não depende do Fator R: aumentar o pró-labore só gera INSS e
+- Atividade de anexo único não depende do Fator R: aumentar o pró-labore só gera INSS e
   IRRF a mais.
 - Pró-labore que mantém 28% em regime ≈ 0,28 × RBT12 ÷ 12. Como a média é móvel, sair do V
   para o III pode exigir valores maiores por alguns meses, ou levar alguns meses.

@@ -15,8 +15,10 @@ ctbz impostos -o json            # grupo: em_atraso | este_mes | proximo_mes
 ctbz impostos guia ID -o json    # valor_total, juros_e_multa, situacao, acoes, descricao
 ```
 
-Apresente por grupo: imposto, competência, vencimento, valor e situação. Para cada guia em
-atraso, mostre `juros_e_multa` e diga como resolver (abaixo).
+Apresente por grupo: imposto, competência, vencimento, valor e situação. Guias com
+`situacao` `PAGA` continuam na lista: não são pendências (no detalhe, `situacao` é uma lista,
+ex. `["PAGA"]`, e o `vencimento` pode vir `null`). Para cada guia em atraso e não paga, mostre
+`juros_e_multa` e diga como resolver (abaixo).
 
 ## Pagar uma guia
 

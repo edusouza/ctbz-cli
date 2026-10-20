@@ -12,8 +12,9 @@ muda para o sócio.
 ## 1. Diagnóstico (leituras em paralelo)
 
 ```sh
-ctbz empresa -o json               # regime_tributario, ramos_atividade
-ctbz prolabore fator-r -o json     # fator_r, motor_fator_r, atividades[].anexos / anexo_fixo
+ctbz empresa -o json               # regime_tributario
+ctbz empresa atividades -o json    # anexos_simples de cada CNAE (["V","III"] = depende do Fator R)
+ctbz prolabore fator-r -o json     # fator_r, motor_fator_r, simulador
 ctbz prolabore -o json             # gerenciamento, socios[] (id, valor, gestao)
 ctbz prolabore parametros -o json  # salario_minimo, inss_*, prolabore_teto_inss, irrf_a_partir_de
 ctbz impostos faturamento -o json  # 12 meses: faturamento, prolabore, impostos_pagos
@@ -29,9 +30,18 @@ Classifique a empresa:
 
 | Caso | Sinal | Caminho |
 |---|---|---|
-| **A**: depende do Fator R | alguma atividade com `anexos` "V ou III" e `anexo_fixo` falso | seção 2 |
-| **B**: anexo fixo (I, II, III ou IV) | todas com `anexo_fixo` verdadeiro | pró-labore mínimo + lucros (seção 3) |
-| **C**: já otimizada | `motor_fator_r: true` ou `gerenciamento: INTELIGENTE` | confira se faz sentido manter (seção 4) |
+| **A**: depende do Fator R | alguma atividade com `anexos_simples` contendo V e III | seção 2 |
+| **B**: anexo único (I, II, III ou IV) | nenhuma atividade com V e III | pró-labore mínimo + lucros (seção 3) |
+| **C**: já otimizada | `motor_fator_r: true` e `gerenciamento: INTELIGENTE` com pró-labore > 0 | confira se faz sentido manter (seção 4) |
+
+Não use `anexo_fixo` nem `anexos` de `prolabore fator-r` para classificar: na prática eles
+não batem com os anexos do CNAE (uma atividade "V ou III" pode vir com `anexo_fixo: true`).
+`anexos_simples` é a fonte.
+
+Empresa sem faturamento nos 12 meses (`faturamento_12_meses` 0, `fator_r` 100): não há o que
+simular. Explique que o Fator R passa a contar com o primeiro faturamento e que, com a gestão
+inteligente, a Contabilizei ajusta o pró-labore desde o primeiro mês. Se a gestão está
+`INTELIGENTE` mas o pró-labore é 0, procure a pendência que a bloqueia (ex.: PIS do sócio).
 
 ## 2. Fator R: cenários
 
@@ -46,7 +56,10 @@ python3 "<pasta desta skill>/scripts/simular.py" --faturamento-json "$D/fat.json
 ```
 
 `S`, `T` e `I` vêm de `ctbz prolabore parametros` (`salario_minimo`, `prolabore_teto_inss`,
-`irrf_a_partir_de`). O script compara três cenários (atual, salário mínimo e o pró-labore que
+`irrf_a_partir_de`). Se `impostos faturamento` falhar com "Ano inválido" (empresa com menos
+de um ano), troque `--faturamento-json` por `--rbt12`, `--folha12` e `--prolabore`, com os
+valores de `ctbz impostos calculo` (`faturamento_12_meses`, `prolabore_12_meses`) e de
+`ctbz prolabore` (`total`). O script compara três cenários (atual, salário mínimo e o pró-labore que
 dá Fator R de 28%) com DAS, INSS, IRRF e o total. Use `--json` para ler o resultado.
 
 Confira o Fator R do script com o `fator_r` da CLI. Se forem diferentes, vale o da CLI: ajuste

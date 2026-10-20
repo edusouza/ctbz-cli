@@ -17,7 +17,13 @@ bash "<pasta desta skill>/scripts/coletar.sh" [AAAA-MM]
 ```
 
 Código 3 = sem sessão: faça o login (skill `assessor`) e rode de novo. Uma seção com erro não
-invalida as outras: relate a lacuna ("não consegui ler X") e siga.
+invalida as outras: relate a lacuna ("não consegui ler X") e siga. Falhas conhecidas da 1.8:
+
+- `rotinas` e `documentos pendentes` com "HTTP 206": a Central de Rotinas respondeu sem
+  pendências no formato parcial. Leia o mesmo dado com `ctbz api dashboard/v2/central-rotinas`
+  (JSON cru: `pendencias.pendenciasCriticas.*.possuiPendencia`).
+- `impostos faturamento` com "HTTP 400 ... Ano inválido": a empresa é mais nova que a janela de
+  12 meses. Use `faturamento_12_meses`, `prolabore_12_meses` e `fator_r` de `ctbz impostos calculo`.
 
 Sem o script, rode em paralelo: `resumo`, `impostos`, `impostos debitos`,
 `impostos faturamento`, `pendencias`, `pendencias termos`, `pendencias procuracao`,
@@ -30,8 +36,12 @@ Sem o script, rode em paralelo: `resumo`, `impostos`, `impostos debitos`,
 
 Classifique cada achado. A ordem das seções do relatório segue esta prioridade:
 
+Guias com `situacao` `PAGA`/`PAGO` ainda aparecem em `impostos` e o `resumo` pode marcá-las
+como `vencida`: não são pendências. Diga só que estão pagas (o `juros_e_multa` de
+`impostos guia ID` mostra se foram pagas com atraso).
+
 **🔴 Urgente (resolver hoje)**
-- `impostos`: guia em `grupo: "em_atraso"`. Juros e multa correm todo dia.
+- `impostos`: guia em `grupo: "em_atraso"` e não paga. Juros e multa correm todo dia.
 - `impostos debitos`: `possui_debitos_federais: true`. Impede certidão negativa e a
   distribuição isenta de lucros.
 - `resumo`: `alerta: "vencida"` ou `"crítica"`.
@@ -57,8 +67,10 @@ Classifique cada achado. A ordem das seções do relatório segue esta prioridad
 - `certificado`: `dias_para_vencer` ≤ 60 ou `apto_renovacao: true`.
 
 **🟢 Oportunidades e acompanhamento**
-- Fator R: atividade com `anexos` "V ou III", `fator_r` < 28 e `motor_fator_r: false` →
-  provável economia. Encaminhe para `planejamento-tributario`.
+- Fator R: atividade com `anexos_simples` contendo V e III (`empresa atividades`), `fator_r`
+  < 28 e `motor_fator_r: false` → provável economia. Encaminhe para `planejamento-tributario`.
+- `prolabore`: `gerenciamento: INTELIGENTE` com `total` 0 e uma pendência de cadastro (ex.: PIS)
+  → a gestão inteligente não está funcionando; resolver a pendência é o que a ativa.
 - `impostos faturamento`: RBT12 (some `faturamento`) acima de R$ 3 milhões (perto do sublimite
   de R$ 3,6 mi) ou de R$ 4 milhões (perto do teto de R$ 4,8 mi).
 - `notas config`: `instabilidade: true` → avise que é melhor esperar para emitir notas.
