@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-10-04
+
+Conta, usuários e acessos: quem acessa a empresa, dados de acesso a órgãos públicos, e-mail,
+telefone e senha de login, e o escritório virtual.
+
 ### Added
 
 - `ctbz usuarios`, `convidar`, `desativar` e `ativar`: quem acessa a empresa no painel
@@ -319,7 +324,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.8.0...HEAD
+[1.8.0]: https://github.com/edusouza/ctbz-cli/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/edusouza/ctbz-cli/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/edusouza/ctbz-cli/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/edusouza/ctbz-cli/compare/v1.4.0...v1.5.0

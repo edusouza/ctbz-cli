@@ -40,7 +40,7 @@ escritas, `risco: baixo|médio|alto`.
 | **v1.5** | Extratos, contas bancárias e documentos | [#199](https://github.com/edusouza/ctbz-cli/issues/199) | 6 | concluída |
 | **v1.6** | Notas fiscais: tomadores e notas de entrada | [#206](https://github.com/edusouza/ctbz-cli/issues/206) | 4 | concluída |
 | **v1.7** | Pró-labore, distribuição de lucros e informe de rendimentos | [#211](https://github.com/edusouza/ctbz-cli/issues/211) | 6 | concluída |
-| **v1.8** | Conta, usuários e acessos | [#218](https://github.com/edusouza/ctbz-cli/issues/218) | 4 | planejada |
+| **v1.8** | Conta, usuários e acessos | [#218](https://github.com/edusouza/ctbz-cli/issues/218) | 4 | concluída |
 
 ## v0.1 — Login e dados da empresa
 
@@ -308,10 +308,10 @@ Usuários da empresa, credenciais de órgãos públicos, dados de login e escrit
 
 | | Issue | Funcionalidade | Tipo | Risco |
 |---|---|---|---|---|
-| ⬜ | [#219](https://github.com/edusouza/ctbz-cli/issues/219) | Usuários da empresa: listar, convidar, ativar e desativar | funcionalidade | alto |
-| ⬜ | [#220](https://github.com/edusouza/ctbz-cli/issues/220) | Dados de acesso a órgãos públicos: ver, atualizar e confirmar senha da prefeitura | funcionalidade | alto |
-| ⬜ | [#221](https://github.com/edusouza/ctbz-cli/issues/221) | Alterar e-mail, telefone e senha da conta com código OTP | funcionalidade | alto |
-| ⬜ | [#222](https://github.com/edusouza/ctbz-cli/issues/222) | Escritório virtual: correspondências, endereço de envio e autorização | investigação | médio |
+| ✅ | [#219](https://github.com/edusouza/ctbz-cli/issues/219) | Usuários da empresa: listar, convidar, ativar e desativar | funcionalidade | alto |
+| ✅ | [#220](https://github.com/edusouza/ctbz-cli/issues/220) | Dados de acesso a órgãos públicos: ver, atualizar e confirmar senha da prefeitura | funcionalidade | alto |
+| ✅ | [#221](https://github.com/edusouza/ctbz-cli/issues/221) | Alterar e-mail, telefone e senha da conta com código OTP | funcionalidade | alto |
+| ✅ | [#222](https://github.com/edusouza/ctbz-cli/issues/222) | Escritório virtual: correspondências, endereço de envio e autorização | investigação | médio |
 
 Fora de escopo: Segundo fator por app autenticador; revogar convite pendente (sem endpoint).
 
