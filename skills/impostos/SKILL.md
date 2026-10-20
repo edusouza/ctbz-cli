@@ -64,8 +64,11 @@ Tributo federal pago com atraso tem multa de 0,33% ao dia (até 20%) mais juros 
   `das_total ÷ faturamento`. `das_inconsistente: true` → peça ao usuário que fale com a
   Contabilizei antes de pagar.
 - **INSS** = `inss_aliquota` (11%) × `inss_prolabore`, até o teto (`ctbz prolabore parametros`).
-- **IRRF** = (`irrf_base_calculo` × `irrf_aliquota`) − `irrf_deducao`. A base é o pró-labore
-  menos o INSS e os dependentes. Tabela: `ctbz impostos tabela-irrf`.
+- **IRRF** = (`irrf_base_calculo` × `irrf_aliquota`) − `irrf_deducao`, menos o redutor de 2026
+  (Lei 15.270/2025): IR zero até R$ 5.000 de pró-labore e, de R$ 5.000,01 a R$ 7.350, redução
+  de R$ 978,62 − 0,133145 × pró-labore. A base é o pró-labore menos o INSS e os dependentes, ou
+  menos o desconto simplificado (R$ 607,20), o que for maior. Por isso, nessa faixa, a conta
+  pela tabela (`ctbz impostos tabela-irrf`) dá mais que `irrf_total`: vale o `irrf_total`.
 - `fator_r`, `faturamento_12_meses`, `prolabore_12_meses`: se o Fator R estiver abaixo de 28%
   numa atividade sujeita a ele, sugira a skill `planejamento-tributario`.
 

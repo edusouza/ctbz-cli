@@ -120,6 +120,15 @@ ctbz notas entrada --lista a-classificar --mes M -o json
 ctbz notas entrada produtos ID -o json
 ```
 
+As escritas procuram a nota no mês atual por padrão: passe sempre `--mes M`, o mesmo das
+listagens (sem ele, a CLI responde "nota X não encontrada em AAAA-MM; use --mes" e não envia).
+
+```sh
+ctbz notas entrada manifestar ID... --confirmar --mes M --dry-run
+ctbz notas entrada classificar ID... --como uso-consumo --mes M --dry-run
+ctbz notas entrada reclassificar ID --como estoque --mes M --dry-run
+```
+
 - **Manifestar** (só `PENDENTE` ou `CIENCIA`): pergunte se a compra foi recebida.
   `--confirmar` (recebi), `--desconhecer` (não reconheço) e `--nao-realizada --justificativa
   "…"` (15 a 255 caracteres) são eventos na SEFAZ **sem desfazer** (risco alto). `--ciencia`
@@ -140,9 +149,13 @@ ctbz documentos pendentes -o json     # id_pendencia, tipo, competencia, conta
 - Arquivo existe → peça o caminho e `ctbz documentos enviar ARQ --pendencia ID` (médio; várias
   `--pendencia` do mesmo tipo vão num arquivo só). Extratos bancários vão por
   `extratos importar`.
-- Não existe → `documentos sem-arquivo --pendencia ID` (estoque, intermediações, AFAC) ou
-  `documentos sem-aplicacao --conta-bancaria ID --pendencia ID` (sem aplicação financeira).
-  Declarações **de risco alto** que fecham a pendência: confirme que é verdade.
+- Não existe → `documentos sem-arquivo --pendencia ID` para `ESTOQUE` ("não tive estoque") e
+  `CONTROLE_DE_INTERMEDIACOES` ("não tive intermediações"), ou `documentos sem-aplicacao
+  --conta-bancaria ID --pendencia ID` (sem aplicação financeira). Declarações **de risco alto**
+  e sem desfazer que fecham a pendência: confirme que é verdade.
+- **AFAC** (`CONTRATO_DE_AFAC`) é diferente: ali o `sem-arquivo` declara que o contrato **já foi
+  enviado antes** e que esse documento vale como comprovante. Use só nesse caso. Se o contrato
+  não existe, não use `sem-arquivo`: oriente o usuário a falar com a Contabilizei.
 
 ## 7. Conferência final
 

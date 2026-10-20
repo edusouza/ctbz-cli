@@ -47,7 +47,7 @@ O risco é o que a CLI declara. No terminal, o médio pede `[s/N]` e o alto pede
 | `prolabore definir` | muda INSS, IRRF e Fator R; dá para mudar de novo com o mês aberto |
 | `prolabore zerar-sem-faturamento on` | sócios sem INSS nos meses sem faturamento (aposentadoria, auxílios) |
 | `prolabore gestao-inteligente ativar` / `sair` | muda quem define o pró-labore |
-| `lucros distribuir` | rendimentos isentos declarados no IRPF dos sócios |
+| `lucros distribuir` | lucros declarados no IRPF dos sócios; desde 2026, retenção de 10% acima de R$ 50 mil/mês e IRPFM (ver skill `fechamento-anual`) |
 | `lucros informe aceitar` / `decidir` | sem desfazer; `--nao-regularizar-pendencia` zera a distribuição |
 | `balanco reabrir --ano A` | informe indisponível até a análise; sem desfazer |
 | `usuarios convidar EMAIL` | acesso total, sem revogar antes do aceite |

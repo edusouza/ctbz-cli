@@ -52,14 +52,21 @@ D=$(mktemp -d)
 ctbz impostos faturamento -o json > "$D/fat.json"
 ctbz impostos tabela-irrf -o json > "$D/irrf.json"
 python3 "<pasta desta skill>/scripts/simular.py" --faturamento-json "$D/fat.json" \
-  --irrf-json "$D/irrf.json" --socios N --salario-minimo S --teto-inss T --irrf-isento-ate I
+  --irrf-json "$D/irrf.json" --socios N --salario-minimo S --teto-inss T --irrf-isento-ate I \
+  [--dependentes K] [--meses-atividade M]
 ```
 
 `S`, `T` e `I` vêm de `ctbz prolabore parametros` (`salario_minimo`, `prolabore_teto_inss`,
-`irrf_a_partir_de`). Se `impostos faturamento` falhar com "Ano inválido" (empresa com menos
-de um ano), troque `--faturamento-json` por `--rbt12`, `--folha12` e `--prolabore`, com os
-valores de `ctbz impostos calculo` (`faturamento_12_meses`, `prolabore_12_meses`) e de
-`ctbz prolabore` (`total`). O script compara três cenários (atual, salário mínimo e o pró-labore que
+`irrf_a_partir_de`); `K` é o número de dependentes de cada sócio (`socios[].dependentes` de
+`ctbz prolabore`).
+
+**Empresa com menos de 12 meses:** a RBT12 é a média dos meses de atividade × 12. O script
+anualiza sozinho, contando os meses desde o primeiro com faturamento ou pró-labore; passe
+`--meses-atividade M` (meses desde a abertura, de `ctbz empresa`) quando a contagem automática
+estiver errada. Se `impostos faturamento` falhar com "Ano inválido" (CLI até a 1.8.0), troque
+`--faturamento-json` por `--rbt12`, `--folha12` e `--prolabore`, com os valores de
+`ctbz impostos calculo` (`faturamento_12_meses`, `prolabore_12_meses`) e de `ctbz prolabore`
+(`total`), e informe `--meses-atividade`. O script compara três cenários (atual, salário mínimo e o pró-labore que
 dá Fator R de 28%) com DAS, INSS, IRRF e o total. Use `--json` para ler o resultado.
 
 Confira o Fator R do script com o `fator_r` da CLI. Se forem diferentes, vale o da CLI: ajuste
@@ -95,11 +102,13 @@ pró-labore custa 31% (11% + 20% patronal).
 - **Exportação de serviços:** se houver clientes no exterior (`ctbz notas tomadores`,
   `exterior: true`), confira em `ctbz notas aliquotas` a alíquota `externo` e lembre que as
   notas precisam ser emitidas como exportação.
-- **Limites:** RBT12 acima de R$ 3,6 milhões (sublimite) ou perto de R$ 4,8 milhões (teto):
-  alerte e recomende conversar com o contador sobre a mudança de regime. Projete com a média
-  dos últimos meses: meses até o limite ≈ (limite − RBT12) ÷ (crescimento mensal médio).
-- **Retenções:** `das_deducao_retencao` > 0 indica ISS ou outros tributos retidos pelo cliente,
-  que reduzem o DAS. Se o cliente retém e o valor não aparece, oriente a falar com a Contabilizei.
+- **Limites:** sublimite (R$ 3,6 milhões) e teto (R$ 4,8 milhões) se medem pela receita do
+  **ano-calendário** (proporcionais no ano de abertura), não pela RBT12. Some o faturamento do
+  ano corrente em `impostos faturamento`, projete o resto do ano pela média dos últimos meses e,
+  se a projeção passar perto, recomende conversar com o contador sobre a mudança de regime.
+- **Retenções:** `das_deducao_retencao` > 0 indica ISS retido pelo cliente, o único que reduz o
+  DAS. INSS retido (Anexo IV) é compensado fora do DAS. Se o cliente retém ISS e o valor não
+  aparece, oriente a falar com a Contabilizei.
 
 ## 4. Aplicar (somente com o ok do usuário)
 

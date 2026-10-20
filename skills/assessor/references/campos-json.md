@@ -20,7 +20,7 @@ em reais são números, datas `AAAA-MM-DD`, horários RFC 3339, CNPJ/CPF só dí
 
 | Comando | Forma | Campos |
 |---|---|---|
-| `resumo` | lista | `secao` (`impostos`, `pendencias`, `rotinas`, `mensalidade`, `painel`), `item`, `prazo`, `valor`, `situacao`, `alerta` (`vencida`, `próxima`, `crítica`, `aviso` ou `null`) |
+| `resumo` | lista | `secao` (`impostos`, `pendencias`, `rotinas`, `mensalidade`, `painel`), `item`, `prazo`, `valor`, `situacao`, `alerta` (`vencida`, `próxima`, `crítica` ou `null`; indicadores não críticos do painel saem com `situacao: "aviso"` e `alerta: null`) |
 | `pendencias` | lista | `id`, `tipo`, `detalhe` (texto completo), `criada`, `prazo`, `situacao`, `alerta` |
 | `rotinas` | lista | `responsavel` (`empresa`/`contabilizei`), `rotina`, `prazo`, `status`, `valor`, `alerta`, `pendencias` (ids) |
 | `pendencias termos` | lista | `chave`, `titulo`, `pendente`, `prazo_aceite_tacito_dias` |
@@ -56,7 +56,7 @@ em reais são números, datas `AAAA-MM-DD`, horários RFC 3339, CNPJ/CPF só dí
 | `prolabore parametros` | objeto | `salario_minimo`, `inss_aliquota`, `inss_contribuicao_maxima`, `prolabore_teto_inss`, `irrf_a_partir_de` |
 | `prolabore fator-r` | objeto | `motor_fator_r`, `fator_r` (%), `prolabore_12_meses`, `faturamento_12_meses`, `simulador`, `atividades[]` com `cnae`, `atividade`, `anexos`, `aliquotas`, `anexo_fixo` (não use para saber se depende do Fator R: veja `empresa atividades`) |
 | `prolabore historico` | lista | `competencia`, `socio`, `prolabore`, `descontos` |
-| `prolabore zerar-sem-faturamento` | objeto | `zerar` (estado atual também em `prolabore -o json`) |
+| `prolabore zerar-sem-faturamento on\|off` | objeto | `acao`, `situacao`, `zerar` (estado depois do envio). Não há leitura do estado atual: o comando exige `on` ou `off` e, se o estado já for o pedido, não envia nada (`sem mudança`) |
 | `lucros` | objeto | `exercicio`, `saldo`, `total_distribuido`, `total_adiantamentos`, `limite_distribuicao`, `exercicio_fechado`, `pode_alterar`, `data_limite`, `motivo`, `pendencia_documental`, `debitos_federais`, `reabertura_balanco`, `socios[]` com `id`, `socio`, `valor`, `porcentagem` |
 | `lucros informe restricoes` | objeto | `ano`, `carta_pendente`, `debitos_federais`, `debitos`, `divergencia_contabil_fiscal`, `pendencia_documental`, `pendencias`, `fluxo_regularizacao` (`NAO_NECESSARIO`, `REABERTURA_BALANCO`…), `valor_servico_adicional`, `reabertura_balanco` |
 | `lucros informe` | lista | `ano`, `socio`, `cpf`, `rendimentos`, `previdencia`, `irrf_retido`, `decimo_terceiro`, `irrf_decimo_terceiro`, `lucros_isentos` |

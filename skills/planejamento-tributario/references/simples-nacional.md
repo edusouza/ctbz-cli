@@ -38,10 +38,17 @@ custa 11% + 20%.
 
 ## Limites
 
-| RBT12 / receita do ano | Efeito |
+Sublimite e teto se medem pela **receita bruta do ano-calendário** (LC 123, arts. 3º e 20),
+não pela RBT12. A RBT12 só define a faixa e a alíquota; uma RBT12 acima de R$ 4,8 milhões não
+quer dizer, sozinha, que a empresa saiu do Simples (a alíquota usa a 6ª faixa).
+
+| Receita do ano-calendário | Efeito |
 |---|---|
-| acima de R$ 3,6 milhões (sublimite) | ISS e ICMS saem do DAS e passam a ser pagos à parte, no ano seguinte (ou de imediato se passar 20% do sublimite) |
-| acima de R$ 4,8 milhões (teto) | exclusão do Simples: no ano seguinte se o excesso for de até 20%; senão, a partir do mês seguinte |
+| acima de R$ 3,6 milhões (sublimite) | ISS e ICMS saem do DAS e passam a ser pagos à parte: no ano seguinte se o excesso for de até 20%; senão, a partir do mês seguinte ao excesso |
+| acima de R$ 4,8 milhões (teto) | exclusão do Simples: no ano seguinte se o excesso for de até 20%; senão, a partir do mês seguinte ao excesso |
+
+No ano de início de atividade, os limites são proporcionais aos meses de atividade:
+R$ 300 mil (sublimite) e R$ 400 mil (teto) por mês.
 
 A repartição dos tributos dentro do DAS por faixa e os casos de transição ficam com o contador.
 
@@ -50,9 +57,21 @@ A repartição dos tributos dentro do DAS por faixa e os casos de transição fi
 | | Pró-labore | Distribuição de lucros |
 |---|---|---|
 | INSS | 11% do sócio (até o teto) | não |
-| IRRF | tabela progressiva (isenção até R$ 5.000 em 2026) | isenta até o lucro apurado; desde 2026, retenção de 10% sobre o que passar de R$ 50 mil/mês por sócio (Lei 15.270/2025) |
+| IRRF | tabela progressiva (isenção até R$ 5.000 em 2026, com redutor até R$ 7.350) | isenta até o lucro apurado, com as ressalvas abaixo |
 | Conta para aposentadoria | sim | não |
 | Fator R | entra | não entra |
+
+**Lucros desde 2026** (Lei 15.270/2025, art. 6º-A da Lei 9.250):
+
+- quando a empresa paga mais de R$ 50 mil no mês ao mesmo sócio, retém 10% de IR sobre o
+  **valor total** do mês (R$ 80 mil → R$ 8 mil retidos, não R$ 3 mil);
+- os lucros entram na base do imposto mínimo anual (IRPFM) de quem tem renda acima de
+  R$ 600 mil por ano, chegando a 10% a partir de R$ 1,2 milhão;
+- ficam na regra antiga só os lucros apurados até 2025 com distribuição aprovada até
+  31/12/2025.
+
+Para quem distribui valores altos, a "isenção" deixou de ser automática: planeje o calendário
+de distribuição com o contador, sem fracionar pagamentos só para fugir da retenção.
 
 Regra prática: pró-labore no mínimo que faz sentido (salário mínimo, ou o que leva ao Fator R
 de 28% quando isso compensa) e o resto como distribuição de lucros. Valores e regras da

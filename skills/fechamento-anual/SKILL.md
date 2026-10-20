@@ -31,7 +31,7 @@ quando dá para alterar e o que bloqueia.
 
 | Restrição | O que significa | Caminhos |
 |---|---|---|
-| `debitos_federais: true` | débitos na Receita/PGFN | regularizar (skill `impostos`: pagar ou parcelar); aceitar o termo de débitos (`lucros informe aceitar termo-debitos`); ou decidir não distribuir (`decidir --nao-distribuir-lucros`) |
+| `debitos_federais: true` | débitos na Receita/PGFN; distribuir com débito não garantido gera multa de 50% do valor distribuído | regularizar (skill `impostos`: pagar ou parcelar); aceitar o termo de débitos (`lucros informe aceitar termo-debitos`); ou decidir não distribuir (`decidir --nao-distribuir-lucros`) |
 | `divergencia_contabil_fiscal: true` (em `restricoes`) | contabilidade e fiscal não batem | falar com a Contabilizei antes de distribuir |
 | `pendencia_documental: true` | faltam documentos do ano | `decidir --regularizar-pendencia` (mostra onde enviar) e, se o caminho for `REABERTURA_BALANCO`, `balanco reabrir --ano A`; ou `decidir --nao-regularizar-pendencia` (**sem distribuição de lucros** no informe) |
 | carta de responsabilidade pendente | o painel exige o aceite para liberar o informe | ler e aceitar (seção 3) |
@@ -68,10 +68,18 @@ A Central de Rotinas tem os seus próprios aceites (`ctbz pendencias termos`, `t
    Sócios não citados ficam com zero.
 3. A CLI recusa sem exercício aberto, com `pode_alterar: false` (mostra o `motivo`), depois da
    `data_limite` ou com restrições. Resolva a causa; não contorne.
-4. **Risco alto:** são os rendimentos isentos que cada sócio declara no IRPF. Dá para refazer
-   enquanto `pode_alterar` for verdadeiro. Desde 2026 há retenção de 10% de IR sobre lucros
-   acima de R$ 50 mil por mês por sócio (Lei 15.270/2025); para valores altos, recomende
-   confirmar com o contador.
+4. **Risco alto:** são os lucros que cada sócio declara no IRPF. Dá para refazer enquanto
+   `pode_alterar` for verdadeiro. O exercício de 2026 em diante cai inteiro na regra nova
+   (Lei 15.270/2025, art. 6º-A da Lei 9.250):
+   - quando a empresa paga mais de R$ 50 mil no mês ao mesmo sócio, retém 10% de IR sobre o
+     **valor total** do mês (R$ 80 mil → R$ 8 mil retidos);
+   - os lucros entram no imposto mínimo anual (IRPFM) de quem tem renda acima de R$ 600 mil
+     por ano, chegando a 10% a partir de R$ 1,2 milhão;
+   - só os lucros apurados até 2025 com distribuição aprovada até 31/12/2025 ficam na regra
+     antiga.
+
+   Mostre essas regras antes de confirmar valores altos e recomende planejar o calendário de
+   pagamentos com o contador.
 
 ## 5. Informe de rendimentos (IRPF dos sócios)
 
