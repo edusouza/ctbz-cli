@@ -42,8 +42,11 @@ a alíquota do Simples Nacional), pró-labore acumulado e o percentual do Fator 
 			pagos := map[int]*api.DadosGrafico{}
 			for _, m := range meses {
 				if _, ok := pagos[m.ano]; !ok {
-					if pagos[m.ano], err = api.BuscarImpostosPagosNoAno(cmd.Context(), g, m.ano); err != nil && !anoAntesDaAbertura(err) {
-						return err
+					if pagos[m.ano], err = api.BuscarImpostosPagosNoAno(cmd.Context(), g, m.ano); err != nil {
+						if !anoAntesDaAbertura(err) {
+							return err
+						}
+						fmt.Fprintf(s.err, "Impostos pagos indisponíveis em %d: a Contabilizei recusou o ano por ser anterior à abertura ou à ativação da empresa.\n", m.ano)
 					}
 				}
 			}

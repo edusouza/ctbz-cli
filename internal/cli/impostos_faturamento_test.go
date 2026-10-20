@@ -62,4 +62,7 @@ func TestImpostosFaturamentoAnoAntesDaAbertura(t *testing.T) {
 	if code != ExitOK || out != want {
 		t.Errorf("código %d, %s\nCSV:\n%s\nesperado:\n%s", code, stderr, out, want)
 	}
+	if !strings.Contains(stderr, "Impostos pagos indisponíveis em 2025") {
+		t.Errorf("sem aviso do ano recusado: %q", stderr)
+	}
 }

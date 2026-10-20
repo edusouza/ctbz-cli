@@ -67,6 +67,14 @@ func TestResumoIgnoraGuiaPaga(t *testing.T) {
 	}
 }
 
+func TestGuiaPaga(t *testing.T) {
+	for situacao, want := range map[string]bool{"PAGA": true, "Paga": true, "PAGO": true, "PAGAR": false, "RECALCULADA": false, "": false} {
+		if got := guiaPaga(situacao); got != want {
+			t.Errorf("guiaPaga(%q) = %v, quero %v", situacao, got, want)
+		}
+	}
+}
+
 func TestResumoNadaAFazer(t *testing.T) {
 	fixNow(t, "2026-08-15") // a fixture não tem rotinas em agosto
 	withSession(t, fakeAPI(t, map[string]string{

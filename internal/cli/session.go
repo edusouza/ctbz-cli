@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"strings"
 	"sync"
@@ -115,9 +116,12 @@ func (g sessionGetter) GetText(ctx context.Context, path string) (string, error)
 	return string(resp.Body), nil
 }
 
-// sucesso diz se um status de leitura é de sucesso. Como o painel, aceita qualquer 2xx: a
-// Central de Rotinas às vezes responde 206 com a resposta completa.
-func sucesso(status int) bool { return status >= 200 && status < 300 }
+// sucesso diz se um status de leitura traz dados. Como o painel, aceita 2xx (a Central de
+// Rotinas às vezes responde 206 com a resposta completa), menos o 204: sem corpo, ele quer
+// dizer "não encontrado" ou "sem dados" (ex.: o cadastro de um tomador inexistente).
+func sucesso(status int) bool {
+	return status >= 200 && status < 300 && status != http.StatusNoContent
+}
 
 // saveCookies persiste cookies renovados pelo servidor durante as chamadas.
 func saveCookies(store *ctbz.Store, sess *ctbz.Session, c *ctbz.Client, errOut io.Writer) {

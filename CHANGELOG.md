@@ -10,10 +10,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 ### Fixed
 
 - `ctbz rotinas`, `documentos pendentes` e as demais leituras da Central de Rotinas não
-  falham mais quando a Contabilizei responde HTTP 206: as leituras aceitam qualquer 2xx, como
-  o painel.
+  falham mais quando a Contabilizei responde HTTP 206: as leituras aceitam 2xx, como o painel,
+  menos o 204, que continua querendo dizer "não encontrado".
 - `ctbz impostos faturamento` funciona em empresas com menos de um ano: os meses anteriores à
-  abertura saem sem impostos pagos, em vez de o comando falhar com "Ano inválido".
+  abertura saem sem impostos pagos, com um aviso no stderr, em vez de o comando falhar com
+  "Ano inválido".
 - `ctbz resumo` não lista mais como vencida uma guia já paga.
 
 ## [1.8.0] - 2026-10-04
