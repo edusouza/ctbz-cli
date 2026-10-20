@@ -1,0 +1,14 @@
+{
+  "name": "ctbz-cli",
+  "description": "Skills para operar a Contabilizei com a CLI ctbz.",
+  "owner": {
+    "name": "Eduardo Oliveira de Souza"
+  },
+  "plugins": [
+    {
+      "name": "ctbz",
+      "source": "./",
+      "description": "Um assessor contábil para a Contabilizei: checkup, fechamento do mês, impostos, Fator R, lucros, notas e acessos, pela CLI ctbz."
+    }
+  ]
+}
