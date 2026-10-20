@@ -19,7 +19,7 @@ Uma lista só com o que exige ação, montada a partir de três consultas feitas
 
 | Seção | De onde vem |
 |---|---|
-| `impostos` | guias em atraso (sempre `vencida`) e do mês, como em `ctbz impostos` |
+| `impostos` | guias em atraso (sempre `vencida`) e do mês, como em `ctbz impostos`, menos as já pagas (`PAGA`) |
 | `pendencias` | pendências abertas, como em `ctbz pendencias` |
 | `rotinas` | rotinas da empresa do mês ainda não realizadas (sem os impostos, que já aparecem acima) |
 | `mensalidade` | a mensalidade do mês, paga ou não |

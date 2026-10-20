@@ -52,6 +52,21 @@ func TestResumoImpostoEmAtraso(t *testing.T) {
 	}
 }
 
+// Uma guia já paga continua entre as do mês, mas não pede ação, mesmo com o vencimento passado.
+func TestResumoIgnoraGuiaPaga(t *testing.T) {
+	fixNow(t, "2026-10-20")
+	withSession(t, fakeAPI(t, map[string]string{
+		pathGuias: `{"emAtraso":[],"esteMes":[{"id":9,"nome":{"label":"DARF Unificado"},"tipo":"GUIA","identificadorImposto":"DARF_UNIFICADO",
+"vencimentoOriginal":"2026-10-06","valor":{"label":12.92},"competencia":"Jul de 2026","status":{"label":"PAGA"}}],"proximoMes":[]}`,
+		pathPendencias: `[]`,
+		pathCentral:    `{"pendencias":{"pendenciasCriticas":{},"outrasPendencias":{}},"rotinas":[],"rotinasContabilizei":[]}`,
+	}))
+	out, stderr, code := execCLI(t, "", "resumo", "--fail-on-atencao")
+	if code != ExitOK || !strings.Contains(stderr, "Nada precisa de atenção.") {
+		t.Errorf("guia paga: código %d, stdout %q, stderr %q", code, out, stderr)
+	}
+}
+
 func TestResumoNadaAFazer(t *testing.T) {
 	fixNow(t, "2026-08-15") // a fixture não tem rotinas em agosto
 	withSession(t, fakeAPI(t, map[string]string{
