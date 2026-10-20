@@ -1,0 +1,23 @@
+[
+  {
+    "id": 101,
+    "nome": "FULANO DE TAL",
+    "email": "fulano@example.com",
+    "tipo": "USUARIO_PRINCIPAL",
+    "status": "ATIVO"
+  },
+  {
+    "id": 102,
+    "nome": "BELTRANO DE TAL",
+    "email": "beltrano@example.com",
+    "tipo": "USUARIO_SECUNDARIO",
+    "status": "INATIVO"
+  },
+  {
+    "id": 103,
+    "nome": null,
+    "email": "convidado@example.com",
+    "tipo": "USUARIO_SECUNDARIO",
+    "status": "CONVITE_ENVIADO"
+  }
+]

@@ -115,4 +115,8 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz rotinas`](ctbz_rotinas.md) | Lista as rotinas e obrigações do mês (da empresa e da Contabilizei) |
 | [`ctbz rotinas reclassificar`](ctbz_rotinas_reclassificar.md) | Confirma ou altera a classificação de lançamentos pedida pela Central de Rotinas |
 | [`ctbz status`](ctbz_status.md) | Mostra a sessão atual e testa se ainda é válida |
+| [`ctbz usuarios`](ctbz_usuarios.md) | Lista quem tem acesso à empresa no painel (multiusuário) |
+| [`ctbz usuarios ativar`](ctbz_usuarios_ativar.md) | Devolve o acesso de um usuário desativado |
+| [`ctbz usuarios convidar`](ctbz_usuarios_convidar.md) | Convida uma pessoa para acessar a empresa, com acesso total |
+| [`ctbz usuarios desativar`](ctbz_usuarios_desativar.md) | Revoga o acesso de um usuário à empresa |
 | [`ctbz version`](ctbz_version.md) | Mostra a versão do ctbz |

@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Added
+
+- `ctbz usuarios`, `convidar`, `desativar` e `ativar`: quem acessa a empresa no painel
+  (multiusuário), com convite de acesso total e revogação por desativação.
+
 ## [1.7.0] - 2026-10-04
 
 Pró-labore, distribuição de lucros e informe de rendimentos: mudar a gestão do pró-labore,

@@ -326,6 +326,12 @@ func Escritas() []Escrita {
 		{Name: "balanco_reabrir", Exemplo: func(ctx context.Context, s Sender) error {
 			return ReabrirBalanco(ctx, s, 2025)
 		}},
+		{Name: "usuarios_convidar", Exemplo: func(ctx context.Context, s Sender) error {
+			return ConvidarUsuario(ctx, s, "convidado@example.com")
+		}},
+		{Name: "usuarios_desativar", Exemplo: func(ctx context.Context, s Sender) error {
+			return AtivarUsuarioEmpresa(ctx, s, 102, false)
+		}},
 		{Name: "caixa_remover_lancamento", Exemplo: func(ctx context.Context, s Sender) error {
 			return RemoverLancamento(ctx, s, 2026, 9, 1000000000000002)
 		}},

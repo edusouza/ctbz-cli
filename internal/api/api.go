@@ -109,6 +109,8 @@ func Endpoints() []Endpoint {
 		{Name: "distribuicao_lucros", LivePath: PathDistribuicaoLucros, Type: DistribuicaoLucros{}},
 		{Name: "restricoes_informe", LivePath: PathRestricoesInforme(2025), Type: RestricoesInforme{}},
 		{Name: "carta_responsabilidade_informe", LivePath: PathCartaResponsabilidadeInforme(2025), Type: CartaResponsabilidadeInforme{}}, // sintética (ADR-0021)
+		{Name: "usuarios_empresa", LivePath: PathUsuariosEmpresa, Type: []UsuarioEmpresa{}},                                              // sintética (ADR-0021)
+		{Name: "status_multiusuario", LivePath: PathStatusMultiusuario, Type: StatusMultiusuario{}},                                      // sintética (ADR-0021)
 		{Name: "socios_informe", LivePath: PathSociosInforme(2025), Type: []SocioInforme{}},
 		// getValoresComprovanteRendimento fica sem contrato: nenhum exemplo real (sem sócios com informe).
 	}
