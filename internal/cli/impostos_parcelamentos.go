@@ -87,7 +87,7 @@ parcelamentos), por isso os campos são mostrados como a API os devolve.`,
 			if err != nil {
 				return err
 			}
-			if resp.Status != 200 {
+			if !sucesso(resp.Status) {
 				return &ctbz.HTTPError{Step: "detalhe do parcelamento", Status: resp.Status, Body: resp.Body}
 			}
 			data, err := output.FromJSON(resp.Body)

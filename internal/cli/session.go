@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"strings"
 	"sync"
@@ -78,7 +79,7 @@ func getJSONCom(ctx context.Context, s streams, path string, v any, relogar bool
 	if err != nil {
 		return err
 	}
-	if resp.Status != 200 {
+	if !sucesso(resp.Status) {
 		return &ctbz.HTTPError{Step: path, Status: resp.Status, Body: resp.Body}
 	}
 	if err := json.Unmarshal(resp.Body, v); err != nil {
@@ -109,10 +110,17 @@ func (g sessionGetter) GetText(ctx context.Context, path string) (string, error)
 	if err != nil {
 		return "", err
 	}
-	if resp.Status != 200 {
+	if !sucesso(resp.Status) {
 		return "", &ctbz.HTTPError{Step: path, Status: resp.Status, Body: resp.Body}
 	}
 	return string(resp.Body), nil
+}
+
+// sucesso diz se um status de leitura traz dados. Como o painel, aceita 2xx (a Central de
+// Rotinas às vezes responde 206 com a resposta completa), menos o 204: sem corpo, ele quer
+// dizer "não encontrado" ou "sem dados" (ex.: o cadastro de um tomador inexistente).
+func sucesso(status int) bool {
+	return status >= 200 && status < 300 && status != http.StatusNoContent
 }
 
 // saveCookies persiste cookies renovados pelo servidor durante as chamadas.

@@ -1,13 +1,17 @@
 package cli
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
+	"net/http"
 	"sort"
 	"strconv"
 
 	"github.com/spf13/cobra"
 
 	"github.com/edusouza/ctbz-cli/internal/api"
+	"github.com/edusouza/ctbz-cli/internal/ctbz"
 	"github.com/edusouza/ctbz-cli/internal/output"
 )
 
@@ -39,7 +43,10 @@ a alíquota do Simples Nacional), pró-labore acumulado e o percentual do Fator 
 			for _, m := range meses {
 				if _, ok := pagos[m.ano]; !ok {
 					if pagos[m.ano], err = api.BuscarImpostosPagosNoAno(cmd.Context(), g, m.ano); err != nil {
-						return err
+						if !anoAntesDaAbertura(err) {
+							return err
+						}
+						fmt.Fprintf(s.err, "Impostos pagos indisponíveis em %d: a Contabilizei recusou o ano por ser anterior à abertura ou à ativação da empresa.\n", m.ano)
 					}
 				}
 			}
@@ -74,6 +81,15 @@ func mesesDoHistorico(c *api.CalculoImposto) []mesFaturamento {
 	}
 	sort.Slice(out, func(i, j int) bool { return out[i].ano*100+out[i].mes < out[j].ano*100+out[j].mes })
 	return out
+}
+
+// anoAntesDaAbertura diz se a Contabilizei recusou o ano por ser anterior à abertura (ou à
+// ativação) da empresa: os 12 meses do histórico podem começar antes dela, e nesses meses não
+// há impostos pagos a mostrar.
+func anoAntesDaAbertura(err error) bool {
+	var he *ctbz.HTTPError
+	return errors.As(err, &he) && he.Status == http.StatusBadRequest &&
+		bytes.Contains(he.Body, []byte("impostos/historico-impostos/ano-invalido"))
 }
 
 func faturamentoList(meses []mesFaturamento, pagos map[int]*api.DadosGrafico) *output.List {

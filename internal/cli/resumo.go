@@ -19,6 +19,12 @@ import (
 // alertaCritica marca uma pendência crítica do painel, que não tem prazo (ADR-0012).
 const alertaCritica = "crítica"
 
+// guiaPaga diz se a situação é de uma guia já paga, que o painel mantém entre as do mês. A
+// API usa "PAGA" nas guias e "PAGO" no histórico; "PAGAR" não conta.
+func guiaPaga(situacao string) bool {
+	return strings.EqualFold(situacao, "PAGA") || strings.EqualFold(situacao, "PAGO")
+}
+
 func newResumoCmd() *cobra.Command {
 	var failOnAtencao bool
 	cmd := &cobra.Command{
@@ -112,6 +118,9 @@ func resumoList(d *dadosResumo) (*output.List, bool) {
 
 	for _, gr := range gruposDeGuias(d.guias, false)[:2] { // em atraso e deste mês
 		for _, g := range gr.guias {
+			if guiaPaga(g.Status.Label) {
+				continue // continua na lista do mês, mas não pede ação
+			}
 			prazo, _ := output.ParseDate(g.VencimentoOriginal)
 			alerta := alertaDePrazo(prazo, true)
 			if gr.chave == "em_atraso" {

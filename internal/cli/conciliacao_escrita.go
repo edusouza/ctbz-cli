@@ -79,7 +79,7 @@ pendências), por isso os campos saem como a API os devolve.`,
 			if err != nil {
 				return err
 			}
-			if resp.Status != 200 {
+			if !sucesso(resp.Status) {
 				return &ctbz.HTTPError{Step: path, Status: resp.Status, Body: resp.Body}
 			}
 			return escreverJSONCru(cmd, s, resp.Body)
@@ -133,7 +133,7 @@ Os campos saem como a API os devolve (formato não verificado).`,
 			if err != nil {
 				return err
 			}
-			if resp.Status != 200 {
+			if !sucesso(resp.Status) {
 				return &ctbz.HTTPError{Step: api.PathDetalhesConciliacao, Status: resp.Status, Body: resp.Body}
 			}
 			return escreverJSONCru(cmd, s, resp.Body)

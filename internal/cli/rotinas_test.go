@@ -1,6 +1,9 @@
 package cli
 
 import (
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 )
@@ -66,5 +69,21 @@ func TestRotinasPendencias(t *testing.T) {
 	out, stderr, code := execCLI(t, "", "rotinas", "-o", "csv")
 	if code != ExitOK || !strings.HasSuffix(out, "empresa,Alterar lançamento bancário,2026-10-10,EM_ABERTO,,próxima,p1; p2\n") {
 		t.Errorf("código %d, %s\n%s", code, stderr, out)
+	}
+}
+
+// A Central de Rotinas às vezes responde 206 com a resposta completa; o painel aceita.
+func TestRotinasStatus206(t *testing.T) {
+	fixNow(t, "2026-10-03")
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusPartialContent)
+		io.WriteString(w, centralRotinasJSON)
+	}))
+	t.Cleanup(srv.Close)
+	withSession(t, srv)
+
+	out, stderr, code := execCLI(t, "", "rotinas", "-o", "csv")
+	if code != ExitOK || !strings.Contains(out, "empresa,DARF Unificada,2026-10-02") {
+		t.Errorf("com HTTP 206, código %d, %s\n%s", code, stderr, out)
 	}
 }

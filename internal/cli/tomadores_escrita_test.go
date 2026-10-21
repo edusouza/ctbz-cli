@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 )
@@ -113,5 +115,24 @@ func TestTomadoresRemover(t *testing.T) {
 	}
 	if _, _, code := execCLI(t, "", "notas", "tomadores", "remover", "123", "--yes"); code != ExitError {
 		t.Errorf("inexistente: código %d", code)
+	}
+}
+
+// O cadastro do tomador responde 204 quando ele não existe: a leitura não pode tratar o 204
+// como sucesso.
+func TestTomadoresEditarNaoEncontrado(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == pathCadastroBB {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	t.Cleanup(srv.Close)
+	withSession(t, srv)
+
+	_, stderr, code := execCLI(t, "", "notas", "tomadores", "editar", "00000000000191", "--email", "a@exemplo.com", "--yes")
+	if code != ExitError || !strings.Contains(stderr, "tomador 00000000000191 não encontrado") {
+		t.Errorf("tomador inexistente: código %d, %s", code, stderr)
 	}
 }
