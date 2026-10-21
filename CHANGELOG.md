@@ -15,6 +15,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   (com simulador de Fator R), `fechamento-anual`, `notas-e-clientes` e `cadastro-e-acessos`.
 - `scripts/gerar-comandos-skill.py`: gera o mapa de comandos das skills a partir de
   `docs/referencia`.
+- READMEs das skills (`skills/README.md` e um por skill): instalação, configuração do login,
+  exemplos de uso, o que cada skill pode alterar e com que risco, limites e solução de problemas.
 
 ### Fixed
 
