@@ -116,7 +116,7 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			if resp != nil && len(resp.IDTicket) > 0 && string(resp.IDTicket) != "null" {
 				ticket := strings.Trim(string(resp.IDTicket), `"`)
 				id = ticket
-				if r, err := authedAPI(ctx, s, "GET", api.PathDetalheNegociacaoEspecializada(ticket), nil); err == nil && r.Status == 200 && json.Valid(r.Body) {
+				if r, err := authedAPI(ctx, s, "GET", api.PathDetalheNegociacaoEspecializada(ticket), nil); err == nil && sucesso(r.Status) && json.Valid(r.Body) {
 					detalhes = r.Body
 				} else {
 					fmt.Fprintln(s.err, "aviso: pedido feito, mas não foi possível ler o detalhe; veja ctbz impostos parcelamentos")

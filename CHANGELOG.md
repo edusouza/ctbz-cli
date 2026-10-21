@@ -16,6 +16,16 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `scripts/gerar-comandos-skill.py`: gera o mapa de comandos das skills a partir de
   `docs/referencia`.
 
+### Fixed
+
+- `ctbz rotinas`, `documentos pendentes` e as demais leituras da Central de Rotinas não
+  falham mais quando a Contabilizei responde HTTP 206: as leituras aceitam 2xx, como o painel,
+  menos o 204, que continua querendo dizer "não encontrado".
+- `ctbz impostos faturamento` funciona em empresas com menos de um ano: os meses anteriores à
+  abertura saem sem impostos pagos, com um aviso no stderr, em vez de o comando falhar com
+  "Ano inválido".
+- `ctbz resumo` não lista mais como vencida uma guia já paga.
+
 ## [1.8.0] - 2026-10-04
 
 Conta, usuários e acessos: quem acessa a empresa, dados de acesso a órgãos públicos, e-mail,
