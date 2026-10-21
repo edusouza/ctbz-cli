@@ -13,6 +13,7 @@ comando e flag está em [Referência de comandos](../referencia/README.md).
 | [Contabilidade](contabil.md) | Balancete, balanço, razão, caixa, extratos, contas bancárias e plano de contas |
 | [Documentos e certificado](documentos.md) | Central de documentos e certificado digital |
 | [Conta e acessos](conta.md) | Usuários da empresa e convites, dados de acesso a órgãos públicos, e-mail, telefone e senha de login, escritório virtual |
+| [Skills para agentes](agentes.md) | Plugin do Claude Code que faz um agente operar a Contabilizei como um assessor: checkup, fechamento do mês, impostos, Fator R, lucros e informe |
 | [Ações que alteram dados](escrita.md) | Confirmação, `--yes`, `--dry-run`, níveis de risco e códigos de saída das escritas |
 
 Antes de tudo, faça o login (veja o [README](https://github.com/edusouza/ctbz-cli#login)).

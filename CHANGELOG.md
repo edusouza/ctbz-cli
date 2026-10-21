@@ -7,6 +7,15 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Added
+
+- Plugin do Claude Code (`.claude-plugin/`, `skills/`) com skills que fazem um agente operar a
+  Contabilizei como um assessor contábil: `assessor` (base: login, protocolo de escrita e
+  dossiê da empresa), `checkup`, `fechamento-mensal`, `impostos`, `planejamento-tributario`
+  (com simulador de Fator R), `fechamento-anual`, `notas-e-clientes` e `cadastro-e-acessos`.
+- `scripts/gerar-comandos-skill.py`: gera o mapa de comandos das skills a partir de
+  `docs/referencia`.
+
 ### Fixed
 
 - `ctbz rotinas`, `documentos pendentes` e as demais leituras da Central de Rotinas não
