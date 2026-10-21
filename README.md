@@ -194,7 +194,8 @@ confirmação antes de qualquer escrita.
 /plugin install ctbz@ctbz-cli
 ```
 
-Detalhes em [docs/guia/agentes.md](docs/guia/agentes.md).
+Instalação, configuração do login e o que cada skill faz (com o risco de cada ação): no
+[README das skills](skills/README.md). Visão geral em [docs/guia/agentes.md](docs/guia/agentes.md).
 
 ## Formatos de saída
 

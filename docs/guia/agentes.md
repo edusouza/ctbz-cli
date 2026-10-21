@@ -36,6 +36,11 @@ O `ctbz` precisa estar instalado e no `PATH` (veja o [README](https://github.com
 O agente escolhe a skill pelo pedido ("como está minha empresa?", "dá para pagar menos
 imposto?", "fecha o mês de setembro"); também dá para chamar pelo nome, como `/ctbz:checkup`.
 
+Cada skill tem um README com exemplos de pedido, o que ela lê, o que pode alterar (com o risco
+de cada ação) e os limites: veja o
+[README das skills](https://github.com/edusouza/ctbz-cli/blob/main/skills/README.md), que também
+traz a configuração do login e a solução de problemas.
+
 ## Como o agente trabalha
 
 - **Login:** usa `CTBZ_USER` e `CTBZ_PASSWORD` do ambiente e pede ao usuário só o código de 6
@@ -66,6 +71,7 @@ go run ./tools/gendocs
 python3 scripts/gerar-comandos-skill.py
 ```
 
-Os campos do JSON (`skills/assessor/references/campos-json.md`) e os passos de cada skill são
-escritos à mão: atualize-os junto com o comando que mudou. A versão do plugin
+Os campos do JSON (`skills/assessor/references/campos-json.md`), os passos de cada skill
+(`SKILL.md`) e o README de cada skill são escritos à mão: atualize-os junto com o comando que
+mudou. A versão do plugin
 (`.claude-plugin/plugin.json`) acompanha a da CLI.
