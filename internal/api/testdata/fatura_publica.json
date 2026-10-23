@@ -1,0 +1,16 @@
+{
+  "dataVencimento": "2026-10-25",
+  "total": 1234.56,
+  "meioDePagamento": {
+    "pix": {
+      "textoPagamento": "00020101021226000000000000000000000000000000BR.GOV.BCB.PIX5204000053039865802BR5913EMPRESA EXEMPLO6009SAO PAULO62070503***6304ABCD",
+      "urlPagamento": "data:image/png;base64,AAAA",
+      "exibir": true
+    },
+    "boleto": {
+      "textoPagamento": "00190000090000000000000000000000000000000000000",
+      "urlPagamento": "00190000000000000000000000000000000000000000",
+      "exibir": true
+    }
+  }
+}

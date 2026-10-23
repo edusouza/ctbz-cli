@@ -118,10 +118,21 @@ Sem o serviço contratado, a listagem avisa e termina com código 0.
 ctbz mensalidade -o json             # competencia, valor, vencimento, situacao, competencia_anterior_atrasada
 ctbz mensalidade situacao -o json    # em_dia
 ctbz mensalidade historico -o json   # faturas pagas (pagamentos[]), da mais recente
+ctbz mensalidade segunda-via --dry-run          # risco médio: registra boleto novo, não cobra
+ctbz mensalidade segunda-via --yes -o json      # itens, total, vencimento, pix_copia_e_cola, linha_digitavel, link
+ctbz mensalidade segunda-via --pix --yes        # só o copia e cola, para pipe
 ctbz plano -o json                   # plano e categoria (lidos no login)
 ctbz plano contrato --texto          # contrato de prestação de serviços
 ctbz plano proposta --texto          # proposta com a tabela de preços
 ```
+
+"Pague a mensalidade": confira `ctbz mensalidade -o json`. Se `botao_adicional_acao` começa com
+`request:`, gere a segunda via (protocolo de escrita, risco médio) e entregue ao usuário o Pix
+copia e cola ou a linha digitável. O pagamento é feito fora da Contabilizei (ex.: pelo app do
+banco, ou `inter-pj pix enviar --copia-e-cola "$(ctbz mensalidade segunda-via --pix --yes)"`
+com a confirmação dele). Não gere outra segunda via sem necessidade: cada uma registra um boleto.
+Depois do pagamento, confirme com `ctbz mensalidade situacao` (`em_dia`). A fatura pública demora
+a dar baixa. O `link` dá acesso à fatura sem login: não o grave no dossiê.
 
 Para perguntas como "o que meu plano cobre?" ou "posso cancelar?", leia o contrato
 (`--texto`) e cite o trecho. Trocar de plano é feito só com a Contabilizei.

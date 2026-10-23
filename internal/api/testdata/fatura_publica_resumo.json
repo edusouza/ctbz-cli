@@ -1,0 +1,9 @@
+{
+  "resumo": {
+    "itens": [
+      {"descricao": "Mensalidade", "valor": 1200.00},
+      {"descricao": "Multa e juros da fatura anterior", "valor": 34.56}
+    ]
+  },
+  "status": {"id": "PENDENTE", "descricao": "Pendente"}
+}

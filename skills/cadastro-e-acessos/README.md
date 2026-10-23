@@ -102,7 +102,9 @@ recebimento. Sem o serviço contratado, a listagem só avisa.
 ### Mensalidade, plano e contrato
 
 Mensalidade atual, se a empresa está em dia, histórico de pagamentos, plano contratado, contrato
-e proposta. Para "o que meu plano cobre?" ou "posso cancelar?", o agente lê o contrato
+e proposta. Com a mensalidade atrasada, o agente gera a segunda via (`ctbz mensalidade
+segunda-via`, risco médio: registra um boleto novo, não cobra) e entrega o Pix copia e cola ou a
+linha digitável para você pagar. Depois, confere com `ctbz mensalidade situacao`. Para "o que meu plano cobre?" ou "posso cancelar?", o agente lê o contrato
 (`ctbz plano contrato --texto`) e cita o trecho. Trocar de plano é feito só com a Contabilizei.
 
 ### Atendimento e primeiros passos
@@ -130,6 +132,7 @@ Tudo com `--dry-run` primeiro e a sua confirmação (protocolo da skill `assesso
 | `correspondencias endereco` / `autorizar off` | agente | médio | regravar / `autorizar on` |
 | `correspondencias autorizar on` | agente | **alto** | o envio pode ser cobrado |
 | `primeiros-passos concluir ETAPA` | agente | baixo | sem volta |
+| `mensalidade segunda-via` | agente | médio | não; registra um boleto novo, sem cobrança |
 | `empresa credenciais atualizar` | **você**, no terminal | **alto** | credencial errada faz falhar declarações |
 | `conta alterar` / `conta senha` | **você**, no terminal | **alto** | pode tirar o acesso; exige OTP |
 

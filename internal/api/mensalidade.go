@@ -18,6 +18,12 @@ type Fatura struct {
 	Vencimento            any      `json:"vencimento"`  // formato não verificado (vinha null)
 	MensagemAdicional     string   `json:"mensagemAdicional"`
 	PossuiCartaoPrincipal bool     `json:"possuiCartaoPrincipal"`
+	// Ações dos botões do card ("<tipo>:<valor>", ver ParseAcaoCard). O adicional ("Gerar
+	// segunda via s/ juros", "request:dashboard/nova-fatura/AAAAMM") vem null com a fatura em dia.
+	BotaoTitulo          string `json:"botaoTitulo"`
+	BotaoAcao            string `json:"botaoAcao"`
+	BotaoAdicionalTitulo string `json:"botaoAdicionalTitulo"`
+	BotaoAdicionalAcao   string `json:"botaoAdicionalAcao"`
 }
 
 // BuscarFatura lê dashboard/fatura.

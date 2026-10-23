@@ -457,6 +457,14 @@ Campos do JSON de cada comando: [campos-json.md](campos-json.md).
 
 `ctbz mensalidade historico`: Lista as faturas pagas da mensalidade
 
+`ctbz mensalidade segunda-via [flags]`: Gera a segunda via da mensalidade e mostra o Pix copia e cola e a linha digitável
+
+```text
+--competencia string   competência AAAA-MM esperada; o card precisa oferecer a segunda via dela
+--linha                imprime só a linha digitável do boleto (para pipe)
+--pix                  imprime só o Pix copia e cola (para pipe)
+```
+
 `ctbz mensalidade situacao [flags]`: Indica se a empresa está em dia com a Contabilizei
 
 ```text

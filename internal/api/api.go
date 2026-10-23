@@ -67,7 +67,9 @@ func Endpoints() []Endpoint {
 		{Name: "chamados_em_andamento", LivePath: PathChamadosEmAndamento, Type: []Chamado{}},
 		{Name: "fatura", LivePath: PathFatura, Type: Fatura{}},
 		{Name: "mensalidade", LivePath: PathMensalidade, Type: Mensalidade{}},
-		{Name: "faturas_pagas", Type: []FaturaPaga{}}, // sintética (ADR-0021), no formato real (#856); o CNPJ vem da sessão
+		{Name: "fatura_publica", Type: FaturaPublica{}},              // sintética (ADR-0021); o caminho exige o UUID de uma segunda via
+		{Name: "fatura_publica_resumo", Type: FaturaPublicaResumo{}}, // sintética (ADR-0021); idem
+		{Name: "faturas_pagas", Type: []FaturaPaga{}},                // sintética (ADR-0021), no formato real (#856); o CNPJ vem da sessão
 		{Name: "recorrencia", LivePath: PathRecorrenciaInit, Type: Recorrencia{}},
 		{Name: "recorrencia_historico", LivePath: PathRecorrenciaHistorico, Type: HistoricoRecorrencia{}},
 		{Name: "contrato_servico", LivePath: PathContratoServico, Type: ContratoServico{}},

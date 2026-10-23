@@ -29,7 +29,7 @@ Legenda: ✅ 200 · ⚠️ responde, mas precisa de parâmetro ou não está lib
 | `dashboard/v2/init` | ✅ | `contaDigital, impostos, notasFiscais, mensalidade, prolabore, prolaboreV2, modalInitDashboard, checklistPrimeirosPassos…` (resumo de tudo) |
 | `dashboard/init` | ✅ | `versao` |
 | `dashboard/situacao-app` | ✅ | `elegivel, cadastroFinalizado, companyInfo{cnpj, cpf, cadastroStatus}, tipoPerfil, variacaoBannerCbank` |
-| `dashboard/fatura` | ✅ | `total, vencimento, competencia, status, label, possuiCartaoPrincipal, botaoAcao…`: mensalidade da Contabilizei |
+| `dashboard/fatura` | ✅ | `total, vencimento, competencia, status, label, possuiCartaoPrincipal, botaoTitulo, botaoAcao, botaoAdicionalTitulo, botaoAdicionalAcao`: mensalidade da Contabilizei e ações do card (a de segunda via é `request:dashboard/nova-fatura/AAAAMM`; ver [escrita, 2.3](escrita/impostos-e-pagamentos.md)) |
 | `dashboard/v1/mensalidade` | ✅ | `status, plano, valor, dataVencimento, competenciaAnteriorAtrasada…` |
 | `dashboard/rotinas-mensais` | ✅ | `cardInfo[{ramoAtividade, descricaoPerfilEmissao, urlPerfilEmissao, urlConsultaNota}]`: só atalhos de emissão de nota, não rotinas |
 | `dashboard/v2/central-rotinas` | ✅ | `tipoExibicao, tipoPendencia, pendencias, rotinas, rotinasContabilizei` |
