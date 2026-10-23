@@ -25,6 +25,31 @@ vier nas respostas.
 
 O valor de `oauth-token` é o mesmo que aparece em `localStorage.l.token`.
 
+## Cabeçalhos exigidos
+
+A CLI envia, em toda chamada às APIs, `Cookie`, `User-Agent` de navegador, `Accept`, `Origin`
+e `Referer` (veja com `ctbz --verbose …`). Teste de 23/10/2026, com `curl`, em
+`GET /api/plataforma/dashboard/fatura` e `GET /api/plataforma/appbar/get`:
+
+| Enviado | Resultado |
+|---|---|
+| tudo o que a CLI envia | 200 |
+| sem `User-Agent` (o `curl/…` padrão) | **401** |
+| sem `Origin` e `Referer` | 200 |
+| sem `Accept` | 200 |
+| sem o cookie `__C` | 200 |
+| sem o cookie `oauth-token` | 401 |
+
+O `User-Agent` do `curl` recebe 401, como se a sessão fosse inválida. Para repetir uma chamada
+fora da CLI, mande o cookie `oauth-token` da sessão e um `User-Agent` de navegador:
+
+```sh
+curl -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36'   -H "Cookie: oauth-token=$TOKEN" https://app.contabilizei.com.br/api/plataforma/dashboard/fatura
+```
+
+Na época do teste da tabela anterior, sem `__C` a resposta era 401. Envie os dois cookies, como a
+CLI faz.
+
 ## `localStorage`
 
 O script final grava três chaves. Cada valor é

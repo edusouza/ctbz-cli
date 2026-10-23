@@ -12,6 +12,7 @@ internal/cli/
   root.go        árvore Cobra, flag global -o, códigos de saída, ajuda em português
   login.go       comando login: retomada, fontes de OTP, escolha de empresa
   session.go     chamadas autenticadas (re-login automático), dados da sessão
+  verbose.go     --verbose / CTBZ_DEBUG: requisições no stderr, segredos mascarados
   escrita.go     sessionSender: sessão conferida antes, tentativa única, registro da ação
   confirmacao.go escrever(): resumo, confirmação por risco, --yes, --dry-run (simulacao.go)
   status.go, empresa.go, api.go, logout.go, version.go   um arquivo por comando
@@ -26,6 +27,7 @@ internal/contract/
   anon.go        anonimização das fixtures
 internal/ctbz/
   client.go      HTTP: cookies manuais, redirecionamentos manuais, API(), erros
+  trace.go       Tracer no contexto: cada troca do Client vai para o modo verbose
   login.go       etapas do login e parsers de HTML/localStorage
   session.go     persistência (session.json, pending.json)
 internal/otp/

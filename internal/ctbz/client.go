@@ -5,6 +5,7 @@
 package ctbz
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -68,8 +69,17 @@ func (c *Client) URL(path string) string {
 }
 
 // Do executa uma requisição enviando os cookies da sessão e absorvendo os
-// cookies retornados pelo servidor.
+// cookies retornados pelo servidor. Com um Tracer no contexto, cada troca é passada a ele.
 func (c *Client) Do(ctx context.Context, method, path string, body io.Reader, headers map[string]string) (*Response, error) {
+	trace := TracerFrom(ctx)
+	var reqBody []byte
+	if trace != nil && body != nil {
+		b, err := io.ReadAll(body)
+		if err != nil {
+			return nil, err
+		}
+		reqBody, body = b, bytes.NewReader(b)
+	}
 	req, err := http.NewRequestWithContext(ctx, method, c.URL(path), body)
 	if err != nil {
 		return nil, err
@@ -87,12 +97,20 @@ func (c *Client) Do(ctx context.Context, method, path string, body io.Reader, he
 		}
 		req.AddCookie(&http.Cookie{Name: ck.Name, Value: ck.Value})
 	}
+	inicio := time.Now()
 	resp, err := c.HTTP.Do(req)
 	if err != nil {
+		if trace != nil {
+			trace(Exchange{Method: method, URL: req.URL.String(), Header: req.Header, Body: reqBody, Elapsed: time.Since(inicio), Err: err})
+		}
 		return nil, err
 	}
 	defer resp.Body.Close()
 	data, err := io.ReadAll(resp.Body)
+	if trace != nil {
+		trace(Exchange{Method: method, URL: req.URL.String(), Header: req.Header, Body: reqBody, Status: resp.StatusCode,
+			RespHeader: resp.Header, RespBody: data, Elapsed: time.Since(inicio), Err: err})
+	}
 	if err != nil {
 		return nil, err
 	}

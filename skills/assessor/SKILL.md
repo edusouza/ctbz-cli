@@ -70,6 +70,9 @@ Caminho absoluto (fora de `/api/plataforma/`): escreva com `//` (`ctbz api //api
 Git Bash do Windows, um argumento que começa com uma só `/` vira caminho do Windows e a CLI
 recusa.
 
+Para entender um erro do servidor, repita a leitura com `--verbose` (ou `CTBZ_DEBUG=1`): as
+requisições vão para o stderr, com os segredos mascarados. Não copie a sessão para um `curl`.
+
 ## 4. Dossiê da empresa (memória do assessor)
 
 Arquivo local por empresa: `${CTBZ_HOME:-$HOME/.config/ctbz}/dossie/<CNPJ só dígitos>.md`,

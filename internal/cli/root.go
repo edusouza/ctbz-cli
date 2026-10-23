@@ -70,12 +70,21 @@ func NewRootCmd(version string) *cobra.Command {
 		Long: `ctbz opera a Contabilizei pela linha de comando: faz o mesmo login do site
 (usuário, senha e código enviado por e-mail) e consulta os dados da empresa.
 
-Dados vão para stdout no formato escolhido com -o; mensagens e progresso vão para stderr.`,
+Dados vão para stdout no formato escolhido com -o; mensagens e progresso vão para stderr.
+
+Para diagnosticar um erro, --verbose (ou CTBZ_DEBUG=1) mostra cada requisição no stderr:
+método, URL, status, tempo e cabeçalhos. Repetido (ou CTBZ_DEBUG=2), mostra também os corpos.
+Cookies, credenciais (senhas, tokens, códigos, chaves, JWT), dados de pagamento (Pix, linha
+digitável, código de barras), UUIDs e CPFs/CNPJs do caminho da URL saem sempre como ***.`,
 		Version:       resolveVersion(version).Version,
 		SilenceErrors: true,
 		SilenceUsage:  true,
+		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
+			return ligarVerbose(cmd, cmd.ErrOrStderr())
+		},
 	}
 	root.PersistentFlags().StringP("output", "o", "", "formato de saída: table, json ou csv (padrão: CTBZ_OUTPUT ou table)")
+	addVerboseFlag(root)
 	root.PersistentFlags().BoolP("help", "h", false, "mostra a ajuda do comando")
 	root.Flags().BoolP("version", "v", false, "mostra a versão do ctbz")
 	root.SetFlagErrorFunc(func(_ *cobra.Command, err error) error { return usageError{err} })

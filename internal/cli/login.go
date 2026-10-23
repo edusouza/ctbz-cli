@@ -134,7 +134,7 @@ func login(ctx context.Context, store *ctbz.Store, s streams, o loginOpts) (*ctb
 					// Margem para atraso de relógio entre esta máquina e o servidor de e-mail.
 					Since:   st.OTPSentAt.Add(-time.Minute),
 					Timeout: o.otpTimeout,
-					Log:     verboseWriter(s),
+					Log:     verboseWriter(ctx, s),
 				}).Fetch(ctx)
 				if err != nil {
 					return nil, pause("%v\nO login ficou pendente; informe o código com: ctbz login --otp NNNNNN\n", err)
