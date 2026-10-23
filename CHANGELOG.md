@@ -43,10 +43,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   o Banco Inter - Internacional (077-1). `--banco` usa o id, depois o código exato e só então o
   código sem sufixo; código de mais de um banco dá erro com a lista de candidatos. O resumo e o
   `--dry-run` mostram o código do banco (#853).
-- `ctbz extratos importar`: se a conexão cair no envio do arquivo, a CLI relê a competência e diz
-  se é seguro repetir (continua `PENDENTE`: nada foi importado) ou se é preciso conferir antes.
-  A queda ao concluir a importação não diz mais "não foi concluída", e sim para conferir. O
-  envio do arquivo tem prazo de 3 minutos, em vez de 60 segundos (#854, #594).
+- `ctbz extratos importar`: se a conexão cair ou o servidor responder com erro 5xx (502, 504…)
+  no envio do arquivo, a CLI relê a competência e diz se é seguro repetir (continua `PENDENTE`:
+  nada foi importado) ou se é preciso conferir antes. A queda ou o 5xx ao concluir a importação
+  não diz mais "não foi concluída", e sim para conferir; "não foi concluída" fica para as
+  recusas (4xx e regra de negócio). O envio do arquivo tem prazo de 3 minutos, em vez de 60
+  segundos (#854, #594, #875).
 - `ctbz extratos importar` recusa competência já `IMPORTADO` ou `PROCESSANDO`, como o painel, e
   explica quando o extrato importado está vazio: o processamento de um mês pode criar o mês
   seguinte sem lançamentos. Depois de importar, avisa se a competência terminou sem

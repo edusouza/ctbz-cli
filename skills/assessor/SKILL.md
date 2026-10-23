@@ -100,7 +100,8 @@ Toda escrita segue estes passos, sem exceção:
 
 Regras:
 
-- Nunca repita uma escrita que falhou por conexão ("sem resposta"): primeiro confira o estado.
+- Nunca repita uma escrita que falhou por conexão ("sem resposta") ou com erro 5xx do servidor
+  (502, 504…): ela pode ter sido aplicada; primeiro confira o estado.
   Quando a própria CLI conferir e disser que é seguro repetir (`extratos importar`), repita uma vez.
 - Nunca encadeie várias escritas de risco alto num único "ok"; peça uma por uma.
 - Escritas que dependem de terminal (`empresa credenciais atualizar`, `conta senha`) leem

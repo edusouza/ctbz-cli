@@ -48,11 +48,11 @@ dispensa importação) cujo mês `M` falta:
    (exclui o atual e importa): mostre o `--dry-run` e confirme com o usuário. Com lançamentos é
    risco alto (as classificações se perdem). Depois de importar, confira `quantidade_lancamentos`:
    zero com um arquivo que tem movimentações é problema.
-6. Conexão caiu no envio do arquivo: a CLI relê a competência e diz se é seguro repetir
-   ("nada foi importado e é seguro rodar o mesmo comando de novo"). Só repita nesse caso, uma
-   vez. Se ela mandar conferir (competência `IMPORTADO`/`PROCESSANDO`, ou queda ao concluir),
-   rode `ctbz extratos` e `ctbz extratos lancamentos` e mostre ao usuário antes de qualquer
-   nova tentativa.
+6. Conexão caiu ou o servidor respondeu com erro 5xx (502, 504…) no envio do arquivo: a CLI
+   relê a competência e diz se é seguro repetir ("nada foi importado e é seguro rodar o mesmo
+   comando de novo"). Só repita nesse caso, uma vez. Se ela mandar conferir (competência
+   `IMPORTADO`/`PROCESSANDO`, ou queda/5xx ao concluir), rode `ctbz extratos` e
+   `ctbz extratos lancamentos` e mostre ao usuário antes de qualquer nova tentativa.
 
 Importou o mês errado? `ctbz extratos excluir` é **risco alto** (perde as classificações).
 
