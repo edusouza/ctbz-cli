@@ -34,6 +34,10 @@ dispensa importação) cujo mês `M` falta:
    é recusado, use o CSV/XLS do internet banking. Esses formatos vão pela Central de Documentos e
    a Contabilizei os importa **manualmente, em até 45 dias** (`importacao: "manual"`,
    `situacao: "enviado"`). Avise o usuário e registre no dossiê que o mês aguarda essa importação.
+   Até lá a competência continua `PENDENTE` em `ctbz extratos`, o que é o esperado: **nunca
+   reenvie** um arquivo com `importacao: "manual"` (a fila manual recebe duplicados), nem depois
+   de uma falha de conexão; peça ao usuário para conferir na Central de Documentos do painel.
+   CSV/XLS não aceitam `--substituir` e são recusados sobre um extrato já importado.
 2. Num OFX, leia o saldo final no próprio arquivo (`<LEDGERBAL>` → `<BALAMT>`) e mostre ao
    usuário para conferir.
 3. Simule e importe (risco médio):

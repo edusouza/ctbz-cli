@@ -106,7 +106,7 @@ func TestExtratosImportarCSVSemResposta(t *testing.T) {
 	statusNaEscrita(f, "extrato/enviar", 502)
 	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
 	want := "o servidor respondeu com erro (HTTP 502) no envio do arquivo, que pode ou não ter chegado à Contabilizei; " +
-		"confira com `ctbz extratos` e na Central de Documentos do painel antes de enviar de novo"
+		"confira na Central de Documentos do painel antes de enviar de novo (`ctbz extratos` continua PENDENTE mesmo depois de um envio manual)"
 	if code != ExitError || len(f.writes) != 1 || !strings.Contains(stderr, want) {
 		t.Errorf("código %d, %d escritas\n%s", code, len(f.writes), stderr)
 	}
@@ -123,14 +123,56 @@ func TestExtratosImportarCSVSaldoFinal(t *testing.T) {
 }
 
 func TestExtratosImportarSubstituirComCSV(t *testing.T) {
-	f, _ := substituirFake(t, "0", true)
-	arq, _ := arquivoExtrato(t, "extrato.csv")
-	bancoAceita(f, `"PDF","CSV"`)
-	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--substituir", "--yes")...)
-	if code != ExitOK || len(f.writes) != 2 || f.writes[0] != "DELETE "+pathExcluirExtrato9+" " || !strings.HasPrefix(f.writes[1], envioCentralDocsPOST) {
-		t.Errorf("código %d, escritas %q\n%s", code, f.writes, stderr)
+	// Recusado antes de qualquer escrita, com o extrato vazio ou com lançamentos (#920).
+	for _, lancamentos := range []string{"0", "2"} {
+		f, _ := substituirFake(t, lancamentos, true)
+		arq, _ := arquivoExtrato(t, "extrato.csv")
+		bancoAceita(f, `"PDF","CSV"`)
+		_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--substituir", "--yes")...)
+		if code != ExitUsage || len(f.writes) != 0 || !strings.Contains(stderr, "--substituir só vale para OFX e PDF") ||
+			!strings.Contains(stderr, "em até 45 dias") || !strings.Contains(stderr, "ctbz extratos excluir") {
+			t.Errorf("%s lançamentos: código %d, escritas %q\n%s", lancamentos, code, f.writes, stderr)
+		}
 	}
-	if !strings.Contains(stderr, "pelo arquivo extrato.csv (CSV, 13 bytes), pela Central de Documentos") {
-		t.Errorf("resumo:\n%s", stderr)
+}
+
+func TestExtratosImportarCSVSobreExtratoImportado(t *testing.T) {
+	for _, situacao := range []string{"IMPORTADO", "PROCESSANDO"} {
+		f, _ := substituirFake(t, "2", true)
+		f.gets[pathExtratos] = extratosNaSituacao(situacao)
+		arq, _ := arquivoExtrato(t, "extrato.xls")
+		bancoAceita(f, `"PDF","XLS"`)
+		_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
+		// Recusa justificada (#921): não sugere --substituir, que o envio manual não aceita.
+		if code != ExitError || len(f.writes) != 0 || strings.Contains(stderr, "--substituir") {
+			t.Errorf("%s: código %d, escritas %q\n%s", situacao, code, f.writes, stderr)
+		}
+	}
+	f, _ := substituirFake(t, "2", true)
+	arq, _ := arquivoExtrato(t, "extrato.xls")
+	bancoAceita(f, `"PDF","XLS"`)
+	_, stderr, _ := execCLI(t, "", append(baseImportar, arq, "--yes")...)
+	if !strings.Contains(stderr, "poderia duplicar os lançamentos") || !strings.Contains(stderr, "Central de Documentos do painel") {
+		t.Errorf("recusa sem a justificativa:\n%s", stderr)
+	}
+}
+
+func TestExtratosImportarCSVReenvioAvisa(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.csv")
+	f, _ := importarFake(t, mt, "csv")
+	bancoAceita(f, `"CSV"`)
+	f.gets[pathExtratos] = extratosNaSituacao("PENDENTE")
+	aviso := "a competência continua PENDENTE em `ctbz extratos`. Se você já enviou este extrato, não envie de novo: " +
+		"confira na Central de Documentos do painel"
+	for envio := 1; envio <= 2; envio++ {
+		_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
+		if code != ExitOK || len(f.writes) != envio || !strings.Contains(stderr, aviso) ||
+			!strings.Contains(stderr, "o que é o esperado: não envie o arquivo de novo") || strings.Contains(stderr, "Acompanhe com `ctbz extratos`") {
+			t.Errorf("envio %d: código %d, escritas %d\n%s", envio, code, len(f.writes), stderr)
+		}
+	}
+	// No --dry-run o aviso também aparece, antes de qualquer envio.
+	if _, stderr, _ := execCLI(t, "", append(baseImportar, arq, "--dry-run")...); !strings.Contains(stderr, aviso) {
+		t.Errorf("dry-run sem o aviso:\n%s", stderr)
 	}
 }

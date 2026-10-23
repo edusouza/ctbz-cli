@@ -73,6 +73,8 @@ Antes de enviar, a CLI confere o tamanho (até 30 MB), se o banco aceita o forma
 (a lista vem da Contabilizei, e a mensagem de erro a mostra), se a conta é integrada (essas
 não precisam de importação), se há um período anterior pendente e se a competência já foi
 importada ou está em processamento (o painel também não deixa importar por cima).
+CSV, XLS e os outros formatos de importação manual também são recusados sobre um extrato
+importado, para a importação manual não duplicar os lançamentos, e não aceitam --substituir.
 
 OFX e PDF passam pela tela "Importar extrato":
 
@@ -83,7 +85,9 @@ OFX e PDF passam pela tela "Importar extrato":
 
 Os demais formatos que o banco aceita (CSV, XLS…) vão pela Central de Documentos, como no
 painel: um envio só, sem conclusão nem saldo, e a Contabilizei importa o arquivo manualmente,
-em até 45 dias. O resultado sai com situacao "enviado" e importacao "manual".
+em até 45 dias. O resultado sai com situacao "enviado" e importacao "manual". Até a importação,
+a competência continua PENDENTE em ctbz extratos, o que é o esperado: não envie o arquivo de
+novo; acompanhe na Central de Documentos do painel.
 
 Ao final, a CLI relê a competência: em processamento, avisa para conferir depois; importada
 sem nenhum lançamento, avisa no stderr.
@@ -158,7 +162,10 @@ enviar nada.`,
 			if err := periodoLiberado(per, alvo); err != nil {
 				return err
 			}
-			existente, err := competenciaImportavel(ctx, s, g, alvo, substituir)
+			// CSV, XLS e outros formatos fora da tela "Importar extrato" vão pela Central de
+			// Documentos, num envio só, e a Contabilizei os importa manualmente (#899).
+			manual := !api.ImportacaoAutomatica(formatoArq)
+			existente, err := competenciaImportavel(ctx, s, g, alvo, substituir, manual)
 			if err != nil {
 				return err
 			}
@@ -193,9 +200,6 @@ enviar nada.`,
 				Arquivo: filepath.Base(args[0]), Conteudo: conteudo}
 			yes, _ := cmd.Flags().GetBool("yes")
 			mes := alvo.mes.Format("01/2006")
-			// CSV, XLS e outros formatos fora da tela "Importar extrato" vão pela Central de
-			// Documentos, num envio só, e a Contabilizei os importa manualmente (#899).
-			manual := !api.ImportacaoAutomatica(formatoArq)
 			viaCentral := ""
 			if manual {
 				viaCentral = " pela Central de Documentos"
@@ -207,11 +211,8 @@ enviar nada.`,
 				if existente.lancamentos != nil {
 					atual = fmt.Sprintf("%d lançamentos", *existente.lancamentos)
 				}
-				if manual {
-					viaCentral = "," + viaCentral
-				}
-				op.Resumo = fmt.Sprintf("Substituir o extrato de %s da conta %d (atual: %s) pelo arquivo %s (%s, %s)%s",
-					mes, alvo.conta, atual, arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)), viaCentral)
+				op.Resumo = fmt.Sprintf("Substituir o extrato de %s da conta %d (atual: %s) pelo arquivo %s (%s, %s)",
+					mes, alvo.conta, atual, arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)))
 				// Excluir um extrato vazio não perde nada; com lançamentos, perde as classificações.
 				if !existente.vazio() {
 					op.Risco = riscoAlto
@@ -249,6 +250,11 @@ enviar nada.`,
 				}
 				return nil
 			}
+			if manual {
+				// O envio manual não muda a situação da competência: nada barra um reenvio (#921).
+				fmt.Fprintln(s.err, "Envio para importação manual: até a Contabilizei importar o arquivo, a competência continua "+
+					"PENDENTE em `ctbz extratos`. Se você já enviou este extrato, não envie de novo: confira na Central de Documentos do painel.")
+			}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
 				if existente != nil {
 					if err := api.ExcluirExtrato(ctx, snd, alvo.conta, alvo.ano(), alvo.mesNum()); err != nil {
@@ -274,7 +280,8 @@ enviar nada.`,
 			if manual {
 				situacao, importacao, arquivoEnviado = "enviado", "manual", arquivo.Arquivo
 				fmt.Fprintf(s.err, "O formato não é OFX nem PDF: a Contabilizei importa este extrato manualmente, em até 45 dias. "+
-					"Acompanhe com `ctbz extratos`.\n")
+					"Até lá a competência continua PENDENTE em `ctbz extratos`, o que é o esperado: não envie o arquivo de novo; "+
+					"acompanhe na Central de Documentos do painel.\n")
 			}
 			var situacaoExtrato, quantidade any
 			if sit, err := situacaoExtratoAlvo(ctx, g, alvo); err != nil {
@@ -331,7 +338,10 @@ func (e *extratoExistente) vazio() bool { return e.lancamentos != nil && *e.lanc
 // vazio: o processamento de um extrato de outro mês pode criar o do mês seguinte sem
 // lançamentos (#855). Com substituir, um extrato IMPORTADO que o painel deixa excluir é
 // devolvido para ser excluído antes do envio, o mesmo caminho do painel (excluir e importar).
-func competenciaImportavel(ctx context.Context, s streams, g api.Getter, alvo extratoAlvo, substituir bool) (*extratoExistente, error) {
+// No envio manual (CSV, XLS…), substituir é recusado: o arquivo só é importado em até 45 dias,
+// e a exclusão deixaria o mês sem extrato até lá (#920). Sem substituir, a recusa não sugere
+// --substituir: um arquivo manual por cima do importado poderia duplicar os lançamentos (#921).
+func competenciaImportavel(ctx context.Context, s streams, g api.Getter, alvo extratoAlvo, substituir, manual bool) (*extratoExistente, error) {
 	sit, err := situacaoExtratoAlvo(ctx, g, alvo)
 	if err != nil {
 		return nil, err
@@ -341,6 +351,16 @@ func competenciaImportavel(ctx context.Context, s streams, g api.Getter, alvo ex
 	case "PROCESSANDO":
 		return nil, fmt.Errorf("o extrato de %s ainda está em processamento; aguarde e confira com `ctbz extratos`", mes)
 	case "IMPORTADO":
+		if manual && substituir {
+			return nil, usageError{fmt.Errorf("--substituir só vale para OFX e PDF: este formato vai pela Central de Documentos e a "+
+				"Contabilizei o importa manualmente, em até 45 dias, e excluir o extrato atual deixaria %s sem extrato até lá; se é "+
+				"isso mesmo, exclua antes com `ctbz extratos excluir` e envie o arquivo sem --substituir", mes)}
+		}
+		if manual {
+			return nil, fmt.Errorf("o extrato de %s já foi importado (veja %s); um arquivo que não é OFX nem PDF iria para a "+
+				"importação manual e poderia duplicar os lançamentos. Se ele complementa o extrato importado, envie-o pela "+
+				"Central de Documentos do painel", mes, comandoConferirExtrato(alvo))
+		}
 		info, err := api.BuscarExtratoInfo(ctx, g, alvo.conta, alvo.ano(), alvo.mesNum())
 		if substituir {
 			if err != nil {
@@ -419,7 +439,8 @@ func enviarPelaCentral(ctx context.Context, snd api.Sender, e api.ExtratoDocumen
 	}
 	if falha, causa, ok := envioIncerto(err); ok {
 		return &importacaoIncerta{fmt.Errorf("%s no envio do arquivo, que pode ou não ter chegado à Contabilizei; "+
-			"confira com `ctbz extratos` e na Central de Documentos do painel antes de enviar de novo: %w", falha, causa)}
+			"confira na Central de Documentos do painel antes de enviar de novo (`ctbz extratos` continua PENDENTE "+
+			"mesmo depois de um envio manual): %w", falha, causa)}
 	}
 	return fmt.Errorf("a Contabilizei recusou o arquivo: %w", err)
 }
