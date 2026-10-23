@@ -186,7 +186,10 @@ func TestExtratosImportarTimeoutNoUploadPendente(t *testing.T) {
 func TestExtratosImportarTimeoutNoUploadImportado(t *testing.T) {
 	arq, mt := arquivoExtrato(t, "extrato.pdf")
 	f, _ := importarFake(t, mt, "pdf")
-	f.gets["/api/plataforma/movimentacao-financeira/v2/extratos"] = strings.Replace(f.gets["/api/plataforma/movimentacao-financeira/v2/extratos"], "ABERTO", "IMPORTADO", 1)
+	// O servidor aplicou o envio, mas a resposta não chegou.
+	f.onWrite = func(f *escritaFake) {
+		f.gets[pathExtratos] = strings.Replace(f.gets[pathExtratos], "ABERTO", "IMPORTADO", 1)
+	}
 	semRespostaNoEnvio(t, f, "enviar/bucket")
 	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
 	want := "o extrato de 09/2026 aparece como IMPORTADO; confira com `ctbz extratos lancamentos --conta-bancaria 7 --competencia 2026-09` antes de repetir"
@@ -198,7 +201,7 @@ func TestExtratosImportarTimeoutNoUploadImportado(t *testing.T) {
 func TestExtratosImportarTimeoutNoUploadSemReleitura(t *testing.T) {
 	arq, mt := arquivoExtrato(t, "extrato.pdf")
 	f, _ := importarFake(t, mt, "pdf")
-	delete(f.gets, "/api/plataforma/movimentacao-financeira/v2/extratos")
+	f.onWrite = func(f *escritaFake) { delete(f.gets, pathExtratos) }
 	semRespostaNoEnvio(t, f, "enviar/bucket")
 	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
 	if code != ExitError || !strings.Contains(stderr, "pode ou não ter sido aplicada; confira antes de repetir") || !strings.Contains(stderr, "não foi possível reler a situação do extrato") {
@@ -219,5 +222,86 @@ func TestExtratosImportarConexaoCaiAoConcluir(t *testing.T) {
 	f.mu.Unlock()
 	if code != ExitError || escritas != 2 || !strings.Contains(stderr, want) || strings.Contains(stderr, "não foi concluída") {
 		t.Errorf("código %d, escritas %d\n%s", code, escritas, stderr)
+	}
+}
+
+const (
+	pathExtratos     = "/api/plataforma/movimentacao-financeira/v2/extratos"
+	pathInfoExtrato9 = "/api/plataforma/movimentacao-financeira/extrato/info?idContaBancaria=7&ano=2026&mes=9"
+)
+
+// comSituacao troca a situação da competência 09/2026 na lista de extratos do fake.
+func comSituacao(f *escritaFake, situacao string) {
+	f.gets[pathExtratos] = strings.Replace(f.gets[pathExtratos], `"situacao":"ABERTO"`, `"situacao":"`+situacao+`"`, 1)
+}
+
+func TestExtratosImportarCompetenciaJaImportada(t *testing.T) {
+	for _, tc := range []struct {
+		nome, situacao, info, want string
+	}{
+		{"vazia", "IMPORTADO", `{"permiteEditarLancamento":true,"quantidadeLancamentos":0}`,
+			"o extrato de 09/2026 já aparece como IMPORTADO, mas sem nenhum lançamento (o processamento do extrato de outro mês pode tê-lo criado vazio); " +
+				"para importar este arquivo, exclua antes o extrato vazio com `ctbz extratos excluir --conta-bancaria 7 --competencia 2026-09` (risco alto)"},
+		{"com lançamentos", "IMPORTADO", `{"permiteEditarLancamento":true,"quantidadeLancamentos":2}`,
+			"o extrato de 09/2026 já foi importado (veja `ctbz extratos lancamentos --conta-bancaria 7 --competencia 2026-09`); para substituí-lo, exclua-o antes"},
+		{"sem contagem", "IMPORTADO", `{"permiteEditarLancamento":true}`, "o extrato de 09/2026 já foi importado"},
+		{"processando", "PROCESSANDO", "", "o extrato de 09/2026 ainda está em processamento"},
+	} {
+		t.Run(tc.nome, func(t *testing.T) {
+			arq, mt := arquivoExtrato(t, "extrato.pdf")
+			f, _ := importarFake(t, mt, "pdf")
+			comSituacao(f, tc.situacao)
+			if tc.info != "" {
+				f.gets[pathInfoExtrato9] = tc.info
+			}
+			// Vale também no --dry-run: nada seria enviado.
+			for _, extra := range []string{"--yes", "--dry-run"} {
+				_, stderr, code := execCLI(t, "", append(baseImportar, arq, extra)...)
+				if code != ExitError || len(f.writes) != 0 || !strings.Contains(stderr, tc.want) {
+					t.Errorf("%s: código %d, escritas %d\n%s", extra, code, len(f.writes), stderr)
+				}
+			}
+		})
+	}
+}
+
+func TestExtratosImportarTerminaSemLancamentos(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.pdf")
+	f, _ := importarFake(t, mt, "pdf")
+	f.gets[pathInfoExtrato9] = `{"permiteEditarLancamento":true,"quantidadeLancamentos":0}`
+	f.onWrite = func(f *escritaFake) { comSituacao(f, "IMPORTADO") }
+	out, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes", "-o", "json")...)
+	if code != ExitOK || len(f.writes) != 2 || !strings.Contains(stderr, "aviso: o extrato de 09/2026 ficou IMPORTADO sem nenhum lançamento") ||
+		!strings.Contains(out, `"quantidade_lancamentos": 0`) || !strings.Contains(out, `"situacao_extrato": "IMPORTADO"`) {
+		t.Errorf("código %d, escritas %d\nstderr %s\nsaída %s", code, len(f.writes), stderr, out)
+	}
+	f.gets[pathInfoExtrato9] = `{"permiteEditarLancamento":true,"quantidadeLancamentos":2}`
+	// Volta ao estado anterior para importar de novo.
+	f.gets[pathExtratos] = strings.Replace(f.gets[pathExtratos], `"situacao":"IMPORTADO"`, `"situacao":"ABERTO"`, 1)
+	out, stderr, _ = execCLI(t, "", append(baseImportar, arq, "--yes", "-o", "json")...)
+	if strings.Contains(stderr, "sem nenhum lançamento") || !strings.Contains(out, `"quantidade_lancamentos": 2`) {
+		t.Errorf("com lançamentos:\nstderr %s\nsaída %s", stderr, out)
+	}
+}
+
+func TestExtratosImportarTerminaProcessando(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.pdf")
+	f, _ := importarFake(t, mt, "pdf")
+	f.onWrite = func(f *escritaFake) { comSituacao(f, "PROCESSANDO") }
+	out, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes", "-o", "json")...)
+	if code != ExitOK || !strings.Contains(stderr, "A Contabilizei está processando o extrato; em alguns minutos confira") ||
+		!strings.Contains(out, `"quantidade_lancamentos": null`) {
+		t.Errorf("código %d\nstderr %s\nsaída %s", code, stderr, out)
+	}
+}
+
+func TestExtratosImportarArquivoNaoReconhecido(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.pdf")
+	f, _ := importarFake(t, mt, "pdf")
+	f.status = 400
+	f.resposta = `{"mensagem":"(ERRO-NA-VALIDACAO-DE-DOCUMENTO-API-CONTABIL) arquivo inválido"}`
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
+	if code != ExitError || !strings.Contains(stderr, "não reconheceu o arquivo como extrato bancário; tente o OFX do banco ou o PDF baixado direto do internet banking") {
+		t.Errorf("código %d\n%s", code, stderr)
 	}
 }

@@ -40,6 +40,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   se é seguro repetir (continua `PENDENTE`: nada foi importado) ou se é preciso conferir antes.
   A queda ao concluir a importação não diz mais "não foi concluída", e sim para conferir. O
   envio do arquivo tem prazo de 3 minutos, em vez de 60 segundos (#854, #594).
+- `ctbz extratos importar` recusa competência já `IMPORTADO` ou `PROCESSANDO`, como o painel, e
+  explica quando o extrato importado está vazio: o processamento de um mês pode criar o mês
+  seguinte sem lançamentos. Depois de importar, avisa se a competência terminou sem
+  lançamentos (`quantidade_lancamentos` no JSON). A recusa "não reconheceu o arquivo" sugere
+  alternativas (#855).
 
 ## [1.8.0] - 2026-10-04
 

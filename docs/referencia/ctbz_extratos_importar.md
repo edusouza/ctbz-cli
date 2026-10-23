@@ -6,13 +6,17 @@ Importa o extrato do mês de uma conta bancária, como a tela "Importar extrato"
 (risco médio: entra na contabilidade; desfaça com ctbz extratos excluir).
 
 Antes de enviar, a CLI confere a extensão (.ofx ou .pdf), o tamanho (até 30 MB), os formatos
-aceitos pelo banco, se a conta é integrada (essas não precisam de importação) e se há um
-período anterior pendente. Depois:
+aceitos pelo banco, se a conta é integrada (essas não precisam de importação), se há um
+período anterior pendente e se a competência já foi importada ou está em processamento (o
+painel também não deixa importar de novo: exclua o extrato antes). Depois:
 
   1. envia o arquivo;
   2. no OFX, lê o saldo do último dia que a Contabilizei encontrou e pede para confirmar
      (ou compara com --saldo-final; diferente, a importação para);
   3. conclui a importação.
+
+Ao final, a CLI relê a competência: em processamento, avisa para conferir depois; importada
+sem nenhum lançamento, avisa no stderr.
 
 Se a importação parar depois do envio (saldo recusado, extrato de outra competência), o
 arquivo fica enviado mas o extrato não é efetivado; corrija e rode o comando de novo.

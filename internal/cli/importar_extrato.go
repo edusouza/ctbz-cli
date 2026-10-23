@@ -37,7 +37,8 @@ func traduzErroImportacao(err error) error {
 	case strings.Contains(we.Message, "CONTA-NAO-CADASTRADA"):
 		return errors.New("a conta bancária do extrato não está cadastrada; cadastre-a com ctbz contas-bancarias adicionar e importe de novo")
 	case strings.Contains(we.Message, "ERRO-NA-VALIDACAO-DE-DOCUMENTO-API-CONTABIL"):
-		return errors.New("a Contabilizei não reconheceu o arquivo como extrato bancário")
+		return errors.New("a Contabilizei não reconheceu o arquivo como extrato bancário; tente o OFX do banco ou o PDF " +
+			"baixado direto do internet banking e, se continuar, abra um chamado no painel")
 	}
 	return err
 }
@@ -67,13 +68,17 @@ func newExtratosImportarCmd() *cobra.Command {
 (risco médio: entra na contabilidade; desfaça com ctbz extratos excluir).
 
 Antes de enviar, a CLI confere a extensão (.ofx ou .pdf), o tamanho (até 30 MB), os formatos
-aceitos pelo banco, se a conta é integrada (essas não precisam de importação) e se há um
-período anterior pendente. Depois:
+aceitos pelo banco, se a conta é integrada (essas não precisam de importação), se há um
+período anterior pendente e se a competência já foi importada ou está em processamento (o
+painel também não deixa importar de novo: exclua o extrato antes). Depois:
 
   1. envia o arquivo;
   2. no OFX, lê o saldo do último dia que a Contabilizei encontrou e pede para confirmar
      (ou compara com --saldo-final; diferente, a importação para);
   3. conclui a importação.
+
+Ao final, a CLI relê a competência: em processamento, avisa para conferir depois; importada
+sem nenhum lançamento, avisa no stderr.
 
 Se a importação parar depois do envio (saldo recusado, extrato de outra competência), o
 arquivo fica enviado mas o extrato não é efetivado; corrija e rode o comando de novo.
@@ -129,6 +134,9 @@ enviar nada.`,
 				return err
 			}
 			if err := periodoLiberado(per, alvo); err != nil {
+				return err
+			}
+			if err := competenciaImportavel(ctx, g, alvo); err != nil {
 				return err
 			}
 			lista, err := api.BuscarContasBancarias(ctx, g)
@@ -195,17 +203,19 @@ enviar nada.`,
 				return err
 			}
 			situacao := "importado"
-			var situacaoExtrato any
+			var situacaoExtrato, quantidade any
 			if sit, err := situacaoExtratoAlvo(ctx, g, alvo); err != nil {
 				fmt.Fprintln(s.err, "aviso: extrato importado, mas não foi possível reler os extratos:", err)
 			} else {
 				situacaoExtrato = nilIfEmpty(sit)
+				quantidade = conferirImportado(ctx, s, g, alvo, sit)
 			}
 			rec := resultadoEscrita("importar", situacao, alvo.conta).
 				Add("competencia", "Competência", alvo.mes.Format("01/2006")).
 				Add("arquivo", "Arquivo", nome).
 				Add("saldo_ultimo_dia", "Saldo do último dia", moneyOrNil(saldo)).
-				Add("situacao_extrato", "Situação do extrato", situacaoExtrato)
+				Add("situacao_extrato", "Situação do extrato", situacaoExtrato).
+				Add("quantidade_lancamentos", "Lançamentos", quantidade)
 			return output.Write(s.out, f, rec)
 		},
 	}
@@ -228,6 +238,58 @@ func situacaoExtratoAlvo(ctx context.Context, g api.Getter, alvo extratoAlvo) (s
 		}
 	}
 	return "", nil
+}
+
+// competenciaImportavel recusa importar sobre um extrato já importado ou em processamento,
+// como o painel, que não mostra "Importar" nesses casos. Um extrato IMPORTADO pode estar
+// vazio: o processamento de um extrato de outro mês pode criar o do mês seguinte sem
+// lançamentos (#855). Para substituí-lo, é preciso excluí-lo antes.
+func competenciaImportavel(ctx context.Context, g api.Getter, alvo extratoAlvo) error {
+	sit, err := situacaoExtratoAlvo(ctx, g, alvo)
+	if err != nil {
+		return err
+	}
+	mes := alvo.mes.Format("01/2006")
+	excluir := fmt.Sprintf("`ctbz extratos excluir --conta-bancaria %d --competencia %s`", alvo.conta, alvo.mes.Format("2006-01"))
+	switch sit {
+	case "PROCESSANDO":
+		return fmt.Errorf("o extrato de %s ainda está em processamento; aguarde e confira com `ctbz extratos`", mes)
+	case "IMPORTADO":
+		info, err := api.BuscarExtratoInfo(ctx, g, alvo.conta, alvo.ano(), alvo.mesNum())
+		if err == nil && info.QuantidadeLancamentos != nil && *info.QuantidadeLancamentos == 0 {
+			return fmt.Errorf("o extrato de %s já aparece como IMPORTADO, mas sem nenhum lançamento (o processamento do extrato de outro mês "+
+				"pode tê-lo criado vazio); para importar este arquivo, exclua antes o extrato vazio com %s (risco alto) e rode este comando de novo",
+				mes, excluir)
+		}
+		return fmt.Errorf("o extrato de %s já foi importado (veja %s); para substituí-lo, exclua-o antes com %s (risco alto: perde as classificações)",
+			mes, comandoConferirExtrato(alvo), excluir)
+	}
+	return nil
+}
+
+// conferirImportado relê o extrato depois da importação e devolve quantos lançamentos ele tem
+// (nil se não deu para saber). Em processamento, orienta a conferir depois; importado sem
+// lançamentos, avisa: a competência pareceria resolvida sem nada dentro.
+func conferirImportado(ctx context.Context, s streams, g api.Getter, alvo extratoAlvo, sit string) any {
+	if sit == "PROCESSANDO" {
+		fmt.Fprintf(s.err, "A Contabilizei está processando o extrato; em alguns minutos confira com `ctbz extratos` e %s.\n", comandoConferirExtrato(alvo))
+	}
+	if sit != "IMPORTADO" {
+		return nil
+	}
+	info, err := api.BuscarExtratoInfo(ctx, g, alvo.conta, alvo.ano(), alvo.mesNum())
+	if err != nil {
+		fmt.Fprintln(s.err, "aviso: extrato importado, mas não foi possível contar os lançamentos:", err)
+		return nil
+	}
+	if info.QuantidadeLancamentos == nil {
+		return nil
+	}
+	if *info.QuantidadeLancamentos == 0 {
+		fmt.Fprintf(s.err, "aviso: o extrato de %s ficou IMPORTADO sem nenhum lançamento; confira o arquivo e, se ele tem movimentações, "+
+			"abra um chamado no painel\n", alvo.mes.Format("01/2006"))
+	}
+	return *info.QuantidadeLancamentos
 }
 
 // comandoConferirExtrato é o comando que mostra o que entrou no extrato da competência.

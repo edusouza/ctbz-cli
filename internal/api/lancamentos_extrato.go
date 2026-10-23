@@ -101,6 +101,9 @@ type ExtratoInfo struct {
 	PermiteEditarLancamento bool           `json:"permiteEditarLancamento"`
 	PermiteExclusaoExtrato  bool           `json:"permiteExclusaoExtrato" contract:"optional"`
 	Socios                  []SocioExtrato `json:"socios" contract:"optional"`
+	// QuantidadeLancamentos é quantos lançamentos o extrato importado tem (visto numa conta
+	// real, #855); nil quando a resposta não traz.
+	QuantidadeLancamentos *int `json:"quantidadeLancamentos" contract:"optional"`
 }
 
 // BuscarExtratoInfo lê as permissões e os sócios do extrato do mês.
