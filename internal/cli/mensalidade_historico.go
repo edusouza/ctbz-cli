@@ -3,29 +3,38 @@ package cli
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"io"
+	"sort"
 	"strconv"
-	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 
 	"github.com/edusouza/ctbz-cli/internal/api"
+	"github.com/edusouza/ctbz-cli/internal/ctbz"
 	"github.com/edusouza/ctbz-cli/internal/output"
 )
 
 func newMensalidadeHistoricoCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "historico",
-		Short: "Lista os pagamentos anteriores da mensalidade e a situação do débito automático",
-		Long: `Lista os pagamentos anteriores da mensalidade (data, competência, valor e status) e mostra a
-situação do débito automático: se está habilitado e ativo, a competência e a próxima cobrança.
+		Short: "Lista as faturas pagas da mensalidade",
+		Long: `Lista as faturas da Contabilizei já pagas, como a tela "Consultar histórico" do painel: por
+competência, o vencimento, a data do pagamento, o valor, a multa e os juros cobrados pelo
+atraso da fatura anterior, a forma de pagamento e o status. A mais recente vem primeiro.
 
-Só campos conhecidos são copiados para a saída: chaves do gateway de pagamento e dados de cartão
-nunca são mostrados. O formato de cada pagamento não é documentado; se nenhum campo for
-reconhecido, o comando avisa e indica "ctbz api payments/recorrencia/historico".`,
+A baixa da fatura pode demorar depois do pagamento: para saber se a mensalidade está em dia,
+use ctbz mensalidade situacao.
+
+Os campos debito_automatico_ativo, debito_automatico_habilitado, status, competencia e
+proximo_pagamento são do débito automático de impostos (o mesmo de ctbz impostos recorrente),
+não da mensalidade. Ficam por compatibilidade e estão obsoletos.
+
+Só campos conhecidos são copiados para a saída: dados de cartão, chaves do gateway de
+pagamento e os códigos de pagamento das faturas nunca são mostrados.`,
 		Example: `  ctbz mensalidade historico
-  ctbz mensalidade historico -o json | jq '.pagamentos[].valor'`,
+  ctbz mensalidade historico -o json | jq '.pagamentos[] | {competencia, valor, multa_juros}'`,
 		Args: exactArgs(0, "nenhum argumento"),
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			f, err := outputFormat(cmd, "")
@@ -34,14 +43,19 @@ reconhecido, o comando avisa e indica "ctbz api payments/recorrencia/historico".
 			}
 			s := streamsOf(cmd)
 			g := sessionGetter{s}
-			var ini, hist json.RawMessage
+			cnpj, err := cnpjDaSessao()
+			if err != nil {
+				return err
+			}
+			var ini json.RawMessage
 			if err := g.GetJSON(cmd.Context(), api.PathRecorrenciaInit, &ini); err != nil {
 				return err
 			}
-			if err := g.GetJSON(cmd.Context(), api.PathRecorrenciaHistorico, &hist); err != nil {
+			faturas, err := api.BuscarFaturasPagas(cmd.Context(), g, cnpj)
+			if err != nil {
 				return err
 			}
-			rec, err := buildHistorico(ini, hist, s.err)
+			rec, err := buildHistorico(ini, faturas)
 			if err != nil {
 				return err
 			}
@@ -50,40 +64,40 @@ reconhecido, o comando avisa e indica "ctbz api payments/recorrencia/historico".
 	}
 }
 
-// buildHistorico monta o registro de saída a partir das respostas de
-// payments/recorrencia/init e payments/recorrencia/historico. Só campos
-// conhecidos são copiados: a resposta pode trazer dados de cartão ou chaves
-// do gateway de pagamento (adyenClientKey), que nunca devem chegar à saída.
-// Avisos vão para errOut.
-func buildHistorico(initBody, histBody []byte, errOut io.Writer) (*output.Record, error) {
+// buildHistorico monta o registro de saída a partir das faturas pagas e de
+// payments/recorrencia/init (débito automático de impostos, mantido por compatibilidade).
+// Só campos conhecidos são copiados: a resposta da recorrência traz chaves do gateway de
+// pagamento (adyenClientKey) e a das faturas, Pix e linha digitável, que nunca devem chegar
+// à saída.
+func buildHistorico(initBody []byte, faturas []api.FaturaPaga) (*output.Record, error) {
 	var ini map[string]any
 	if err := decodeJSON(initBody, &ini); err != nil {
 		return nil, fmt.Errorf("resposta inesperada de %s: %w", api.PathRecorrenciaInit, err)
 	}
-	var hist struct {
-		Pagamentos []map[string]any `json:"pagamentos"`
-	}
-	if err := decodeJSON(histBody, &hist); err != nil {
-		return nil, fmt.Errorf("resposta inesperada de %s: %w", api.PathRecorrenciaHistorico, err)
-	}
 
-	pagamentos := make([]output.Record, 0, len(hist.Pagamentos))
-	reconhecidos := false
-	for _, p := range hist.Pagamentos {
+	sort.SliceStable(faturas, func(i, j int) bool {
+		a, b := faturas[i].Competencia, faturas[j].Competencia
+		return a.Ano > b.Ano || (a.Ano == b.Ano && a.Mes > b.Mes)
+	})
+	pagamentos := make([]output.Record, 0, len(faturas))
+	for _, x := range faturas {
+		status := x.StatusLabel
+		if status == "" {
+			status = x.Status
+		}
+		var forma any
+		if x.Pagamento != nil {
+			forma = nilIfEmpty(x.Pagamento.FormaPagamento)
+		}
 		r := output.Record{}
-		data, okData := pick(p, "dataPagamento", "dataPagto", "data", "dataVencimento", "vencimento")
-		competencia, okComp := pick(p, "competencia", "mesCompetencia")
-		valor, okValor := pick(p, "valorPago", "valor", "total")
-		status, okStatus := pick(p, "status", "situacao")
-		reconhecidos = reconhecidos || okData || okComp || okValor || okStatus
-		r.Add("data", "Data", toDate(data)).
-			Add("competencia", "Competência", toText(competencia)).
-			Add("valor", "Valor", toMoney(valor)).
-			Add("status", "Status", toText(status))
+		r.Add("data", "Data", diaDeMillis(x.DataPagamento, true)).
+			Add("competencia", "Competência", fmt.Sprintf("%02d/%d", x.Competencia.Mes, x.Competencia.Ano)).
+			Add("vencimento", "Vencimento", diaDeMillis(x.DataVencimento, false)).
+			Add("valor", "Valor", moneyOrNil(x.Total)).
+			Add("multa_juros", "Multa e juros", output.Money(x.MultaEJuros())).
+			Add("forma_pagamento", "Forma", forma).
+			Add("status", "Status", nilIfEmpty(status))
 		pagamentos = append(pagamentos, r)
-	}
-	if len(hist.Pagamentos) > 0 && !reconhecidos {
-		fmt.Fprintln(errOut, "aviso: formato de pagamentos não reconhecido; veja o original com `ctbz api payments/recorrencia/historico`")
 	}
 
 	status, _ := pick(ini, "status")
@@ -93,13 +107,47 @@ func buildHistorico(initBody, histBody []byte, errOut io.Writer) (*output.Record
 	ativado, _ := pick(ini, "ativado")
 
 	rec := &output.Record{}
-	rec.Add("debito_automatico_ativo", "Débito automático ativo", toBool(ativado)).
-		Add("debito_automatico_habilitado", "Débito automático habilitado", toBool(habilitado)).
-		Add("status", "Status", toText(status)).
-		Add("competencia", "Competência", toText(competencia)).
-		Add("proximo_pagamento", "Próxima cobrança", toDate(proximo)).
-		Add("pagamentos", "Pagamentos", pagamentos)
+	rec.Add("debito_automatico_ativo", "Débito automático de impostos ativo", toBool(ativado)).
+		Add("debito_automatico_habilitado", "Débito automático de impostos habilitado", toBool(habilitado)).
+		Add("status", "Status do débito automático de impostos", toText(status)).
+		Add("competencia", "Competência do débito automático de impostos", toText(competencia)).
+		Add("proximo_pagamento", "Próximo débito de impostos", toDate(proximo)).
+		Add("pagamentos", "Faturas pagas", pagamentos)
 	return rec, nil
+}
+
+// diaDeMillis devolve o dia de um epoch em ms opcional (nil quando ausente), sem depender do
+// fuso da máquina. O pagamento é um instante, lido em Brasília; o vencimento é uma data que a
+// API grava como meia-noite UTC (ex.: dia 15 às 00:00 UTC), lida em UTC para não virar dia 14.
+func diaDeMillis(ms *int64, emBrasilia bool) any {
+	if ms == nil {
+		return nil
+	}
+	t := time.UnixMilli(*ms).UTC()
+	if emBrasilia {
+		t = api.DiaEmBrasilia(t)
+	}
+	d, _ := output.ParseDate(t.Format("2006-01-02"))
+	return d
+}
+
+// cnpjDaSessao é o CNPJ da empresa escolhida na sessão salva.
+func cnpjDaSessao() (string, error) {
+	store, err := ctbz.DefaultStore()
+	if err != nil {
+		return "", err
+	}
+	sess, err := store.LoadSession()
+	if err != nil {
+		return "", err
+	}
+	if cnpj := currentCNPJ(sess); cnpj != "" {
+		return cnpj, nil
+	}
+	if sess.CNPJ != "" {
+		return sess.CNPJ, nil
+	}
+	return "", errors.New("a sessão não tem a empresa escolhida; rode `ctbz login` ou `ctbz empresa usar`")
 }
 
 func decodeJSON(b []byte, v any) error {
@@ -153,23 +201,4 @@ func toDate(v any) output.Date {
 		}
 	}
 	return output.Date{}
-}
-
-// toMoney aceita número ou texto ("1.234,56" ou "1234.56"). Sem valor: nil.
-func toMoney(v any) any {
-	switch x := v.(type) {
-	case json.Number:
-		if f, err := x.Float64(); err == nil {
-			return output.Money(f)
-		}
-	case string:
-		s := strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(x), "R$"))
-		if strings.Contains(s, ",") {
-			s = strings.ReplaceAll(strings.ReplaceAll(s, ".", ""), ",", ".")
-		}
-		if f, err := strconv.ParseFloat(s, 64); err == nil {
-			return output.Money(f)
-		}
-	}
-	return nil
 }

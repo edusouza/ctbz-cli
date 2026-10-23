@@ -117,7 +117,7 @@ Sem o serviço contratado, a listagem avisa e termina com código 0.
 ```sh
 ctbz mensalidade -o json             # competencia, valor, vencimento, situacao, competencia_anterior_atrasada
 ctbz mensalidade situacao -o json    # em_dia
-ctbz mensalidade historico -o json   # pagamentos e débito automático
+ctbz mensalidade historico -o json   # faturas pagas (pagamentos[]), da mais recente
 ctbz plano -o json                   # plano e categoria (lidos no login)
 ctbz plano contrato --texto          # contrato de prestação de serviços
 ctbz plano proposta --texto          # proposta com a tabela de preços

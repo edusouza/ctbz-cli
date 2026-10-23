@@ -36,32 +36,36 @@ Situação:  OK
   mostrado como veio, com `em_dia` falso.
 - `--fail-on-inadimplencia` termina com **código 4** quando a empresa não está em dia.
 
-## Histórico de pagamentos e débito automático
+## Histórico de pagamentos
 
 ```sh
 ctbz mensalidade historico
 ```
 
 ```text
-Débito automático ativo:       sim
-Débito automático habilitado:  sim
-Status:                        ATIVO
-Competência:                   10/2026
-Próxima cobrança:              10/11/2026
-Pagamentos:
-  Data        Competência        Valor  Status
-  10/09/2026  09/2026        R$ 189,90  PAGO
-  10/09/2026  08/2026      R$ 1.189,90  PAGO
+Débito automático de impostos ativo:           não
+Débito automático de impostos habilitado:      sim
+Competência do débito automático de impostos:  09-2026
+Faturas pagas:
+  Data        Competência  Vencimento      Valor  Multa e juros  Forma   Status
+  18/09/2026  09/2026      15/09/2026  R$ 141,83        R$ 2,83  PIX     Paga
+  19/08/2026  08/2026      15/08/2026  R$ 139,00        R$ 0,00  BOLETO  Paga
+              07/2026      26/07/2026    R$ 0,00        R$ 0,00          Paga
 ```
 
-- Lê `payments/recorrencia/init` e `payments/recorrencia/historico`.
-- O formato de cada pagamento não está documentado e não foi verificado contra uma conta com
-  histórico: os nomes dos campos (data, competência, valor, status) são inferidos, com
-  alternativas aceitas. Se nenhum for reconhecido, o comando avisa no stderr e indica
-  `ctbz api payments/recorrencia/historico`.
-- Só campos conhecidos são copiados para a saída: chaves do gateway de pagamento e dados de
-  cartão nunca aparecem.
-- Para o pagamento recorrente de **impostos**, veja `ctbz impostos recorrente`.
+- As faturas pagas vêm da mesma fonte da tela "Consultar histórico" do painel
+  (`GET /api/pagamentos/faturas?cnpj=…&confirmadas=true`), da mais recente para a mais antiga.
+  "Multa e juros" é o que a fatura cobrou pelo atraso da anterior. A fatura zerada (ex.: o
+  crédito de abertura da empresa) aparece sem data de pagamento.
+- A baixa pode demorar depois do pagamento. Para saber se a mensalidade está em dia, use
+  `ctbz mensalidade situacao`.
+- Os campos do topo (`debito_automatico_*`, `status`, `competencia`, `proximo_pagamento`) vêm de
+  `payments/recorrencia/init`, que é o débito automático de **impostos** (o mesmo de
+  `ctbz impostos recorrente`), não o da mensalidade. Ficam por compatibilidade e estão obsoletos.
+  Até a 1.8.0, `pagamentos` também vinha dessa fonte, por isso saía vazio para quem paga a
+  mensalidade por boleto ou Pix.
+- Só campos conhecidos são copiados para a saída: dados de cartão, chaves do gateway de
+  pagamento e os códigos de pagamento das faturas (linha digitável, Pix) nunca aparecem.
 
 ## Plano e contrato
 

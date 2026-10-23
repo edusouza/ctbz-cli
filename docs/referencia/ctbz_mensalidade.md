@@ -23,7 +23,7 @@ ctbz mensalidade [flags]
 
 ## Subcomandos
 
-- [`ctbz mensalidade historico`](ctbz_mensalidade_historico.md): Lista os pagamentos anteriores da mensalidade e a situação do débito automático
+- [`ctbz mensalidade historico`](ctbz_mensalidade_historico.md): Lista as faturas pagas da mensalidade
 - [`ctbz mensalidade situacao`](ctbz_mensalidade_situacao.md): Indica se a empresa está em dia com a Contabilizei
 
 ## Flags

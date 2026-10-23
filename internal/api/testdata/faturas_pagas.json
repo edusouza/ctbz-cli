@@ -1,0 +1,45 @@
+[
+  {
+    "id": 1000000000000701,
+    "competencia": {"identificador": 202608, "mes": 8, "ano": 2026},
+    "tipo": "COMPETENCIA",
+    "status": "CONFIRMADA",
+    "statusLabel": "Paga",
+    "dataVencimento": 1786752000000,
+    "dataPagamento": 1787146723000,
+    "total": 139,
+    "pagamento": {"dataPagamento": 1787146723000, "valor": 139, "formaPagamento": "BOLETO"},
+    "itens": [{"tipo": "MENSALIDADE", "descricao": "Mensalidade da competência Agosto/2026", "valor": 139}]
+  },
+  {
+    "id": 1000000000000702,
+    "competencia": {"identificador": 202609, "mes": 9, "ano": 2026},
+    "tipo": "COMPETENCIA",
+    "status": "CONFIRMADA",
+    "statusLabel": "Paga",
+    "dataVencimento": 1789430400000,
+    "dataPagamento": 1789740182000,
+    "total": 141.83,
+    "pagamento": {"dataPagamento": 1789740182000, "valor": 141.83, "formaPagamento": "PIX"},
+    "itens": [
+      {"tipo": "MULTA", "descricao": "Multa sobre fatura Agosto/2026", "valor": 2.78},
+      {"tipo": "JUROS", "descricao": "Juros sobre fatura Agosto/2026", "valor": 0.05},
+      {"tipo": "MENSALIDADE", "descricao": "Mensalidade da competência Setembro/2026", "valor": 139}
+    ]
+  },
+  {
+    "id": 1000000000000700,
+    "competencia": {"identificador": 202607, "mes": 7, "ano": 2026},
+    "tipo": "COMPETENCIA",
+    "status": "CONFIRMADA",
+    "statusLabel": "Paga",
+    "dataVencimento": 1785034800000,
+    "dataPagamento": null,
+    "total": 0,
+    "pagamento": null,
+    "itens": [
+      {"tipo": "CREDITO_ABERTURA", "descricao": "Crédito ref. abertura de empresa", "valor": -139},
+      {"tipo": "MENSALIDADE", "descricao": "Mensalidade da competência Julho/2026", "valor": 139}
+    ]
+  }
+]
