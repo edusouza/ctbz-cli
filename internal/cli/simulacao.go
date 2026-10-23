@@ -75,19 +75,22 @@ func secreta(chave string) bool {
 	return false
 }
 
-func mascarar(v any) any {
+func mascarar(v any) any { return mascararCom(v, secreta) }
+
+// mascararCom troca por *** os valores das chaves que eh reconhece, em qualquer nível.
+func mascararCom(v any, eh func(string) bool) any {
 	switch x := v.(type) {
 	case map[string]any:
 		for k, e := range x {
-			if secreta(k) && e != nil {
+			if eh(k) && e != nil {
 				x[k] = "***"
 			} else {
-				x[k] = mascarar(e)
+				x[k] = mascararCom(e, eh)
 			}
 		}
 	case []any:
 		for i, e := range x {
-			x[i] = mascarar(e)
+			x[i] = mascararCom(e, eh)
 		}
 	}
 	return v
