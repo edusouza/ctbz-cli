@@ -78,15 +78,15 @@ o resultado traz sempre as chaves `acao`, `situacao` e `id`, que fazem parte do
 
 ## Registro das ações: `ctbz acoes`
 
-Cada escrita enviada (inclusive as que falham, e as de `ctbz api -X`) vira uma linha JSON em
-`$CTBZ_HOME/acoes.jsonl`, com permissão `0600`: data e hora, CNPJ da empresa, comando,
+Cada escrita enviada (inclusive as que falham, e as de `ctbz api -X` e `-F`) vira uma linha
+JSON em `$CTBZ_HOME/acoes.jsonl`, com permissão `0600`: data e hora, CNPJ da empresa, comando,
 método, caminho (sem a query), status HTTP, resultado, id do objeto quando conhecido e, nos
 envios de arquivo, o nome e o tamanho de cada arquivo (`arquivos`, ex.:
 `documento: extrato.pdf (42 KB)`). Simulações (`--dry-run`) não entram.
 
-**Corpos de requisição e de resposta nunca são gravados**, porque podem ter dados pessoais ou
-senhas, nem o conteúdo dos arquivos. Se o registro não puder ser gravado, a CLI avisa no stderr e o resultado da escrita
-continua valendo.
+**Corpos de requisição e de resposta nunca são gravados**, nem o conteúdo dos arquivos
+enviados, porque podem ter dados pessoais ou senhas. Se o registro não puder ser gravado, a CLI
+avisa no stderr e o resultado da escrita continua valendo.
 
 ```sh
 ctbz acoes                      # as 50 mais recentes
@@ -110,17 +110,18 @@ O arquivo só cresce; apague-o ou arquive-o quando quiser recomeçar.
 | `1` | confirmação recusada ("operação cancelada") ou erro ao enviar |
 | `2` | sem terminal e sem `--yes` (nada foi enviado), ou flag inválida |
 
-## Baixo nível: `ctbz api -X`
+## Baixo nível: `ctbz api -X` e `-F`
 
-`ctbz api -X POST|PUT|PATCH|DELETE` envia qualquer requisição sem confirmação, sem
-`--dry-run` e sem validações. Ele também confere a sessão antes e envia uma única vez. Use só
-quando souber exatamente o que está enviando.
+`ctbz api -X POST|PUT|PATCH|DELETE` e `ctbz api -F …` enviam qualquer requisição sem
+confirmação, sem `--dry-run` e sem validações. Eles também conferem a sessão antes e enviam uma
+única vez. Use só quando souber exatamente o que está enviando.
 
 `-F` monta um corpo `multipart/form-data`, como o `curl`, para os uploads que nenhum comando
 cobre:
 
 ```sh
-ctbz api -F nomeArquivo=x.csv -F ano=2026 -F mes=9 -F idConta=1000000000000001   -F documento=@extrato.csv upload-documentos/extrato/enviar/bucket
+ctbz api -F nomeArquivo=x.csv -F ano=2026 -F mes=9 -F idConta=1000000000000001 \
+  -F documento=@extrato.csv upload-documentos/extrato/enviar/bucket
 ```
 
 - `-F campo=valor` é um campo de texto; `-F campo=@arquivo` envia o arquivo, com o tipo
