@@ -7,19 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
-### Changed
+## [1.9.0] - 2026-10-23
 
-- `ctbz extratos importar` confere o formato do arquivo pela lista do banco, numa mensagem só:
-  "o banco desta conta aceita extratos em PDF, XLS ou CSV; este arquivo é .ofx". Antes, a
-  extensão era conferida contra uma lista fixa (`.ofx`/`.pdf`) que contradizia a do banco (#899).
-
-### Fixed
-
-- `extratos importar --substituir`: quando a exclusão dá certo e a importação falha, a mensagem
-  vem da competência relida, e não de uma suposição. Antes dizia "voltou a ficar pendente" e
-  mandava rodar de novo, mas a competência já foi vista `PROCESSANDO` por minutos depois de um
-  arquivo recusado. Agora, com `PROCESSANDO`, a CLI manda esperar e conferir; com `IMPORTADO`,
-  conferir os lançamentos; e só manda repetir quando a competência está pendente (#901).
+O que faltou no primeiro uso real: gerar a segunda via da mensalidade atrasada com Pix copia
+e cola e linha digitável, importar extratos em CSV e XLS pela Central de Documentos e
+diagnosticar uma chamada que falha, com o modo verbose e o envio `multipart/form-data` no
+`ctbz api`.
 
 ### Added
 
@@ -54,6 +47,20 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   extrato já importado (#899, #920, #921).
 - Documentado o que a plataforma exige numa chamada: o cookie `oauth-token` e um `User-Agent`
   de navegador. Com o `User-Agent` do `curl`, a resposta é 401 (#902).
+
+### Changed
+
+- `ctbz extratos importar` confere o formato do arquivo pela lista do banco, numa mensagem só:
+  "o banco desta conta aceita extratos em PDF, XLS ou CSV; este arquivo é .ofx". Antes, a
+  extensão era conferida contra uma lista fixa (`.ofx`/`.pdf`) que contradizia a do banco (#899).
+
+### Fixed
+
+- `extratos importar --substituir`: quando a exclusão dá certo e a importação falha, a mensagem
+  vem da competência relida, e não de uma suposição. Antes dizia "voltou a ficar pendente" e
+  mandava rodar de novo, mas a competência já foi vista `PROCESSANDO` por minutos depois de um
+  arquivo recusado. Agora, com `PROCESSANDO`, a CLI manda esperar e conferir; com `IMPORTADO`,
+  conferir os lançamentos; e só manda repetir quando a competência está pendente (#901).
 
 ## [1.8.1] - 2026-10-23
 
@@ -434,7 +441,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.8.1...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.0...HEAD
+[1.9.0]: https://github.com/edusouza/ctbz-cli/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/edusouza/ctbz-cli/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/edusouza/ctbz-cli/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/edusouza/ctbz-cli/compare/v1.6.0...v1.7.0

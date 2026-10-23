@@ -42,7 +42,7 @@ escritas, `risco: baixo|médio|alto`.
 | **v1.7** | Pró-labore, distribuição de lucros e informe de rendimentos | [#211](https://github.com/edusouza/ctbz-cli/issues/211) | 6 | concluída |
 | **v1.8** | Conta, usuários e acessos | [#218](https://github.com/edusouza/ctbz-cli/issues/218) | 4 | concluída |
 | **v1.8.1** | Correções do primeiro uso real de ponta a ponta | — | 6 | concluída |
-| **v1.9** | Segunda via da mensalidade, extratos em CSV/XLS e diagnóstico | — | 5 | em andamento (5/5) |
+| **v1.9** | Segunda via da mensalidade, extratos em CSV/XLS e diagnóstico | — | 5 | concluída |
 
 ## v0.1 — Login e dados da empresa
 
