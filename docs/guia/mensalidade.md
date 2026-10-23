@@ -48,8 +48,8 @@ Débito automático de impostos habilitado:      sim
 Competência do débito automático de impostos:  09-2026
 Faturas pagas:
   Data        Competência  Vencimento      Valor  Multa e juros  Forma   Status
-  18/09/2026  09/2026      14/09/2026  R$ 141,83        R$ 2,83  PIX     Paga
-  19/08/2026  08/2026      14/08/2026  R$ 139,00        R$ 0,00  BOLETO  Paga
+  18/09/2026  09/2026      15/09/2026  R$ 141,83        R$ 2,83  PIX     Paga
+  19/08/2026  08/2026      15/08/2026  R$ 139,00        R$ 0,00  BOLETO  Paga
               07/2026      26/07/2026    R$ 0,00        R$ 0,00          Paga
 ```
 

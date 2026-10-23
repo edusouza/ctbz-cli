@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -89,9 +90,9 @@ func buildHistorico(initBody []byte, faturas []api.FaturaPaga) (*output.Record, 
 			forma = nilIfEmpty(x.Pagamento.FormaPagamento)
 		}
 		r := output.Record{}
-		r.Add("data", "Data", dataMillis(x.DataPagamento)).
+		r.Add("data", "Data", diaDeMillis(x.DataPagamento, true)).
 			Add("competencia", "Competência", fmt.Sprintf("%02d/%d", x.Competencia.Mes, x.Competencia.Ano)).
-			Add("vencimento", "Vencimento", dataMillis(x.DataVencimento)).
+			Add("vencimento", "Vencimento", diaDeMillis(x.DataVencimento, false)).
 			Add("valor", "Valor", moneyOrNil(x.Total)).
 			Add("multa_juros", "Multa e juros", output.Money(x.MultaEJuros())).
 			Add("forma_pagamento", "Forma", forma).
@@ -115,12 +116,19 @@ func buildHistorico(initBody []byte, faturas []api.FaturaPaga) (*output.Record, 
 	return rec, nil
 }
 
-// dataMillis converte um epoch em ms opcional numa data (nil quando ausente).
-func dataMillis(ms *int64) any {
+// diaDeMillis devolve o dia de um epoch em ms opcional (nil quando ausente), sem depender do
+// fuso da máquina. O pagamento é um instante, lido em Brasília; o vencimento é uma data que a
+// API grava como meia-noite UTC (ex.: dia 15 às 00:00 UTC), lida em UTC para não virar dia 14.
+func diaDeMillis(ms *int64, emBrasilia bool) any {
 	if ms == nil {
 		return nil
 	}
-	return output.DateFromMillis(*ms)
+	t := time.UnixMilli(*ms).UTC()
+	if emBrasilia {
+		t = api.DiaEmBrasilia(t)
+	}
+	d, _ := output.ParseDate(t.Format("2006-01-02"))
+	return d
 }
 
 // cnpjDaSessao é o CNPJ da empresa escolhida na sessão salva.

@@ -59,7 +59,7 @@ func TestMensalidadeHistoricoFormats(t *testing.T) {
 	if set.Valor != 141.83 || set.MultaJuros != 2.83 || set.Forma == nil || *set.Forma != "PIX" || set.Status != "Paga" || set.Data == nil || *set.Data != "2026-09-18" {
 		t.Errorf("setembro: %+v", set)
 	}
-	if ago.MultaJuros != 0 || *ago.Forma != "BOLETO" || ago.Vencimento != "2026-08-14" {
+	if ago.MultaJuros != 0 || *ago.Forma != "BOLETO" || ago.Vencimento != "2026-08-15" {
 		t.Errorf("agosto: %+v", ago)
 	}
 	if jul.Valor != 0 || jul.Data != nil || jul.Forma != nil {
