@@ -181,6 +181,7 @@ ctbz correspondencias [baixar ID | endereco | autorizar on|off]  # escritório v
 ctbz acoes --desde 2026-10-01                  # escritas enviadas por esta CLI (registro local)
 ctbz api menu/get        # qualquer endpoint; caminho relativo → /api/plataforma/
 ctbz api -X POST -d @corpo.json /api/plataforma/algum/endpoint
+ctbz api -F campo=valor -F documento=@arquivo.csv algum/upload   # multipart, como o curl -F
 ctbz logout              # apaga a sessão local
 ctbz version             # versão do binário
 ```

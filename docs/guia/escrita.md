@@ -80,11 +80,12 @@ o resultado traz sempre as chaves `acao`, `situacao` e `id`, que fazem parte do
 
 Cada escrita enviada (inclusive as que falham, e as de `ctbz api -X`) vira uma linha JSON em
 `$CTBZ_HOME/acoes.jsonl`, com permissão `0600`: data e hora, CNPJ da empresa, comando,
-método, caminho (sem a query), status HTTP, resultado e id do objeto quando conhecido.
-Simulações (`--dry-run`) não entram.
+método, caminho (sem a query), status HTTP, resultado, id do objeto quando conhecido e, nos
+envios de arquivo, o nome e o tamanho de cada arquivo (`arquivos`, ex.:
+`documento: extrato.pdf (42 KB)`). Simulações (`--dry-run`) não entram.
 
 **Corpos de requisição e de resposta nunca são gravados**, porque podem ter dados pessoais ou
-senhas. Se o registro não puder ser gravado, a CLI avisa no stderr e o resultado da escrita
+senhas, nem o conteúdo dos arquivos. Se o registro não puder ser gravado, a CLI avisa no stderr e o resultado da escrita
 continua valendo.
 
 ```sh
@@ -114,3 +115,16 @@ O arquivo só cresce; apague-o ou arquive-o quando quiser recomeçar.
 `ctbz api -X POST|PUT|PATCH|DELETE` envia qualquer requisição sem confirmação, sem
 `--dry-run` e sem validações. Ele também confere a sessão antes e envia uma única vez. Use só
 quando souber exatamente o que está enviando.
+
+`-F` monta um corpo `multipart/form-data`, como o `curl`, para os uploads que nenhum comando
+cobre:
+
+```sh
+ctbz api -F nomeArquivo=x.csv -F ano=2026 -F mes=9 -F idConta=1000000000000001   -F documento=@extrato.csv upload-documentos/extrato/enviar/bucket
+```
+
+- `-F campo=valor` é um campo de texto; `-F campo=@arquivo` envia o arquivo, com o tipo
+  deduzido da extensão (`-F documento=@extrato.csv;type=text/csv` escolhe outro).
+- Sem `-X`, `-F` envia com `POST`. `-F` e `-d` não podem ser usados juntos.
+- Cada arquivo tem até 30 MB, e o envio tem o mesmo prazo dos uploads da CLI (3 minutos).
+- O `ctbz acoes` guarda o nome e o tamanho dos arquivos, nunca o conteúdo.

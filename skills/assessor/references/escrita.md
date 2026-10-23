@@ -59,5 +59,5 @@ O risco é o que a CLI declara. No terminal, o médio pede `[s/N]` e o alto pede
 
 ## Fora da CLI
 
-`ctbz api -X POST|PUT|PATCH|DELETE` envia sem confirmação, sem `--dry-run` e sem validação.
-Não use por iniciativa própria.
+`ctbz api -X POST|PUT|PATCH|DELETE` e `ctbz api -F …` (upload multipart) enviam sem
+confirmação, sem `--dry-run` e sem validação. Não use por iniciativa própria.

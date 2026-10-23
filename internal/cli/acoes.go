@@ -17,12 +17,12 @@ func newAcoesCmd() *cobra.Command {
 		Use:   "acoes",
 		Short: "Lista as ações de escrita enviadas à Contabilizei por esta CLI",
 		Long: `Lista as escritas que esta CLI enviou à Contabilizei, da mais antiga para a mais recente:
-data e hora, CNPJ da empresa, comando, método, caminho, status HTTP, resultado e id do
-objeto (quando conhecido).
+data e hora, CNPJ da empresa, comando, método, caminho, status HTTP, resultado, id do
+objeto (quando conhecido) e, nos envios de arquivo, o nome e o tamanho de cada arquivo.
 
 O registro fica em $CTBZ_HOME/acoes.jsonl (permissão 0600), uma linha JSON por escrita
 enviada, inclusive as que falharam. Simulações (--dry-run) não entram. Corpos de
-requisição e de resposta nunca são gravados.
+requisição e de resposta nunca são gravados, nem o conteúdo dos arquivos.
 
 Resultado: "enviada" (HTTP 2xx), "recusada" (resposta de erro) ou "sem resposta" (falha de
 conexão: a escrita pode ou não ter sido aplicada).`,
@@ -88,6 +88,7 @@ func acoesList(acoes []ctbz.Acao) *output.List {
 		{Key: "status", Header: "Status"},
 		{Key: "resultado", Header: "Resultado"},
 		{Key: "id", Header: "ID"},
+		{Key: "arquivos", Header: "Arquivos"},
 	}}
 	for _, a := range acoes {
 		var status any
@@ -95,7 +96,7 @@ func acoesList(acoes []ctbz.Acao) *output.List {
 			status = a.Status
 		}
 		l.Append(output.DateTime{Time: a.Data}, output.NewCNPJ(a.CNPJ), a.Comando, a.Metodo, a.Caminho,
-			status, a.Resultado, nilIfEmpty(a.ID))
+			status, a.Resultado, nilIfEmpty(a.ID), nilIfEmpty(a.Arquivos))
 	}
 	return l
 }

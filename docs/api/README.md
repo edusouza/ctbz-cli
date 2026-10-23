@@ -45,6 +45,7 @@ ctbz api dadosempresa/get                 # relativo → /api/plataforma/dadosem
 ctbz api /api/legado/empresa/cnpj?cnpj=…  # absoluto → qualquer base
 ctbz api //api/legado/empresa/cnpj?cnpj=… # o mesmo, em qualquer shell (inclusive Git Bash)
 ctbz api -X POST -d @corpo.json caminho   # corpo JSON (Content-Type: application/json)
+ctbz api -F ano=2026 -F documento=@x.csv caminho  # multipart/form-data (POST sem -X)
 ```
 
 No Git Bash do Windows (MSYS2), um argumento que começa com `/` é convertido em caminho do
