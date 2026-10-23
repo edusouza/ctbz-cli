@@ -9,7 +9,8 @@ Dados vão para stdout no formato escolhido com -o; mensagens e progresso vão p
 
 Para diagnosticar um erro, --verbose (ou CTBZ_DEBUG=1) mostra cada requisição no stderr:
 método, URL, status, tempo e cabeçalhos. Repetido (ou CTBZ_DEBUG=2), mostra também os corpos.
-Cookies, tokens, senhas, códigos e UUIDs saem sempre como ***.
+Cookies, credenciais (senhas, tokens, códigos, chaves, JWT), dados de pagamento (Pix, linha
+digitável, código de barras), UUIDs e CPFs/CNPJs do caminho da URL saem sempre como ***.
 
 ## Subcomandos
 
