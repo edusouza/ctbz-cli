@@ -122,7 +122,7 @@ Também existem `impostos --fail-on-atraso`, `pendencias --fail-on-vencidas`,
 
 ## Falhas conhecidas até a CLI 1.8.0
 
-Corrigidas depois da 1.8.0; a skill contorna quando a CLI é mais velha:
+Corrigidas na 1.8.1; a skill contorna quando a CLI é mais velha:
 
 - "HTTP 206" nos comandos que leem a Central de Rotinas (`rotinas`, `resumo`,
   `documentos pendentes`…): o agente lê por `ctbz api dashboard/v2/central-rotinas`.

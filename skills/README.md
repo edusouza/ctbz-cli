@@ -211,8 +211,10 @@ diz que é preciso confirmar com a Contabilizei.
 | Muitos e-mails de código | A sessão expirou várias vezes, ou o login foi repetido. Configure `CTBZ_OTP_CMD`, ou faça o login no terminal antes de abrir o Claude Code. |
 | "nenhuma sessão salva" / código 3 | Sem login ou login pendente. O agente conclui com `ctbz login --otp NNNNNN`. |
 | O agente pede `CTBZ_USER`/`CTBZ_PASSWORD` | As variáveis não estavam no ambiente quando o Claude Code abriu. Exporte-as e reabra. |
-| "HTTP 206" em `rotinas`, `resumo`, `documentos pendentes` (CLI até a 1.8.0) | Falha conhecida, corrigida depois da 1.8.0. Atualize o `ctbz`; até lá, o `checkup` lê a Central de Rotinas por `ctbz api`. |
-| "Ano inválido" em `impostos faturamento` (CLI até a 1.8.0) | Empresa com menos de um ano. Corrigido depois da 1.8.0; as skills usam os números de `ctbz impostos calculo` como alternativa. |
+| "HTTP 206" em `rotinas`, `resumo`, `documentos pendentes` (CLI até a 1.8.0) | Falha conhecida, corrigida na 1.8.1. Atualize o `ctbz`; até lá, o `checkup` lê a Central de Rotinas por `ctbz api`. |
+| "Ano inválido" em `impostos faturamento` (CLI até a 1.8.0) | Empresa com menos de um ano. Corrigido na 1.8.1; as skills usam os números de `ctbz impostos calculo` como alternativa. |
+| "cannot unmarshal array" em `extratos lancamentos`, `classificar` ou `desmembrar` (CLI até a 1.8.0) | A Contabilizei devolve os lançamentos num formato que a CLI antiga não lia. Corrigido na 1.8.1: atualize o `ctbz`. |
+| `mensalidade historico` com `pagamentos` vazio (CLI até a 1.8.0) | A CLI antiga lia o histórico do débito automático de impostos. Corrigido na 1.8.1: atualize o `ctbz`. |
 | "unknown command" ou "unknown flag" | O `ctbz` é mais velho que o plugin. Atualize a CLI. |
 | "convertido pelo Git Bash do Windows" em `ctbz api` | O Git Bash troca um argumento que começa com `/` por um caminho do Windows. Escreva o caminho com `//` (`ctbz api //api/legado/…`) ou use `MSYS_NO_PATHCONV=1`. |
 | O `checkup` falha no Windows | O script de coleta precisa de `bash`. Use o WSL ou o Git Bash, ou deixe o agente rodar as leituras uma a uma. |
