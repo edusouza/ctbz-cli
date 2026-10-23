@@ -42,9 +42,9 @@ requisição: método, URL, status, tempo, tamanho e cabeçalhos enviados e rece
 (`--verbose --verbose`), mostra também os corpos, truncados. Saem sempre como `***`: valores de
 cookies; cabeçalhos e campos de credencial (senha, token, código, chave, sessão, `Authorization`,
 JWT); dados de pagamento das respostas (Pix copia e cola, QR code, linha digitável, código de
-barras, chave do gateway); UUIDs e JWTs em qualquer lugar; e CPFs e CNPJs no caminho da URL. No
-nível 1 os valores da query também saem mascarados, porque podem ter CNPJ. `-v` continua sendo
-`--version`.
+barras, chave do gateway); UUIDs e JWTs em qualquer lugar; e CPFs e CNPJs (inclusive o
+alfanumérico) no caminho da URL. No nível 1 os valores da query também saem mascarados, porque
+podem ter CNPJ. `-v` continua sendo `--version`.
 
 ```sh
 ctbz --verbose mensalidade 2> requisicoes.txt

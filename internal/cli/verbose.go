@@ -112,7 +112,7 @@ func erroMascarado(err error, nivel int) string {
 // trechosSecretos identificam, no nome de um cabeçalho, campo ou parâmetro (em minúsculas e
 // sem "-" e "_"), valores mascarados no modo verbose além dos do --dry-run: credenciais e os
 // dados de pagamento das respostas (chave do gateway, Pix, linha digitável, código de barras).
-var trechosSecretos = []string{"auth", "bearer", "jwt", "cookie", "session", "csrf", "xsrf", "apikey", "refresh",
+var trechosSecretos = []string{"auth", "bearer", "jwt", "cookie", "session", "sessao", "csrf", "xsrf", "apikey", "refresh",
 	"credencial", "chave", "hash", "pix", "copiaecola", "qrcode", "digitavel", "codigobarras", "barras", "boleto"}
 
 // secretaVerbose diz se o valor de um cabeçalho, campo ou parâmetro deve sair como *** no modo
@@ -164,18 +164,27 @@ func mascararCookies(v string) string {
 	return strings.Join(partes, "; ")
 }
 
-// documentoPontuado reconhece CPF (000.000.000-00) e CNPJ (00.000.000/0000-00, com a barra
-// escapada ou não); sequencia, as sequências de dígitos.
+// documentoPontuado reconhece CPF (000.000.000-00) e CNPJ (00.000.000/0000-00, também o
+// alfanumérico 12.ABC.345/01DE-35, com a barra escapada ou não); alfanumerico, as sequências de
+// letras e dígitos; sequencia, as de dígitos.
 var (
-	documentoPontuado = regexp.MustCompile(`\d{3}\.\d{3}\.\d{3}-\d{2}|\d{2}\.\d{3}\.\d{3}(?:/|%2[Ff])\d{4}-\d{2}`)
+	documentoPontuado = regexp.MustCompile(`\d{3}\.\d{3}\.\d{3}-\d{2}|(?i)[0-9a-z]{2}\.[0-9a-z]{3}\.[0-9a-z]{3}(?:/|%2F)[0-9a-z]{4}-\d{2}`)
+	alfanumerico      = regexp.MustCompile(`[0-9A-Za-z]+`)
 	sequencia         = regexp.MustCompile(`\d+`)
 )
 
-// mascararDocumentos troca por *** CPFs e CNPJs: pontuados ou sequências de exatamente 11 ou 14
-// dígitos (ex.: /clientes/consulta/00000000000191 ou o nome de arquivo 00000000000191_2026_9…).
-// Ids, anos e meses (outros tamanhos) ficam como estão.
+// mascararDocumentos troca por *** CPFs e CNPJs: pontuados, CNPJs alfanuméricos válidos (14
+// posições com letras e dígitos verificadores corretos, para não pegar ids hexadecimais) e
+// sequências de exatamente 11 ou 14 dígitos (ex.: /clientes/consulta/00000000000191 ou o nome
+// de arquivo 00000000000191_2026_9…). Ids, anos e meses (outros tamanhos) ficam como estão.
 func mascararDocumentos(s string) string {
 	s = documentoPontuado.ReplaceAllString(s, "***")
+	s = alfanumerico.ReplaceAllStringFunc(s, func(d string) string {
+		if len(d) == 14 && !soDigitos(d) && dvCNPJ(strings.ToUpper(d)) {
+			return "***"
+		}
+		return d
+	})
 	return sequencia.ReplaceAllStringFunc(s, func(d string) string {
 		if len(d) == 11 || len(d) == 14 {
 			return "***"
