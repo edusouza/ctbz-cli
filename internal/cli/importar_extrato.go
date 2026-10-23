@@ -61,6 +61,7 @@ func validarArquivoExtrato(caminho string) (string, os.FileInfo, error) {
 
 func newExtratosImportarCmd() *cobra.Command {
 	var saldoFinal string
+	var substituir bool
 	cmd := &cobra.Command{
 		Use:   "importar ARQUIVO",
 		Short: "Importa o extrato bancário (OFX ou PDF) de uma conta num mês",
@@ -70,7 +71,7 @@ func newExtratosImportarCmd() *cobra.Command {
 Antes de enviar, a CLI confere a extensão (.ofx ou .pdf), o tamanho (até 30 MB), os formatos
 aceitos pelo banco, se a conta é integrada (essas não precisam de importação), se há um
 período anterior pendente e se a competência já foi importada ou está em processamento (o
-painel também não deixa importar de novo: exclua o extrato antes). Depois:
+painel também não deixa importar por cima). Depois:
 
   1. envia o arquivo;
   2. no OFX, lê o saldo do último dia que a Contabilizei encontrou e pede para confirmar
@@ -79,6 +80,14 @@ painel também não deixa importar de novo: exclua o extrato antes). Depois:
 
 Ao final, a CLI relê a competência: em processamento, avisa para conferir depois; importada
 sem nenhum lançamento, avisa no stderr.
+
+Para refazer a importação de um mês já importado (ex.: um extrato vazio criado pelo
+processamento de outro mês, ou o arquivo errado), use --substituir: a CLI exclui o extrato
+atual e importa o arquivo, com uma confirmação só, como excluir e importar no painel. Se o
+extrato atual tem lançamentos, o risco é alto (as classificações se perdem; digite
+"confirmo"); se está vazio, é médio. Se os contadores já concluíram a classificação, o painel
+não deixa excluir, e a CLI também não. Se a exclusão der certo e a importação falhar, o mês
+fica pendente: corrija e rode o comando de novo.
 
 Se a importação parar depois do envio (saldo recusado, extrato de outra competência), o
 arquivo fica enviado mas o extrato não é efetivado; corrija e rode o comando de novo.
@@ -93,7 +102,9 @@ Pede confirmação (--yes em scripts) e aceita --dry-run, que mostra o envio e a
 enviar nada.`,
 		Example: `  ctbz extratos importar extrato-setembro.ofx --conta-bancaria 1000000000000001 --competencia 2026-09
   ctbz extratos importar extrato.ofx --conta-bancaria 1000000000000001 --competencia 2026-09 \
-    --saldo-final 1.234,56 --yes`,
+    --saldo-final 1.234,56 --yes
+  ctbz extratos importar extrato-setembro.pdf --conta-bancaria 1000000000000001 --competencia 2026-09 \
+    --substituir --dry-run`,
 		Args: exactArgs(1, "o ARQUIVO do extrato"),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			alvo, err := extratoFlags(cmd)
@@ -136,7 +147,8 @@ enviar nada.`,
 			if err := periodoLiberado(per, alvo); err != nil {
 				return err
 			}
-			if err := competenciaImportavel(ctx, g, alvo); err != nil {
+			existente, err := competenciaImportavel(ctx, s, g, alvo, substituir)
+			if err != nil {
 				return err
 			}
 			lista, err := api.BuscarContasBancarias(ctx, g)
@@ -169,10 +181,25 @@ enviar nada.`,
 			arquivo := api.ArquivoExtrato{NomeArquivo: nome, Ano: alvo.ano(), Mes: alvo.mesNum(), IDConta: alvo.conta,
 				Arquivo: filepath.Base(args[0]), Conteudo: conteudo}
 			yes, _ := cmd.Flags().GetBool("yes")
+			mes := alvo.mes.Format("01/2006")
 			op := operacao{Risco: riscoMedio, ID: fmt.Sprint(alvo.conta), Resumo: fmt.Sprintf("Importar o extrato %s (%s, %s) da conta %d em %s",
-				arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)), alvo.conta, alvo.mes.Format("01/2006"))}
+				arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)), alvo.conta, mes)}
+			if existente != nil {
+				atual := "quantidade de lançamentos desconhecida"
+				if existente.lancamentos != nil {
+					atual = fmt.Sprintf("%d lançamentos", *existente.lancamentos)
+				}
+				op.Resumo = fmt.Sprintf("Substituir o extrato de %s da conta %d (atual: %s) pelo arquivo %s (%s, %s)",
+					mes, alvo.conta, atual, arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)))
+				// Excluir um extrato vazio não perde nada; com lançamentos, perde as classificações.
+				if !existente.vazio() {
+					op.Risco = riscoAlto
+					op.Consequencia = "O extrato atual é excluído antes do envio: as classificações e informações adicionais das movimentações se perdem e não dá para desfazer."
+				}
+			}
 			var saldo *float64
-			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
+			// importarArquivo envia o arquivo, confirma o saldo (OFX) e conclui a importação.
+			importarArquivo := func(snd api.Sender) error {
 				if err := api.EnviarExtrato(ctx, snd, arquivo); err != nil {
 					var semResposta *erroSemResposta
 					if errors.As(err, &semResposta) {
@@ -198,6 +225,19 @@ enviar nada.`,
 					return fmt.Errorf("o arquivo foi enviado, mas a importação não foi concluída: %w", err)
 				}
 				return nil
+			}
+			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
+				if existente != nil {
+					if err := api.ExcluirExtrato(ctx, snd, alvo.conta, alvo.ano(), alvo.mesNum()); err != nil {
+						return fmt.Errorf("excluindo o extrato atual de %s (o novo arquivo não foi enviado): %w", mes, err)
+					}
+				}
+				err := importarArquivo(snd)
+				if err != nil && existente != nil {
+					return fmt.Errorf("o extrato antigo de %s foi excluído e a importação voltou a ficar pendente, mas o novo arquivo não foi importado "+
+						"(rode ctbz extratos importar de novo, sem precisar de --substituir): %w", mes, err)
+				}
+				return err
 			})
 			if err != nil || !enviado {
 				return err
@@ -211,17 +251,19 @@ enviar nada.`,
 				quantidade = conferirImportado(ctx, s, g, alvo, sit)
 			}
 			rec := resultadoEscrita("importar", situacao, alvo.conta).
-				Add("competencia", "Competência", alvo.mes.Format("01/2006")).
+				Add("competencia", "Competência", mes).
 				Add("arquivo", "Arquivo", nome).
 				Add("saldo_ultimo_dia", "Saldo do último dia", moneyOrNil(saldo)).
 				Add("situacao_extrato", "Situação do extrato", situacaoExtrato).
-				Add("quantidade_lancamentos", "Lançamentos", quantidade)
+				Add("quantidade_lancamentos", "Lançamentos", quantidade).
+				Add("substituiu_extrato", "Substituiu o extrato anterior", existente != nil)
 			return output.Write(s.out, f, rec)
 		},
 	}
 	addContaBancariaFlag(cmd)
 	addCompetenciaFlag(cmd)
 	cmd.Flags().StringVar(&saldoFinal, "saldo-final", "", "saldo do último dia esperado (OFX); diferente do lido, a importação para")
+	cmd.Flags().BoolVar(&substituir, "substituir", false, "se o extrato do mês já foi importado, exclui-o antes e importa este arquivo (como excluir e importar no painel)")
 	addWriteFlags(cmd)
 	return cmd
 }
@@ -240,31 +282,50 @@ func situacaoExtratoAlvo(ctx context.Context, g api.Getter, alvo extratoAlvo) (s
 	return "", nil
 }
 
+// extratoExistente é o extrato já importado que --substituir exclui antes de importar.
+type extratoExistente struct {
+	lancamentos *int // nil quando extrato/info não traz a quantidade
+}
+
+// vazio diz se o extrato existente sabidamente não tem lançamentos (nada se perde ao excluir).
+func (e *extratoExistente) vazio() bool { return e.lancamentos != nil && *e.lancamentos == 0 }
+
 // competenciaImportavel recusa importar sobre um extrato já importado ou em processamento,
 // como o painel, que não mostra "Importar" nesses casos. Um extrato IMPORTADO pode estar
 // vazio: o processamento de um extrato de outro mês pode criar o do mês seguinte sem
-// lançamentos (#855). Para substituí-lo, é preciso excluí-lo antes.
-func competenciaImportavel(ctx context.Context, g api.Getter, alvo extratoAlvo) error {
+// lançamentos (#855). Com substituir, um extrato IMPORTADO que o painel deixa excluir é
+// devolvido para ser excluído antes do envio, o mesmo caminho do painel (excluir e importar).
+func competenciaImportavel(ctx context.Context, s streams, g api.Getter, alvo extratoAlvo, substituir bool) (*extratoExistente, error) {
 	sit, err := situacaoExtratoAlvo(ctx, g, alvo)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	mes := alvo.mes.Format("01/2006")
-	excluir := fmt.Sprintf("`ctbz extratos excluir --conta-bancaria %d --competencia %s`", alvo.conta, alvo.mes.Format("2006-01"))
 	switch sit {
 	case "PROCESSANDO":
-		return fmt.Errorf("o extrato de %s ainda está em processamento; aguarde e confira com `ctbz extratos`", mes)
+		return nil, fmt.Errorf("o extrato de %s ainda está em processamento; aguarde e confira com `ctbz extratos`", mes)
 	case "IMPORTADO":
 		info, err := api.BuscarExtratoInfo(ctx, g, alvo.conta, alvo.ano(), alvo.mesNum())
-		if err == nil && info.QuantidadeLancamentos != nil && *info.QuantidadeLancamentos == 0 {
-			return fmt.Errorf("o extrato de %s já aparece como IMPORTADO, mas sem nenhum lançamento (o processamento do extrato de outro mês "+
-				"pode tê-lo criado vazio); para importar este arquivo, exclua antes o extrato vazio com %s (risco alto) e rode este comando de novo",
-				mes, excluir)
+		if substituir {
+			if err != nil {
+				return nil, err
+			}
+			if !info.PermiteExclusaoExtrato {
+				return nil, fmt.Errorf("o extrato de %s não pode ser substituído: os contadores já concluíram a classificação dele (o painel também não deixa excluir)", mes)
+			}
+			return &extratoExistente{lancamentos: info.QuantidadeLancamentos}, nil
 		}
-		return fmt.Errorf("o extrato de %s já foi importado (veja %s); para substituí-lo, exclua-o antes com %s (risco alto: perde as classificações)",
-			mes, comandoConferirExtrato(alvo), excluir)
+		if err == nil && info.QuantidadeLancamentos != nil && *info.QuantidadeLancamentos == 0 {
+			return nil, fmt.Errorf("o extrato de %s já aparece como IMPORTADO, mas sem nenhum lançamento (o processamento do extrato de outro mês "+
+				"pode tê-lo criado vazio); para trocá-lo por este arquivo, rode o mesmo comando com --substituir", mes)
+		}
+		return nil, fmt.Errorf("o extrato de %s já foi importado (veja %s); para trocá-lo por este arquivo, rode o mesmo comando com --substituir "+
+			"(risco alto: exclui o extrato atual e as classificações dele)", mes, comandoConferirExtrato(alvo))
 	}
-	return nil
+	if substituir {
+		fmt.Fprintf(s.err, "Nada a substituir: o extrato de %s não foi importado; segue a importação normal.\n", mes)
+	}
+	return nil, nil
 }
 
 // conferirImportado relê o extrato depois da importação e devolve quantos lançamentos ele tem

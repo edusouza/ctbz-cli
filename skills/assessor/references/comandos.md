@@ -303,6 +303,7 @@ Campos do JSON de cada comando: [campos-json.md](campos-json.md).
 --competencia string   competência AAAA-MM (obrigatória)
 --conta-bancaria int   id da conta bancária (ver ctbz contas-bancarias) (obrigatória)
 --saldo-final string   saldo do último dia esperado (OFX); diferente do lido, a importação para
+--substituir           se o extrato do mês já foi importado, exclui-o antes e importa este arquivo (como excluir e importar no painel)
 ```
 
 `ctbz extratos lancamentos [flags]`: Lista os lançamentos do extrato de uma conta bancária num mês

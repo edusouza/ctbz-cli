@@ -43,10 +43,11 @@ dispensa importação) cujo mês `M` falta:
 4. Mensagens de "outro banco", "outra conta", "conta não cadastrada" (cadastre com
    `ctbz contas-bancarias adicionar`, skill `cadastro-e-acessos`) e período anterior pendente
    vêm traduzidas: siga o que dizem.
-5. Competência já `IMPORTADO` ou `PROCESSANDO`: a CLI recusa. Se ela disser que o extrato está
-   vazio (sem nenhum lançamento, criado pelo processamento de outro mês), explique ao usuário e
-   só exclua (`ctbz extratos excluir`, risco alto) com a confirmação dele. Depois de importar,
-   confira `quantidade_lancamentos`: zero com um arquivo que tem movimentações é problema.
+5. Competência já `IMPORTADO` ou `PROCESSANDO`: a CLI recusa. Se o extrato atual está vazio
+   (criado pelo processamento de outro mês) ou é o arquivo errado, refaça com `--substituir`
+   (exclui o atual e importa): mostre o `--dry-run` e confirme com o usuário. Com lançamentos é
+   risco alto (as classificações se perdem). Depois de importar, confira `quantidade_lancamentos`:
+   zero com um arquivo que tem movimentações é problema.
 6. Conexão caiu no envio do arquivo: a CLI relê a competência e diz se é seguro repetir
    ("nada foi importado e é seguro rodar o mesmo comando de novo"). Só repita nesse caso, uma
    vez. Se ela mandar conferir (competência `IMPORTADO`/`PROCESSANDO`, ou queda ao concluir),

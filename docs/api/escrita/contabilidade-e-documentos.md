@@ -201,8 +201,9 @@ Convenções:
     `IMPORTADO`: o painel não oferece importar de novo sem excluir antes (seção 1.6).
 
   Por isso a CLI recusa importar sobre uma competência `IMPORTADO` ou `PROCESSANDO` (com a
-  mensagem certa quando ela está vazia) e, depois de importar, avisa quando a competência termina
-  sem lançamentos.
+  mensagem certa quando ela está vazia), avisa depois de importar quando a competência termina
+  sem lançamentos e oferece `--substituir`, que faz o caminho do painel para reimportar: o
+  `DELETE` da seção 1.6 e, em seguida, o envio e a conclusão, numa confirmação só.
 
 ### 1.8 `GET movimentacao-financeira/permiteImportacao/{idContaBancaria}/{ano}/{mes}` (só leitura)
 

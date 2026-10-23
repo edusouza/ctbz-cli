@@ -129,8 +129,14 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
   integradas não precisam de importação.
 - A CLI também recusa importar uma competência que já está `IMPORTADO` ou `PROCESSANDO`, como o
   painel. Atenção: o processamento de um extrato pode deixar o mês **seguinte** como
-  `IMPORTADO` sem nenhum lançamento (visto numa conta real). Nesse caso a mensagem diz que o
-  extrato está vazio: exclua-o com `ctbz extratos excluir` (risco alto) e importe o arquivo certo.
+  `IMPORTADO` sem nenhum lançamento (visto numa conta real); a mensagem avisa quando o extrato
+  está vazio.
+- Para refazer a importação de um mês já importado, use `--substituir`: a CLI exclui o extrato
+  atual e importa o arquivo, com uma confirmação só (o mesmo que excluir e importar no painel,
+  que não tem outro jeito de reimportar). Extrato atual vazio: risco médio. Com lançamentos:
+  risco alto, porque as classificações se perdem. O `--dry-run` mostra a exclusão, o envio e a
+  conclusão. Se a exclusão der certo e a importação falhar, o mês fica pendente: corrija e rode
+  de novo.
 - Depois de importar, a CLI relê a competência. Se ela ainda está `PROCESSANDO`, confira em
   alguns minutos com `ctbz extratos lancamentos`; se terminou `IMPORTADO` sem nenhum lançamento,
   a CLI avisa no stderr. O JSON traz `quantidade_lancamentos`.

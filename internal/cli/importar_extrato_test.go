@@ -241,9 +241,10 @@ func TestExtratosImportarCompetenciaJaImportada(t *testing.T) {
 	}{
 		{"vazia", "IMPORTADO", `{"permiteEditarLancamento":true,"quantidadeLancamentos":0}`,
 			"o extrato de 09/2026 já aparece como IMPORTADO, mas sem nenhum lançamento (o processamento do extrato de outro mês pode tê-lo criado vazio); " +
-				"para importar este arquivo, exclua antes o extrato vazio com `ctbz extratos excluir --conta-bancaria 7 --competencia 2026-09` (risco alto)"},
+				"para trocá-lo por este arquivo, rode o mesmo comando com --substituir"},
 		{"com lançamentos", "IMPORTADO", `{"permiteEditarLancamento":true,"quantidadeLancamentos":2}`,
-			"o extrato de 09/2026 já foi importado (veja `ctbz extratos lancamentos --conta-bancaria 7 --competencia 2026-09`); para substituí-lo, exclua-o antes"},
+			"o extrato de 09/2026 já foi importado (veja `ctbz extratos lancamentos --conta-bancaria 7 --competencia 2026-09`); " +
+				"para trocá-lo por este arquivo, rode o mesmo comando com --substituir (risco alto"},
 		{"sem contagem", "IMPORTADO", `{"permiteEditarLancamento":true}`, "o extrato de 09/2026 já foi importado"},
 		{"processando", "PROCESSANDO", "", "o extrato de 09/2026 ainda está em processamento"},
 	} {
