@@ -40,7 +40,10 @@ importação):
 
 1. pede o OFX (preferível) ou o PDF do mês. Se o banco só aceita outros formatos, ou se o PDF é
    recusado, usa o CSV ou o XLS do internet banking. Esses vão pela Central de Documentos, e a
-   Contabilizei importa o arquivo manualmente, em até 45 dias;
+   Contabilizei importa o arquivo manualmente, em até 45 dias. Até lá o mês continua `PENDENTE`
+   em `ctbz extratos`, e o agente não reenvia o arquivo: a conferência é na Central de
+   Documentos do painel. CSV/XLS não aceitam `--substituir` nem vão por cima de um extrato já
+   importado;
 2. num OFX, lê o saldo final do próprio arquivo e mostra para você conferir;
 3. simula e importa, informando o saldo final para a Contabilizei conferir:
 

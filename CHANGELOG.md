@@ -48,7 +48,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   (CSV, XLS…). Como a tela "Importar extrato" do painel só aceita OFX e PDF, esses arquivos vão
   pela Central de Documentos (`POST upload-documentos/extrato/enviar`), num envio só, e a
   Contabilizei os importa manualmente, em até 45 dias. O resultado sai com
-  `situacao: "enviado"` e a chave nova `importacao` (`automatica` ou `manual`) (#899).
+  `situacao: "enviado"` e a chave nova `importacao` (`automatica` ou `manual`). Até a
+  importação, a competência continua `PENDENTE`: a CLI avisa para não reenviar e conferir na
+  Central de Documentos. Esses formatos não aceitam `--substituir` e são recusados sobre um
+  extrato já importado (#899, #920, #921).
 - Documentado o que a plataforma exige numa chamada: o cookie `oauth-token` e um `User-Agent`
   de navegador. Com o `User-Agent` do `curl`, a resposta é 401 (#902).
 
