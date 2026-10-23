@@ -17,6 +17,13 @@ período anterior pendente. Depois:
 Se a importação parar depois do envio (saldo recusado, extrato de outra competência), o
 arquivo fica enviado mas o extrato não é efetivado; corrija e rode o comando de novo.
 
+Se a conexão cair ou o servidor responder com erro 5xx (502, 504…) no envio do arquivo, a CLI
+relê a situação do extrato: se a competência continua como estava (ex.: PENDENTE), nada foi
+efetivado e é seguro rodar o mesmo comando de novo (o arquivo vai com o mesmo nome e substitui
+o anterior). Se isso acontecer ao concluir a importação, ou se a competência já aparecer como
+IMPORTADO ou PROCESSANDO, a importação pode ter sido aplicada: confira com ctbz extratos e ctbz
+extratos lancamentos antes de repetir, para não importar duas vezes.
+
 Pede confirmação (--yes em scripts) e aceita --dry-run, que mostra o envio e a conclusão sem
 enviar nada.
 

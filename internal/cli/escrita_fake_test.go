@@ -3,8 +3,10 @@ package cli
 import (
 	"io"
 	"net/http"
+	"strings"
 	"sync"
 	"testing"
+	"time"
 )
 
 // escritaFake responde GETs fixos (por caminho com query) e grava as escritas recebidas,
@@ -16,6 +18,11 @@ type escritaFake struct {
 	status   int
 	resposta string
 	onWrite  func(*escritaFake)
+	// atraso segura a resposta das escritas cujo caminho contém atrasar (simula timeout).
+	atrasar string
+	atraso  time.Duration
+	// cair derruba a conexão, sem resposta, nas escritas cujo caminho contém o trecho.
+	cair string
 }
 
 func newEscritaFake(t *testing.T, gets map[string]string) *escritaFake {
@@ -37,6 +44,18 @@ func newEscritaFake(t *testing.T, gets map[string]string) *escritaFake {
 		f.writes = append(f.writes, r.Method+" "+r.URL.RequestURI()+" "+string(body))
 		if f.onWrite != nil {
 			f.onWrite(f)
+		}
+		if f.cair != "" && strings.Contains(r.URL.Path, f.cair) {
+			if conn, _, err := w.(http.Hijacker).Hijack(); err == nil {
+				conn.Close()
+			}
+			return
+		}
+		if f.atraso > 0 && strings.Contains(r.URL.Path, f.atrasar) {
+			atraso := f.atraso
+			f.mu.Unlock()
+			time.Sleep(atraso)
+			f.mu.Lock()
 		}
 		w.WriteHeader(f.status)
 		io.WriteString(w, f.resposta)

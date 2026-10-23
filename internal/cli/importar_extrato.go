@@ -78,6 +78,13 @@ período anterior pendente. Depois:
 Se a importação parar depois do envio (saldo recusado, extrato de outra competência), o
 arquivo fica enviado mas o extrato não é efetivado; corrija e rode o comando de novo.
 
+Se a conexão cair ou o servidor responder com erro 5xx (502, 504…) no envio do arquivo, a CLI
+relê a situação do extrato: se a competência continua como estava (ex.: PENDENTE), nada foi
+efetivado e é seguro rodar o mesmo comando de novo (o arquivo vai com o mesmo nome e substitui
+o anterior). Se isso acontecer ao concluir a importação, ou se a competência já aparecer como
+IMPORTADO ou PROCESSANDO, a importação pode ter sido aplicada: confira com ctbz extratos e ctbz
+extratos lancamentos antes de repetir, para não importar duas vezes.
+
 Pede confirmação (--yes em scripts) e aceita --dry-run, que mostra o envio e a conclusão sem
 enviar nada.`,
 		Example: `  ctbz extratos importar extrato-setembro.ofx --conta-bancaria 1000000000000001 --competencia 2026-09
@@ -160,6 +167,9 @@ enviar nada.`,
 			var saldo *float64
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
 				if err := api.EnviarExtrato(ctx, snd, arquivo); err != nil {
+					if falha, causa, ok := envioIncerto(err); ok {
+						return orientarEnvioIncerto(ctx, g, alvo, falha, causa)
+					}
 					return traduzErroImportacao(err)
 				}
 				evento := api.EventoUploadExtrato{Ano: alvo.ano(), Mes: alvo.mesNum(), CNPJ: cnpj, IDContaBancaria: alvo.conta, NomeArquivoStorage: nome}
@@ -172,6 +182,10 @@ enviar nada.`,
 					evento.Respostas = []api.RespostaSaldo{{Tipo: "SALDO_ULTIMO_MES", Data: now().UTC().Format("2006-01-02T15:04:05.000Z"), Valor: valor}}
 				}
 				if err := api.ConcluirImportacaoExtrato(ctx, snd, evento); err != nil {
+					if falha, causa, ok := envioIncerto(err); ok {
+						return fmt.Errorf("o arquivo foi enviado, mas %s ao concluir a importação, que pode ou não ter sido aplicada; confira com %s antes de repetir: %w",
+							falha, comandoConferirExtrato(alvo), causa)
+					}
 					return fmt.Errorf("o arquivo foi enviado, mas a importação não foi concluída: %w", err)
 				}
 				return nil
@@ -181,14 +195,10 @@ enviar nada.`,
 			}
 			situacao := "importado"
 			var situacaoExtrato any
-			if es, err := api.BuscarExtratos(ctx, g); err != nil {
+			if sit, err := situacaoExtratoAlvo(ctx, g, alvo); err != nil {
 				fmt.Fprintln(s.err, "aviso: extrato importado, mas não foi possível reler os extratos:", err)
 			} else {
-				for _, e := range es {
-					if e.IDContaBancaria == alvo.conta && e.Ano == alvo.ano() && e.Mes == alvo.mesNum() {
-						situacaoExtrato = nilIfEmpty(e.Situacao)
-					}
-				}
+				situacaoExtrato = nilIfEmpty(sit)
 			}
 			rec := resultadoEscrita("importar", situacao, alvo.conta).
 				Add("competencia", "Competência", alvo.mes.Format("01/2006")).
@@ -203,6 +213,63 @@ enviar nada.`,
 	cmd.Flags().StringVar(&saldoFinal, "saldo-final", "", "saldo do último dia esperado (OFX); diferente do lido, a importação para")
 	addWriteFlags(cmd)
 	return cmd
+}
+
+// situacaoExtratoAlvo relê a situação do extrato da conta na competência ("" se não aparece).
+func situacaoExtratoAlvo(ctx context.Context, g api.Getter, alvo extratoAlvo) (string, error) {
+	es, err := api.BuscarExtratos(ctx, g)
+	if err != nil {
+		return "", err
+	}
+	for _, e := range es {
+		if e.IDContaBancaria == alvo.conta && e.Ano == alvo.ano() && e.Mes == alvo.mesNum() {
+			return e.Situacao, nil
+		}
+	}
+	return "", nil
+}
+
+// comandoConferirExtrato é o comando que mostra o que entrou no extrato da competência.
+func comandoConferirExtrato(alvo extratoAlvo) string {
+	return fmt.Sprintf("`ctbz extratos lancamentos --conta-bancaria %d --competencia %s`", alvo.conta, alvo.mes.Format("2006-01"))
+}
+
+// envioIncerto diz se a falha de um envio deixa o resultado incerto e devolve como descrevê-la
+// e a causa: sem resposta (*erroSemResposta) ou erro 5xx de servidor ou gateway (502, 504…),
+// que pode chegar depois de o backend aplicar a escrita. 560 (regra de negócio) e os erros de
+// negócio conhecidos são recusas definitivas.
+func envioIncerto(err error) (falha string, causa error, ok bool) {
+	var semResposta *erroSemResposta
+	if errors.As(err, &semResposta) {
+		return "a conexão falhou", semResposta.causa, true
+	}
+	var we *ctbz.WriteError
+	if errors.As(err, &we) && we.Status >= 500 && we.Status != 560 && traduzErroImportacao(err) == err {
+		return fmt.Sprintf("o servidor respondeu com erro (HTTP %d)", we.Status), err, true
+	}
+	return "", nil, false
+}
+
+// orientarEnvioIncerto explica uma falha de resultado incerto no envio do arquivo (passo 1).
+// Sem a conclusão (passo 3), nada entra na contabilidade: se a competência não está importada
+// nem em processamento, repetir é seguro e só substitui o arquivo, que vai com o mesmo nome.
+func orientarEnvioIncerto(ctx context.Context, g api.Getter, alvo extratoAlvo, falha string, causa error) error {
+	mes := alvo.mes.Format("01/2006")
+	sit, rerr := situacaoExtratoAlvo(ctx, g, alvo)
+	switch {
+	case rerr != nil:
+		return fmt.Errorf("%s no envio do arquivo e a escrita pode ou não ter sido aplicada; confira antes de repetir: %w (e não foi possível reler a situação do extrato: %v)",
+			falha, causa, rerr)
+	case sit == "IMPORTADO" || sit == "PROCESSANDO":
+		return fmt.Errorf("%s no envio do arquivo e o extrato de %s aparece como %s; confira com %s antes de repetir: %w",
+			falha, mes, sit, comandoConferirExtrato(alvo), causa)
+	}
+	situacao := "não aparece entre os extratos"
+	if sit != "" {
+		situacao = "continua " + sit
+	}
+	return fmt.Errorf("%s no envio do arquivo, mas o extrato de %s %s: nada foi importado e é seguro rodar o mesmo comando de novo (%v)",
+		falha, mes, situacao, causa)
 }
 
 // validarContaUpload confere se a conta aceita upload no formato do arquivo.
@@ -325,14 +392,10 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 				return err
 			}
 			var situacaoExtrato any
-			if es, err := api.BuscarExtratos(ctx, g); err != nil {
+			if sit, err := situacaoExtratoAlvo(ctx, g, alvo); err != nil {
 				fmt.Fprintln(s.err, "aviso: extrato excluído, mas não foi possível reler os extratos:", err)
 			} else {
-				for _, e := range es {
-					if e.IDContaBancaria == alvo.conta && e.Ano == alvo.ano() && e.Mes == alvo.mesNum() {
-						situacaoExtrato = nilIfEmpty(e.Situacao)
-					}
-				}
+				situacaoExtrato = nilIfEmpty(sit)
 			}
 			fmt.Fprintf(s.err, "Não se esqueça de importar o extrato de %s de novo (ctbz extratos importar).\n", alvo.mes.Format("01/2006"))
 			rec := resultadoEscrita("excluir-extrato", "excluido", alvo.conta).

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/edusouza/ctbz-cli/internal/api"
 	"github.com/edusouza/ctbz-cli/internal/ctbz"
@@ -34,19 +35,23 @@ func (w sessionSender) Send(ctx context.Context, method, path string, body any, 
 	if data != nil {
 		contentType = "application/json"
 	}
-	return w.send(ctx, method, path, data, contentType, v)
+	return w.send(ctx, method, path, data, contentType, 0, v)
 }
+
+// timeoutUpload é o prazo dos envios de arquivo, maior que o geral do cliente (60 s): um
+// extrato pode ter até 30 MB.
+var timeoutUpload = 3 * time.Minute
 
 func (w sessionSender) SendMultipart(ctx context.Context, method, path string, campos []api.Campo, v any) error {
 	data, contentType, err := api.EncodeMultipart(campos)
 	if err != nil {
 		return err
 	}
-	return w.send(ctx, method, path, data, contentType, v)
+	return w.send(ctx, method, path, data, contentType, timeoutUpload, v)
 }
 
-func (w sessionSender) send(ctx context.Context, method, path string, body []byte, contentType string, v any) error {
-	resp, err := sendOnce(ctx, w.s, w.origem, method, path, body, contentType)
+func (w sessionSender) send(ctx context.Context, method, path string, body []byte, contentType string, timeout time.Duration, v any) error {
+	resp, err := sendOnce(ctx, w.s, w.origem, method, path, body, contentType, timeout)
 	if err != nil {
 		return err
 	}
@@ -56,14 +61,25 @@ func (w sessionSender) send(ctx context.Context, method, path string, body []byt
 	return api.DecodeResponse(resp.Body, v)
 }
 
+// erroSemResposta é a falha de conexão durante o envio de uma escrita: ela pode ou não ter sido
+// aplicada. Quem chama pode reler o estado para orientar melhor (ex.: extratos importar).
+type erroSemResposta struct{ causa error }
+
+func (e *erroSemResposta) Error() string {
+	return "a conexão falhou durante o envio e a escrita pode ou não ter sido aplicada; confira antes de repetir: " + e.causa.Error()
+}
+
+func (e *erroSemResposta) Unwrap() error { return e.causa }
+
 // errExpiredOnSend indica que o servidor recusou a escrita por sessão expirada: nada foi aplicado.
 var errExpiredOnSend = errors.New("a sessão expirou antes do envio e a escrita não foi aplicada; rode `ctbz login` e repita")
 
 // sendOnce confere a sessão com um GET (que pode refazer o login, porque nada foi enviado
 // ainda) e então envia a escrita uma única vez. Respostas HTTP de erro voltam sem erro, para
-// quem chama decidir; erros de rede avisam que o resultado da escrita é incerto. Todo envio,
-// com ou sem sucesso, é registrado em acoes.jsonl.
-func sendOnce(ctx context.Context, s streams, origem origemEscrita, method, path string, body []byte, contentType string) (*ctbz.Response, error) {
+// quem chama decidir; erros de rede (*erroSemResposta) avisam que o resultado da escrita é
+// incerto. timeout > 0 troca o prazo do cliente. Todo envio, com ou sem sucesso, é registrado
+// em acoes.jsonl.
+func sendOnce(ctx context.Context, s streams, origem origemEscrita, method, path string, body []byte, contentType string, timeout time.Duration) (*ctbz.Response, error) {
 	if _, err := authedAPI(ctx, s, "GET", api.PathAppBar, nil); err != nil {
 		return nil, fmt.Errorf("conferindo a sessão antes de enviar: %w", err)
 	}
@@ -76,13 +92,16 @@ func sendOnce(ctx context.Context, s streams, origem origemEscrita, method, path
 		return nil, err
 	}
 	c := sess.Client()
+	if timeout > 0 {
+		c.HTTP.Timeout = timeout
+	}
 	resp, err := c.Send(ctx, method, path, bytes.NewReader(body), contentType)
 	registrarAcao(store, sess, s, origem, method, path, resp)
 	switch {
 	case errors.Is(err, ctbz.ErrUnauthorized):
 		return nil, errExpiredOnSend
 	case err != nil:
-		return nil, fmt.Errorf("a conexão falhou durante o envio e a escrita pode ou não ter sido aplicada; confira antes de repetir: %w", err)
+		return nil, &erroSemResposta{err}
 	}
 	saveCookies(store, sess, c, s.err)
 	return resp, nil
