@@ -43,8 +43,15 @@ Com a CLI:
 ```sh
 ctbz api dadosempresa/get                 # relativo → /api/plataforma/dadosempresa/get
 ctbz api /api/legado/empresa/cnpj?cnpj=…  # absoluto → qualquer base
+ctbz api //api/legado/empresa/cnpj?cnpj=… # o mesmo, em qualquer shell (inclusive Git Bash)
 ctbz api -X POST -d @corpo.json caminho   # corpo JSON (Content-Type: application/json)
 ```
+
+No Git Bash do Windows (MSYS2), um argumento que começa com `/` é convertido em caminho do
+Windows antes de chegar à CLI: `/api/legado/…` vira `C:/Program Files/Git/api/legado/…`, e a
+Contabilizei responderia 404. A CLI recusa esse caminho e explica. Use `//api/…` (o Git Bash
+não converte um argumento que começa com `//`, e a CLI trata o `//` inicial como `/` em
+qualquer shell) ou rode com `MSYS_NO_PATHCONV=1`.
 
 A empresa da sessão é a escolhida no login: **nenhuma rota recebe o CNPJ como parâmetro**
 para dados da própria empresa.

@@ -59,6 +59,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz mensalidade historico` lista as faturas pagas, da mesma fonte da tela "Consultar
   histórico" do painel, com vencimento, multa e juros e forma de pagamento. Antes lia o histórico
   do débito automático de impostos e saía vazio para quem paga por boleto ou Pix (#856).
+- `ctbz api` aceita caminho absoluto começando com `//` (`//api/legado/…`), a forma que o Git
+  Bash do Windows não converte, e recusa com explicação um caminho que chegou convertido pelo
+  MSYS (`C:/Program Files/Git/api/…`), em vez de mandar a requisição e receber 404 (#857).
 
 ## [1.8.0] - 2026-10-04
 

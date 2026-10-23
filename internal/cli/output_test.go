@@ -146,3 +146,20 @@ func TestAPICommand(t *testing.T) {
 		t.Errorf("404 deveria sair com %d, veio %d", ExitError, code)
 	}
 }
+
+func TestAPICaminhoGitBash(t *testing.T) {
+	withSession(t, fakeAPI(t, map[string]string{"/api/legado/empresa/cnpj?cnpj=1": `{"razaoSocial":"X"}`}))
+	// "//" é a forma que o Git Bash não converte; em outros shells chega assim e vale "/".
+	for _, p := range []string{"//api/legado/empresa/cnpj?cnpj=1", "///api/legado/empresa/cnpj?cnpj=1"} {
+		if out, stderr, code := execCLI(t, "", "api", p); code != ExitOK || !strings.Contains(out, `"razaoSocial": "X"`) {
+			t.Errorf("%s: código %d, %s", p, code, stderr)
+		}
+	}
+	// O caminho que o MSYS converteu nem chega a ser enviado.
+	for _, p := range []string{`C:/Program Files/Git/api/legado/empresa/cnpj?cnpj=1`, `D:\api\legado`} {
+		_, stderr, code := execCLI(t, "", "api", p)
+		if code != ExitUsage || !strings.Contains(stderr, "convertido pelo Git Bash do Windows") || !strings.Contains(stderr, "MSYS_NO_PATHCONV=1") {
+			t.Errorf("%s: código %d, %s", p, code, stderr)
+		}
+	}
+}

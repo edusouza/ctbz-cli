@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -25,6 +26,11 @@ func newAPICmd() *cobra.Command {
 CAMINHO relativo é resolvido contra o BFF da plataforma (/api/plataforma/);
 caminhos absolutos ("/api/legado/...") alcançam as demais APIs do app.
 
+No Git Bash do Windows (e em agentes que rodam por ele), um argumento que começa com "/" vira
+caminho do Windows ("C:/Program Files/Git/api/...") antes de chegar à CLI. Comece o caminho
+com "//" ("//api/legado/..."), que funciona em qualquer shell, ou rode com MSYS_NO_PATHCONV=1.
+A CLI recusa um caminho que já chegou convertido.
+
 Com -X diferente de GET, a chamada é uma escrita: a CLI confere a sessão antes e envia uma
 única vez, sem re-login automático nem retentativa depois do envio. Não há confirmação nem
 --dry-run: ctbz api é a ferramenta de baixo nível (ADR-0018).
@@ -35,10 +41,15 @@ Respostas HTTP 4xx/5xx terminam com código de saída 1.`,
 		Example: `  ctbz api dadosempresa/get
   ctbz api -o table menu/get
   ctbz api /api/legado/empresa/cnpj?cnpj=00000000000100
+  ctbz api //api/legado/empresa/cnpj?cnpj=00000000000100   # no Git Bash do Windows
   ctbz api -X POST -d @corpo.json caminho/qualquer`,
 		Args: exactArgs(1, "exatamente um CAMINHO"),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			f, err := outputFormat(cmd, string(output.FormatJSON))
+			if err != nil {
+				return err
+			}
+			caminho, err := caminhoAPI(args[0])
 			if err != nil {
 				return err
 			}
@@ -47,7 +58,7 @@ Respostas HTTP 4xx/5xx terminam com código de saída 1.`,
 			if err != nil {
 				return err
 			}
-			resp, err := callAPI(cmd.Context(), s, strings.ToUpper(method), args[0], body)
+			resp, err := callAPI(cmd.Context(), s, strings.ToUpper(method), caminho, body)
 			if err != nil {
 				return err
 			}
@@ -84,6 +95,23 @@ func callAPI(ctx context.Context, s streams, method, path string, body []byte) (
 		contentType = "application/json"
 	}
 	return sendOnce(ctx, s, origemEscrita{comando: "ctbz api"}, method, path, body, contentType, 0)
+}
+
+// caminhoConvertidoMSYS reconhece um caminho absoluto que o Git Bash (MSYS) do Windows trocou
+// por um caminho do Windows antes de passá-lo à CLI: "/api/x" → "C:/Program Files/Git/api/x".
+var caminhoConvertidoMSYS = regexp.MustCompile(`^[A-Za-z]:[/\\]`)
+
+// caminhoAPI valida o CAMINHO de ctbz api. Recusa o caminho convertido pelo MSYS, que daria um
+// 404 sem explicação, e aceita "//api/..." (que o Git Bash não converte) como "/api/...".
+func caminhoAPI(p string) (string, error) {
+	if caminhoConvertidoMSYS.MatchString(p) {
+		return "", usageError{fmt.Errorf("o caminho %q parece ter sido convertido pelo Git Bash do Windows a partir de um caminho absoluto; "+
+			"comece o caminho com // (ex.: ctbz api //api/legado/...) ou rode com MSYS_NO_PATHCONV=1", p)}
+	}
+	if strings.HasPrefix(p, "//") {
+		p = "/" + strings.TrimLeft(p, "/")
+	}
+	return p, nil
 }
 
 func readBody(arg string, stdin io.Reader) ([]byte, error) {
