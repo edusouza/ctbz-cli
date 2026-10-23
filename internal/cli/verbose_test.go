@@ -211,8 +211,10 @@ func TestVerboseErroDeConexaoECorpoGrande(t *testing.T) {
 
 // chavesDePagamento são campos de respostas reais (gateway, fatura, Pix) e de autenticação que
 // o modo verbose mascara além dos do --dry-run (#909).
+// Inclui cada palavra que o README e o CHANGELOG prometem mascarar (#935).
 var chavesDePagamento = []string{"adyenClientKey", "linhaDigitavel", "qrCodeTextPix", "pixCopiaECola", "codigoBarras",
-	"jwt", "authorization", "apiKey", "sessionId", "refresh_token", "csrf", "cookie", "chavePix", "pin", "hash"}
+	"jwt", "authorization", "apiKey", "sessionId", "refresh_token", "csrf", "cookie", "chavePix", "pin", "hash",
+	"senha", "token", "codigo", "chave", "sessao", "sessaoId", "idSessao"}
 
 func TestVerboseNivel2MascaraCredenciaisEPagamento(t *testing.T) {
 	for _, chave := range chavesDePagamento {
@@ -233,9 +235,13 @@ func TestVerboseNivel2MascaraCredenciaisEPagamento(t *testing.T) {
 		mw.Close()
 		escreverTroca(&buf, 2, ctbz.Exchange{Method: "POST", URL: "https://app.example.com/x",
 			Header: http.Header{"Content-Type": {mw.FormDataContentType()}}, Body: corpo.Bytes(), Status: 200})
-		// Cabeçalho: o mesmo critério dos corpos.
+		// Cabeçalho: o mesmo critério dos corpos (Cookie tem máscara própria, por par nome=valor).
+		cabecalho := chave
+		if strings.EqualFold(chave, "cookie") {
+			cabecalho = "X-Cookie"
+		}
 		escreverTroca(&buf, 1, ctbz.Exchange{Method: "GET", URL: "https://app.example.com/x",
-			Header: http.Header{"X-" + chave: {segredo}}, Status: 200})
+			Header: http.Header{cabecalho: {segredo}}, Status: 200})
 		if strings.Contains(buf.String(), segredo) {
 			t.Errorf("%s: a saída verbose mostra o valor:\n%s", chave, buf.String())
 		}
@@ -262,6 +268,12 @@ func TestVerboseMascaraDocumentosNoCaminho(t *testing.T) {
 		{"https://app.example.com/api/plataforma/autopilot/clientes/12345678901", "/autopilot/clientes/***"},
 		{"https://app.example.com/api/plataforma/autopilot/clientes/12.345.678%2F0001-99", "/autopilot/clientes/***"},
 		{"https://app.example.com/api/plataforma/autopilot/clientes/123.456.789-01", "/autopilot/clientes/***"},
+		// CNPJ alfanumérico (#936), sem e com pontuação.
+		{"https://app.example.com/api/plataforma/autopilot/clientes/12ABC34501DE35", "/autopilot/clientes/***"},
+		{"https://app.example.com/api/plataforma/autopilot/clientes/12.ABC.345%2F01DE-35", "/autopilot/clientes/***"},
+		// Ids hexadecimais e hashes de 14 posições sem dígitos verificadores de CNPJ ficam visíveis.
+		{"https://app.example.com/api/plataforma/documentos/5f3a9c2b7e1d40", "/documentos/5f3a9c2b7e1d40"},
+		{"https://app.example.com/api/plataforma/documentos/ABCDEF12345678", "/documentos/ABCDEF12345678"},
 		{"https://app.example.com/api/plataforma/movimentacao-financeira/info-extrato/7/2026/9/00000000000191_2026_9_123456_1759000000000.pdf",
 			"/info-extrato/7/2026/9/***_2026_9_123456_1759000000000.pdf"},
 		// Ids, anos e meses não são documentos.
@@ -276,7 +288,7 @@ func TestVerboseMascaraDocumentosNoCaminho(t *testing.T) {
 		if n := strings.Count(saida, tc.want); n != 4 {
 			t.Errorf("%s: %q aparece %d vezes (2 requisições, Location e erro):\n%s", tc.url, tc.want, n, saida)
 		}
-		for _, doc := range []string{"12345678000199", "00000000000191", "12345678901", "12.345.678", "123.456.789"} {
+		for _, doc := range []string{"12345678000199", "00000000000191", "12345678901", "12.345.678", "123.456.789", "12ABC34501DE35", "12.ABC.345"} {
 			if strings.Contains(saida, doc) {
 				t.Errorf("%s: a saída mostra %q:\n%s", tc.url, doc, saida)
 			}
