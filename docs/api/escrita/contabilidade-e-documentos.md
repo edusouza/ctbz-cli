@@ -185,6 +185,25 @@ Convenções:
 - Em seguida o front chama `GET /integracao-bancaria/parametros-integracao/{idContaBancaria}` (oferta
   de Open Finance).
 - **Risco: médio.** Efetiva a importação; o desfazer é o `DELETE /movimentacao-financeira/extrato` da seção 1.6.
+- **Processamento assíncrono (observado numa conta real, #855).** Depois do evento, a competência
+  fica `PROCESSANDO` e o servidor converte o PDF em OFX. Ao terminar (cerca de 30 s depois), o
+  processamento de um PDF de **agosto** gravou dois OFX no mesmo instante (5 ms de diferença no
+  `DTSERVER`): o de agosto, com os 2 lançamentos, e um de **setembro** vazio (nenhum `STMTTRN`).
+  Setembro passou a `IMPORTADO`, com `extrato/info.quantidadeLancamentos = 0` e
+  `lancamento-usuario/paginado` = `[]`, **antes** de qualquer envio de setembro. Os dois envios
+  seguintes do PDF de setembro foram recusados com HTTP 400 `ERRO-NA-VALIDACAO-DE-DOCUMENTO-API-CONTABIL`
+  ("não reconheceu o arquivo"). Não se sabe se a recusa veio do arquivo ou da competência já
+  importada, nem por que o processamento criou o mês seguinte. O que se sabe:
+  - um mês pode ficar `IMPORTADO` sem nenhum lançamento por efeito do processamento de outro mês;
+  - `GET movimentacao-financeira/extrato/info?idContaBancaria&ano&mes` traz `quantidadeLancamentos`
+    (e `urlDownloadExtrato`, uma URL assinada do OFX gerado, que a CLI não usa nem mostra);
+  - `GET movimentacao-financeira/v2/extratos` traz `exibirBotaoImportar: false` nas competências
+    `IMPORTADO`: o painel não oferece importar de novo sem excluir antes (seção 1.6).
+
+  Por isso a CLI recusa importar sobre uma competência `IMPORTADO` ou `PROCESSANDO` (com a
+  mensagem certa quando ela está vazia), avisa depois de importar quando a competência termina
+  sem lançamentos e oferece `--substituir`, que faz o caminho do painel para reimportar: o
+  `DELETE` da seção 1.6 e, em seguida, o envio e a conclusão, numa confirmação só.
 
 ### 1.8 `GET movimentacao-financeira/permiteImportacao/{idContaBancaria}/{ano}/{mes}` (só leitura)
 

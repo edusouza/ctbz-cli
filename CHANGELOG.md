@@ -42,6 +42,13 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   não diz mais "não foi concluída", e sim para conferir; "não foi concluída" fica para as
   recusas (4xx e regra de negócio). O envio do arquivo tem prazo de 3 minutos, em vez de 60
   segundos (#854, #594, #875).
+- `ctbz extratos importar` recusa competência já `IMPORTADO` ou `PROCESSANDO`, como o painel, e
+  explica quando o extrato importado está vazio: o processamento de um mês pode criar o mês
+  seguinte sem lançamentos. Depois de importar, avisa se a competência terminou sem
+  lançamentos (`quantidade_lancamentos` no JSON). `--substituir` refaz a importação de um mês
+  já importado: exclui o extrato atual e importa o arquivo, numa confirmação só (risco alto se
+  o extrato tem lançamentos). A recusa "não reconheceu o arquivo" sugere
+  alternativas (#855).
 
 ## [1.8.0] - 2026-10-04
 
