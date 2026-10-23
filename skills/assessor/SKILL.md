@@ -66,6 +66,9 @@ ctbz login --cnpj 00000000000100   # se a saída listar empresas ("Escolha a emp
 HTTP 401 numa leitura = sessão expirada: faça o login e repita. `ctbz api CAMINHO` (GET) é o
 último recurso para ler um endpoint que nenhum comando cobre; nunca use `ctbz api -X …`, que
 envia escritas sem confirmação nem validação, a não ser que o usuário peça exatamente isso.
+Caminho absoluto (fora de `/api/plataforma/`): escreva com `//` (`ctbz api //api/legado/…`). No
+Git Bash do Windows, um argumento que começa com uma só `/` vira caminho do Windows e a CLI
+recusa.
 
 ## 4. Dossiê da empresa (memória do assessor)
 

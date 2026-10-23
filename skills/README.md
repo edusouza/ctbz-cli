@@ -214,6 +214,7 @@ diz que é preciso confirmar com a Contabilizei.
 | "HTTP 206" em `rotinas`, `resumo`, `documentos pendentes` (CLI até a 1.8.0) | Falha conhecida, corrigida depois da 1.8.0. Atualize o `ctbz`; até lá, o `checkup` lê a Central de Rotinas por `ctbz api`. |
 | "Ano inválido" em `impostos faturamento` (CLI até a 1.8.0) | Empresa com menos de um ano. Corrigido depois da 1.8.0; as skills usam os números de `ctbz impostos calculo` como alternativa. |
 | "unknown command" ou "unknown flag" | O `ctbz` é mais velho que o plugin. Atualize a CLI. |
+| "convertido pelo Git Bash do Windows" em `ctbz api` | O Git Bash troca um argumento que começa com `/` por um caminho do Windows. Escreva o caminho com `//` (`ctbz api //api/legado/…`) ou use `MSYS_NO_PATHCONV=1`. |
 | O `checkup` falha no Windows | O script de coleta precisa de `bash`. Use o WSL ou o Git Bash, ou deixe o agente rodar as leituras uma a uma. |
 
 ## Para quem mantém
