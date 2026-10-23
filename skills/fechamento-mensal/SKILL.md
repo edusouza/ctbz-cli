@@ -43,11 +43,11 @@ dispensa importação) cujo mês `M` falta:
 4. Mensagens de "outro banco", "outra conta", "conta não cadastrada" (cadastre com
    `ctbz contas-bancarias adicionar`, skill `cadastro-e-acessos`) e período anterior pendente
    vêm traduzidas: siga o que dizem.
-5. Conexão caiu no envio do arquivo: a CLI relê a competência e diz se é seguro repetir
-   ("nada foi importado e é seguro rodar o mesmo comando de novo"). Só repita nesse caso, uma
-   vez. Se ela mandar conferir (competência `IMPORTADO`/`PROCESSANDO`, ou queda ao concluir),
-   rode `ctbz extratos` e `ctbz extratos lancamentos` e mostre ao usuário antes de qualquer
-   nova tentativa.
+5. Conexão caiu ou o servidor respondeu com erro 5xx (502, 504…) no envio do arquivo: a CLI
+   relê a competência e diz se é seguro repetir ("nada foi importado e é seguro rodar o mesmo
+   comando de novo"). Só repita nesse caso, uma vez. Se ela mandar conferir (competência
+   `IMPORTADO`/`PROCESSANDO`, ou queda/5xx ao concluir), rode `ctbz extratos` e
+   `ctbz extratos lancamentos` e mostre ao usuário antes de qualquer nova tentativa.
 
 Importou o mês errado? `ctbz extratos excluir` é **risco alto** (perde as classificações).
 

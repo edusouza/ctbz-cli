@@ -132,12 +132,13 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
   para.
 - Se a importação parar depois do envio (saldo recusado, extrato de outra competência), o
   arquivo fica enviado mas o extrato não é efetivado; corrija e rode de novo.
-- Se a conexão cair no envio do arquivo (o envio tem prazo de 3 minutos), a CLI relê a situação
-  da competência. Se ela continua como estava (ex.: `PENDENTE`), nada foi importado e é seguro
-  rodar o mesmo comando de novo: o arquivo vai com o mesmo nome e substitui o anterior. Se ela
-  já aparece como `IMPORTADO` ou `PROCESSANDO`, ou se a conexão caiu ao concluir a importação,
-  confira com `ctbz extratos` e `ctbz extratos lancamentos` antes de repetir, para não importar
-  duas vezes.
+- Se a conexão cair ou o servidor responder com erro 5xx (502, 504…) no envio do arquivo (o
+  envio tem prazo de 3 minutos), a CLI relê a situação da competência. Se ela continua como
+  estava (ex.: `PENDENTE`), nada foi importado e é seguro rodar o mesmo comando de novo: o
+  arquivo vai com o mesmo nome e substitui o anterior. Se ela já aparece como `IMPORTADO` ou
+  `PROCESSANDO`, ou se a queda ou o 5xx aconteceu ao concluir a importação, a importação pode
+  ter sido aplicada: confira com `ctbz extratos` e `ctbz extratos lancamentos` antes de repetir,
+  para não importar duas vezes.
 - Erros conhecidos viram mensagens claras: extrato de outro banco, outra conta ou agência, conta
   não cadastrada (cadastre com `ctbz contas-bancarias adicionar`).
 - Para desfazer, use `ctbz extratos excluir`:
