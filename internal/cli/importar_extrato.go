@@ -87,7 +87,9 @@ atual e importa o arquivo, com uma confirmação só, como excluir e importar no
 extrato atual tem lançamentos, o risco é alto (as classificações se perdem; digite
 "confirmo"); se está vazio, é médio. Se os contadores já concluíram a classificação, o painel
 não deixa excluir, e a CLI também não. Se a exclusão der certo e a importação falhar, o mês
-fica pendente: corrija e rode o comando de novo.
+fica pendente: corrija e rode o comando de novo, sem --substituir. Se a conexão cair ou o
+servidor responder com erro 5xx ao concluir, não se sabe se o novo arquivo entrou: confira
+antes de qualquer nova tentativa, e não use --substituir, que excluiria o extrato novo.
 
 Se a importação parar depois do envio (saldo recusado, extrato de outra competência), o
 arquivo fica enviado mas o extrato não é efetivado; corrija e rode o comando de novo.
@@ -218,8 +220,8 @@ enviar nada.`,
 				}
 				if err := api.ConcluirImportacaoExtrato(ctx, snd, evento); err != nil {
 					if falha, causa, ok := envioIncerto(err); ok {
-						return fmt.Errorf("o arquivo foi enviado, mas %s ao concluir a importação, que pode ou não ter sido aplicada; confira com %s antes de repetir: %w",
-							falha, comandoConferirExtrato(alvo), causa)
+						return &importacaoIncerta{fmt.Errorf("o arquivo foi enviado, mas %s ao concluir a importação, que pode ou não ter sido aplicada; confira com %s antes de repetir: %w",
+							falha, comandoConferirExtrato(alvo), causa)}
 					}
 					return fmt.Errorf("o arquivo foi enviado, mas a importação não foi concluída: %w", err)
 				}
@@ -232,11 +234,16 @@ enviar nada.`,
 					}
 				}
 				err := importarArquivo(snd)
-				if err != nil && existente != nil {
-					return fmt.Errorf("o extrato antigo de %s foi excluído e a importação voltou a ficar pendente, mas o novo arquivo não foi importado "+
-						"(rode ctbz extratos importar de novo, sem precisar de --substituir): %w", mes, err)
+				var incerta *importacaoIncerta
+				switch {
+				case err == nil || existente == nil:
+					return err
+				case errors.As(err, &incerta):
+					return fmt.Errorf("o extrato antigo de %s foi excluído e não se sabe se o novo arquivo foi importado "+
+						"(não use --substituir antes de conferir: ele excluiria o extrato novo): %w", mes, err)
 				}
-				return err
+				return fmt.Errorf("o extrato antigo de %s foi excluído e a importação voltou a ficar pendente, mas o novo arquivo não foi importado "+
+					"(rode ctbz extratos importar de novo, sem precisar de --substituir): %w", mes, err)
 			})
 			if err != nil || !enviado {
 				return err
@@ -373,6 +380,14 @@ func envioIncerto(err error) (falha string, causa error, ok bool) {
 	return "", nil, false
 }
 
+// importacaoIncerta é a falha da importação cujo resultado só se sabe conferindo: quem a recebe
+// não pode afirmar que nada foi importado nem mandar repetir.
+type importacaoIncerta struct{ err error }
+
+func (e *importacaoIncerta) Error() string { return e.err.Error() }
+
+func (e *importacaoIncerta) Unwrap() error { return e.err }
+
 // orientarEnvioIncerto explica uma falha de resultado incerto no envio do arquivo (passo 1).
 // Sem a conclusão (passo 3), nada entra na contabilidade: se a competência não está importada
 // nem em processamento, repetir é seguro e só substitui o arquivo, que vai com o mesmo nome.
@@ -381,11 +396,11 @@ func orientarEnvioIncerto(ctx context.Context, g api.Getter, alvo extratoAlvo, f
 	sit, rerr := situacaoExtratoAlvo(ctx, g, alvo)
 	switch {
 	case rerr != nil:
-		return fmt.Errorf("%s no envio do arquivo e a escrita pode ou não ter sido aplicada; confira antes de repetir: %w (e não foi possível reler a situação do extrato: %v)",
-			falha, causa, rerr)
+		return &importacaoIncerta{fmt.Errorf("%s no envio do arquivo e a escrita pode ou não ter sido aplicada; confira antes de repetir: %w (e não foi possível reler a situação do extrato: %v)",
+			falha, causa, rerr)}
 	case sit == "IMPORTADO" || sit == "PROCESSANDO":
-		return fmt.Errorf("%s no envio do arquivo e o extrato de %s aparece como %s; confira com %s antes de repetir: %w",
-			falha, mes, sit, comandoConferirExtrato(alvo), causa)
+		return &importacaoIncerta{fmt.Errorf("%s no envio do arquivo e o extrato de %s aparece como %s; confira com %s antes de repetir: %w",
+			falha, mes, sit, comandoConferirExtrato(alvo), causa)}
 	}
 	situacao := "não aparece entre os extratos"
 	if sit != "" {

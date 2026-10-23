@@ -136,7 +136,9 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
   que não tem outro jeito de reimportar). Extrato atual vazio: risco médio. Com lançamentos:
   risco alto, porque as classificações se perdem. O `--dry-run` mostra a exclusão, o envio e a
   conclusão. Se a exclusão der certo e a importação falhar, o mês fica pendente: corrija e rode
-  de novo.
+  de novo, sem `--substituir`. Se a conexão cair ou o servidor responder com erro 5xx ao
+  concluir, não se sabe se o novo arquivo entrou: confira antes de qualquer nova tentativa e não
+  use `--substituir`, que excluiria o extrato novo.
 - Depois de importar, a CLI relê a competência. Se ela ainda está `PROCESSANDO`, confira em
   alguns minutos com `ctbz extratos lancamentos`; se terminou `IMPORTADO` sem nenhum lançamento,
   a CLI avisa no stderr. O JSON traz `quantidade_lancamentos`.

@@ -119,3 +119,47 @@ func TestExtratosImportarSubstituirSemExtrato(t *testing.T) {
 		t.Errorf("código %d, escritas %q\nstderr %s\nsaída %s", code, f.writes, stderr, out)
 	}
 }
+
+func TestExtratosImportarSubstituirConclusaoSemResposta(t *testing.T) {
+	f, arq := substituirFake(t, "0", true)
+	f.cair = "eventoUploadExtrato"
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--substituir", "--yes")...)
+	f.mu.Lock()
+	escritas := append([]string(nil), f.writes...)
+	f.mu.Unlock()
+	if code != ExitError || len(escritas) != 3 || !strings.HasPrefix(escritas[0], "DELETE ") ||
+		!strings.Contains(escritas[1], "enviar/bucket") || !strings.Contains(escritas[2], "eventoUploadExtrato") {
+		t.Fatalf("código %d, escritas %q\n%s", code, escritas, stderr)
+	}
+	for _, want := range []string{
+		"o extrato antigo de 09/2026 foi excluído e não se sabe se o novo arquivo foi importado (não use --substituir antes de conferir",
+		"confira com `ctbz extratos lancamentos --conta-bancaria 7 --competencia 2026-09` antes de repetir",
+	} {
+		if !strings.Contains(stderr, want) {
+			t.Errorf("stderr sem %q:\n%s", want, stderr)
+		}
+	}
+	for _, nao := range []string{"voltou a ficar pendente", "de novo", "seguro"} {
+		if strings.Contains(stderr, nao) {
+			t.Errorf("stderr com %q:\n%s", nao, stderr)
+		}
+	}
+}
+
+func TestExtratosImportarSubstituirUploadRecusado(t *testing.T) {
+	f, arq := substituirFake(t, "0", true)
+	excluir := f.onWrite
+	f.onWrite = func(f *escritaFake) {
+		excluir(f)
+		f.status = 200
+		if strings.Contains(f.writes[len(f.writes)-1], "enviar/bucket") {
+			f.status = 400
+		}
+	}
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--substituir", "--yes")...)
+	want := "o extrato antigo de 09/2026 foi excluído e a importação voltou a ficar pendente, mas o novo arquivo não foi importado " +
+		"(rode ctbz extratos importar de novo, sem precisar de --substituir)"
+	if code != ExitError || len(f.writes) != 2 || !strings.Contains(stderr, want) {
+		t.Errorf("código %d, escritas %d\n%s", code, len(f.writes), stderr)
+	}
+}
