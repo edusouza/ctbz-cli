@@ -29,8 +29,10 @@ processamento de outro mês, ou o arquivo errado), use --substituir: a CLI exclu
 atual e importa o arquivo, com uma confirmação só, como excluir e importar no painel. Se o
 extrato atual tem lançamentos, o risco é alto (as classificações se perdem; digite
 "confirmo"); se está vazio, é médio. Se os contadores já concluíram a classificação, o painel
-não deixa excluir, e a CLI também não. Se a exclusão der certo e a importação falhar, o mês
-fica pendente: corrija e rode o comando de novo, sem --substituir. Se a conexão cair ou o
+não deixa excluir, e a CLI também não. Se a exclusão der certo e a importação falhar, a CLI
+relê a competência e diz em que situação ela ficou: pendente, corrija e rode o comando de novo,
+sem --substituir; PROCESSANDO (já visto depois de um arquivo recusado), espere e confira com
+ctbz extratos antes de importar de novo. Se a conexão cair ou o
 servidor responder com erro 5xx ao concluir, não se sabe se o novo arquivo entrou: confira
 antes de qualquer nova tentativa, e não use --substituir, que excluiria o extrato novo.
 

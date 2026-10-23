@@ -93,8 +93,10 @@ processamento de outro mês, ou o arquivo errado), use --substituir: a CLI exclu
 atual e importa o arquivo, com uma confirmação só, como excluir e importar no painel. Se o
 extrato atual tem lançamentos, o risco é alto (as classificações se perdem; digite
 "confirmo"); se está vazio, é médio. Se os contadores já concluíram a classificação, o painel
-não deixa excluir, e a CLI também não. Se a exclusão der certo e a importação falhar, o mês
-fica pendente: corrija e rode o comando de novo, sem --substituir. Se a conexão cair ou o
+não deixa excluir, e a CLI também não. Se a exclusão der certo e a importação falhar, a CLI
+relê a competência e diz em que situação ela ficou: pendente, corrija e rode o comando de novo,
+sem --substituir; PROCESSANDO (já visto depois de um arquivo recusado), espere e confira com
+ctbz extratos antes de importar de novo. Se a conexão cair ou o
 servidor responder com erro 5xx ao concluir, não se sabe se o novo arquivo entrou: confira
 antes de qualquer nova tentativa, e não use --substituir, que excluiria o extrato novo.
 
@@ -264,8 +266,7 @@ enviar nada.`,
 					return fmt.Errorf("o extrato antigo de %s foi excluído e não se sabe se o novo arquivo foi importado "+
 						"(não use --substituir antes de conferir: ele excluiria o extrato novo): %w", mes, err)
 				}
-				return fmt.Errorf("o extrato antigo de %s foi excluído e a importação voltou a ficar pendente, mas o novo arquivo não foi importado "+
-					"(rode ctbz extratos importar de novo, sem precisar de --substituir): %w", mes, err)
+				return falhaDepoisDeExcluir(ctx, g, alvo, err)
 			})
 			if err != nil || !enviado {
 				return err
@@ -408,6 +409,32 @@ func envioIncerto(err error) (falha string, causa error, ok bool) {
 		return fmt.Sprintf("o servidor respondeu com erro (HTTP %d)", we.Status), err, true
 	}
 	return "", nil, false
+}
+
+// falhaDepoisDeExcluir explica uma falha definitiva da importação depois que --substituir
+// excluiu o extrato antigo. Relê a competência em vez de supor que ela voltou a ficar
+// pendente: depois de um envio recusado ela já foi vista PROCESSANDO por minutos (#901), e aí
+// importar por cima não é permitido.
+func falhaDepoisDeExcluir(ctx context.Context, g api.Getter, alvo extratoAlvo, err error) error {
+	mes := alvo.mes.Format("01/2006")
+	sit, rerr := situacaoExtratoAlvo(ctx, g, alvo)
+	switch {
+	case rerr != nil:
+		return fmt.Errorf("o extrato antigo de %s foi excluído e o novo arquivo não foi importado; não foi possível reler a competência (%v): "+
+			"confira com `ctbz extratos` antes de importar de novo: %w", mes, rerr, err)
+	case sit == "PROCESSANDO":
+		return fmt.Errorf("o extrato antigo de %s foi excluído e a competência está PROCESSANDO; espere ela sair desse estado e confira com "+
+			"`ctbz extratos` antes de importar de novo (sem --substituir): %w", mes, err)
+	case sit == "IMPORTADO":
+		return fmt.Errorf("o extrato antigo de %s foi excluído, mas a competência aparece como IMPORTADO; confira com %s antes de importar de novo: %w",
+			mes, comandoConferirExtrato(alvo), err)
+	}
+	situacao := "não aparece entre os extratos"
+	if sit != "" {
+		situacao = "está " + semControle(sit)
+	}
+	return fmt.Errorf("o extrato antigo de %s foi excluído e a competência %s, mas o novo arquivo não foi importado "+
+		"(rode ctbz extratos importar de novo, sem precisar de --substituir): %w", mes, situacao, err)
 }
 
 // enviarPelaCentral envia o extrato pela Central de Documentos (envio único). Uma falha de

@@ -13,6 +13,14 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   "o banco desta conta aceita extratos em PDF, XLS ou CSV; este arquivo é .ofx". Antes, a
   extensão era conferida contra uma lista fixa (`.ofx`/`.pdf`) que contradizia a do banco (#899).
 
+### Fixed
+
+- `extratos importar --substituir`: quando a exclusão dá certo e a importação falha, a mensagem
+  vem da competência relida, e não de uma suposição. Antes dizia "voltou a ficar pendente" e
+  mandava rodar de novo, mas a competência já foi vista `PROCESSANDO` por minutos depois de um
+  arquivo recusado. Agora, com `PROCESSANDO`, a CLI manda esperar e conferir; com `IMPORTADO`,
+  conferir os lançamentos; e só manda repetir quando a competência está pendente (#901).
+
 ### Added
 
 - Modo verbose: `--verbose` (em qualquer comando) ou `CTBZ_DEBUG=1` mostra no stderr cada
