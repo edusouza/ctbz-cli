@@ -80,7 +80,7 @@ func escreverTroca(w io.Writer, nivel int, e ctbz.Exchange) {
 	}
 	ms := e.Elapsed.Milliseconds()
 	if e.Err != nil && e.Status == 0 {
-		fmt.Fprintf(&b, "< sem resposta (%d ms): %v\n", ms, e.Err)
+		fmt.Fprintf(&b, "< sem resposta (%d ms): %s\n", ms, erroMascarado(e.Err, nivel))
 	} else {
 		fmt.Fprintf(&b, "< HTTP %d (%d ms, %s)\n", e.Status, ms, tamanhoArquivo(len(e.RespBody)))
 		escreverCabecalhos(&b, "< ", e.RespHeader, nivel)
@@ -89,6 +89,16 @@ func escreverTroca(w io.Writer, nivel int, e ctbz.Exchange) {
 		}
 	}
 	io.WriteString(w, uuid.ReplaceAllString(b.String(), "***"))
+}
+
+// erroMascarado descreve um erro de conexão. O *url.Error do net/http traz a URL inteira, que
+// passa pela mesma máscara da linha da requisição.
+func erroMascarado(err error, nivel int) string {
+	var ue *url.Error
+	if errors.As(err, &ue) {
+		return fmt.Sprintf("%s %q: %v", ue.Op, mascararURL(ue.URL, nivel), ue.Err)
+	}
+	return err.Error()
 }
 
 // cabecalhoSecreto diz se o valor de um cabeçalho é credencial.
@@ -137,26 +147,35 @@ func mascararCookies(v string) string {
 }
 
 // mascararURL mascara os valores da query: todos no nível 1 (podem ter CNPJ e outros dados
-// pessoais) e só os secretos no nível 2.
+// pessoais) e só os secretos no nível 2. Pares chave=valor num fragmento depois da query
+// seguem a mesma regra.
 func mascararURL(raw string, nivel int) string {
 	antes, query, ok := strings.Cut(raw, "?")
 	if !ok {
 		return raw
 	}
 	query, fragmento, temFragmento := strings.Cut(query, "#")
-	partes := strings.Split(query, "&")
+	saida := antes + "?" + mascararPares(query, nivel)
+	if temFragmento {
+		saida += "#" + mascararPares(fragmento, nivel)
+	}
+	return saida
+}
+
+// mascararPares mascara os valores de "a=1&b=2"; partes sem "=" ficam como estão.
+func mascararPares(s string, nivel int) string {
+	partes := strings.Split(s, "&")
 	for i, p := range partes {
-		nome, _, _ := strings.Cut(p, "=")
+		nome, _, temValor := strings.Cut(p, "=")
+		if !temValor {
+			continue
+		}
 		chave, _ := url.QueryUnescape(nome)
 		if nivel < 2 || secreta(chave) {
 			partes[i] = nome + "=***"
 		}
 	}
-	saida := antes + "?" + strings.Join(partes, "&")
-	if temFragmento {
-		saida += "#" + fragmento
-	}
-	return saida
+	return strings.Join(partes, "&")
 }
 
 // escreverCorpo mostra um corpo JSON ou de formulário com os campos secretos mascarados; de
@@ -169,7 +188,7 @@ func escreverCorpo(b *strings.Builder, prefixo, contentType string, corpo []byte
 		fmt.Fprintf(b, "%s%s\n", prefixo, truncar(mascararFormulario(string(corpo)), len(corpo)))
 	case tipo == "multipart/form-data":
 		escreverMultipart(b, prefixo, params["boundary"], corpo)
-	case tipo == "application/json" || strings.HasSuffix(tipo, "+json") || (tipo == "" && json.Valid(corpo)):
+	case (tipo == "application/json" || strings.HasSuffix(tipo, "+json") || tipo == "") && json.Valid(corpo):
 		fmt.Fprintf(b, "%s%s\n", prefixo, truncar(jsonMascarado(corpo), len(corpo)))
 	default:
 		if tipo == "" {
@@ -179,16 +198,13 @@ func escreverCorpo(b *strings.Builder, prefixo, contentType string, corpo []byte
 	}
 }
 
+// jsonMascarado reescreve um JSON válido com os campos secretos mascarados.
 func jsonMascarado(corpo []byte) string {
-	v := decodificar(corpo)
-	if _, texto := v.(string); texto && !json.Valid(corpo) {
-		return string(corpo)
-	}
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
 	enc.SetEscapeHTML(false)
-	if enc.Encode(mascarar(v)) != nil {
-		return string(corpo)
+	if enc.Encode(mascarar(decodificar(corpo))) != nil {
+		return "(JSON ilegível omitido)"
 	}
 	return strings.TrimSuffix(buf.String(), "\n")
 }

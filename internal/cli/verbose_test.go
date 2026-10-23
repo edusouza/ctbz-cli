@@ -6,6 +6,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 	"time"
@@ -174,6 +175,24 @@ func TestVerboseErroDeConexaoECorpoGrande(t *testing.T) {
 	if !strings.Contains(buf.String(), "< sem resposta (1000 ms): unexpected EOF") {
 		t.Errorf("saída:\n%s", buf.String())
 	}
+	// O erro do net/http traz a URL inteira: ela passa pela mesma máscara.
+	buf.Reset()
+	escreverTroca(&buf, 1, ctbz.Exchange{Method: "GET", URL: "https://app.example.com/x?cnpj=00000000000100",
+		Err: &url.Error{Op: "Get", URL: "https://app.example.com/x?cnpj=00000000000100", Err: io.ErrUnexpectedEOF}})
+	if !strings.Contains(buf.String(), `< sem resposta (0 ms): Get "https://app.example.com/x?cnpj=***": unexpected EOF`) {
+		t.Errorf("saída:\n%s", buf.String())
+	}
+	semSegredos(t, buf.String())
+	buf.Reset()
+	escreverTroca(&buf, 2, ctbz.Exchange{Method: "GET", URL: "https://app.example.com/x", Status: 200,
+		RespHeader: http.Header{"Content-Type": {"application/json"}, "Location": {"/y?a=1#token=TOKEN-SECRETO&b=2"}},
+		RespBody:   []byte(`{"token":"TOKEN-SECRETO"`)})
+	for _, want := range []string{"< Location: /y?a=1#token=***&b=2", "< (corpo application/json de 24 bytes omitido)"} {
+		if !strings.Contains(buf.String(), want) {
+			t.Errorf("saída sem %q:\n%s", want, buf.String())
+		}
+	}
+	semSegredos(t, buf.String())
 	buf.Reset()
 	grande := `{"lista":"` + strings.Repeat("a", 5000) + `"}`
 	escreverTroca(&buf, 2, ctbz.Exchange{Method: "GET", URL: "https://app.example.com/x", Status: 200,
