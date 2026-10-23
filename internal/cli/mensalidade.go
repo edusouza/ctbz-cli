@@ -16,6 +16,8 @@ func newMensalidadeCmd() *cobra.Command {
 		Short: "Mostra a mensalidade atual da Contabilizei (valor, vencimento e situação)",
 		Long: `Mostra a fatura atual da Contabilizei: competência, valor, vencimento, situação e
 observações (ex.: serviços adicionais), e se há mensalidade de competência anterior em atraso.
+Traz também os botões do card e as ações deles (botao_acao, botao_adicional_acao): com a
+mensalidade atrasada, o botão adicional gera a segunda via (ctbz mensalidade segunda-via).
 
 Com --fail-on-atraso, o comando termina com código 4 quando há competência anterior em atraso.`,
 		Example: `  ctbz mensalidade
@@ -49,6 +51,7 @@ Com --fail-on-atraso, o comando termina com código 4 quando há competência an
 	cmd.Flags().BoolVar(&failOnAtraso, "fail-on-atraso", false, "termina com código 4 se houver competência anterior em atraso")
 	cmd.AddCommand(newMensalidadeSituacaoCmd())
 	cmd.AddCommand(newMensalidadeHistoricoCmd())
+	cmd.AddCommand(newMensalidadeSegundaViaCmd())
 	return cmd
 }
 
@@ -108,6 +111,10 @@ func mensalidadeRecord(fat *api.Fatura, m *api.Mensalidade) *output.Record {
 	rec.Add("situacao", "Situação", nilIfEmpty(fat.Status))
 	rec.Add("observacao", "Observação", nilIfEmpty(fat.MensagemAdicional))
 	rec.Add("competencia_anterior_atrasada", "Competência anterior em atraso", m.CompetenciaAnteriorAtrasada)
+	rec.Add("botao_titulo", "Botão do card", nilIfEmpty(fat.BotaoTitulo))
+	rec.Add("botao_acao", "Ação do botão", nilIfEmpty(fat.BotaoAcao))
+	rec.Add("botao_adicional_titulo", "Botão adicional", nilIfEmpty(fat.BotaoAdicionalTitulo))
+	rec.Add("botao_adicional_acao", "Ação do botão adicional", nilIfEmpty(fat.BotaoAdicionalAcao))
 	return rec
 }
 

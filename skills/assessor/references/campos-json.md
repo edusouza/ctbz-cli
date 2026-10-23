@@ -94,7 +94,8 @@ em reais são números, datas `AAAA-MM-DD`, horários RFC 3339, CNPJ/CPF só dí
 |---|---|---|
 | `documentos` | lista | `tipo`, `nome`, `quantidade`, `modificado` (com `--tipo`: `competencia`, `arquivo`, `enviado`, `descricao`, `valor`, `link`) |
 | `documentos pendentes` | lista | `id_pendencia`, `tipo`, `competencia`, `conta`, `tipo_investimento` |
-| `mensalidade` | objeto | `competencia`, `valor`, `vencimento` (texto, ex. `"Vencimento 15/10"`), `situacao` (ex. `Atrasada`), `observacao`, `competencia_anterior_atrasada` |
+| `mensalidade` | objeto | `competencia`, `valor`, `vencimento` (texto, ex. `"Vencimento 15/10"`), `situacao` (ex. `Atrasada`), `observacao`, `competencia_anterior_atrasada`, `botao_titulo`, `botao_acao`, `botao_adicional_titulo`, `botao_adicional_acao` (`request:…` = dá para gerar a segunda via) |
+| `mensalidade segunda-via` | objeto | `acao`, `situacao` (`gerada`), `id` (`AAAAMM`), `competencia`, `vencimento`, `total`, `status`, `itens[]` (`descricao`, `valor`), `pix_copia_e_cola`, `linha_digitavel`, `codigo_barras`, `link` |
 | `mensalidade situacao` | objeto | `em_dia`, `situacao` (`OK`, `EM_ATRASO`…) |
 | `mensalidade historico` | objeto | `pagamentos[]`: faturas pagas, da mais recente (`data` do pagamento, `competencia` `MM/AAAA`, `vencimento`, `valor`, `multa_juros`, `forma_pagamento`, `status`). Obsoletos, do débito automático de **impostos**: `debito_automatico_ativo`, `debito_automatico_habilitado`, `status`, `competencia`, `proximo_pagamento` |
 | `usuarios` | lista | `id`, `nome`, `email`, `tipo`, `status` |

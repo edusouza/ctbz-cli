@@ -20,6 +20,40 @@ Competência anterior em atraso:  não
 - `--fail-on-atraso` termina com **código 4** quando há mensalidade de competência anterior
   em atraso.
 
+## Segunda via e o que pagar
+
+Com a mensalidade atrasada, o card do painel oferece "Gerar segunda via s/ juros". A CLI faz o
+mesmo e mostra o que pagar:
+
+```sh
+ctbz mensalidade segunda-via
+```
+
+```text
+Gerar a segunda via da mensalidade de 10/2026 (registra um boleto novo, com vencimento novo; não cobra nada) (risco médio)
+Confirma? [s/N] s
+```
+
+O resultado traz competência, vencimento, total, situação da fatura, itens (mensalidade, multa e
+juros, serviços adicionais), Pix copia e cola, linha digitável, código de barras e o link do
+checkout.
+
+- Risco **médio**: registra um boleto novo, com vencimento novo, mas não cobra nada. Pede
+  confirmação (`--yes` em scripts) e aceita `--dry-run`.
+- O caminho vem da ação do card (`ctbz mensalidade -o json`, `botao_adicional_acao`). Com a
+  fatura em dia, o card não oferece segunda via e o comando para com erro.
+- `--competencia AAAA-MM` confere se a segunda via oferecida é do mês esperado.
+- `--pix` e `--linha` imprimem só o código, para usar num pipe:
+
+```sh
+inter-pj pix enviar --copia-e-cola "$(ctbz mensalidade segunda-via --pix --yes)"
+```
+
+- O link tem o identificador da fatura, que dá acesso a ela sem login. Ele sai só no resultado,
+  nunca no registro de ações (`ctbz acoes`), e o `--verbose` o mascara.
+- Depois de pagar, confirme com `ctbz mensalidade situacao`. A fatura pública demora a dar
+  baixa e continua "Pendente" por um tempo.
+
 ## Situação com a Contabilizei
 
 ```sh

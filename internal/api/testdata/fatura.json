@@ -1,4 +1,8 @@
 {
+  "botaoAcao": "redirect:/painel-de-controle/#/pagar-com-cartao",
+  "botaoAdicionalAcao": "request:dashboard/nova-fatura/202610",
+  "botaoAdicionalTitulo": "Gerar segunda via s/ juros",
+  "botaoTitulo": "Pagar com cartão",
   "competencia": "Outubro, 2026",
   "mensagemAdicional": "+ 1 Serviço adicional",
   "possuiCartaoPrincipal": false,

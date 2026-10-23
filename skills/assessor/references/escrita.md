@@ -32,6 +32,7 @@ O risco é o que a CLI declara. No terminal, o médio pede `[s/N]` e o alto pede
 | `empresa credenciais confirmar-prefeitura` | não |
 | `correspondencias endereco --cep …` / `autorizar off` | regravar / `autorizar on` |
 | `prolabore zerar-sem-faturamento off` | `on` |
+| `mensalidade segunda-via` | não; registra um boleto novo com vencimento novo, sem cobrança. Não gere outra sem necessidade |
 
 ## Alto (confirmação explícita do usuário para cada um)
 

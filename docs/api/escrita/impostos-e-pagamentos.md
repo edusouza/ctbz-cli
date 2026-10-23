@@ -267,8 +267,43 @@ Tela `#/pagar-com-cartao` (`pagamentoCartaoCredito.*.js`):
   - `redirect:<rota>` → navegação interna (sem rede).
   - qualquer outro tipo → **`GET /api/plataforma/<valor>`** (o caminho vem do servidor) → `{url}` aberto em nova aba.
     Toast: "Seu boleto para pagamento será aberto em uma nova aba. Os boletos gerados são registrados, por isso caso tenha dificuldades no pagamento, recomendamos tentar novamente após 2 horas."
-- Semântica: **GET com efeito colateral** — gera/registra boleto da mensalidade. O caminho exato não está no bundle **(incerto)**; precisa ser lido da resposta real de `dashboard/fatura`.
-- Risco: **baixo/médio** (registra boleto; não cobra). CLI pode expor `ctbz mensalidade boleto` lendo `botaoAcao` dinamicamente.
+- Semântica: **GET com efeito colateral**: gera e registra a segunda via da mensalidade.
+- **Verificado numa conta real (23/10/2026, #851):** com a mensalidade atrasada, o card traz
+  `"botaoTitulo": "Pagar com cartão"`, `"botaoAcao": "redirect:/painel-de-controle/#/pagar-com-cartao"`,
+  `"botaoAdicionalTitulo": "Gerar segunda via s/ juros"` e
+  `"botaoAdicionalAcao": "request:dashboard/nova-fatura/202610"`. O tipo é `request:` e o caminho é
+  `dashboard/nova-fatura/{AAAAMM}`. Com a fatura em dia, os campos `botaoAdicional*` vêm `null`
+  (e `botaoAcao` é, por exemplo, `redirect:/painel-de-controle/#/cadastrar-cartao`).
+- `GET /api/plataforma/dashboard/nova-fatura/{AAAAMM}` registra a segunda via com vencimento novo
+  (no caso, D+2) e devolve `{"url": "https://app.contabilizei.com.br/checkout/#/fatura-contabilizei?idFatura=<UUID>"}`.
+- O checkout é uma SPA (`VUE_APP_CONTABILIZEI_FINTECH_URL = "/api/fintech/"`). Os endpoints são
+  **públicos**: o UUID é a credencial, e eles funcionam sem cookie.
+
+| Uso | Método e caminho | Testado |
+|---|---|---|
+| versão do checkout | `GET /api/fintech/public/v2/fatura-contabilizei/{uuid}/init` → `{"versao":"V4"}` | ✅ |
+| fatura com meios de pagamento (v2) | `GET /api/fintech/public/v2/fatura-contabilizei/{uuid}` | ✅ |
+| fatura com itens e status (v1) | `GET /api/fintech/public/fatura-contabilizei/{uuid}` | ✅ |
+| Pix | `GET /api/fintech/public/v2/fatura-contabilizei/{uuid}/pix` (mesmo corpo da v2) | ✅ |
+| cobrança | `GET /api/fintech/public/fatura-contabilizei/{uuid}/cobranca` (mesmo corpo da v2) | ✅ |
+| boleto | `GET /api/fintech/public/v2/fatura-contabilizei/{uuid}/boleto` | ⚠️ 400 depois de paga |
+| adiantar pagamento | `GET /api/fintech/public/fatura-contabilizei/{uuid}/link-adiantar-pagamento` | não testado |
+| pagar com cartão | `POST /api/fintech/public/v2/fatura-contabilizei/{uuid}/pagar` | não testado, risco alto |
+
+- Campos usados:
+  - v2: `dataVencimento`, `total` e `meioDePagamento`. Nele, `pix.textoPagamento` é o copia e
+    cola (`pix.urlPagamento` é o QR em data-URI), `boleto.textoPagamento` é a **linha digitável**
+    (47 dígitos) e `boleto.urlPagamento` é, apesar do nome, o **código de barras** (44 dígitos).
+    Cada meio tem `exibir`. A v2 também traz `token`, que a CLI não lê nem mostra.
+  - v1: `resumo.itens[{descricao, valor}]` (mensalidade, multa e juros da fatura anterior,
+    serviços adicionais) e `status{id, descricao}`.
+- Depois do Pix pago, a v1 continuou `PENDENTE`, mas `inadimplencia/consultasituacaomensalidadeempresa`
+  já dizia `OK`: a baixa da fatura pública atrasa.
+- Não há endpoint só de leitura com o UUID da fatura atual; o caminho é gerar a segunda via.
+- Os endpoints públicos mostram razão social, endereço, CNPJ mascarado e o código de pagamento a quem
+  tiver o UUID. A CLI não o grava no registro de ações e o mascara no `--verbose`.
+- Risco: **médio** (registra boleto; não cobra). Na CLI: `ctbz mensalidade segunda-via`, que lê a
+  ação do card a cada vez e só segue uma ação `request:` com caminho relativo do BFF.
 
 ### 2.4 Troca de plano (upsell Multibenefícios)
 

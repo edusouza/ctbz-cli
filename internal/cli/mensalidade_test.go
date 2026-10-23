@@ -16,8 +16,10 @@ func TestMensalidade(t *testing.T) {
 	if code != ExitOK {
 		t.Fatalf("código %d: %s", code, stderr)
 	}
-	want := "competencia,valor,vencimento,situacao,observacao,competencia_anterior_atrasada\n" +
-		"10/2026,1234.56,,Em aberto,+ 1 Serviço adicional,false\n"
+	want := "competencia,valor,vencimento,situacao,observacao,competencia_anterior_atrasada," +
+		"botao_titulo,botao_acao,botao_adicional_titulo,botao_adicional_acao\n" +
+		"10/2026,1234.56,,Em aberto,+ 1 Serviço adicional,false," +
+		"Pagar com cartão,redirect:/painel-de-controle/#/pagar-com-cartao,Gerar segunda via s/ juros,request:dashboard/nova-fatura/202610\n"
 	if out != want {
 		t.Errorf("CSV:\n%s\nesperado:\n%s", out, want)
 	}

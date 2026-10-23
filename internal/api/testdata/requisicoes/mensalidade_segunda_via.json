@@ -1,0 +1,6 @@
+[
+  {
+    "metodo": "GET",
+    "caminho": "/api/plataforma/dashboard/nova-fatura/202610"
+  }
+]

@@ -35,6 +35,13 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz acoes` ganha a coluna `arquivos`: nos envios de arquivo (`ctbz api -F`,
   `extratos importar`, `documentos enviar`…), o nome e o tamanho de cada arquivo, nunca o
   conteúdo (#900).
+- `ctbz mensalidade segunda-via`: gera a segunda via da mensalidade atrasada, como o botão
+  "Gerar segunda via s/ juros" do card, e mostra itens, total, vencimento, situação, Pix copia
+  e cola, linha digitável, código de barras e o link do checkout. `--pix` e `--linha` imprimem
+  só o código, para pipe. O caminho vem da ação do card, lida a cada vez. Risco médio, com
+  confirmação e `--dry-run`. O identificador da fatura não vai para o registro de ações (#851).
+- `ctbz mensalidade` mostra os botões do card e as ações deles: `botao_titulo`, `botao_acao`,
+  `botao_adicional_titulo` e `botao_adicional_acao` (#851).
 - `ctbz extratos importar` aceita os formatos que o banco da conta declara além de OFX e PDF
   (CSV, XLS…). Como a tela "Importar extrato" do painel só aceita OFX e PDF, esses arquivos vão
   pela Central de Documentos (`POST upload-documentos/extrato/enviar`), num envio só, e a

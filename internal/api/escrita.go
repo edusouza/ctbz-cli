@@ -246,6 +246,10 @@ func Escritas() []Escrita {
 		{Name: "extrato_enviar_central_documentos", Exemplo: func(ctx context.Context, s Sender) error {
 			return EnviarExtratoDocumentos(ctx, s, ExtratoDocumentos{Ano: 2026, Mes: 9, IDContaBancaria: 7, Arquivo: "extrato.csv", Conteudo: []byte("data;valor")})
 		}},
+		{Name: "mensalidade_segunda_via", Exemplo: func(ctx context.Context, s Sender) error {
+			_, err := GerarSegundaVia(ctx, s, "dashboard/nova-fatura/202610")
+			return err
+		}, Resposta: `{"url":"https://app.contabilizei.com.br/checkout/#/fatura-contabilizei?idFatura=00000000-0000-4000-8000-000000000000"}`},
 		{Name: "extrato_excluir", Exemplo: func(ctx context.Context, s Sender) error {
 			return ExcluirExtrato(ctx, s, 7, 2026, 9)
 		}},
