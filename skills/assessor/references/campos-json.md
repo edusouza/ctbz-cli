@@ -106,3 +106,7 @@ em reais são números, datas `AAAA-MM-DD`, horários RFC 3339, CNPJ/CPF só dí
 Toda escrita com `-o json` devolve pelo menos `acao`, `situacao` e `id`. `situacao: "enviado"`
 quer dizer aceita pela Contabilizei, mas ainda não visível na releitura: não repita.
 `--dry-run -o json` devolve uma lista com `metodo`, `caminho`, `content_type`, `corpo` e `campos`.
+
+`extratos importar` acrescenta `competencia`, `importacao` (`automatica` para OFX/PDF; `manual`
+para CSV/XLS, que a Contabilizei importa em até 45 dias, com `situacao: "enviado"`), `arquivo`,
+`saldo_ultimo_dia`, `situacao_extrato`, `quantidade_lancamentos` e `substituiu_extrato`.

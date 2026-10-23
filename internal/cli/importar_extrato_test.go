@@ -112,10 +112,10 @@ func TestExtratosImportarValidacoes(t *testing.T) {
 		want string
 		prep func(*escritaFake)
 	}{
-		{[]string{txt}, ExitUsage, ".ofx ou .pdf", nil},
+		{[]string{txt}, ExitUsage, "o banco desta conta aceita extratos em OFX ou PDF; este arquivo é .txt", nil},
 		{[]string{pdf, "--saldo-final", "1"}, ExitUsage, "só vale para extratos OFX", nil},
 		{[]string{ofx, "--conta-bancaria", "8"}, ExitError, "a conta é integrada", nil},
-		{[]string{pdf, "--conta-bancaria", "9"}, ExitUsage, "aceita extratos em OFX, não PDF", nil},
+		{[]string{pdf, "--conta-bancaria", "9"}, ExitUsage, "o banco desta conta aceita extratos em OFX; este arquivo é .pdf", nil},
 		{[]string{ofx}, ExitError, "há importação pendente em 08/2026", func(f *escritaFake) {
 			f.gets["/api/plataforma/movimentacao-financeira/permiteImportacao/7/2026/9"] = `{"periodosDeImportacao":[{"ano":2026,"mes":8,"mensagem":"Importe agosto","temLancamentoPendente":true}]}`
 		}},

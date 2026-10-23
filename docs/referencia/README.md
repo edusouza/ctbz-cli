@@ -50,7 +50,7 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz extratos desfazer-desmembramento`](ctbz_extratos_desfazer-desmembramento.md) | Volta um lançamento desmembrado do extrato ao original |
 | [`ctbz extratos desmembrar`](ctbz_extratos_desmembrar.md) | Divide um lançamento do extrato em partes com classificações diferentes |
 | [`ctbz extratos excluir`](ctbz_extratos_excluir.md) | Exclui o extrato importado de uma conta num mês |
-| [`ctbz extratos importar`](ctbz_extratos_importar.md) | Importa o extrato bancário (OFX ou PDF) de uma conta num mês |
+| [`ctbz extratos importar`](ctbz_extratos_importar.md) | Importa o extrato bancário (OFX, PDF ou o formato que o banco aceita) de uma conta num mês |
 | [`ctbz extratos lancamentos`](ctbz_extratos_lancamentos.md) | Lista os lançamentos do extrato de uma conta bancária num mês |
 | [`ctbz impostos`](ctbz_impostos.md) | Lista as guias de impostos a pagar (em atraso, do mês e do próximo mês) |
 | [`ctbz impostos baixar`](ctbz_impostos_baixar.md) | Baixa o PDF de guias de imposto |

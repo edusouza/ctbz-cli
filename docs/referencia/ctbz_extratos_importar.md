@@ -1,19 +1,29 @@
 # ctbz extratos importar
 
-Importa o extrato bancário (OFX ou PDF) de uma conta num mês
+Importa o extrato bancário (OFX, PDF ou o formato que o banco aceita) de uma conta num mês
 
 Importa o extrato do mês de uma conta bancária, como a tela "Importar extrato" do painel
 (risco médio: entra na contabilidade; desfaça com ctbz extratos excluir).
 
-Antes de enviar, a CLI confere a extensão (.ofx ou .pdf), o tamanho (até 30 MB), os formatos
-aceitos pelo banco, se a conta é integrada (essas não precisam de importação), se há um
-período anterior pendente e se a competência já foi importada ou está em processamento (o
-painel também não deixa importar por cima). Depois:
+Antes de enviar, a CLI confere o tamanho (até 30 MB), se o banco aceita o formato do arquivo
+(a lista vem da Contabilizei, e a mensagem de erro a mostra), se a conta é integrada (essas
+não precisam de importação), se há um período anterior pendente e se a competência já foi
+importada ou está em processamento (o painel também não deixa importar por cima).
+CSV, XLS e os outros formatos de importação manual também são recusados sobre um extrato
+importado, para a importação manual não duplicar os lançamentos, e não aceitam --substituir.
+
+OFX e PDF passam pela tela "Importar extrato":
 
   1. envia o arquivo;
   2. no OFX, lê o saldo do último dia que a Contabilizei encontrou e pede para confirmar
      (ou compara com --saldo-final; diferente, a importação para);
   3. conclui a importação.
+
+Os demais formatos que o banco aceita (CSV, XLS…) vão pela Central de Documentos, como no
+painel: um envio só, sem conclusão nem saldo, e a Contabilizei importa o arquivo manualmente,
+em até 45 dias. O resultado sai com situacao "enviado" e importacao "manual". Até a importação,
+a competência continua PENDENTE em ctbz extratos, o que é o esperado: não envie o arquivo de
+novo; acompanhe na Central de Documentos do painel.
 
 Ao final, a CLI relê a competência: em processamento, avisa para conferir depois; importada
 sem nenhum lançamento, avisa no stderr.
@@ -55,6 +65,7 @@ ctbz extratos importar ARQUIVO [flags]
     --saldo-final 1.234,56 --yes
   ctbz extratos importar extrato-setembro.pdf --conta-bancaria 1000000000000001 --competencia 2026-09 \
     --substituir --dry-run
+  ctbz extratos importar extrato-setembro.csv --conta-bancaria 1000000000000001 --competencia 2026-09
 ```
 
 ## Flags

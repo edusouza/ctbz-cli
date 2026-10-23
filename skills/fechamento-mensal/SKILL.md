@@ -1,6 +1,6 @@
 ---
 name: fechamento-mensal
-description: Fechamento do mês na Contabilizei pela CLI ctbz, o trabalho do analista do plano Experts. Use para importar extratos bancários (OFX/PDF), classificar ou desmembrar lançamentos, lançar no caixa, conciliar notas e recebimentos, manifestar e classificar notas de entrada, enviar documentos pedidos e resolver as rotinas do mês, deixando a contabilidade em dia.
+description: Fechamento do mês na Contabilizei pela CLI ctbz, o trabalho do analista do plano Experts. Use para importar extratos bancários (OFX, PDF, CSV/XLS), classificar ou desmembrar lançamentos, lançar no caixa, conciliar notas e recebimentos, manifestar e classificar notas de entrada, enviar documentos pedidos e resolver as rotinas do mês, deixando a contabilidade em dia.
 ---
 
 # Fechamento do mês
@@ -29,7 +29,15 @@ começar.
 Para cada conta **não integrada** (`integracao` vazio; a Conta PJ Contabilizei é integrada e
 dispensa importação) cujo mês `M` falta:
 
-1. Peça o arquivo OFX (preferível) ou PDF do mês ao usuário: o caminho no disco.
+1. Peça o arquivo OFX (preferível) ou PDF do mês ao usuário: o caminho no disco. Se o banco só
+   aceita outros formatos (a CLI recusa e lista os aceitos, ex.: "PDF, XLS ou CSV"), ou se o PDF
+   é recusado, use o CSV/XLS do internet banking. Esses formatos vão pela Central de Documentos e
+   a Contabilizei os importa **manualmente, em até 45 dias** (`importacao: "manual"`,
+   `situacao: "enviado"`). Avise o usuário e registre no dossiê que o mês aguarda essa importação.
+   Até lá a competência continua `PENDENTE` em `ctbz extratos`, o que é o esperado: **nunca
+   reenvie** um arquivo com `importacao: "manual"` (a fila manual recebe duplicados), nem depois
+   de uma falha de conexão; peça ao usuário para conferir na Central de Documentos do painel.
+   CSV/XLS não aceitam `--substituir` e são recusados sobre um extrato já importado.
 2. Num OFX, leia o saldo final no próprio arquivo (`<LEDGERBAL>` → `<BALAMT>`) e mostre ao
    usuário para conferir.
 3. Simule e importe (risco médio):

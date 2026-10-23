@@ -42,7 +42,7 @@ escritas, `risco: baixo|médio|alto`.
 | **v1.7** | Pró-labore, distribuição de lucros e informe de rendimentos | [#211](https://github.com/edusouza/ctbz-cli/issues/211) | 6 | concluída |
 | **v1.8** | Conta, usuários e acessos | [#218](https://github.com/edusouza/ctbz-cli/issues/218) | 4 | concluída |
 | **v1.8.1** | Correções do primeiro uso real de ponta a ponta | — | 6 | concluída |
-| **v1.9** | Segunda via da mensalidade, extratos em CSV/XLS e diagnóstico | — | 5 | em andamento (2/5) |
+| **v1.9** | Segunda via da mensalidade, extratos em CSV/XLS e diagnóstico | — | 5 | em andamento (3/5) |
 
 ## v0.1 — Login e dados da empresa
 
@@ -346,7 +346,7 @@ que o banco aceita e diagnosticar uma chamada que falha.
 |---|---|---|---|---|
 | ✅ | [#902](https://github.com/edusouza/ctbz-cli/issues/902) | Modo verbose (`--verbose`/`CTBZ_DEBUG`) com segredos mascarados | infra | — |
 | ✅ | [#900](https://github.com/edusouza/ctbz-cli/issues/900) | `ctbz api -F`: envio `multipart/form-data` | infra | — |
-| | [#899](https://github.com/edusouza/ctbz-cli/issues/899) | `extratos importar` aceita CSV/XLS quando o banco declara o formato | funcionalidade | médio |
+| ✅ | [#899](https://github.com/edusouza/ctbz-cli/issues/899) | `extratos importar` aceita CSV/XLS quando o banco declara o formato | funcionalidade | médio |
 | | [#901](https://github.com/edusouza/ctbz-cli/issues/901) | `--substituir` relê a competência depois de uma falha | bug | médio |
 | | [#851](https://github.com/edusouza/ctbz-cli/issues/851) | `ctbz mensalidade segunda-via`: Pix copia e cola e linha digitável | funcionalidade | médio |
 

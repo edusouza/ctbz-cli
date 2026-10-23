@@ -298,7 +298,7 @@ Campos do JSON de cada comando: [campos-json.md](campos-json.md).
 --conta-bancaria int   id da conta bancária (ver ctbz contas-bancarias) (obrigatória)
 ```
 
-`ctbz extratos importar ARQUIVO [flags]`: Importa o extrato bancário (OFX ou PDF) de uma conta num mês
+`ctbz extratos importar ARQUIVO [flags]`: Importa o extrato bancário (OFX, PDF ou o formato que o banco aceita) de uma conta num mês
 
 ```text
 --competencia string   competência AAAA-MM (obrigatória)

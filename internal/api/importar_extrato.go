@@ -156,13 +156,49 @@ func ConcluirImportacaoExtrato(ctx context.Context, s Sender, e EventoUploadExtr
 	return s.Send(ctx, "POST", PathEventoUploadExtrato, e, nil)
 }
 
-// TipoArquivo fixa o Content-Type dos uploads (PDF ou binário), sem depender da tabela de
-// tipos do sistema operacional.
+// TipoArquivo fixa o Content-Type dos uploads (PDF, planilhas ou binário), sem depender da
+// tabela de tipos do sistema operacional.
 func TipoArquivo(nome string) string {
-	if strings.EqualFold(filepath.Ext(nome), ".pdf") {
+	switch strings.ToLower(filepath.Ext(nome)) {
+	case ".pdf":
 		return "application/pdf"
+	case ".csv":
+		return "text/csv"
+	case ".xls":
+		return "application/vnd.ms-excel"
+	case ".xlsx":
+		return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 	}
 	return "application/octet-stream"
+}
+
+// ImportacaoAutomatica diz se o formato passa pela tela "Importar extrato" (OFX e PDF, as
+// extencoesValidas do front). Os demais formatos que o banco aceita (CSV, XLS…) vão pela
+// Central de Documentos e são importados manualmente pela Contabilizei.
+func ImportacaoAutomatica(formato string) bool {
+	return strings.EqualFold(formato, "OFX") || strings.EqualFold(formato, "PDF")
+}
+
+// PathEnviarExtratoDocumentos recebe o extrato pela Central de Documentos (multipart, envio
+// único, sem conclusão nem saldo). Ver docs/api/escrita/contabilidade-e-documentos.md, seção 2.1 (b).
+const PathEnviarExtratoDocumentos = "upload-documentos/extrato/enviar"
+
+// ExtratoDocumentos é o arquivo e a identificação do envio pela Central de Documentos.
+type ExtratoDocumentos struct {
+	Ano, Mes        int
+	IDContaBancaria int64
+	Arquivo         string // nome original
+	Conteudo        []byte
+}
+
+// EnviarExtratoDocumentos envia o extrato pela Central de Documentos, como o painel faz com os
+// formatos que não são OFX nem PDF: a Contabilizei importa o arquivo manualmente.
+func EnviarExtratoDocumentos(ctx context.Context, s Sender, e ExtratoDocumentos) error {
+	return s.SendMultipart(ctx, "POST", PathEnviarExtratoDocumentos, []Campo{
+		{Nome: "documento", Arquivo: e.Arquivo, Conteudo: e.Conteudo, Tipo: TipoArquivo(e.Arquivo)},
+		{Nome: "competencia", Valor: fmt.Sprintf("%02d/%d", e.Mes, e.Ano)},
+		{Nome: "idContaBancaria", Valor: strconv.FormatInt(e.IDContaBancaria, 10)},
+	}, nil)
 }
 
 // PathExcluirExtrato exclui o extrato importado de uma conta num mês (DELETE; fora do

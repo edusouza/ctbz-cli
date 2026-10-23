@@ -1,0 +1,23 @@
+[
+  {
+    "metodo": "POST",
+    "caminho": "/api/plataforma/upload-documentos/extrato/enviar",
+    "content_type": "multipart/form-data",
+    "campos": [
+      {
+        "nome": "documento",
+        "arquivo": "extrato.csv",
+        "tipo": "text/csv",
+        "tamanho": 10
+      },
+      {
+        "nome": "competencia",
+        "valor": "09/2026"
+      },
+      {
+        "nome": "idContaBancaria",
+        "valor": "7"
+      }
+    ]
+  }
+]
