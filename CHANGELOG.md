@@ -11,9 +11,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 - Modo verbose: `--verbose` (em qualquer comando) ou `CTBZ_DEBUG=1` mostra no stderr cada
   requisição, com método, URL, status, tempo, tamanho e cabeçalhos enviados e recebidos.
-  `--verbose --verbose` ou `CTBZ_DEBUG=2` mostra também os corpos, truncados. Valores de
-  cookies, cabeçalhos de autenticação, campos secretos (senha, token, código) e UUIDs saem
-  sempre como `***`. No nível 1, os valores da query também (#902).
+  `--verbose --verbose` ou `CTBZ_DEBUG=2` mostra também os corpos, truncados. Saem sempre
+  como `***`: valores de cookies, cabeçalhos e campos de credencial (senha, token, código,
+  chave, sessão, `Authorization`, JWT), dados de pagamento das respostas (Pix, linha digitável,
+  código de barras, chave do gateway), UUIDs, JWTs e CPFs/CNPJs no caminho da URL. No nível 1,
+  os valores da query também (#902, #909, #911).
 - `ctbz api -F campo=valor -F campo=@arquivo[;type=tipo]`: envia `multipart/form-data`, como o
   `curl -F`. Assim dá para fazer pela ferramenta de baixo nível os uploads que nenhum comando
   cobre. Sem `-X`, envia com `POST`; não combina com `-d`. Cada arquivo tem até 30 MB, e o
