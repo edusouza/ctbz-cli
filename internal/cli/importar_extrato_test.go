@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -304,5 +305,59 @@ func TestExtratosImportarArquivoNaoReconhecido(t *testing.T) {
 	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
 	if code != ExitError || !strings.Contains(stderr, "não reconheceu o arquivo como extrato bancário; tente o OFX do banco ou o PDF baixado direto do internet banking") {
 		t.Errorf("código %d\n%s", code, stderr)
+	}
+}
+
+// statusNaEscrita responde status às escritas cujo caminho contém trecho; as outras, 200.
+func statusNaEscrita(f *escritaFake, trecho string, status int) {
+	f.onWrite = func(f *escritaFake) {
+		f.status = http.StatusOK
+		if strings.Contains(f.writes[len(f.writes)-1], trecho) {
+			f.status = status
+		}
+	}
+}
+
+func TestExtratosImportarErroDeServidorAoConcluir(t *testing.T) {
+	for _, status := range []int{502, 503, 504} {
+		arq, mt := arquivoExtrato(t, "extrato.pdf")
+		f, _ := importarFake(t, mt, "pdf")
+		statusNaEscrita(f, "eventoUploadExtrato", status)
+		_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
+		want := fmt.Sprintf("o arquivo foi enviado, mas o servidor respondeu com erro (HTTP %d) ao concluir a importação, que pode ou não ter sido aplicada; ", status) +
+			"confira com `ctbz extratos lancamentos --conta-bancaria 7 --competencia 2026-09` antes de repetir"
+		if code != ExitError || len(f.writes) != 2 || !strings.Contains(stderr, want) || strings.Contains(stderr, "não foi concluída") {
+			t.Errorf("%d: código %d, escritas %d\n%s", status, code, len(f.writes), stderr)
+		}
+	}
+}
+
+func TestExtratosImportarRecusaAoConcluir(t *testing.T) {
+	for _, status := range []int{400, 560} {
+		arq, mt := arquivoExtrato(t, "extrato.pdf")
+		f, _ := importarFake(t, mt, "pdf")
+		statusNaEscrita(f, "eventoUploadExtrato", status)
+		_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
+		if code != ExitError || len(f.writes) != 2 || !strings.Contains(stderr, "o arquivo foi enviado, mas a importação não foi concluída") || strings.Contains(stderr, "confira") {
+			t.Errorf("%d: código %d, escritas %d\n%s", status, code, len(f.writes), stderr)
+		}
+	}
+}
+
+func TestExtratosImportarErroDeServidorNoUpload(t *testing.T) {
+	for _, tc := range []struct{ situacao, want, nao string }{
+		{"PENDENTE", "o servidor respondeu com erro (HTTP 504) no envio do arquivo, mas o extrato de 09/2026 continua PENDENTE: nada foi importado e é seguro rodar o mesmo comando de novo", "confira"},
+		{"IMPORTADO", "o servidor respondeu com erro (HTTP 504) no envio do arquivo e o extrato de 09/2026 aparece como IMPORTADO; confira com `ctbz extratos lancamentos --conta-bancaria 7 --competencia 2026-09` antes de repetir", "seguro"},
+	} {
+		arq, mt := arquivoExtrato(t, "extrato.pdf")
+		f, _ := importarFake(t, mt, "pdf")
+		statusNaEscrita(f, "enviar/bucket", 504)
+		// O servidor aplicou o envio (ou não) e respondeu 504.
+		responder := f.onWrite
+		f.onWrite = func(f *escritaFake) { responder(f); comSituacao(f, tc.situacao) }
+		_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
+		if code != ExitError || len(f.writes) != 1 || !strings.Contains(stderr, tc.want) || strings.Contains(stderr, tc.nao) {
+			t.Errorf("%s: código %d, escritas %d\n%s", tc.situacao, code, len(f.writes), stderr)
+		}
 	}
 }
