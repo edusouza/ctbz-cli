@@ -43,13 +43,18 @@ Envio e declarações de inexistência: skill `fechamento-mensal`, seção 6.
 ```sh
 ctbz contas-bancarias -o json
 ctbz contas-bancarias bancos -o json            # id e código dos bancos aceitos
-ctbz contas-bancarias adicionar --banco 341 --agencia 1234 --conta 12345-6 \
+ctbz contas-bancarias adicionar --banco 237 --agencia 1234 --conta 12345-6 \
   --abertura 2024-01-10 --declaro-conta-pj [--saldo-inicial 0,00] --dry-run
 ctbz contas-bancarias editar ID --abertura 2024-02-01 --dry-run
 ctbz contas-bancarias remover ID --dry-run      # risco alto: permanente
 ```
 
 `--declaro-conta-pj` afirma que a conta é PJ e movimenta só este CNPJ: confirme com o usuário.
+
+Confira o banco no resumo do `--dry-run` (nome e código) antes de confirmar: há códigos
+repetidos e pares nacional/internacional (`077` Banco Inter S.A. e `077-1` Banco Inter -
+Internacional). Se a CLI disser que o código corresponde a mais de um banco, pergunte qual é e
+passe o **id** em `--banco`.
 A data de abertura define desde quando a Contabilizei pede extratos. Atualize o dossiê.
 
 ## Usuários com acesso

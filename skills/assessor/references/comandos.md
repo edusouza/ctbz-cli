@@ -131,7 +131,7 @@ Campos do JSON de cada comando: [campos-json.md](campos-json.md).
 ```text
 --abertura string        data de abertura da conta AAAA-MM-DD (define desde quando os extratos são pedidos)
 --agencia string         agência, sem dígito
---banco string           banco: id ou código (ver ctbz contas-bancarias bancos)
+--banco string           banco: id ou código exato (ver ctbz contas-bancarias bancos)
 --conta string           conta com dígito (ex.: 12345-6)
 --declaro-conta-pj       declara que é uma conta PJ que movimenta só este CNPJ (obrigatório)
 --saldo-inicial string   saldo na abertura, em reais (padrão: 0)
@@ -144,7 +144,7 @@ Campos do JSON de cada comando: [campos-json.md](campos-json.md).
 ```text
 --abertura string        data de abertura da conta AAAA-MM-DD (define desde quando os extratos são pedidos)
 --agencia string         agência, sem dígito
---banco string           banco: id ou código (ver ctbz contas-bancarias bancos)
+--banco string           banco: id ou código exato (ver ctbz contas-bancarias bancos)
 --conta string           conta com dígito (ex.: 12345-6)
 --saldo-inicial string   saldo na abertura, em reais (padrão: 0)
 ```

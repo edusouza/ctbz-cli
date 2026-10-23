@@ -53,7 +53,7 @@ inexistência ficam na skill [`fechamento-mensal`](../fechamento-mensal/README.m
 ```sh
 ctbz contas-bancarias -o json
 ctbz contas-bancarias bancos -o json
-ctbz contas-bancarias adicionar --banco 341 --agencia 1234 --conta 12345-6 \
+ctbz contas-bancarias adicionar --banco 237 --agencia 1234 --conta 12345-6 \
   --abertura 2024-01-10 --declaro-conta-pj --dry-run
 ```
 

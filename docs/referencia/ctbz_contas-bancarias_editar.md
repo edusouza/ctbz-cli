@@ -26,7 +26,7 @@ ctbz contas-bancarias editar ID [flags]
 ```
       --abertura string        data de abertura da conta AAAA-MM-DD (define desde quando os extratos são pedidos)
       --agencia string         agência, sem dígito
-      --banco string           banco: id ou código (ver ctbz contas-bancarias bancos)
+      --banco string           banco: id ou código exato (ver ctbz contas-bancarias bancos)
       --conta string           conta com dígito (ex.: 12345-6)
       --dry-run                mostra a requisição que seria enviada, sem enviar
       --saldo-inicial string   saldo na abertura, em reais (padrão: 0)

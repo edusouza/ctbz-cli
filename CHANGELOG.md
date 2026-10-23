@@ -32,6 +32,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   tem limite e dá erro numa página repetida, em vez de truncar a lista. A lista ganha a
   situação e a classificação sugerida, com a probabilidade; mês sem lançamentos avisa no stderr
   e sai com 0 (#852).
+- `ctbz contas-bancarias adicionar --banco 077` escolhe o Banco Inter S.A. (código exato), e não
+  o Banco Inter - Internacional (077-1). `--banco` usa o id, depois o código exato e só então o
+  código sem sufixo; código de mais de um banco dá erro com a lista de candidatos. O resumo e o
+  `--dry-run` mostram o código do banco (#853).
 
 ## [1.8.0] - 2026-10-04
 
