@@ -52,7 +52,9 @@ dispensa importação) cujo mês `M` falta:
    relê a competência e diz se é seguro repetir ("nada foi importado e é seguro rodar o mesmo
    comando de novo"). Só repita nesse caso, uma vez. Se ela mandar conferir (competência
    `IMPORTADO`/`PROCESSANDO`, ou queda/5xx ao concluir), rode `ctbz extratos` e
-   `ctbz extratos lancamentos` e mostre ao usuário antes de qualquer nova tentativa.
+   `ctbz extratos lancamentos` e mostre ao usuário antes de qualquer nova tentativa. Depois de
+   um `--substituir` que excluiu o extrato antigo e falhou, nunca repita com `--substituir` sem
+   conferir: se o novo arquivo entrou, ele seria excluído.
 
 Importou o mês errado? `ctbz extratos excluir` é **risco alto** (perde as classificações).
 
