@@ -18,6 +18,7 @@ O risco é o que a CLI declara. No terminal, o médio pede `[s/N]` e o alto pede
 | `caixa adicionar` / `editar` | editar de novo ou `caixa remover` |
 | `caixa remover ID` | não (a CLI mostra o `caixa adicionar` que recria) |
 | `extratos importar ARQ` | `extratos excluir` (risco alto) |
+| `extratos importar ARQ --substituir` (extrato atual vazio) | reimportar com `--substituir`; com lançamentos é risco alto |
 | `extratos classificar` / `desmembrar` / `desfazer-desmembramento` | sim, enquanto os contadores não fecharem o período |
 | `rotinas reclassificar --classificacao` | a rotina não reabre; a classificação ainda muda com `extratos classificar` |
 | `impostos confirmar ID [--nao-paguei]` | `impostos desmarcar ID`. É declaração, não pagamento |
@@ -41,6 +42,7 @@ O risco é o que a CLI declara. No terminal, o médio pede `[s/N]` e o alto pede
 | `pendencias aceitar CHAVE` | declaração legal sem revogação (texto impresso antes) |
 | `pendencias conciliacao resolver` | define a natureza fiscal do recebimento; pode ser refeita, não apagada |
 | `extratos excluir` | perde classificações; só reimportando |
+| `extratos importar ARQ --substituir` (extrato atual com lançamentos) | exclui o extrato atual antes de importar: perde as classificações, sem desfazer |
 | `contas-bancarias remover ID` | permanente; vínculos se perdem |
 | `notas entrada manifestar --confirmar/--desconhecer/--nao-realizada` | evento fiscal na SEFAZ, sem desfazer |
 | `documentos sem-arquivo` / `sem-aplicacao` | declaração que fecha pendências, sem desfazer |
