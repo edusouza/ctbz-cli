@@ -84,7 +84,7 @@ em reais são números, datas `AAAA-MM-DD`, horários RFC 3339, CNPJ/CPF só dí
 | `caixa contas`, `extratos contas` | lista | `id`, `descricao`, `classificacao`/`tipo`, `vinculo`/`exige_socio` |
 | `extratos` | lista | `competencia`, `banco`, `agencia`, `conta`, `situacao` (`ABERTO`/`FECHADO`), `integracao`, `id_conta` |
 | `contas-bancarias` | lista | `id`, `banco`, `codigo_banco`, `agencia`, `conta`, `saldo_inicial`, `data_saldo_inicial`, `integracao`, `fluxo_integracao` |
-| `extratos lancamentos` | lista | `id`, `data`, `descricao`, `valor`, `classificacao`, `id_classificacao`, `id_lancamento_pai` |
+| `extratos lancamentos` | lista | `id`, `data`, `descricao`, `valor`, `classificacao`, `id_classificacao`, `id_lancamento_pai`, `situacao`, `sugestao`, `probabilidade_sugestao` (0–100) |
 | `contas` | lista | `id`, `descricao`, `conta_contabil`, `classificacao`, `situacao` |
 | `rotinas reclassificar ID` | lista | `id_pendencia`, `descricao`, `valor`, `classificacao_atual`, `id_classificacao`, `classificacao`, `socios` |
 

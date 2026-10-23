@@ -208,8 +208,10 @@ Confirma? [s/N]
 ```
 
 - O id da conta bancária vem de `ctbz contas-bancarias` ou `ctbz extratos`.
-- `lancamentos` mostra a classificação atual e, nas partes de um lançamento desmembrado, o id
-  do original (coluna "Parte de").
+- `lancamentos` mostra a classificação atual (pelo nome), a situação, a classificação que a
+  Contabilizei sugere com a probabilidade em % e, nas partes de um lançamento desmembrado, o id
+  do original (coluna "Parte de"). Mês sem lançamentos imprime uma lista vazia, avisa no stderr
+  e sai com código 0.
 - Entradas aceitam classificações `RECEITA` e saídas, `DESPESA` (`ctbz extratos contas`).
   Classificações de sócio exigem `--socio` (ids dos sócios do extrato).
 - Quando os contadores já fecharam o período, a classificação não pode mais ser trocada: o

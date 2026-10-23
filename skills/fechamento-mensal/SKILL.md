@@ -55,7 +55,9 @@ ctbz extratos contas --competencia M -o json      # opções aceitas (RECEITA p/
 
 1. Separe os lançamentos sem classificação ou com classificação duvidosa.
 2. Proponha uma classificação para cada um **escolhida da lista de `extratos contas`** (nunca
-   invente nomes). Pistas em [references/classificacao.md](references/classificacao.md).
+   invente nomes). Pistas em [references/classificacao.md](references/classificacao.md) e em
+   `sugestao`/`probabilidade_sugestao`, a sugestão da própria Contabilizei (é só uma pista:
+   confira com a descrição).
    Pergunte quando não der para saber (transferência de sócio, por exemplo: aporte, empréstimo
    ou devolução?).
 3. Mostre a tabela inteira (data, descrição, valor, classificação proposta). Um "ok" do usuário

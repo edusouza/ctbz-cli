@@ -20,9 +20,9 @@ func TestParseParte(t *testing.T) {
 func TestExtratosDesmembrar(t *testing.T) {
 	f := extratoFake(t)
 	f.onWrite = func(f *escritaFake) {
-		f.gets[pathLancsExtrato] = `{"total":2,"list":[
-{"id":201,"data":1789786800000,"descricao":"Fornecedor","valor":-1000,"idContaUsuario":1000000000000012,"idLancamentoPai":1000000000000102},
-{"id":202,"data":1789786800000,"descricao":"Lucros","valor":-234.56,"idContaUsuario":6199733752168448,"idLancamentoPai":1000000000000102}]}`
+		f.gets[pathLancsExtrato] = `[
+{"idLancamentoUsuario":201,"data":1789786800000,"descricao":"Fornecedor","valor":-1000,"idContaUsuario":1000000000000012,"idLancamentoPai":1000000000000102},
+{"idLancamentoUsuario":202,"data":1789786800000,"descricao":"Lucros","valor":-234.56,"idContaUsuario":6199733752168448,"idLancamentoPai":1000000000000102}]`
 	}
 	out, stderr, code := execCLI(t, "", "extratos", "desmembrar", "1000000000000102", "--conta-bancaria", "7", "--competencia", "2026-09",
 		"--parte", "Fornecedor:1.000,00:Pagamento de Fornecedores", "--parte", "Lucros:234,56:6199733752168448:1000000000000031", "--yes", "-o", "json")
@@ -68,7 +68,7 @@ func TestExtratosDesmembrarValidacoes(t *testing.T) {
 func TestExtratosDesfazerDesmembramento(t *testing.T) {
 	f := extratoFake(t)
 	f.onWrite = func(f *escritaFake) {
-		f.gets[pathLancsExtrato] = `{"total":1,"list":[{"id":1000000000000100,"data":1789786800000,"descricao":"Original","valor":-1200,"idContaUsuario":null}]}`
+		f.gets[pathLancsExtrato] = `[{"idLancamentoUsuario":1000000000000100,"data":1789786800000,"descricao":"Original","valor":-1200,"idContaUsuario":null}]`
 	}
 	// Pelo id de uma parte: o pedido vai para o original.
 	out, stderr, code := execCLI(t, "", "extratos", "desfazer-desmembramento", "1000000000000103", "--conta-bancaria", "7", "--competencia", "2026-09", "--yes", "-o", "json")

@@ -20,7 +20,7 @@ func PathLancamentosExtrato(idContaBancaria int64, ano, mes, pagina int) string 
 
 // LancamentoExtrato é um lançamento do extrato importado.
 type LancamentoExtrato struct {
-	ID        int64    `json:"id"`
+	ID        int64    `json:"idLancamentoUsuario"`
 	Data      Data     `json:"data"`
 	Descricao string   `json:"descricao"`
 	Valor     *float64 `json:"valor"` // negativo nas saídas
@@ -28,27 +28,60 @@ type LancamentoExtrato struct {
 	IDContaUsuario  *int64          `json:"idContaUsuario"`
 	IDLancamentoPai *int64          `json:"idLancamentoPai" contract:"optional"` // parte de um desmembramento
 	IDVinculo       json.RawMessage `json:"idVinculo" contract:"optional"`
+	Situacao        string          `json:"situacao" contract:"optional"` // ex.: CONFIRMADO
+	// Sugestoes são as classificações que a Contabilizei sugere, que o painel mostra primeiro.
+	Sugestoes []SugestaoClassificacao `json:"predicts" contract:"optional"`
 }
 
-// PaginaLancamentosExtrato é a resposta de PathLancamentosExtrato (formato incerto, ADR-0021).
-type PaginaLancamentosExtrato struct {
-	List  []LancamentoExtrato `json:"list"`
-	Total int                 `json:"total"`
+// SugestaoClassificacao é uma classificação sugerida para um lançamento do extrato.
+type SugestaoClassificacao struct {
+	IDContaUsuario int64   `json:"idContaUsuario"`
+	Descricao      string  `json:"descricao"`
+	Probabilidade  float64 `json:"probabilidade"` // de 0 a 1
 }
 
-// BuscarLancamentosExtrato lê todas as páginas de lançamentos do extrato do mês.
+// MelhorSugestao devolve a sugestão mais provável, se houver.
+func (l LancamentoExtrato) MelhorSugestao() *SugestaoClassificacao {
+	var melhor *SugestaoClassificacao
+	for i := range l.Sugestoes {
+		if melhor == nil || l.Sugestoes[i].Probabilidade > melhor.Probabilidade {
+			melhor = &l.Sugestoes[i]
+		}
+	}
+	return melhor
+}
+
+// maxPaginasExtrato protege contra paginação que nunca termina (10 mil lançamentos no mês).
+const maxPaginasExtrato = 100
+
+// BuscarLancamentosExtrato lê todas as páginas de lançamentos do extrato do mês. Cada página é
+// um array (a resposta não traz total): a leitura para na primeira página incompleta ou vazia.
+// Uma página cheia que só repete lançamentos já lidos (o servidor ignorou o número da página) e
+// o limite de páginas são erro, para nunca devolver a lista truncada em silêncio.
 func BuscarLancamentosExtrato(ctx context.Context, g Getter, idContaBancaria int64, ano, mes int) ([]LancamentoExtrato, error) {
-	var todos []LancamentoExtrato
-	for pagina := 1; ; pagina++ {
-		p, err := get[PaginaLancamentosExtrato](ctx, g, PathLancamentosExtrato(idContaBancaria, ano, mes, pagina))
+	todos := []LancamentoExtrato{}
+	vistos := map[int64]bool{}
+	for pagina := 1; pagina <= maxPaginasExtrato; pagina++ {
+		p, err := get[[]LancamentoExtrato](ctx, g, PathLancamentosExtrato(idContaBancaria, ano, mes, pagina))
 		if err != nil {
 			return nil, err
 		}
-		todos = append(todos, p.List...)
-		if len(p.List) < RegistrosPorPaginaExtrato || len(todos) >= p.Total {
+		novos := 0
+		for _, l := range *p {
+			if !vistos[l.ID] {
+				vistos[l.ID] = true
+				todos = append(todos, l)
+				novos++
+			}
+		}
+		if len(*p) < RegistrosPorPaginaExtrato {
 			return todos, nil
 		}
+		if novos == 0 {
+			return nil, fmt.Errorf("a página %d de lançamentos do extrato de %02d/%d repete a anterior; a paginação não avança e a lista ficaria incompleta", pagina, mes, ano)
+		}
 	}
+	return nil, fmt.Errorf("o extrato de %02d/%d tem mais de %d páginas de lançamentos; a paginação parece não terminar", mes, ano, maxPaginasExtrato)
 }
 
 // PathExtratoInfo descreve o extrato de uma conta num mês: se dá para editar os lançamentos,

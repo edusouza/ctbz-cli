@@ -97,6 +97,10 @@ Convenções:
 
   - `idLancamentoUsuario`: item de
     `GET /movimentacao-financeira/lancamento-usuario/paginado?idContaBancaria&ano&mes&registroPorPagina=100&pagina=N`.
+    A resposta é um **array** de lançamentos, sem total (`[]` no mês vazio), verificado numa
+    conta real (#852): `{idLancamentoUsuario, data (epoch ms), descricao, valor, idContaUsuario,
+    idVinculo, idLancamentoPai, situacao ("CONFIRMADO"…), predicts: [{idContaUsuario, descricao,
+    probabilidade, tipo, situacao}]}`. A CLI pagina até a primeira página incompleta.
   - `idContaUsuario`: escolhido no autocomplete "Classificação". As opções vêm de
     `GET movimentacao-financeira/contas-usuario/{ano}/{mes}?origem=EXTRATO`. Ficam só as que têm `exibir`,
     `situacao === "ATIVO"` e `classificacao` igual a `RECEITA` (se `valor > 0`) ou `DESPESA` (se `valor < 0`).
