@@ -266,11 +266,16 @@ ID                Classificação                                Tipo         Ex
 
 ```sh
 ctbz contas-bancarias bancos                      # bancos aceitos (id e código)
-ctbz contas-bancarias adicionar --banco 341 --agencia 1234 --conta 12345-6 \
+ctbz contas-bancarias adicionar --banco 237 --agencia 1234 --conta 12345-6 \
   --abertura 2024-01-10 --declaro-conta-pj
 ctbz contas-bancarias editar 1000000000000001 --abertura 2024-02-01
 ```
 
+- `--banco` aceita o id ou o código. O código vale pelo valor exato: `077` é o Banco Inter
+  S.A., e o Banco Inter - Internacional só é escolhido com `077-1`. Sem código exato, vale o
+  código sem o sufixo (`104` → `104-0`) se houver um só banco. Se o código for de mais de um
+  banco (há códigos repetidos na lista), a CLI lista id, código e nome e pede o id. O resumo da
+  confirmação e o `--dry-run` mostram o nome e o código do banco escolhido.
 - `--declaro-conta-pj` é obrigatório, como o checkbox do painel: a conta é PJ e movimenta só
   este CNPJ.
 - A data de abertura define desde quando a Contabilizei vai pedir os extratos da conta.

@@ -21,8 +21,12 @@ func newContasBancariasBancosCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "bancos",
 		Short: "Lista os bancos aceitos no cadastro de contas bancárias",
-		Long:  `Lista os bancos aceitos no cadastro de contas (id, código e nome); use o id ou o código em --banco.`,
-		Args:  exactArgs(0, "nenhum argumento"),
+		Long: `Lista os bancos aceitos no cadastro de contas (id, código e nome); use o id ou o código em --banco.
+
+Alguns códigos se repetem (ex.: dois bancos com 341) ou têm uma versão internacional (077 e
+077-1). --banco escolhe o código exato; se mais de um banco tiver o código, a CLI lista os
+candidatos e pede o id.`,
+		Args: exactArgs(0, "nenhum argumento"),
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			f, err := outputFormat(cmd, "")
 			if err != nil {
@@ -42,15 +46,65 @@ func newContasBancariasBancosCmd() *cobra.Command {
 	}
 }
 
-// acharBanco resolve --banco pelo id ou pelo código (com ou sem dígito, ex.: 341 ou 341-7).
+// acharBanco resolve --banco pelo id; depois pelo código exato (ex.: 077 ou 341-7); e, só sem
+// código exato, pelo código sem o sufixo (341 → 341-7). Nunca escolhe entre candidatos: há
+// bancos com o mesmo código (ex.: 341) e pares nacional/internacional (077 e 077-1).
 func acharBanco(bancos []api.Banco, v string) (api.Banco, error) {
+	v = strings.TrimSpace(v)
 	for _, b := range bancos {
-		cod, _, _ := strings.Cut(b.Codigo, "-")
-		if strconv.FormatInt(b.ID, 10) == v || (b.Codigo != "" && (b.Codigo == v || cod == v)) {
+		if strconv.FormatInt(b.ID, 10) == v {
 			return b, nil
 		}
 	}
-	return api.Banco{}, usageError{fmt.Errorf("banco %q não encontrado; veja ctbz contas-bancarias bancos", v)}
+	var exatos, semSufixo []api.Banco
+	for _, b := range bancos {
+		cod, _, _ := strings.Cut(b.Codigo, "-")
+		switch {
+		case b.Codigo == "":
+		case b.Codigo == v:
+			exatos = append(exatos, b)
+		case cod == v:
+			semSufixo = append(semSufixo, b)
+		}
+	}
+	candidatos := exatos
+	if len(candidatos) == 0 {
+		candidatos = semSufixo
+	}
+	switch len(candidatos) {
+	case 0:
+		return api.Banco{}, usageError{fmt.Errorf("banco %q não encontrado; veja ctbz contas-bancarias bancos", v)}
+	case 1:
+		return candidatos[0], nil
+	}
+	linhas := make([]string, len(candidatos))
+	for i, b := range candidatos {
+		linhas[i] = fmt.Sprintf("  %d  %s  %s", b.ID, b.Codigo, b.Nome)
+	}
+	return api.Banco{}, usageError{fmt.Errorf("o código %q corresponde a %d bancos; informe o id em --banco:\n%s",
+		v, len(candidatos), strings.Join(linhas, "\n"))}
+}
+
+// bancoAtual acha o banco de uma conta que não traz o id do banco, pelo código e, se o
+// código for ambíguo, também pelo nome.
+func bancoAtual(bancos []api.Banco, codigo, nome string) (api.Banco, bool) {
+	if b, err := acharBanco(bancos, codigo); err == nil {
+		return b, true
+	}
+	for _, b := range bancos {
+		if codigo != "" && b.Codigo == codigo && strings.EqualFold(b.Nome, nome) {
+			return b, true
+		}
+	}
+	return api.Banco{}, false
+}
+
+// nomeBanco mostra o nome do banco com o código, para não confundir bancos de mesmo nome.
+func nomeBanco(b api.Banco) string {
+	if b.Codigo == "" {
+		return b.Nome
+	}
+	return fmt.Sprintf("%s (%s)", b.Nome, b.Codigo)
 }
 
 // normalizarConta tira hífen, pontos e espaços: o painel envia conta e dígito juntos.
@@ -65,7 +119,7 @@ type contaBancariaFlags struct {
 
 func (f *contaBancariaFlags) add(cmd *cobra.Command) {
 	fl := cmd.Flags()
-	fl.StringVar(&f.banco, "banco", "", "banco: id ou código (ver ctbz contas-bancarias bancos)")
+	fl.StringVar(&f.banco, "banco", "", "banco: id ou código exato (ver ctbz contas-bancarias bancos)")
 	fl.StringVar(&f.agencia, "agencia", "", "agência, sem dígito")
 	fl.StringVar(&f.conta, "conta", "", "conta com dígito (ex.: 12345-6)")
 	fl.StringVar(&f.abertura, "abertura", "", "data de abertura da conta AAAA-MM-DD (define desde quando os extratos são pedidos)")
@@ -144,7 +198,7 @@ médio: dá para editar depois). ` + avisoAbertura + `
 movimentações refletem exclusivamente este CNPJ".
 
 Pede confirmação (--yes em scripts) e aceita --dry-run.`,
-		Example: `  ctbz contas-bancarias adicionar --banco 341 --agencia 1234 --conta 12345-6 \
+		Example: `  ctbz contas-bancarias adicionar --banco 237 --agencia 1234 --conta 12345-6 \
     --abertura 2024-01-10 --declaro-conta-pj`,
 		Args: exactArgs(0, "nenhum argumento"),
 		RunE: func(cmd *cobra.Command, _ []string) error {
@@ -181,7 +235,7 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 				DataSaldoInicial: abertura, VlrSaldoInicial: saldo}
 			fmt.Fprintln(s.err, avisoAbertura)
 			op := operacao{Risco: riscoMedio, Resumo: fmt.Sprintf("Cadastrar a conta %s, aberta em %s com saldo de %s",
-				descreverConta(banco.Nome, req.Agencia, req.ContaCorrente), abertura, formatarCentavos(centavos(saldo)))}
+				descreverConta(nomeBanco(banco), req.Agencia, req.ContaCorrente), abertura, formatarCentavos(centavos(saldo)))}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.SalvarContaBancaria(ctx, snd, req) })
 			if err != nil || !enviado {
 				return err
@@ -268,10 +322,11 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 			if atual.VlrSaldoInicial != nil {
 				req.VlrSaldoInicial = *atual.VlrSaldoInicial
 			}
-			nomeBanco := atual.NomeBanco
+			bancoAntes := nomeBanco(api.Banco{Nome: atual.NomeBanco, Codigo: atual.CodigoBanco})
+			bancoDepois, nomeResultado := bancoAntes, atual.NomeBanco
 			if atual.BancoID != nil {
 				req.BancoID = *atual.BancoID
-			} else if b, err := acharBanco(lista.Bancos, atual.CodigoBanco); err == nil {
+			} else if b, ok := bancoAtual(lista.Bancos, atual.CodigoBanco, atual.NomeBanco); ok {
 				req.BancoID = b.ID
 			}
 			if f.banco != "" {
@@ -279,7 +334,7 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 				if err != nil {
 					return err
 				}
-				req.BancoID, nomeBanco = b.ID, b.Nome
+				req.BancoID, bancoDepois, nomeResultado = b.ID, nomeBanco(b), b.Nome
 			}
 			if req.BancoID == 0 {
 				return usageError{errors.New("não foi possível identificar o banco atual da conta; informe --banco")}
@@ -302,7 +357,7 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 				}
 			}
 			op := operacao{Risco: riscoMedio, ID: args[0], Resumo: fmt.Sprintf("Editar a conta %d: %s → %s, abertura %s, saldo inicial %s",
-				atual.ID, descreverConta(atual.NomeBanco, atual.Agencia, atual.ContaCorrente), descreverConta(nomeBanco, req.Agencia, req.ContaCorrente),
+				atual.ID, descreverConta(bancoAntes, atual.Agencia, atual.ContaCorrente), descreverConta(bancoDepois, req.Agencia, req.ContaCorrente),
 				req.DataSaldoInicial, formatarCentavos(centavos(req.VlrSaldoInicial)))}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.SalvarContaBancaria(ctx, snd, req) })
 			if err != nil || !enviado {
@@ -312,7 +367,7 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 			if err != nil {
 				fmt.Fprintln(s.err, "aviso: conta salva, mas não foi possível reler a lista:", err)
 			}
-			return output.Write(s.out, formato, contaResultado("editar", "editado", relida, req, nomeBanco))
+			return output.Write(s.out, formato, contaResultado("editar", "editado", relida, req, nomeResultado))
 		},
 	}
 	f.add(cmd)

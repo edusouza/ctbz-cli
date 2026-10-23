@@ -3,6 +3,8 @@ package cli
 import (
 	"strings"
 	"testing"
+
+	"github.com/edusouza/ctbz-cli/internal/api"
 )
 
 const (
@@ -64,6 +66,65 @@ func TestContasBancariasAdicionarValidacoes(t *testing.T) {
 		if code != ExitUsage || !strings.Contains(stderr, tc.want) || len(f.writes) != 0 {
 			t.Errorf("%v: código %d, %d escritas, %q (quero %q)", tc.args, code, len(f.writes), stderr, tc.want)
 		}
+	}
+}
+
+// bancosAmbiguos tem os casos da lista real: par nacional/internacional (077 e 077-1), o mesmo
+// código em dois bancos (341) e um código que só existe com sufixo (104-0).
+var bancosAmbiguos = []api.Banco{
+	{ID: 11, Codigo: "077-1", Nome: "Banco Exemplo - Internacional"},
+	{ID: 12, Codigo: "077", Nome: "Banco Exemplo S.A."},
+	{ID: 21, Codigo: "341", Nome: "Banco Repetido"},
+	{ID: 22, Codigo: "341", Nome: "Banco Repetido S.A."},
+	{ID: 31, Codigo: "104-0", Nome: "Banco Com Dígito"},
+	{ID: 41, Codigo: "218-1", Nome: "Outro - Internacional"},
+	{ID: 42, Codigo: "218-2", Nome: "Outro - Digital"},
+}
+
+func TestAcharBanco(t *testing.T) {
+	for _, tc := range []struct {
+		v    string
+		id   int64
+		erro string
+	}{
+		{"077", 12, ""},   // código exato, não o internacional
+		{"077-1", 11, ""}, // o internacional só pelo código completo
+		{"11", 11, ""},    // id
+		{" 104 ", 31, ""}, // sem o sufixo, quando só há um
+		{"104-0", 31, ""},
+		{"341", 0, "corresponde a 2 bancos"},
+		{"218", 0, "corresponde a 2 bancos"},
+		{"999", 0, "não encontrado"},
+	} {
+		b, err := acharBanco(bancosAmbiguos, tc.v)
+		switch {
+		case tc.erro == "" && (err != nil || b.ID != tc.id):
+			t.Errorf("%q: %+v, %v (quero id %d)", tc.v, b, err, tc.id)
+		case tc.erro != "" && (err == nil || !strings.Contains(err.Error(), tc.erro)):
+			t.Errorf("%q: %+v, %v (quero erro %q)", tc.v, b, err, tc.erro)
+		}
+	}
+	_, err := acharBanco(bancosAmbiguos, "341")
+	if !strings.Contains(err.Error(), "21  341  Banco Repetido\n") || !strings.Contains(err.Error(), "22  341  Banco Repetido S.A.") {
+		t.Errorf("a lista de candidatos deve ter id, código e nome: %v", err)
+	}
+	if b, ok := bancoAtual(bancosAmbiguos, "341", "banco repetido s.a."); !ok || b.ID != 22 {
+		t.Errorf("banco atual pelo código e nome: %+v %v", b, ok)
+	}
+}
+
+func TestContasBancariasAdicionarCodigoExato(t *testing.T) {
+	f := contasFake(t)
+	f.gets[pathContasBancarias] = `{"bancos":[{"id":11,"codigo":"077-1","nome":"Banco Exemplo - Internacional"},{"id":12,"codigo":"077","nome":"Banco Exemplo S.A."},
+{"id":21,"codigo":"341","nome":"Banco Repetido"},{"id":22,"codigo":"341","nome":"Banco Repetido S.A."}],"contasBancarias":[]}`
+	args := []string{"contas-bancarias", "adicionar", "--agencia", "0001", "--conta", "12345-6", "--abertura", "2026-08-01", "--declaro-conta-pj", "--dry-run"}
+	out, stderr, code := execCLI(t, "", append(args, "--banco", "077")...)
+	if code != ExitOK || len(f.writes) != 0 || !strings.Contains(stderr, "Cadastrar a conta Banco Exemplo S.A. (077) agência 0001") || !strings.Contains(out, `"bancoId": 12`) {
+		t.Errorf("código %d, escritas %v\nstderr %s\nsaída %s", code, f.writes, stderr, out)
+	}
+	_, stderr, code = execCLI(t, "", append(args, "--banco", "341")...)
+	if code != ExitUsage || !strings.Contains(stderr, "corresponde a 2 bancos; informe o id em --banco") || !strings.Contains(stderr, "22  341  Banco Repetido S.A.") {
+		t.Errorf("ambíguo: código %d, %s", code, stderr)
 	}
 }
 
