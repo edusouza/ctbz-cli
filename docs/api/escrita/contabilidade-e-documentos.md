@@ -258,7 +258,10 @@ O nome "bucket" indica apenas que o backend grava o arquivo no storage.
 - `multipart/form-data` com os campos `nomeArquivo`, `ano`, `mes`, `documento` (o arquivo) e `idConta`.
 - `nomeArquivo` é gerado pelo front: `"<cnpjEmpresa>_<ano>_<mes>_<numeroConta>_<file.lastModified><.ext>"`.
   Esse nome é reaproveitado depois em `info-extrato/...` e em `eventoUploadExtrato.nomeArquivoStorage`.
-- **Formatos:** `.ofx`, `.pdf` (`extencoesValidas`, `acceptedFiles: "application/pdf,.ofx"`), até **30 MB**.
+- **Formatos:** só `.ofx` e `.pdf` (`extencoesValidas: [".pdf",".ofx",".PDF",".OFX"]`,
+  `acceptedFiles: "application/pdf,.ofx"`), até **30 MB**, **mesmo que o banco declare outros**
+  em `formatosDisponiveisUpload` (conferido no chunk `movimentacao-financeira` em 23/10/2026).
+  Os outros formatos vão pelo caminho (b).
   Se o banco tem `importacaoManualParaPdf` e o arquivo é PDF, a tela mostra o erro "ErroImportacaoManual".
 - **Erros conhecidos:**
   - `exception/movimentacao-financeira-901`: "Por enquanto a importação do seu banco é compatível
@@ -274,16 +277,26 @@ O nome "bucket" indica apenas que o backend grava o arquivo no storage.
 
 **(b) `POST upload-documentos/extrato/enviar`** (Central de Documentos, ausente do catálogo, usa `axios({method,url})`)
 
-- `multipart/form-data` com os campos `documento` (arquivo), `competencia` (`"MM/AAAA"`) e `idContaBancaria`.
+- `multipart/form-data` com os campos `documento` (arquivo), `competencia` (`"MM/AAAA"`, mês com dois
+  dígitos) e `idContaBancaria`, nessa ordem.
 - Os bancos e as contas vêm de `GET upload-documentos/extrato/v2/init`, que devolve
   `{bancos:[{id, codigo, formatosDisponiveisUpload:["OFX","PDF",…], contasBancarias:[{id, statusIntegracao,…}]}],
   primeiraCompetencia:{mes, ano}}`. O formato aceito depende do banco. Contas `INTEGRADA` ficam bloqueadas
   ("Não é preciso fazer importação para esta conta, ela é feita automaticamente"). O tamanho máximo é 30 MB.
-  Para o banco de código 323, a tela mostra um alerta do Mercado Pago.
+  Para o banco de código 323, a tela mostra um alerta do Mercado Pago ("Os extratos do Mercado Pago
+  precisam ser enviados em dois formatos: PDF e XLS, pois eles são complementares").
+- **Formatos:** os do banco (`formatosDisponiveisUpload`). A tela compara a extensão do arquivo, em
+  maiúsculas, com essa lista (`accept` do input = `"." + formato`). Ex.: um banco com
+  `["PDF","XLS","CSV"]` aceita `.csv`, mas não `.xlsx`.
 - **UI:** sucesso mostra "Arquivo enviado com sucesso!". Erro mostra `response.data` ou "Arquivo não enviado. Verifique seu
   arquivo e tente enviar novamente."
-- Neste caminho não há confirmação de saldo nem `eventoUploadExtrato` **(incerto se o backend
-  processa como importação ou só arquiva)**.
+- Neste caminho não há confirmação de saldo nem `eventoUploadExtrato`. O modal de sucesso
+  ("ModalExtratoEnviadoSucesso") diz: "Devido ao formato do seu extrato não ser OFX a importação
+  será realizada manualmente pelo nosso time e será concluída em **até 45 dias**, podendo ocorrer
+  antes disso. Confira o status da importação pela tela de extratos bancários." A resposta não é
+  usada pelo front.
+- **Na CLI:** `ctbz extratos importar` usa este caminho para os formatos que não são OFX nem PDF
+  (#899). O resultado sai com `situacao: "enviado"` e `importacao: "manual"`.
 
 **Risco do upload: médio.** O extrato importado entra na contabilidade; o desfazer é o
 `DELETE /movimentacao-financeira/extrato` da seção 1.6.

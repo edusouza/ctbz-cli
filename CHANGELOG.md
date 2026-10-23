@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Changed
+
+- `ctbz extratos importar` confere o formato do arquivo pela lista do banco, numa mensagem só:
+  "o banco desta conta aceita extratos em PDF, XLS ou CSV; este arquivo é .ofx". Antes, a
+  extensão era conferida contra uma lista fixa (`.ofx`/`.pdf`) que contradizia a do banco (#899).
+
 ### Added
 
 - Modo verbose: `--verbose` (em qualquer comando) ou `CTBZ_DEBUG=1` mostra no stderr cada
@@ -21,6 +27,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz acoes` ganha a coluna `arquivos`: nos envios de arquivo (`ctbz api -F`,
   `extratos importar`, `documentos enviar`…), o nome e o tamanho de cada arquivo, nunca o
   conteúdo (#900).
+- `ctbz extratos importar` aceita os formatos que o banco da conta declara além de OFX e PDF
+  (CSV, XLS…). Como a tela "Importar extrato" do painel só aceita OFX e PDF, esses arquivos vão
+  pela Central de Documentos (`POST upload-documentos/extrato/enviar`), num envio só, e a
+  Contabilizei os importa manualmente, em até 45 dias. O resultado sai com
+  `situacao: "enviado"` e a chave nova `importacao` (`automatica` ou `manual`) (#899).
 - Documentado o que a plataforma exige numa chamada: o cookie `oauth-token` e um `User-Agent`
   de navegador. Com o `User-Agent` do `curl`, a resposta é 401 (#902).
 

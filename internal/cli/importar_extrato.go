@@ -43,11 +43,12 @@ func traduzErroImportacao(err error) error {
 	return err
 }
 
-// validarArquivoExtrato confere extensão e tamanho e devolve o formato (OFX ou PDF).
+// validarArquivoExtrato confere a extensão e o tamanho e devolve o formato (a extensão em
+// maiúsculas: OFX, PDF, CSV…). Se o banco aceita o formato, quem diz é validarContaUpload.
 func validarArquivoExtrato(caminho string) (string, os.FileInfo, error) {
 	ext := strings.ToUpper(strings.TrimPrefix(filepath.Ext(caminho), "."))
-	if ext != "OFX" && ext != "PDF" {
-		return "", nil, usageError{fmt.Errorf("o extrato deve ser .ofx ou .pdf: %s", caminho)}
+	if ext == "" {
+		return "", nil, usageError{fmt.Errorf("o arquivo do extrato não tem extensão (.ofx, .pdf, .csv…): %s", caminho)}
 	}
 	fi, err := os.Stat(caminho)
 	if err != nil {
@@ -64,19 +65,25 @@ func newExtratosImportarCmd() *cobra.Command {
 	var substituir bool
 	cmd := &cobra.Command{
 		Use:   "importar ARQUIVO",
-		Short: "Importa o extrato bancário (OFX ou PDF) de uma conta num mês",
+		Short: "Importa o extrato bancário (OFX, PDF ou o formato que o banco aceita) de uma conta num mês",
 		Long: `Importa o extrato do mês de uma conta bancária, como a tela "Importar extrato" do painel
 (risco médio: entra na contabilidade; desfaça com ctbz extratos excluir).
 
-Antes de enviar, a CLI confere a extensão (.ofx ou .pdf), o tamanho (até 30 MB), os formatos
-aceitos pelo banco, se a conta é integrada (essas não precisam de importação), se há um
-período anterior pendente e se a competência já foi importada ou está em processamento (o
-painel também não deixa importar por cima). Depois:
+Antes de enviar, a CLI confere o tamanho (até 30 MB), se o banco aceita o formato do arquivo
+(a lista vem da Contabilizei, e a mensagem de erro a mostra), se a conta é integrada (essas
+não precisam de importação), se há um período anterior pendente e se a competência já foi
+importada ou está em processamento (o painel também não deixa importar por cima).
+
+OFX e PDF passam pela tela "Importar extrato":
 
   1. envia o arquivo;
   2. no OFX, lê o saldo do último dia que a Contabilizei encontrou e pede para confirmar
      (ou compara com --saldo-final; diferente, a importação para);
   3. conclui a importação.
+
+Os demais formatos que o banco aceita (CSV, XLS…) vão pela Central de Documentos, como no
+painel: um envio só, sem conclusão nem saldo, e a Contabilizei importa o arquivo manualmente,
+em até 45 dias. O resultado sai com situacao "enviado" e importacao "manual".
 
 Ao final, a CLI relê a competência: em processamento, avisa para conferir depois; importada
 sem nenhum lançamento, avisa no stderr.
@@ -107,7 +114,8 @@ enviar nada.`,
   ctbz extratos importar extrato.ofx --conta-bancaria 1000000000000001 --competencia 2026-09 \
     --saldo-final 1.234,56 --yes
   ctbz extratos importar extrato-setembro.pdf --conta-bancaria 1000000000000001 --competencia 2026-09 \
-    --substituir --dry-run`,
+    --substituir --dry-run
+  ctbz extratos importar extrato-setembro.csv --conta-bancaria 1000000000000001 --competencia 2026-09`,
 		Args: exactArgs(1, "o ARQUIVO do extrato"),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			alvo, err := extratoFlags(cmd)
@@ -185,15 +193,25 @@ enviar nada.`,
 				Arquivo: filepath.Base(args[0]), Conteudo: conteudo}
 			yes, _ := cmd.Flags().GetBool("yes")
 			mes := alvo.mes.Format("01/2006")
-			op := operacao{Risco: riscoMedio, ID: fmt.Sprint(alvo.conta), Resumo: fmt.Sprintf("Importar o extrato %s (%s, %s) da conta %d em %s",
-				arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)), alvo.conta, mes)}
+			// CSV, XLS e outros formatos fora da tela "Importar extrato" vão pela Central de
+			// Documentos, num envio só, e a Contabilizei os importa manualmente (#899).
+			manual := !api.ImportacaoAutomatica(formatoArq)
+			viaCentral := ""
+			if manual {
+				viaCentral = " pela Central de Documentos"
+			}
+			op := operacao{Risco: riscoMedio, ID: fmt.Sprint(alvo.conta), Resumo: fmt.Sprintf("Importar o extrato %s (%s, %s) da conta %d em %s%s",
+				arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)), alvo.conta, mes, viaCentral)}
 			if existente != nil {
 				atual := "quantidade de lançamentos desconhecida"
 				if existente.lancamentos != nil {
 					atual = fmt.Sprintf("%d lançamentos", *existente.lancamentos)
 				}
-				op.Resumo = fmt.Sprintf("Substituir o extrato de %s da conta %d (atual: %s) pelo arquivo %s (%s, %s)",
-					mes, alvo.conta, atual, arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)))
+				if manual {
+					viaCentral = "," + viaCentral
+				}
+				op.Resumo = fmt.Sprintf("Substituir o extrato de %s da conta %d (atual: %s) pelo arquivo %s (%s, %s)%s",
+					mes, alvo.conta, atual, arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)), viaCentral)
 				// Excluir um extrato vazio não perde nada; com lançamentos, perde as classificações.
 				if !existente.vazio() {
 					op.Risco = riscoAlto
@@ -203,6 +221,10 @@ enviar nada.`,
 			var saldo *float64
 			// importarArquivo envia o arquivo, confirma o saldo (OFX) e conclui a importação.
 			importarArquivo := func(snd api.Sender) error {
+				if manual {
+					return enviarPelaCentral(ctx, snd, api.ExtratoDocumentos{Ano: alvo.ano(), Mes: alvo.mesNum(), IDContaBancaria: alvo.conta,
+						Arquivo: arquivo.Arquivo, Conteudo: conteudo})
+				}
 				if err := api.EnviarExtrato(ctx, snd, arquivo); err != nil {
 					if falha, causa, ok := envioIncerto(err); ok {
 						return orientarEnvioIncerto(ctx, g, alvo, falha, causa)
@@ -248,17 +270,25 @@ enviar nada.`,
 			if err != nil || !enviado {
 				return err
 			}
-			situacao := "importado"
+			situacao, importacao, arquivoEnviado := "importado", "automatica", nome
+			if manual {
+				situacao, importacao, arquivoEnviado = "enviado", "manual", arquivo.Arquivo
+				fmt.Fprintf(s.err, "O formato não é OFX nem PDF: a Contabilizei importa este extrato manualmente, em até 45 dias. "+
+					"Acompanhe com `ctbz extratos`.\n")
+			}
 			var situacaoExtrato, quantidade any
 			if sit, err := situacaoExtratoAlvo(ctx, g, alvo); err != nil {
-				fmt.Fprintln(s.err, "aviso: extrato importado, mas não foi possível reler os extratos:", err)
+				fmt.Fprintf(s.err, "aviso: extrato %s, mas não foi possível reler os extratos: %v\n", situacao, err)
 			} else {
 				situacaoExtrato = nilIfEmpty(sit)
-				quantidade = conferirImportado(ctx, s, g, alvo, sit)
+				if !manual {
+					quantidade = conferirImportado(ctx, s, g, alvo, sit)
+				}
 			}
 			rec := resultadoEscrita("importar", situacao, alvo.conta).
 				Add("competencia", "Competência", mes).
-				Add("arquivo", "Arquivo", nome).
+				Add("importacao", "Importação", importacao).
+				Add("arquivo", "Arquivo", arquivoEnviado).
 				Add("saldo_ultimo_dia", "Saldo do último dia", moneyOrNil(saldo)).
 				Add("situacao_extrato", "Situação do extrato", situacaoExtrato).
 				Add("quantidade_lancamentos", "Lançamentos", quantidade).
@@ -380,6 +410,20 @@ func envioIncerto(err error) (falha string, causa error, ok bool) {
 	return "", nil, false
 }
 
+// enviarPelaCentral envia o extrato pela Central de Documentos (envio único). Uma falha de
+// resultado incerto é *importacaoIncerta: o arquivo pode ter chegado.
+func enviarPelaCentral(ctx context.Context, snd api.Sender, e api.ExtratoDocumentos) error {
+	err := api.EnviarExtratoDocumentos(ctx, snd, e)
+	if err == nil {
+		return nil
+	}
+	if falha, causa, ok := envioIncerto(err); ok {
+		return &importacaoIncerta{fmt.Errorf("%s no envio do arquivo, que pode ou não ter chegado à Contabilizei; "+
+			"confira com `ctbz extratos` e na Central de Documentos do painel antes de enviar de novo: %w", falha, causa)}
+	}
+	return fmt.Errorf("a Contabilizei recusou o arquivo: %w", err)
+}
+
 // importacaoIncerta é a falha da importação cujo resultado só se sabe conferindo: quem a recebe
 // não pode afirmar que nada foi importado nem mandar repetir.
 type importacaoIncerta struct{ err error }
@@ -425,10 +469,19 @@ func validarContaUpload(ini *api.UploadExtratoInit, idConta int64, formato strin
 					return nil
 				}
 			}
-			return usageError{fmt.Errorf("o banco desta conta aceita extratos em %s, não %s", strings.Join(b.FormatosDisponiveisUpload, " ou "), formato)}
+			return usageError{fmt.Errorf("o banco desta conta aceita extratos em %s; este arquivo é .%s",
+				juntarComOu(b.FormatosDisponiveisUpload), strings.ToLower(formato))}
 		}
 	}
 	return fmt.Errorf("a conta %d não aparece entre as contas para importação; veja ctbz contas-bancarias", idConta)
+}
+
+// juntarComOu junta uma lista em português: "PDF", "PDF ou XLS", "PDF, XLS ou CSV".
+func juntarComOu(itens []string) string {
+	if len(itens) < 2 {
+		return strings.Join(itens, "")
+	}
+	return strings.Join(itens[:len(itens)-1], ", ") + " ou " + itens[len(itens)-1]
 }
 
 // periodoLiberado recusa a importação quando há um período anterior com importação pendente.

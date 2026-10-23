@@ -38,7 +38,9 @@ vem antes porque a conciliação e as classificações dependem dele):
 Para cada conta **não integrada** cujo mês falta (a Conta PJ Contabilizei é integrada e dispensa
 importação):
 
-1. pede o OFX (preferível) ou o PDF do mês;
+1. pede o OFX (preferível) ou o PDF do mês. Se o banco só aceita outros formatos, ou se o PDF é
+   recusado, usa o CSV ou o XLS do internet banking. Esses vão pela Central de Documentos, e a
+   Contabilizei importa o arquivo manualmente, em até 45 dias;
 2. num OFX, lê o saldo final do próprio arquivo e mostra para você conferir;
 3. simula e importa, informando o saldo final para a Contabilizei conferir:
 
