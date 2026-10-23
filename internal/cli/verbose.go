@@ -23,9 +23,9 @@ import (
 )
 
 // Modo verbose (#902): cada requisição vai para o stderr, com os segredos sempre mascarados.
-// Nível 1: método, URL (valores da query mascarados), status, tempo, tamanho e cabeçalhos
-// (valores de cookies e de cabeçalhos de autenticação mascarados). Nível 2: também os corpos,
-// truncados e com os campos secretos mascarados.
+// Nível 1: método, URL (valores da query e CPF/CNPJ do caminho mascarados), status, tempo,
+// tamanho e cabeçalhos (valores de cookies e de cabeçalhos de credencial mascarados). Nível 2:
+// também os corpos, truncados e com os campos de credencial e de pagamento mascarados.
 
 // addVerboseFlag acrescenta --verbose às flags globais. Não há -v: ele já é --version.
 func addVerboseFlag(root *cobra.Command) {
@@ -70,6 +70,14 @@ const maxCorpoVerbose = 2000
 // uuid reconhece identificadores que funcionam como credencial (ex.: o da fatura pública).
 var uuid = regexp.MustCompile(`(?i)[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`)
 
+// jwt reconhece um JSON Web Token pelo formato, em qualquer chave ou cabeçalho.
+var jwt = regexp.MustCompile(`eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*`)
+
+// mascararIdentificadores troca UUIDs e JWTs por ***.
+func mascararIdentificadores(s string) string {
+	return jwt.ReplaceAllString(uuid.ReplaceAllString(s, "***"), "***")
+}
+
 // escreverTroca escreve uma troca no formato do modo verbose ("> " enviado, "< " recebido).
 func escreverTroca(w io.Writer, nivel int, e ctbz.Exchange) {
 	var b strings.Builder
@@ -88,7 +96,7 @@ func escreverTroca(w io.Writer, nivel int, e ctbz.Exchange) {
 			escreverCorpo(&b, "< ", e.RespHeader.Get("Content-Type"), e.RespBody)
 		}
 	}
-	io.WriteString(w, uuid.ReplaceAllString(b.String(), "***"))
+	io.WriteString(w, mascararIdentificadores(b.String()))
 }
 
 // erroMascarado descreve um erro de conexão. O *url.Error do net/http traz a URL inteira, que
@@ -101,10 +109,20 @@ func erroMascarado(err error, nivel int) string {
 	return err.Error()
 }
 
-// cabecalhoSecreto diz se o valor de um cabeçalho é credencial.
-func cabecalhoSecreto(nome string) bool {
-	n := strings.ToLower(nome)
-	for _, s := range []string{"auth", "token", "secret", "session", "csrf", "xsrf", "api-key"} {
+// trechosSecretos identificam, no nome de um cabeçalho, campo ou parâmetro (em minúsculas e
+// sem "-" e "_"), valores mascarados no modo verbose além dos do --dry-run: credenciais e os
+// dados de pagamento das respostas (chave do gateway, Pix, linha digitável, código de barras).
+var trechosSecretos = []string{"auth", "bearer", "jwt", "cookie", "session", "csrf", "xsrf", "apikey", "refresh",
+	"credencial", "chave", "hash", "pix", "copiaecola", "qrcode", "digitavel", "codigobarras", "barras", "boleto"}
+
+// secretaVerbose diz se o valor de um cabeçalho, campo ou parâmetro deve sair como *** no modo
+// verbose. Cabeçalhos e corpos usam o mesmo critério. Inclui o do --dry-run (secreta).
+func secretaVerbose(nome string) bool {
+	n := strings.NewReplacer("-", "", "_", "").Replace(strings.ToLower(nome))
+	if secreta(n) || strings.HasSuffix(n, "pin") || strings.HasSuffix(n, "key") {
+		return true
+	}
+	for _, s := range trechosSecretos {
 		if strings.Contains(n, s) {
 			return true
 		}
@@ -128,7 +146,7 @@ func escreverCabecalhos(b *strings.Builder, prefixo string, h http.Header, nivel
 				v = strings.TrimSpace(nome) + "=***"
 			case canon == "Location":
 				v = mascararURL(v, nivel)
-			case cabecalhoSecreto(canon):
+			case secretaVerbose(canon):
 				v = "***"
 			}
 			fmt.Fprintf(b, "%s%s: %s\n", prefixo, http.CanonicalHeaderKey(k), v)
@@ -146,13 +164,34 @@ func mascararCookies(v string) string {
 	return strings.Join(partes, "; ")
 }
 
-// mascararURL mascara os valores da query: todos no nível 1 (podem ter CNPJ e outros dados
-// pessoais) e só os secretos no nível 2. Pares chave=valor num fragmento depois da query
-// seguem a mesma regra.
+// documentoPontuado reconhece CPF (000.000.000-00) e CNPJ (00.000.000/0000-00, com a barra
+// escapada ou não); sequencia, as sequências de dígitos.
+var (
+	documentoPontuado = regexp.MustCompile(`\d{3}\.\d{3}\.\d{3}-\d{2}|\d{2}\.\d{3}\.\d{3}(?:/|%2[Ff])\d{4}-\d{2}`)
+	sequencia         = regexp.MustCompile(`\d+`)
+)
+
+// mascararDocumentos troca por *** CPFs e CNPJs: pontuados ou sequências de exatamente 11 ou 14
+// dígitos (ex.: /clientes/consulta/00000000000191 ou o nome de arquivo 00000000000191_2026_9…).
+// Ids, anos e meses (outros tamanhos) ficam como estão.
+func mascararDocumentos(s string) string {
+	s = documentoPontuado.ReplaceAllString(s, "***")
+	return sequencia.ReplaceAllStringFunc(s, func(d string) string {
+		if len(d) == 11 || len(d) == 14 {
+			return "***"
+		}
+		return d
+	})
+}
+
+// mascararURL mascara CPFs e CNPJs do caminho e os valores da query: todos no nível 1 (podem
+// ter CNPJ e outros dados pessoais) e só os secretos no nível 2. Pares chave=valor num
+// fragmento depois da query seguem a mesma regra.
 func mascararURL(raw string, nivel int) string {
 	antes, query, ok := strings.Cut(raw, "?")
+	antes = mascararDocumentos(antes)
 	if !ok {
-		return raw
+		return antes
 	}
 	query, fragmento, temFragmento := strings.Cut(query, "#")
 	saida := antes + "?" + mascararPares(query, nivel)
@@ -171,7 +210,7 @@ func mascararPares(s string, nivel int) string {
 			continue
 		}
 		chave, _ := url.QueryUnescape(nome)
-		if nivel < 2 || secreta(chave) {
+		if nivel < 2 || secretaVerbose(chave) {
 			partes[i] = nome + "=***"
 		}
 	}
@@ -203,7 +242,7 @@ func jsonMascarado(corpo []byte) string {
 	var buf bytes.Buffer
 	enc := json.NewEncoder(&buf)
 	enc.SetEscapeHTML(false)
-	if enc.Encode(mascarar(decodificar(corpo))) != nil {
+	if enc.Encode(mascararCom(decodificar(corpo), secretaVerbose)) != nil {
 		return "(JSON ilegível omitido)"
 	}
 	return strings.TrimSuffix(buf.String(), "\n")
@@ -222,7 +261,7 @@ func mascararFormulario(corpo string) string {
 	var partes []string
 	for _, k := range chaves {
 		for _, v := range vals[k] {
-			if secreta(k) {
+			if secretaVerbose(k) {
 				v = "***"
 			} else {
 				v = url.QueryEscape(v)
@@ -248,7 +287,7 @@ func escreverMultipart(b *strings.Builder, prefixo, boundary string, corpo []byt
 		switch {
 		case p.FileName() != "":
 			fmt.Fprintf(b, "%s%s: arquivo %s (%s)\n", prefixo, p.FormName(), p.FileName(), tamanhoArquivo(len(dados)))
-		case secreta(p.FormName()):
+		case secretaVerbose(p.FormName()):
 			fmt.Fprintf(b, "%s%s=***\n", prefixo, p.FormName())
 		default:
 			fmt.Fprintf(b, "%s%s=%s\n", prefixo, p.FormName(), truncar(string(dados), len(dados)))
@@ -256,10 +295,10 @@ func escreverMultipart(b *strings.Builder, prefixo, boundary string, corpo []byt
 	}
 }
 
-// truncar corta o texto em maxCorpoVerbose, avisando o tamanho original. Os UUIDs são
+// truncar corta o texto em maxCorpoVerbose, avisando o tamanho original. Os UUIDs e JWTs são
 // mascarados antes, para o corte não deixar um pedaço deles.
 func truncar(s string, total int) string {
-	s = uuid.ReplaceAllString(s, "***")
+	s = mascararIdentificadores(s)
 	if len(s) <= maxCorpoVerbose {
 		return s
 	}

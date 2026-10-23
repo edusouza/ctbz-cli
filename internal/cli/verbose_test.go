@@ -208,3 +208,78 @@ func TestVerboseErroDeConexaoECorpoGrande(t *testing.T) {
 	}
 	semSegredos(t, buf.String())
 }
+
+// chavesDePagamento são campos de respostas reais (gateway, fatura, Pix) e de autenticação que
+// o modo verbose mascara além dos do --dry-run (#909).
+var chavesDePagamento = []string{"adyenClientKey", "linhaDigitavel", "qrCodeTextPix", "pixCopiaECola", "codigoBarras",
+	"jwt", "authorization", "apiKey", "sessionId", "refresh_token", "csrf", "cookie", "chavePix", "pin", "hash"}
+
+func TestVerboseNivel2MascaraCredenciaisEPagamento(t *testing.T) {
+	for _, chave := range chavesDePagamento {
+		segredo := "SEGREDO-" + chave
+		var buf bytes.Buffer
+		// JSON, com o valor como texto e como objeto.
+		escreverTroca(&buf, 2, ctbz.Exchange{Method: "POST", URL: "https://app.example.com/x?" + chave + "=" + segredo,
+			Header: http.Header{"Content-Type": {"application/json"}}, Body: []byte(`{"` + chave + `":{"valor":"` + segredo + `"}}`),
+			Status: 200, RespHeader: http.Header{"Content-Type": {"application/json"}},
+			RespBody: []byte(`{"habilitado":true,"fatura":{"` + chave + `":"` + segredo + `"}}`)})
+		// Formulário.
+		escreverTroca(&buf, 2, ctbz.Exchange{Method: "POST", URL: "https://app.example.com/x",
+			Header: http.Header{"Content-Type": {"application/x-www-form-urlencoded"}}, Body: []byte(chave + "=" + segredo), Status: 200})
+		// Multipart.
+		var corpo bytes.Buffer
+		mw := multipart.NewWriter(&corpo)
+		mw.WriteField(chave, segredo)
+		mw.Close()
+		escreverTroca(&buf, 2, ctbz.Exchange{Method: "POST", URL: "https://app.example.com/x",
+			Header: http.Header{"Content-Type": {mw.FormDataContentType()}}, Body: corpo.Bytes(), Status: 200})
+		// Cabeçalho: o mesmo critério dos corpos.
+		escreverTroca(&buf, 1, ctbz.Exchange{Method: "GET", URL: "https://app.example.com/x",
+			Header: http.Header{"X-" + chave: {segredo}}, Status: 200})
+		if strings.Contains(buf.String(), segredo) {
+			t.Errorf("%s: a saída verbose mostra o valor:\n%s", chave, buf.String())
+		}
+		if !strings.Contains(buf.String(), `"habilitado":true`) {
+			t.Errorf("%s: campos comuns continuam visíveis:\n%s", chave, buf.String())
+		}
+	}
+}
+
+func TestVerboseMascaraJWTPeloFormato(t *testing.T) {
+	var buf bytes.Buffer
+	token := "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIn0.c2VncmVkbw"
+	escreverTroca(&buf, 2, ctbz.Exchange{Method: "GET", URL: "https://app.example.com/x", Status: 200,
+		RespHeader: http.Header{"Content-Type": {"application/json"}}, RespBody: []byte(`{"dado":"` + token + `"}`)})
+	if strings.Contains(buf.String(), "eyJhbGci") || !strings.Contains(buf.String(), `{"dado":"***"}`) {
+		t.Errorf("saída:\n%s", buf.String())
+	}
+}
+
+func TestVerboseMascaraDocumentosNoCaminho(t *testing.T) {
+	for _, tc := range []struct{ url, want string }{
+		{"https://app.example.com/api/plataforma/autopilot/clientes/12345678000199", "/autopilot/clientes/***"},
+		{"https://app.example.com/api/plataforma/novo-emissor/clientes/consulta/00000000000191", "/clientes/consulta/***"},
+		{"https://app.example.com/api/plataforma/autopilot/clientes/12345678901", "/autopilot/clientes/***"},
+		{"https://app.example.com/api/plataforma/autopilot/clientes/12.345.678%2F0001-99", "/autopilot/clientes/***"},
+		{"https://app.example.com/api/plataforma/autopilot/clientes/123.456.789-01", "/autopilot/clientes/***"},
+		{"https://app.example.com/api/plataforma/movimentacao-financeira/info-extrato/7/2026/9/00000000000191_2026_9_123456_1759000000000.pdf",
+			"/info-extrato/7/2026/9/***_2026_9_123456_1759000000000.pdf"},
+		// Ids, anos e meses não são documentos.
+		{"https://app.example.com/api/plataforma/movimentacao-financeira/info-extrato/12/2025/3/x.csv", "/info-extrato/12/2025/3/x.csv"},
+		{"https://app.example.com/api/plataforma/contabancaria/1000000000000001", "/contabancaria/1000000000000001"},
+	} {
+		var buf bytes.Buffer
+		escreverTroca(&buf, 1, ctbz.Exchange{Method: "GET", URL: tc.url, Status: 200,
+			RespHeader: http.Header{"Location": {tc.url}}})
+		escreverTroca(&buf, 1, ctbz.Exchange{Method: "GET", URL: tc.url, Err: &url.Error{Op: "Get", URL: tc.url, Err: io.ErrUnexpectedEOF}})
+		saida := buf.String()
+		if n := strings.Count(saida, tc.want); n != 4 {
+			t.Errorf("%s: %q aparece %d vezes (2 requisições, Location e erro):\n%s", tc.url, tc.want, n, saida)
+		}
+		for _, doc := range []string{"12345678000199", "00000000000191", "12345678901", "12.345.678", "123.456.789"} {
+			if strings.Contains(saida, doc) {
+				t.Errorf("%s: a saída mostra %q:\n%s", tc.url, doc, saida)
+			}
+		}
+	}
+}
