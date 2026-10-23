@@ -9,6 +9,8 @@ Antes de enviar, a CLI confere o tamanho (até 30 MB), se o banco aceita o forma
 (a lista vem da Contabilizei, e a mensagem de erro a mostra), se a conta é integrada (essas
 não precisam de importação), se há um período anterior pendente e se a competência já foi
 importada ou está em processamento (o painel também não deixa importar por cima).
+CSV, XLS e os outros formatos de importação manual também são recusados sobre um extrato
+importado, para a importação manual não duplicar os lançamentos, e não aceitam --substituir.
 
 OFX e PDF passam pela tela "Importar extrato":
 
@@ -19,7 +21,9 @@ OFX e PDF passam pela tela "Importar extrato":
 
 Os demais formatos que o banco aceita (CSV, XLS…) vão pela Central de Documentos, como no
 painel: um envio só, sem conclusão nem saldo, e a Contabilizei importa o arquivo manualmente,
-em até 45 dias. O resultado sai com situacao "enviado" e importacao "manual".
+em até 45 dias. O resultado sai com situacao "enviado" e importacao "manual". Até a importação,
+a competência continua PENDENTE em ctbz extratos, o que é o esperado: não envie o arquivo de
+novo; acompanhe na Central de Documentos do painel.
 
 Ao final, a CLI relê a competência: em processamento, avisa para conferir depois; importada
 sem nenhum lançamento, avisa no stderr.

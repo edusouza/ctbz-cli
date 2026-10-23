@@ -131,8 +131,11 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
 - **CSV, XLS e outros formatos que o banco aceita** (fora OFX e PDF) vão pela Central de
   Documentos, como no painel, porque a tela "Importar extrato" só aceita OFX e PDF. É um envio só,
   sem conferência de saldo. A Contabilizei importa o arquivo **manualmente, em até 45 dias**. O
-  resultado sai com `situacao: "enviado"` e `importacao: "manual"`. Acompanhe com
-  `ctbz extratos`.
+  resultado sai com `situacao: "enviado"` e `importacao: "manual"`. Até lá a competência
+  continua `PENDENTE` em `ctbz extratos`, o que é o esperado: não envie o arquivo de novo (a
+  Central não substitui por nome) e acompanhe na Central de Documentos do painel. Esses formatos
+  não aceitam `--substituir` (a exclusão deixaria o mês sem extrato até a importação manual) e
+  são recusados sobre um extrato já importado, para não duplicar os lançamentos.
 - A CLI também recusa importar uma competência que já está `IMPORTADO` ou `PROCESSANDO`, como o
   painel. Atenção: o processamento de um extrato pode deixar o mês **seguinte** como
   `IMPORTADO` sem nenhum lançamento (visto numa conta real); a mensagem avisa quando o extrato
