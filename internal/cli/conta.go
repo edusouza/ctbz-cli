@@ -142,7 +142,7 @@ func obterCodigo(cmd *cobra.Command, s streams, o otpOpts, metodo string, desde 
 		fmt.Fprintf(s.err, "Código enviado %s; aguardando via --otp-cmd…\n", destino)
 		// Folga curta, só para o relógio: um minuto (como no login) deixaria passar o código de
 		// um login feito há pouco (#834).
-		return (&otp.Command{Cmd: o.cmd, Since: desde.Add(-folgaOTPConta), Timeout: o.timeout, Log: verboseWriter(s)}).Fetch(cmd.Context())
+		return (&otp.Command{Cmd: o.cmd, Since: desde.Add(-folgaOTPConta), Timeout: o.timeout, Log: verboseWriter(cmd.Context(), s)}).Fetch(cmd.Context())
 	}
 	for range 3 {
 		fmt.Fprintf(s.err, "Código %s: ", destino)

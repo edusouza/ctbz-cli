@@ -7,6 +7,16 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Added
+
+- Modo verbose: `--verbose` (em qualquer comando) ou `CTBZ_DEBUG=1` mostra no stderr cada
+  requisição, com método, URL, status, tempo, tamanho e cabeçalhos enviados e recebidos.
+  `--verbose --verbose` ou `CTBZ_DEBUG=2` mostra também os corpos, truncados. Valores de
+  cookies, cabeçalhos de autenticação, campos secretos (senha, token, código) e UUIDs saem
+  sempre como `***`. No nível 1, os valores da query também (#902).
+- Documentado o que a plataforma exige numa chamada: o cookie `oauth-token` e um `User-Agent`
+  de navegador. Com o `User-Agent` do `curl`, a resposta é 401 (#902).
+
 ## [1.8.1] - 2026-10-23
 
 Correções do primeiro uso real de ponta a ponta: lançamentos do extrato, cadastro de conta

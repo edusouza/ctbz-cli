@@ -72,7 +72,9 @@ Regras que valem para todas as skills:
 - uma escrita que falhou por conexão nunca é repetida antes de conferir o estado;
 - várias escritas de risco alto nunca vão num único "ok";
 - segredos (senha, credenciais de órgãos públicos) são digitados por você, num terminal à parte;
-- `ctbz api -X …` (escrita crua) não é usado por iniciativa do agente.
+- `ctbz api -X …` (escrita crua) não é usado por iniciativa do agente;
+- para entender um erro do servidor, o agente repete a leitura com `--verbose`, que mostra as
+  requisições com os segredos mascarados, em vez de copiar a sessão para um `curl`.
 
 O risco de cada comando e o que não dá para desfazer estão em
 [`references/escrita.md`](references/escrita.md).

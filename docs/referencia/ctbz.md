@@ -7,6 +7,10 @@ ctbz opera a Contabilizei pela linha de comando: faz o mesmo login do site
 
 Dados vão para stdout no formato escolhido com -o; mensagens e progresso vão para stderr.
 
+Para diagnosticar um erro, --verbose (ou CTBZ_DEBUG=1) mostra cada requisição no stderr:
+método, URL, status, tempo e cabeçalhos. Repetido (ou CTBZ_DEBUG=2), mostra também os corpos.
+Cookies, tokens, senhas, códigos e UUIDs saem sempre como ***.
+
 ## Subcomandos
 
 - [`ctbz acoes`](ctbz_acoes.md): Lista as ações de escrita enviadas à Contabilizei por esta CLI
@@ -46,5 +50,6 @@ Dados vão para stdout no formato escolhido com -o; mensagens e progresso vão p
 ```
   -h, --help            mostra a ajuda do comando
   -o, --output string   formato de saída: table, json ou csv (padrão: CTBZ_OUTPUT ou table)
+      --verbose count   mostra as requisições no stderr, sem segredos (repita para incluir os corpos; ou CTBZ_DEBUG=1 ou 2)
   -v, --version         mostra a versão do ctbz
 ```

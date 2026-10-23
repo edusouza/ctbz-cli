@@ -213,8 +213,9 @@ func baseURL() string {
 	return ctbz.DefaultBaseURL
 }
 
-func verboseWriter(s streams) io.Writer {
-	if os.Getenv("CTBZ_VERBOSE") != "" {
+// verboseWriter é onde vai o log do --otp-cmd: o stderr com CTBZ_VERBOSE ou no modo verbose.
+func verboseWriter(ctx context.Context, s streams) io.Writer {
+	if os.Getenv("CTBZ_VERBOSE") != "" || ctbz.TracerFrom(ctx) != nil {
 		return s.err
 	}
 	return nil

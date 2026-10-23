@@ -217,6 +217,7 @@ diz que é preciso confirmar com a Contabilizei.
 | `mensalidade historico` com `pagamentos` vazio (CLI até a 1.8.0) | A CLI antiga lia o histórico do débito automático de impostos. Corrigido na 1.8.1: atualize o `ctbz`. |
 | "unknown command" ou "unknown flag" | O `ctbz` é mais velho que o plugin. Atualize a CLI. |
 | "convertido pelo Git Bash do Windows" em `ctbz api` | O Git Bash troca um argumento que começa com `/` por um caminho do Windows. Escreva o caminho com `//` (`ctbz api //api/legado/…`) ou use `MSYS_NO_PATHCONV=1`. |
+| Erro do servidor que ninguém entende, ou uma chamada que funciona na CLI e falha no `curl` | Rode o comando com `--verbose` (ou `CTBZ_DEBUG=1`) e veja as requisições no stderr. Os segredos saem como `***`. Fora da CLI, mande um `User-Agent` de navegador: com o do `curl`, a Contabilizei responde 401. |
 | O `checkup` falha no Windows | O script de coleta precisa de `bash`. Use o WSL ou o Git Bash, ou deixe o agente rodar as leituras uma a uma. |
 
 ## Para quem mantém

@@ -31,10 +31,23 @@ go build -o ctbz ./cmd/ctbz
 | `CTBZ_HOME`        | onde guardar a sessão (padrão `~/.config/ctbz`)                           |
 | `CTBZ_OUTPUT`      | formato de saída padrão: `table` (padrão), `json` ou `csv`                |
 | `CTBZ_VERBOSE=1`   | mostra as tentativas do `CTBZ_OTP_CMD`                                     |
+| `CTBZ_DEBUG`       | `1` ou `2`: o mesmo que `--verbose` ou `--verbose --verbose` (abaixo)      |
 
 A sessão (cookies `__C` e `oauth-token`) fica em `$CTBZ_HOME/session.json` com
 permissão `0600`. As credenciais nunca são gravadas em disco. As escritas enviadas ficam
 registradas, sem corpo, em `$CTBZ_HOME/acoes.jsonl` (veja `ctbz acoes`).
+
+Para diagnosticar um erro do servidor, `--verbose` (em qualquer comando) mostra no stderr cada
+requisição: método, URL, status, tempo, tamanho e cabeçalhos enviados e recebidos. Repetido
+(`--verbose --verbose`), mostra também os corpos, truncados. Os segredos saem sempre como `***`:
+valores de cookies, cabeçalhos de autenticação, campos como senha, token e código, e UUIDs.
+No nível 1 os valores da query também saem mascarados, porque podem ter CNPJ. `-v` continua
+sendo `--version`.
+
+```sh
+ctbz --verbose mensalidade 2> requisicoes.txt
+CTBZ_DEBUG=2 ctbz api dashboard/fatura
+```
 
 ## Login
 
