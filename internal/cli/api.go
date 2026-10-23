@@ -83,7 +83,7 @@ func callAPI(ctx context.Context, s streams, method, path string, body []byte) (
 	if body != nil {
 		contentType = "application/json"
 	}
-	return sendOnce(ctx, s, origemEscrita{comando: "ctbz api"}, method, path, body, contentType)
+	return sendOnce(ctx, s, origemEscrita{comando: "ctbz api"}, method, path, body, contentType, 0)
 }
 
 func readBody(arg string, stdin io.Reader) ([]byte, error) {

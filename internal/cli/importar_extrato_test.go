@@ -157,3 +157,67 @@ func TestExtratosExcluir(t *testing.T) {
 		t.Errorf("bloqueado: código %d, %s", code, stderr)
 	}
 }
+
+// semRespostaNoEnvio faz a escrita cujo caminho contém trecho estourar o prazo do cliente.
+func semRespostaNoEnvio(t *testing.T, f *escritaFake, trecho string) {
+	t.Helper()
+	old := timeoutUpload
+	timeoutUpload = 50 * time.Millisecond
+	t.Cleanup(func() { timeoutUpload = old })
+	f.atrasar, f.atraso = trecho, 300*time.Millisecond
+}
+
+func TestExtratosImportarTimeoutNoUploadPendente(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.pdf")
+	f, _ := importarFake(t, mt, "pdf")
+	f.gets["/api/plataforma/movimentacao-financeira/v2/extratos"] = strings.Replace(f.gets["/api/plataforma/movimentacao-financeira/v2/extratos"], "ABERTO", "PENDENTE", 1)
+	semRespostaNoEnvio(t, f, "enviar/bucket")
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
+	if code != ExitError || len(f.writes) != 1 || !strings.Contains(f.writes[0], "enviar/bucket") {
+		t.Fatalf("código %d, escritas %d\n%s", code, len(f.writes), stderr)
+	}
+	for _, w := range []string{"o extrato de 09/2026 continua PENDENTE: nada foi importado e é seguro rodar o mesmo comando de novo", "Client.Timeout"} {
+		if !strings.Contains(stderr, w) {
+			t.Errorf("stderr sem %q:\n%s", w, stderr)
+		}
+	}
+}
+
+func TestExtratosImportarTimeoutNoUploadImportado(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.pdf")
+	f, _ := importarFake(t, mt, "pdf")
+	f.gets["/api/plataforma/movimentacao-financeira/v2/extratos"] = strings.Replace(f.gets["/api/plataforma/movimentacao-financeira/v2/extratos"], "ABERTO", "IMPORTADO", 1)
+	semRespostaNoEnvio(t, f, "enviar/bucket")
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
+	want := "o extrato de 09/2026 aparece como IMPORTADO; confira com `ctbz extratos lancamentos --conta-bancaria 7 --competencia 2026-09` antes de repetir"
+	if code != ExitError || len(f.writes) != 1 || !strings.Contains(stderr, want) || strings.Contains(stderr, "seguro") {
+		t.Errorf("código %d, escritas %d\n%s", code, len(f.writes), stderr)
+	}
+}
+
+func TestExtratosImportarTimeoutNoUploadSemReleitura(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.pdf")
+	f, _ := importarFake(t, mt, "pdf")
+	delete(f.gets, "/api/plataforma/movimentacao-financeira/v2/extratos")
+	semRespostaNoEnvio(t, f, "enviar/bucket")
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
+	if code != ExitError || !strings.Contains(stderr, "pode ou não ter sido aplicada; confira antes de repetir") || !strings.Contains(stderr, "não foi possível reler a situação do extrato") {
+		t.Errorf("código %d\n%s", code, stderr)
+	}
+}
+
+func TestExtratosImportarConexaoCaiAoConcluir(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.pdf")
+	f, _ := importarFake(t, mt, "pdf")
+	f.cair = "eventoUploadExtrato"
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
+	want := "o arquivo foi enviado, mas a conexão falhou ao concluir a importação, que pode ou não ter sido aplicada; " +
+		"confira com `ctbz extratos lancamentos --conta-bancaria 7 --competencia 2026-09` antes de repetir"
+	// Sem resposta, nenhuma requisição posterior sincroniza com o servidor: lê sob a trava.
+	f.mu.Lock()
+	escritas := len(f.writes)
+	f.mu.Unlock()
+	if code != ExitError || escritas != 2 || !strings.Contains(stderr, want) || strings.Contains(stderr, "não foi concluída") {
+		t.Errorf("código %d, escritas %d\n%s", code, escritas, stderr)
+	}
+}
