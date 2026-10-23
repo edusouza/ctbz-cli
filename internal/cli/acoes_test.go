@@ -35,7 +35,7 @@ func TestAcoesCmd(t *testing.T) {
 	}
 	out, _, _ = execCLI(t, "", "acoes", "--limite", "1", "-o", "csv")
 	if lines := strings.Split(strings.TrimSpace(out), "\n"); len(lines) != 2 ||
-		lines[0] != "data,cnpj,comando,metodo,caminho,status,resultado,id" || !strings.Contains(lines[1], "ctbz api") {
+		lines[0] != "data,cnpj,comando,metodo,caminho,status,resultado,id,arquivos" || !strings.Contains(lines[1], "ctbz api") {
 		t.Errorf("--limite 1 em CSV:\n%s", out)
 	}
 	out, _, _ = execCLI(t, "", "acoes")

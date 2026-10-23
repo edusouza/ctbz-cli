@@ -16,6 +16,13 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   chave, sessão, `Authorization`, JWT), dados de pagamento das respostas (Pix, linha digitável,
   código de barras, chave do gateway), UUIDs, JWTs e CPFs/CNPJs (inclusive o alfanumérico) no
   caminho da URL. No nível 1, os valores da query também (#902, #909, #911, #935, #936).
+- `ctbz api -F campo=valor -F campo=@arquivo[;type=tipo]`: envia `multipart/form-data`, como o
+  `curl -F`. Assim dá para fazer pela ferramenta de baixo nível os uploads que nenhum comando
+  cobre. Sem `-X`, envia com `POST`; não combina com `-d`. Cada arquivo tem até 30 MB, e o
+  prazo do envio é o dos uploads (#900).
+- `ctbz acoes` ganha a coluna `arquivos`: nos envios de arquivo (`ctbz api -F`,
+  `extratos importar`, `documentos enviar`…), o nome e o tamanho de cada arquivo, nunca o
+  conteúdo (#900).
 - Documentado o que a plataforma exige numa chamada: o cookie `oauth-token` e um `User-Agent`
   de navegador. Com o `User-Agent` do `curl`, a resposta é 401 (#902).
 

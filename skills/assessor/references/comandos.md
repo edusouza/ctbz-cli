@@ -20,9 +20,10 @@ Campos do JSON de cada comando: [campos-json.md](campos-json.md).
 `ctbz api CAMINHO [flags]`: Chama uma URL da plataforma com a sessão atual
 
 ```text
--d, --data string     corpo JSON da requisição (@arquivo lê de um arquivo, @- da entrada padrão)
--X, --method string   método HTTP (default "GET")
---raw             imprime o corpo da resposta como veio, sem formatar
+-d, --data string        corpo JSON da requisição (@arquivo lê de um arquivo, @- da entrada padrão)
+-F, --form stringArray   campo multipart/form-data: campo=valor ou campo=@arquivo[;type=tipo] (repita para mais campos)
+-X, --method string      método HTTP (default "GET")
+--raw                imprime o corpo da resposta como veio, sem formatar
 ```
 
 ## balancete

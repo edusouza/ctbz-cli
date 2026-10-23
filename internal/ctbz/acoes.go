@@ -29,6 +29,9 @@ type Acao struct {
 	Status    int       `json:"status,omitempty"` // 0 sem resposta
 	Resultado string    `json:"resultado"`
 	ID        string    `json:"id,omitempty"`
+	// Arquivos são o nome e o tamanho dos arquivos de um envio multipart, nunca o conteúdo
+	// ("documento: extrato.csv (42 KB)").
+	Arquivos string `json:"arquivos,omitempty"`
 }
 
 func (s *Store) acoesPath() string { return filepath.Join(s.Dir, "acoes.jsonl") }

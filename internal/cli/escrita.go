@@ -24,6 +24,8 @@ type sessionSender struct {
 type origemEscrita struct {
 	comando string
 	id      string
+	// arquivos descreve os arquivos de um envio multipart (nome e tamanho, sem o conteúdo).
+	arquivos string
 }
 
 func (w sessionSender) Send(ctx context.Context, method, path string, body any, v any) error {
@@ -47,6 +49,7 @@ func (w sessionSender) SendMultipart(ctx context.Context, method, path string, c
 	if err != nil {
 		return err
 	}
+	w.origem.arquivos = descreverArquivos(campos)
 	return w.send(ctx, method, path, data, contentType, timeoutUpload, v)
 }
 
@@ -118,6 +121,7 @@ func registrarAcao(store *ctbz.Store, sess *ctbz.Session, s streams, origem orig
 		Caminho:   semQuery(ctbz.ResolvePath(path)),
 		Resultado: ctbz.ResultadoSemResposta,
 		ID:        origem.id,
+		Arquivos:  origem.arquivos,
 	}
 	if a.CNPJ == "" {
 		a.CNPJ = sess.CNPJ
@@ -132,6 +136,18 @@ func registrarAcao(store *ctbz.Store, sess *ctbz.Session, s streams, origem orig
 	if err := store.AppendAcao(a); err != nil {
 		fmt.Fprintln(s.err, "aviso: não foi possível registrar a ação em acoes.jsonl:", err)
 	}
+}
+
+// descreverArquivos lista os arquivos de um envio multipart para o registro de ações:
+// "documento: extrato.csv (42 KB)", separados por "; ".
+func descreverArquivos(campos []api.Campo) string {
+	var partes []string
+	for _, c := range campos {
+		if c.Arquivo != "" {
+			partes = append(partes, fmt.Sprintf("%s: %s (%s)", c.Nome, c.Arquivo, tamanhoArquivo(len(c.Conteudo))))
+		}
+	}
+	return strings.Join(partes, "; ")
 }
 
 // semQuery tira a query do caminho registrado: ela pode carregar dados pessoais.

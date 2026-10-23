@@ -75,8 +75,8 @@ Qualquer comando serve: um script IMAP, uma chamada a um webhook etc. Basta impr
 
 Com `CTBZ_OTP_CMD` definido, `ctbz empresa` e `ctbz api` também **refazem o login
 sozinhos** quando a sessão expira (HTTP 401) e repetem a chamada. Escritas (incluindo
-`ctbz api -X POST`) nunca são repetidas: a sessão é conferida, e refeita se preciso, antes do
-envio ([ADR-0019](docs/adr/0019-camada-de-escrita.md)).
+`ctbz api -X POST` e `ctbz api -F`) nunca são repetidas: a sessão é conferida, e refeita se
+preciso, antes do envio ([ADR-0019](docs/adr/0019-camada-de-escrita.md)).
 
 ### 2. Interativo
 
@@ -183,6 +183,7 @@ ctbz correspondencias [baixar ID | endereco | autorizar on|off]  # escritório v
 ctbz acoes --desde 2026-10-01                  # escritas enviadas por esta CLI (registro local)
 ctbz api menu/get        # qualquer endpoint; caminho relativo → /api/plataforma/
 ctbz api -X POST -d @corpo.json /api/plataforma/algum/endpoint
+ctbz api -F campo=valor -F documento=@arquivo.csv algum/upload   # multipart, como o curl -F
 ctbz logout              # apaga a sessão local
 ctbz version             # versão do binário
 ```

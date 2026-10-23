@@ -164,7 +164,8 @@ Outras garantias:
 - Senhas, a senha da prefeitura, o código do Simples e o da Dataprev **nunca passam pelo chat**:
   os comandos que pedem segredos (`ctbz conta senha`, `ctbz empresa credenciais atualizar`) são
   digitados por você, num terminal à parte.
-- O agente não usa `ctbz api -X …` (escrita crua, sem confirmação) por iniciativa própria.
+- O agente não usa `ctbz api -X …` nem `ctbz api -F …` (escrita crua, sem confirmação) por
+  iniciativa própria.
 - `ctbz acoes` lista tudo o que a CLI enviou (sem os corpos), com data, comando e resultado:
   pergunte "o que você alterou na Contabilizei esta semana?".
 - Permissões do Claude Code: as leituras e as escritas usam o mesmo binário. Se você liberar
