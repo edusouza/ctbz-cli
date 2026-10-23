@@ -55,8 +55,9 @@ func (l LancamentoExtrato) MelhorSugestao() *SugestaoClassificacao {
 const maxPaginasExtrato = 100
 
 // BuscarLancamentosExtrato lê todas as páginas de lançamentos do extrato do mês. Cada página é
-// um array (a resposta não traz total): a leitura para na primeira página incompleta, vazia
-// ou que só repete lançamentos já lidos.
+// um array (a resposta não traz total): a leitura para na primeira página incompleta ou vazia.
+// Uma página cheia que só repete lançamentos já lidos (o servidor ignorou o número da página) e
+// o limite de páginas são erro, para nunca devolver a lista truncada em silêncio.
 func BuscarLancamentosExtrato(ctx context.Context, g Getter, idContaBancaria int64, ano, mes int) ([]LancamentoExtrato, error) {
 	todos := []LancamentoExtrato{}
 	vistos := map[int64]bool{}
@@ -73,8 +74,11 @@ func BuscarLancamentosExtrato(ctx context.Context, g Getter, idContaBancaria int
 				novos++
 			}
 		}
-		if len(*p) < RegistrosPorPaginaExtrato || novos == 0 {
+		if len(*p) < RegistrosPorPaginaExtrato {
 			return todos, nil
+		}
+		if novos == 0 {
+			return nil, fmt.Errorf("a página %d de lançamentos do extrato de %02d/%d repete a anterior; a paginação não avança e a lista ficaria incompleta", pagina, mes, ano)
 		}
 	}
 	return nil, fmt.Errorf("o extrato de %02d/%d tem mais de %d páginas de lançamentos; a paginação parece não terminar", mes, ano, maxPaginasExtrato)

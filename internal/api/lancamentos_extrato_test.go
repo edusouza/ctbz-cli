@@ -62,11 +62,16 @@ func TestBuscarLancamentosExtratoPaginas(t *testing.T) {
 			t.Errorf("total %d: %d lançamentos, %v", total, len(ls), err)
 		}
 	}
-	// O servidor ignora a página e repete a primeira: para na repetição.
+	// O servidor ignora a página e repete a primeira: erro na repetição, em vez de lista truncada.
 	var lidas int
 	ls, err := BuscarLancamentosExtrato(context.Background(), paginasGetter{total: 300, repete: true, paginasLidas: &lidas}, 1, 2026, 9)
-	if err != nil || len(ls) != RegistrosPorPaginaExtrato || lidas != 2 {
+	if err == nil || !strings.Contains(err.Error(), "página 2 de lançamentos do extrato de 09/2026 repete a anterior") || ls != nil || lidas != 2 {
 		t.Errorf("página repetida: %d lançamentos em %d páginas, %v", len(ls), lidas, err)
+	}
+	// Ignorar a página num mês com menos de uma página cheia não é problema: para na primeira.
+	ls, err = BuscarLancamentosExtrato(context.Background(), paginasGetter{total: 40, repete: true, paginasLidas: &lidas}, 1, 2026, 9)
+	if err != nil || len(ls) != 40 || lidas != 1 {
+		t.Errorf("página repetida incompleta: %d lançamentos em %d páginas, %v", len(ls), lidas, err)
 	}
 	// Páginas cheias sem fim: erro no limite, em vez de laço infinito ou lista truncada.
 	_, err = BuscarLancamentosExtrato(context.Background(), paginasGetter{infinito: true, paginasLidas: &lidas}, 1, 2026, 9)
