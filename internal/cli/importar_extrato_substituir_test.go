@@ -101,7 +101,7 @@ func TestExtratosImportarSubstituirFalhaDepoisDeExcluir(t *testing.T) {
 		t.Fatalf("código %d, escritas %d\n%s", code, escritas, stderr)
 	}
 	for _, want := range []string{
-		"o extrato antigo de 09/2026 foi excluído e a importação voltou a ficar pendente, mas o novo arquivo não foi importado",
+		"o extrato antigo de 09/2026 foi excluído e a competência está PENDENTE, mas o novo arquivo não foi importado",
 		"o extrato de 09/2026 continua PENDENTE: nada foi importado e é seguro rodar o mesmo comando de novo",
 	} {
 		if !strings.Contains(stderr, want) {
@@ -157,9 +157,66 @@ func TestExtratosImportarSubstituirUploadRecusado(t *testing.T) {
 		}
 	}
 	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--substituir", "--yes")...)
-	want := "o extrato antigo de 09/2026 foi excluído e a importação voltou a ficar pendente, mas o novo arquivo não foi importado " +
+	want := "o extrato antigo de 09/2026 foi excluído e a competência está PENDENTE, mas o novo arquivo não foi importado " +
 		"(rode ctbz extratos importar de novo, sem precisar de --substituir)"
 	if code != ExitError || len(f.writes) != 2 || !strings.Contains(stderr, want) {
 		t.Errorf("código %d, escritas %d\n%s", code, len(f.writes), stderr)
+	}
+}
+
+// uploadRecusadoDepoisDeExcluir: DELETE 200, upload 400 e, depois do upload, a competência
+// relida na situação dada ("" = não aparece; "erro" = a releitura falha) (#901).
+func uploadRecusadoDepoisDeExcluir(t *testing.T, situacao string) (string, int, int) {
+	t.Helper()
+	f, arq := substituirFake(t, "0", true)
+	excluir := f.onWrite
+	f.onWrite = func(f *escritaFake) {
+		excluir(f)
+		f.status = 200
+		if strings.Contains(f.writes[len(f.writes)-1], "enviar/bucket") {
+			f.status = 400
+			switch situacao {
+			case "erro":
+				delete(f.gets, pathExtratos)
+			case "":
+				f.gets[pathExtratos] = "[]"
+			default:
+				f.gets[pathExtratos] = extratosNaSituacao(situacao)
+			}
+		}
+	}
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--substituir", "--yes")...)
+	return stderr, code, len(f.writes)
+}
+
+func TestExtratosImportarSubstituirRecusadoEProcessando(t *testing.T) {
+	stderr, code, escritas := uploadRecusadoDepoisDeExcluir(t, "PROCESSANDO")
+	want := "o extrato antigo de 09/2026 foi excluído e a competência está PROCESSANDO; espere ela sair desse estado e confira com " +
+		"`ctbz extratos` antes de importar de novo (sem --substituir)"
+	if code != ExitError || escritas != 2 || !strings.Contains(stderr, want) {
+		t.Errorf("código %d, escritas %d\n%s", code, escritas, stderr)
+	}
+	for _, nao := range []string{"pendente", "PENDENTE", "rode ctbz extratos importar de novo"} {
+		if strings.Contains(stderr, nao) {
+			t.Errorf("com PROCESSANDO, stderr não pode ter %q:\n%s", nao, stderr)
+		}
+	}
+	if !strings.Contains(stderr, "não reconheceu o arquivo") && !strings.Contains(stderr, "HTTP 400") {
+		t.Errorf("stderr sem a causa da recusa:\n%s", stderr)
+	}
+}
+
+func TestExtratosImportarSubstituirRecusadoOutrasSituacoes(t *testing.T) {
+	for _, tc := range []struct{ situacao, want string }{
+		{"IMPORTADO", "o extrato antigo de 09/2026 foi excluído, mas a competência aparece como IMPORTADO; confira com " +
+			"`ctbz extratos lancamentos --conta-bancaria 7 --competencia 2026-09` antes de importar de novo"},
+		{"", "o extrato antigo de 09/2026 foi excluído e a competência não aparece entre os extratos, mas o novo arquivo não foi importado " +
+			"(rode ctbz extratos importar de novo, sem precisar de --substituir)"},
+		{"erro", "o extrato antigo de 09/2026 foi excluído e o novo arquivo não foi importado; não foi possível reler a competência ("},
+	} {
+		stderr, code, escritas := uploadRecusadoDepoisDeExcluir(t, tc.situacao)
+		if code != ExitError || escritas != 2 || !strings.Contains(stderr, tc.want) {
+			t.Errorf("%q: código %d, escritas %d\n%s", tc.situacao, code, escritas, stderr)
+		}
 	}
 }

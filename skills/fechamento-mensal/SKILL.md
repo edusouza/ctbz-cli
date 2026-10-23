@@ -62,7 +62,9 @@ dispensa importação) cujo mês `M` falta:
    `IMPORTADO`/`PROCESSANDO`, ou queda/5xx ao concluir), rode `ctbz extratos` e
    `ctbz extratos lancamentos` e mostre ao usuário antes de qualquer nova tentativa. Depois de
    um `--substituir` que excluiu o extrato antigo e falhou, nunca repita com `--substituir` sem
-   conferir: se o novo arquivo entrou, ele seria excluído.
+   conferir: se o novo arquivo entrou, ele seria excluído. A mensagem diz a situação relida da
+   competência: com `PROCESSANDO`, não importe de novo agora; espere e confira com
+   `ctbz extratos`.
 
 Importou o mês errado? `ctbz extratos excluir` é **risco alto** (perde as classificações).
 

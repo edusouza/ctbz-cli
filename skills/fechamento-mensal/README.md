@@ -61,7 +61,9 @@ o extrato está vazio. Para refazer a importação (extrato vazio ou arquivo err
 `--substituir`, que exclui o extrato atual e importa o arquivo numa confirmação só: mostra o
 `--dry-run` (exclusão, envio e conclusão) e pede o seu "ok". Com o extrato atual vazio é risco
 médio; com lançamentos é **risco alto**, porque as classificações se perdem sem desfazer. O
-JSON traz `substituiu_extrato`.
+JSON traz `substituiu_extrato`. Se a exclusão der certo e o novo arquivo falhar, a CLI relê a
+competência e diz em que situação ela ficou. Com `PROCESSANDO`, o agente espera e confere antes
+de tentar de novo.
 
 Depois de importar, o agente confere `quantidade_lancamentos`: zero com um arquivo que tem
 movimentações é problema, e a CLI avisa no stderr.

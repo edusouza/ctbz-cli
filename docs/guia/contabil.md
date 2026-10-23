@@ -144,8 +144,10 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
   atual e importa o arquivo, com uma confirmação só (o mesmo que excluir e importar no painel,
   que não tem outro jeito de reimportar). Extrato atual vazio: risco médio. Com lançamentos:
   risco alto, porque as classificações se perdem. O `--dry-run` mostra a exclusão, o envio e a
-  conclusão. Se a exclusão der certo e a importação falhar, o mês fica pendente: corrija e rode
-  de novo, sem `--substituir`. Se a conexão cair ou o servidor responder com erro 5xx ao
+  conclusão. Se a exclusão der certo e a importação falhar, a CLI relê a competência e diz em
+  que situação ela ficou. Pendente: corrija e rode de novo, sem `--substituir`. `PROCESSANDO`
+  (já visto por minutos depois de um arquivo recusado): espere e confira com `ctbz extratos`
+  antes de importar de novo. Se a conexão cair ou o servidor responder com erro 5xx ao
   concluir, não se sabe se o novo arquivo entrou: confira antes de qualquer nova tentativa e não
   use `--substituir`, que excluiria o extrato novo.
 - Depois de importar, a CLI relê a competência. Se ela ainda está `PROCESSANDO`, confira em

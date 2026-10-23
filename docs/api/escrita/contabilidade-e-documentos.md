@@ -161,6 +161,13 @@ Convenções:
 - **UI:** sucesso mostra "O extrato de <Mês>/<ano> foi excluído com sucesso. Não se esqueça de importá-lo
   novamente." Erro abre o modal "não pode ser excluído".
 - **Reversível:** não; é preciso reimportar, e as classificações se perdem. **Risco: alto.**
+- **Depois da exclusão (observado numa conta real, #901):** num `--substituir` com o mês
+  `IMPORTADO` e vazio, o `DELETE` deu 200 e o upload do PDF seguinte foi recusado com 400
+  (`ERRO-NA-VALIDACAO-DE-DOCUMENTO-API-CONTABIL`). Logo depois, e de novo minutos mais tarde,
+  `movimentacao-financeira/v2/extratos` mostrava a competência `PROCESSANDO`, e não pendente
+  como diz a confirmação do painel. Não se sabe se o `DELETE` dispara um reprocessamento nem em
+  que situação a competência termina. Por isso a CLI relê a competência depois de uma falha e
+  não afirma que ela voltou a ficar pendente.
 
 ### 1.7 `POST movimentacao-financeira/eventoUploadExtrato`: concluir a importação do extrato
 
