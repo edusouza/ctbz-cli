@@ -454,7 +454,7 @@ Campos do JSON de cada comando: [campos-json.md](campos-json.md).
 --fail-on-atraso   termina com código 4 se houver competência anterior em atraso
 ```
 
-`ctbz mensalidade historico`: Lista os pagamentos anteriores da mensalidade e a situação do débito automático
+`ctbz mensalidade historico`: Lista as faturas pagas da mensalidade
 
 `ctbz mensalidade situacao [flags]`: Indica se a empresa está em dia com a Contabilizei
 

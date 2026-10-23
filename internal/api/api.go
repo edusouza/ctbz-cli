@@ -67,6 +67,7 @@ func Endpoints() []Endpoint {
 		{Name: "chamados_em_andamento", LivePath: PathChamadosEmAndamento, Type: []Chamado{}},
 		{Name: "fatura", LivePath: PathFatura, Type: Fatura{}},
 		{Name: "mensalidade", LivePath: PathMensalidade, Type: Mensalidade{}},
+		{Name: "faturas_pagas", Type: []FaturaPaga{}}, // sintética (ADR-0021), no formato real (#856); o CNPJ vem da sessão
 		{Name: "recorrencia", LivePath: PathRecorrenciaInit, Type: Recorrencia{}},
 		{Name: "recorrencia_historico", LivePath: PathRecorrenciaHistorico, Type: HistoricoRecorrencia{}},
 		{Name: "contrato_servico", LivePath: PathContratoServico, Type: ContratoServico{}},

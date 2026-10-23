@@ -113,7 +113,8 @@ ctbz api impostos/v3/impostos-a-pagar/guia/<id>/baixar-guia | jq -r .url
 | `documentos/envio-documento/init` | ✅ | `tiposPermitidos, documentos` |
 | `documentos/listar-enviados?…` | ⚠️ 400 | exige `tipoDocumento=` (um ou mais) + `limit` + `offset` |
 | `payments/recorrencia/init` | ✅ | `status, competencia, dataProximoPagamento, habilitado, ativado…` |
-| `payments/recorrencia/historico` | ✅ | `pagamentos` |
+| `payments/recorrencia/historico` | ✅ | `pagamentos` (débito automático de impostos, não a mensalidade) |
+| `/api/pagamentos/faturas?cnpj=…&confirmadas=true` | ✅ | lista das faturas da Contabilizei já pagas (tela legada "Consultar histórico"): `competencia{mes, ano}, status, statusLabel, dataVencimento, dataPagamento` (epoch ms), `total, pagamento{formaPagamento}, itens[{tipo, descricao, valor}]`. Traz também linha digitável, Pix e dados da empresa, que a CLI não lê — usado por `ctbz mensalidade historico` (#856) |
 | `inadimplencia/consultasituacaomensalidadeempresa` | ✅ | texto `OK` |
 | `atendimento/chamados?em-andamento=true` | ✅ | lista de chamados abertos |
 | `atendimento/chamados?finalizados=true` | ⚠️ 400 | `timeout` ou `Memcache put: Item may not be more than 1048503 bytes` (lista grande demais para o cache do servidor). A CLI usa `dadosempresa/get` → `chamados` (100 mais recentes, `{id, status, subject, created_at, url}`), ver [ADR-0013](../adr/0013-sem-retentativa-com-fonte-alternativa.md) |

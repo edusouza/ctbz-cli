@@ -1,13 +1,20 @@
 # ctbz mensalidade historico
 
-Lista os pagamentos anteriores da mensalidade e a situação do débito automático
+Lista as faturas pagas da mensalidade
 
-Lista os pagamentos anteriores da mensalidade (data, competência, valor e status) e mostra a
-situação do débito automático: se está habilitado e ativo, a competência e a próxima cobrança.
+Lista as faturas da Contabilizei já pagas, como a tela "Consultar histórico" do painel: por
+competência, o vencimento, a data do pagamento, o valor, a multa e os juros cobrados pelo
+atraso da fatura anterior, a forma de pagamento e o status. A mais recente vem primeiro.
 
-Só campos conhecidos são copiados para a saída: chaves do gateway de pagamento e dados de cartão
-nunca são mostrados. O formato de cada pagamento não é documentado; se nenhum campo for
-reconhecido, o comando avisa e indica "ctbz api payments/recorrencia/historico".
+A baixa da fatura pode demorar depois do pagamento: para saber se a mensalidade está em dia,
+use ctbz mensalidade situacao.
+
+Os campos debito_automatico_ativo, debito_automatico_habilitado, status, competencia e
+proximo_pagamento são do débito automático de impostos (o mesmo de ctbz impostos recorrente),
+não da mensalidade. Ficam por compatibilidade e estão obsoletos.
+
+Só campos conhecidos são copiados para a saída: dados de cartão, chaves do gateway de
+pagamento e os códigos de pagamento das faturas nunca são mostrados.
 
 ## Uso
 
@@ -19,7 +26,7 @@ ctbz mensalidade historico
 
 ```sh
   ctbz mensalidade historico
-  ctbz mensalidade historico -o json | jq '.pagamentos[].valor'
+  ctbz mensalidade historico -o json | jq '.pagamentos[] | {competencia, valor, multa_juros}'
 ```
 
 ## Flags globais

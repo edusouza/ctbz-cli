@@ -9,20 +9,25 @@ import (
 const historicoInitJSON = `{"status":"ATIVO","competencia":"10/2026","dataProximoPagamento":"2026-11-10",
 	"habilitado":true,"ativado":true,"adyenClientKey":"SEGREDO-CHAVE","cartao":{"final":"4242"}}`
 
-const historicoPagamentosJSON = `{"pagamentos":[
-	{"dataPagamento":"2026-09-10","competencia":"09/2026","valor":189.9,"status":"PAGO","cartao":"4242","adyenClientKey":"SEGREDO-CHAVE"},
-	{"dataPagamento":1788998400000,"competencia":"08/2026","valor":"1.189,90","status":"PAGO"}]}`
+const pathFaturasPagas = "/api/pagamentos/faturas?cnpj=00000000000000&confirmadas=true"
 
-func withHistorico(t *testing.T, pagamentos string) {
+func withHistorico(t *testing.T, faturas string) {
 	t.Helper()
 	withSession(t, fakeAPI(t, map[string]string{
-		"/api/plataforma/payments/recorrencia/init":      historicoInitJSON,
-		"/api/plataforma/payments/recorrencia/historico": pagamentos,
+		"/api/plataforma/payments/recorrencia/init": historicoInitJSON,
+		pathFaturasPagas: faturas,
 	}))
 }
 
+// faturasComSegredos acrescenta à fixture campos que a resposta real traz e que nunca podem
+// sair na saída: códigos de pagamento e dados da empresa.
+func faturasComSegredos(t *testing.T) string {
+	return strings.Replace(fixture(t, "faturas_pagas"), `"tipo": "COMPETENCIA",`,
+		`"tipo": "COMPETENCIA", "linhaDigitavel": "SEGREDO-LINHA", "qrCodeTextPix": "SEGREDO-PIX", "cliente": {"razaoSocial": "SEGREDO-EMPRESA"},`, -1)
+}
+
 func TestMensalidadeHistoricoFormats(t *testing.T) {
-	withHistorico(t, historicoPagamentosJSON)
+	withHistorico(t, faturasComSegredos(t))
 
 	out, stderr, code := execCLI(t, "", "mensalidade", "historico", "-o", "json")
 	if code != ExitOK {
@@ -32,24 +37,38 @@ func TestMensalidadeHistoricoFormats(t *testing.T) {
 		Ativo      bool   `json:"debito_automatico_ativo"`
 		Proximo    string `json:"proximo_pagamento"`
 		Pagamentos []struct {
-			Data   string  `json:"data"`
-			Valor  float64 `json:"valor"`
-			Status string  `json:"status"`
+			Data        *string `json:"data"`
+			Competencia string  `json:"competencia"`
+			Vencimento  string  `json:"vencimento"`
+			Valor       float64 `json:"valor"`
+			MultaJuros  float64 `json:"multa_juros"`
+			Forma       *string `json:"forma_pagamento"`
+			Status      string  `json:"status"`
 		} `json:"pagamentos"`
 	}
 	if err := json.Unmarshal([]byte(out), &v); err != nil {
 		t.Fatalf("stdout não é JSON: %v\n%s", err, out)
 	}
-	if !v.Ativo || v.Proximo != "2026-11-10" || len(v.Pagamentos) != 2 {
+	if !v.Ativo || v.Proximo != "2026-11-10" || len(v.Pagamentos) != 3 {
 		t.Fatalf("JSON inesperado: %s", out)
 	}
-	if v.Pagamentos[0].Valor != 189.9 || v.Pagamentos[1].Valor != 1189.9 || v.Pagamentos[1].Data == "" {
-		t.Errorf("pagamentos inesperados: %s", out)
+	set, ago, jul := v.Pagamentos[0], v.Pagamentos[1], v.Pagamentos[2]
+	if set.Competencia != "09/2026" || ago.Competencia != "08/2026" || jul.Competencia != "07/2026" {
+		t.Errorf("a mais recente vem primeiro: %s", out)
+	}
+	if set.Valor != 141.83 || set.MultaJuros != 2.83 || set.Forma == nil || *set.Forma != "PIX" || set.Status != "Paga" || set.Data == nil || *set.Data != "2026-09-18" {
+		t.Errorf("setembro: %+v", set)
+	}
+	if ago.MultaJuros != 0 || *ago.Forma != "BOLETO" || ago.Vencimento != "2026-08-14" {
+		t.Errorf("agosto: %+v", ago)
+	}
+	if jul.Valor != 0 || jul.Data != nil || jul.Forma != nil {
+		t.Errorf("fatura zerada: %+v", jul)
 	}
 	if stderr != "" {
 		t.Errorf("stderr deveria estar vazio, veio %q", stderr)
 	}
-	for _, segredo := range []string{"SEGREDO-CHAVE", "adyen", "4242", "cartao"} {
+	for _, segredo := range []string{"SEGREDO", "adyen", "4242", "cartao"} {
 		if strings.Contains(out, segredo) {
 			t.Errorf("saída JSON vazou %q:\n%s", segredo, out)
 		}
@@ -59,12 +78,12 @@ func TestMensalidadeHistoricoFormats(t *testing.T) {
 	if code != ExitOK {
 		t.Fatalf("código %d: %s", code, stderr)
 	}
-	for _, want := range []string{"Próxima cobrança:", "10/11/2026", "Pagamentos:", "R$ 189,90", "R$ 1.189,90", "PAGO"} {
+	for _, want := range []string{"Débito automático de impostos ativo:", "10/11/2026", "Faturas pagas:", "R$ 141,83", "R$ 2,83", "PIX", "Paga", "18/09/2026"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("tabela sem %q:\n%s", want, out)
 		}
 	}
-	if strings.Contains(out, "SEGREDO-CHAVE") {
+	if strings.Contains(out, "SEGREDO") {
 		t.Errorf("tabela vazou segredo:\n%s", out)
 	}
 
@@ -78,7 +97,7 @@ func TestMensalidadeHistoricoFormats(t *testing.T) {
 }
 
 func TestMensalidadeHistoricoSemPagamentos(t *testing.T) {
-	withHistorico(t, `{"pagamentos":[]}`)
+	withHistorico(t, `[]`)
 	out, stderr, code := execCLI(t, "", "mensalidade", "historico", "-o", "json")
 	if code != ExitOK {
 		t.Fatalf("código %d: %s", code, stderr)
@@ -88,14 +107,11 @@ func TestMensalidadeHistoricoSemPagamentos(t *testing.T) {
 	}
 }
 
-func TestMensalidadeHistoricoFormatoNaoReconhecido(t *testing.T) {
-	withHistorico(t, `{"pagamentos":[{"xyz":1}]}`)
+func TestMensalidadeHistoricoErroNasFaturas(t *testing.T) {
+	withSession(t, fakeAPI(t, map[string]string{"/api/plataforma/payments/recorrencia/init": historicoInitJSON}))
 	_, stderr, code := execCLI(t, "", "mensalidade", "historico", "-o", "json")
-	if code != ExitOK {
-		t.Fatalf("código %d: %s", code, stderr)
-	}
-	if !strings.Contains(stderr, "formato de pagamentos não reconhecido") {
-		t.Errorf("esperava aviso no stderr, veio %q", stderr)
+	if code != ExitError || !strings.Contains(stderr, "/api/pagamentos/faturas") {
+		t.Errorf("código %d: %s", code, stderr)
 	}
 }
 

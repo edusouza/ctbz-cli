@@ -79,7 +79,7 @@ Gerada a partir da própria CLI (`go run ./tools/gendocs`); não edite à mão.
 | [`ctbz lucros informe decidir`](ctbz_lucros_informe_decidir.md) | Decide o que fazer com a pendência documental ou os débitos do informe |
 | [`ctbz lucros informe restricoes`](ctbz_lucros_informe_restricoes.md) | Mostra o que bloqueia o informe de rendimentos de um ano e o que falta aceitar |
 | [`ctbz mensalidade`](ctbz_mensalidade.md) | Mostra a mensalidade atual da Contabilizei (valor, vencimento e situação) |
-| [`ctbz mensalidade historico`](ctbz_mensalidade_historico.md) | Lista os pagamentos anteriores da mensalidade e a situação do débito automático |
+| [`ctbz mensalidade historico`](ctbz_mensalidade_historico.md) | Lista as faturas pagas da mensalidade |
 | [`ctbz mensalidade situacao`](ctbz_mensalidade_situacao.md) | Indica se a empresa está em dia com a Contabilizei |
 | [`ctbz notas`](ctbz_notas.md) | Lista as notas fiscais de serviço (NFS-e) emitidas |
 | [`ctbz notas aliquotas`](ctbz_notas_aliquotas.md) | Lista as alíquotas e os códigos de serviço por atividade |

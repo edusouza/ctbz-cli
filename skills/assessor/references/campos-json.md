@@ -96,7 +96,7 @@ em reais são números, datas `AAAA-MM-DD`, horários RFC 3339, CNPJ/CPF só dí
 | `documentos pendentes` | lista | `id_pendencia`, `tipo`, `competencia`, `conta`, `tipo_investimento` |
 | `mensalidade` | objeto | `competencia`, `valor`, `vencimento` (texto, ex. `"Vencimento 15/10"`), `situacao` (ex. `Atrasada`), `observacao`, `competencia_anterior_atrasada` |
 | `mensalidade situacao` | objeto | `em_dia`, `situacao` (`OK`, `EM_ATRASO`…) |
-| `mensalidade historico` | objeto | `debito_automatico_ativo`, `debito_automatico_habilitado`, `status`, `competencia`, `proximo_pagamento`, `pagamentos[]` (`data`, `competencia`, `valor`, `status`) |
+| `mensalidade historico` | objeto | `pagamentos[]`: faturas pagas, da mais recente (`data` do pagamento, `competencia` `MM/AAAA`, `vencimento`, `valor`, `multa_juros`, `forma_pagamento`, `status`). Obsoletos, do débito automático de **impostos**: `debito_automatico_ativo`, `debito_automatico_habilitado`, `status`, `competencia`, `proximo_pagamento` |
 | `usuarios` | lista | `id`, `nome`, `email`, `tipo`, `status` |
 | `correspondencias` | lista | `id`, `data`, `remetente`, `descricao`, `situacao`, `valor_envio` |
 | `acoes` | lista | `data`, `cnpj`, `comando`, `metodo`, `caminho`, `status`, `resultado` (`enviada`, `recusada`, `sem resposta`), `id` |

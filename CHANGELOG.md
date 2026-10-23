@@ -18,6 +18,13 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - READMEs das skills (`skills/README.md` e um por skill): instalação, configuração do login,
   exemplos de uso, o que cada skill pode alterar e com que risco, limites e solução de problemas.
 
+### Deprecated
+
+- Em `ctbz mensalidade historico`, os campos `debito_automatico_ativo`,
+  `debito_automatico_habilitado`, `status`, `competencia` e `proximo_pagamento` descrevem o débito
+  automático de impostos (`ctbz impostos recorrente`), não a mensalidade. Continuam na saída por
+  compatibilidade.
+
 ### Fixed
 
 - `ctbz rotinas`, `documentos pendentes` e as demais leituras da Central de Rotinas não
@@ -47,6 +54,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   já importado: exclui o extrato atual e importa o arquivo, numa confirmação só (risco alto se
   o extrato tem lançamentos). A recusa "não reconheceu o arquivo" sugere
   alternativas (#855).
+- `ctbz mensalidade historico` lista as faturas pagas, da mesma fonte da tela "Consultar
+  histórico" do painel, com vencimento, multa e juros e forma de pagamento. Antes lia o histórico
+  do débito automático de impostos e saía vazio para quem paga por boleto ou Pix (#856).
 
 ## [1.8.0] - 2026-10-04
 
