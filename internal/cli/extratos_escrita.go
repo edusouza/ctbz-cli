@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -100,9 +101,12 @@ func lancamentosExtratoList(ls []api.LancamentoExtrato, nomes map[int64]string) 
 		{Key: "classificacao", Header: "Classificação"},
 		{Key: "id_classificacao", Header: "ID da classificação"},
 		{Key: "id_lancamento_pai", Header: "Parte de"},
+		{Key: "situacao", Header: "Situação"},
+		{Key: "sugestao", Header: "Sugestão"},
+		{Key: "probabilidade_sugestao", Header: "Prob. (%)"},
 	}}
 	for _, x := range ls {
-		var classif, idClassif, pai any
+		var classif, idClassif, pai, sugestao, prob any
 		if x.IDContaUsuario != nil {
 			idClassif = *x.IDContaUsuario
 			classif = nilIfEmpty(nomes[*x.IDContaUsuario])
@@ -110,7 +114,12 @@ func lancamentosExtratoList(ls []api.LancamentoExtrato, nomes map[int64]string) 
 		if x.IDLancamentoPai != nil {
 			pai = *x.IDLancamentoPai
 		}
-		l.Append(x.ID, diaExtrato(x), output.Text(x.Descricao), moneyOrNil(x.Valor), classif, idClassif, pai)
+		if s := x.MelhorSugestao(); s != nil {
+			sugestao = nilIfEmpty(s.Descricao)
+			prob = int(math.Round(s.Probabilidade * 100))
+		}
+		l.Append(x.ID, diaExtrato(x), output.Text(x.Descricao), moneyOrNil(x.Valor), classif, idClassif, pai,
+			nilIfEmpty(x.Situacao), sugestao, prob)
 	}
 	return l
 }
@@ -132,10 +141,12 @@ func newExtratosLancamentosCmd() *cobra.Command {
 		Use:   "lancamentos",
 		Short: "Lista os lançamentos do extrato de uma conta bancária num mês",
 		Long: `Lista os lançamentos do extrato importado de uma conta bancária na competência: id, data,
-descrição, valor (negativo nas saídas), classificação atual e, nas partes de um lançamento
-desmembrado, o id do lançamento original ("Parte de").
+descrição, valor (negativo nas saídas), classificação atual, nas partes de um lançamento
+desmembrado o id do lançamento original ("Parte de"), a situação (ex.: CONFIRMADO) e a
+classificação que a Contabilizei sugere, com a probabilidade em %.
 
-Os ids são usados por ctbz extratos classificar e desmembrar.`,
+Os ids são usados por ctbz extratos classificar e desmembrar. Mês sem lançamentos imprime uma
+lista vazia e sai com código 0.`,
 		Example: `  ctbz extratos lancamentos --conta-bancaria 1000000000000001 --competencia 2026-09
   ctbz extratos lancamentos --conta-bancaria 1000000000000001 --competencia 2026-09 -o csv`,
 		Args: exactArgs(0, "nenhum argumento"),
@@ -153,6 +164,10 @@ Os ids são usados por ctbz extratos classificar e desmembrar.`,
 			ls, err := alvo.lancamentos(cmd.Context(), g)
 			if err != nil {
 				return err
+			}
+			if len(ls) == 0 {
+				fmt.Fprintf(s.err, "Nenhum lançamento no extrato da conta %d em %s.\n", alvo.conta, alvo.mes.Format("01/2006"))
+				return output.Write(s.out, f, lancamentosExtratoList(ls, nil))
 			}
 			nomes, err := nomesContas(cmd.Context(), g)
 			if err != nil {

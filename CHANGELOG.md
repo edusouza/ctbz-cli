@@ -27,6 +27,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   abertura saem sem impostos pagos, com um aviso no stderr, em vez de o comando falhar com
   "Ano inválido".
 - `ctbz resumo` não lista mais como vencida uma guia já paga.
+- `ctbz extratos lancamentos` (e `classificar`, `desmembrar` e `desfazer-desmembramento`)
+  funciona com a resposta real da Contabilizei, um array de lançamentos sem total. A paginação
+  tem limite e para numa página repetida. A lista ganha a situação e a classificação sugerida,
+  com a probabilidade; mês sem lançamentos avisa no stderr e sai com 0 (#852).
 
 ## [1.8.0] - 2026-10-04
 

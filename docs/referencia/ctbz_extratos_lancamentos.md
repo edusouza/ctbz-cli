@@ -3,10 +3,12 @@
 Lista os lançamentos do extrato de uma conta bancária num mês
 
 Lista os lançamentos do extrato importado de uma conta bancária na competência: id, data,
-descrição, valor (negativo nas saídas), classificação atual e, nas partes de um lançamento
-desmembrado, o id do lançamento original ("Parte de").
+descrição, valor (negativo nas saídas), classificação atual, nas partes de um lançamento
+desmembrado o id do lançamento original ("Parte de"), a situação (ex.: CONFIRMADO) e a
+classificação que a Contabilizei sugere, com a probabilidade em %.
 
-Os ids são usados por ctbz extratos classificar e desmembrar.
+Os ids são usados por ctbz extratos classificar e desmembrar. Mês sem lançamentos imprime uma
+lista vazia e sai com código 0.
 
 ## Uso
 

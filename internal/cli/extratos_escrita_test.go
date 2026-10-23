@@ -25,15 +25,32 @@ func extratoFake(t *testing.T) *escritaFake {
 func TestExtratosLancamentos(t *testing.T) {
 	extratoFake(t)
 	out, stderr, code := execCLI(t, "", "extratos", "lancamentos", "--conta-bancaria", "7", "--competencia", "2026-09", "-o", "csv")
-	want := "id,data,descricao,valor,classificacao,id_classificacao,id_lancamento_pai\n" +
-		"1000000000000101,2026-09-18,PIX RECEBIDO FULANO,1500.00,Receita de Serviços,1000000000000011,\n" +
-		"1000000000000102,2026-09-19,PAGAMENTO BOLETO,-1234.56,,,\n" +
-		"1000000000000103,2026-09-20,Aluguel,-1200.00,Pagamento de Fornecedores,1000000000000012,1000000000000100\n"
+	want := "id,data,descricao,valor,classificacao,id_classificacao,id_lancamento_pai,situacao,sugestao,probabilidade_sugestao\n" +
+		"1000000000000101,2026-09-18,PIX RECEBIDO FULANO,1500.00,Receita de Serviços,1000000000000011,,CONFIRMADO,Receita de Serviços,91\n" +
+		"1000000000000102,2026-09-19,PAGAMENTO BOLETO,-1234.56,,,,PENDENTE,Pagamento de Fornecedores,64\n" +
+		"1000000000000103,2026-09-20,Aluguel,-1200.00,Pagamento de Fornecedores,1000000000000012,1000000000000100,CONFIRMADO,,\n"
 	if code != ExitOK || out != want {
 		t.Errorf("código %d, %s\n%s\nquero:\n%s", code, stderr, out, want)
 	}
 	if _, _, code := execCLI(t, "", "extratos", "lancamentos", "--competencia", "2026-09"); code != ExitUsage {
 		t.Errorf("sem --conta-bancaria: código %d", code)
+	}
+}
+
+func TestExtratosLancamentosMesVazio(t *testing.T) {
+	f := extratoFake(t)
+	f.gets[pathLancsExtrato] = "[]"
+	out, stderr, code := execCLI(t, "", "extratos", "lancamentos", "--conta-bancaria", "7", "--competencia", "2026-09", "-o", "json")
+	if code != ExitOK || strings.TrimSpace(out) != "[]" || !strings.Contains(stderr, "Nenhum lançamento no extrato da conta 7 em 09/2026") {
+		t.Errorf("código %d, saída %q, stderr %s", code, out, stderr)
+	}
+}
+
+func TestExtratosLancamentosFormatoInesperado(t *testing.T) {
+	f := extratoFake(t)
+	f.gets[pathLancsExtrato] = `{"list":[],"total":0}`
+	if _, stderr, code := execCLI(t, "", "extratos", "lancamentos", "--conta-bancaria", "7", "--competencia", "2026-09"); code != ExitError || !strings.Contains(stderr, "resposta inesperada") {
+		t.Errorf("código %d, %s", code, stderr)
 	}
 }
 
