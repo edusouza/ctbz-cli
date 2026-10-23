@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.8.1] - 2026-10-23
+
+Correções do primeiro uso real de ponta a ponta: lançamentos do extrato, cadastro de conta
+bancária, importação de extrato, histórico da mensalidade e `ctbz api` no Git Bash do Windows.
+Traz também o plugin do Claude Code com as skills.
+
 ### Added
 
 - Plugin do Claude Code (`.claude-plugin/`, `skills/`) com skills que fazem um agente operar a
@@ -380,7 +386,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.8.0...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.8.1...HEAD
+[1.8.1]: https://github.com/edusouza/ctbz-cli/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/edusouza/ctbz-cli/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/edusouza/ctbz-cli/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/edusouza/ctbz-cli/compare/v1.5.0...v1.6.0

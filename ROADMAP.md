@@ -41,6 +41,7 @@ escritas, `risco: baixo|médio|alto`.
 | **v1.6** | Notas fiscais: tomadores e notas de entrada | [#206](https://github.com/edusouza/ctbz-cli/issues/206) | 4 | concluída |
 | **v1.7** | Pró-labore, distribuição de lucros e informe de rendimentos | [#211](https://github.com/edusouza/ctbz-cli/issues/211) | 6 | concluída |
 | **v1.8** | Conta, usuários e acessos | [#218](https://github.com/edusouza/ctbz-cli/issues/218) | 4 | concluída |
+| **v1.8.1** | Correções do primeiro uso real de ponta a ponta | — | 6 | concluída |
 
 ## v0.1 — Login e dados da empresa
 
@@ -314,6 +315,24 @@ Usuários da empresa, credenciais de órgãos públicos, dados de login e escrit
 | ✅ | [#222](https://github.com/edusouza/ctbz-cli/issues/222) | Escritório virtual: correspondências, endereço de envio e autorização | investigação | médio |
 
 Fora de escopo: Segundo fator por app autenticador; revogar convite pendente (sem endpoint).
+
+## v1.8.1 — Correções do primeiro uso real de ponta a ponta
+
+Label `uso real: primeiro ponta-a-ponta` · versão de correção
+
+Achados do primeiro uso real (23/10/2026): conta bancária, extratos e mensalidade.
+
+| | Issue | Correção | Tipo |
+|---|---|---|---|
+| ✅ | [#852](https://github.com/edusouza/ctbz-cli/issues/852) | `extratos lancamentos` aceita a resposta em array e pagina com limite | bug |
+| ✅ | [#853](https://github.com/edusouza/ctbz-cli/issues/853) | `--banco` escolhe o código exato e recusa código ambíguo | bug |
+| ✅ | [#854](https://github.com/edusouza/ctbz-cli/issues/854) | `extratos importar` orienta quando a conexão cai no envio | melhoria |
+| ✅ | [#855](https://github.com/edusouza/ctbz-cli/issues/855) | Competência `IMPORTADO` sem lançamentos: causa documentada, recusa, aviso e `--substituir` | investigação |
+| ✅ | [#856](https://github.com/edusouza/ctbz-cli/issues/856) | `mensalidade historico` lista as faturas pagas | investigação |
+| ✅ | [#857](https://github.com/edusouza/ctbz-cli/issues/857) | `ctbz api` e a conversão de caminho do Git Bash | documentação |
+
+Fica para a próxima minor: [#851](https://github.com/edusouza/ctbz-cli/issues/851)
+(`ctbz mensalidade segunda-via`, funcionalidade nova).
 
 ## Fora do roadmap de escrita
 

@@ -21,7 +21,7 @@ novo. Código 1 = não deu para conferir a sessão (rede, servidor): tente de no
 login, porque cada login manda um e-mail com código. Uma seção com erro não invalida as outras:
 relate a lacuna ("não consegui ler X") e siga.
 
-Falhas conhecidas **até a 1.8.0** (`ctbz version`; corrigidas depois dela):
+Falhas conhecidas **até a 1.8.0** (`ctbz version`; corrigidas na 1.8.1):
 
 - "HTTP 206" em qualquer comando que lê a Central de Rotinas (`rotinas`, `documentos
   pendentes`, `resumo`, `impostos confirmar`/`desmarcar`/`recalcular`, `rotinas reclassificar`,
