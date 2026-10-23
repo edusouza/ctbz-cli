@@ -24,7 +24,9 @@ atual e importa o arquivo, com uma confirmação só, como excluir e importar no
 extrato atual tem lançamentos, o risco é alto (as classificações se perdem; digite
 "confirmo"); se está vazio, é médio. Se os contadores já concluíram a classificação, o painel
 não deixa excluir, e a CLI também não. Se a exclusão der certo e a importação falhar, o mês
-fica pendente: corrija e rode o comando de novo.
+fica pendente: corrija e rode o comando de novo, sem --substituir. Se a conexão cair ou o
+servidor responder com erro 5xx ao concluir, não se sabe se o novo arquivo entrou: confira
+antes de qualquer nova tentativa, e não use --substituir, que excluiria o extrato novo.
 
 Se a importação parar depois do envio (saldo recusado, extrato de outra competência), o
 arquivo fica enviado mas o extrato não é efetivado; corrija e rode o comando de novo.

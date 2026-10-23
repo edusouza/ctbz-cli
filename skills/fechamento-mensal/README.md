@@ -50,6 +50,17 @@ Mensagens como "outro banco", "conta não cadastrada" ou "período anterior pend
 traduzidas e o agente segue o que dizem (conta nova: skill
 [`cadastro-e-acessos`](../cadastro-e-acessos/README.md)).
 
+Competência já `IMPORTADO` ou `PROCESSANDO`: a CLI recusa, como o painel. O processamento de um
+extrato pode deixar o mês seguinte `IMPORTADO` sem nenhum lançamento, e a mensagem avisa quando
+o extrato está vazio. Para refazer a importação (extrato vazio ou arquivo errado), o agente usa
+`--substituir`, que exclui o extrato atual e importa o arquivo numa confirmação só: mostra o
+`--dry-run` (exclusão, envio e conclusão) e pede o seu "ok". Com o extrato atual vazio é risco
+médio; com lançamentos é **risco alto**, porque as classificações se perdem sem desfazer. O
+JSON traz `substituiu_extrato`.
+
+Depois de importar, o agente confere `quantidade_lancamentos`: zero com um arquivo que tem
+movimentações é problema, e a CLI avisa no stderr.
+
 ### 2. Classificar lançamentos do extrato
 
 O agente lista os lançamentos sem classificação e propõe uma para cada um, **sempre escolhida
@@ -110,6 +121,7 @@ Tudo com `--dry-run` primeiro e a sua confirmação (protocolo da skill `assesso
 | Ação | Risco | Desfazer |
 |---|---|---|
 | `extratos importar` | médio | `extratos excluir` (risco alto) |
+| `extratos importar --substituir` | médio com o extrato atual vazio; **alto** com lançamentos | não: o extrato atual e as classificações se perdem |
 | `extratos classificar` / `desmembrar` / `desfazer-desmembramento` | médio | sim, até os contadores fecharem o período |
 | `rotinas reclassificar` | médio | a rotina não reabre |
 | `caixa adicionar` / `editar` / `remover` | médio | editar de novo; remover mostra como recriar |
