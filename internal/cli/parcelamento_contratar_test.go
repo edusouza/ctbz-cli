@@ -84,3 +84,58 @@ func TestParcelamentoContratarValidacoes(t *testing.T) {
 		t.Errorf("sem débitos: código %d, %s", code, stderr)
 	}
 }
+
+// Uma opção sem quantidade (ou com 0) ou sem os valores do resumo é erro de leitura
+// (ADR-0021): nada é contratado, nem com --yes, e o --dry-run não mostra a requisição.
+func TestParcelamentoContratarOpcaoIncompleta(t *testing.T) {
+	const (
+		semQtd     = `{"parcelas":[{"valorEntrada":500,"valorDemaisParcelas":250.5}]}`
+		qtdZero    = `{"parcelas":[{"quantidade":0,"valorEntrada":500,"valorDemaisParcelas":250.5}]}`
+		umaSemQtd  = `{"parcelas":[{"quantidade":12,"valorEntrada":500,"valorDemaisParcelas":250.5},{"valorEntrada":300,"valorDemaisParcelas":140.25}]}`
+		semEntrada = `{"parcelas":[{"quantidade":12,"valorEntrada":null,"valorDemaisParcelas":250.5}]}`
+		semDemais  = `{"parcelas":[{"quantidade":12,"valorEntrada":500},{"quantidade":24,"valorEntrada":300}]}`
+	)
+	const msgQtd, msgValor = "sem a quantidade de parcelas; contrate pelo painel", "não trouxe o valor das parcelas da opção de 12 parcelas; contrate pelo painel"
+	for _, tc := range []struct {
+		name, sim string
+		args      []string
+		want      string
+	}{
+		{"sem quantidade", semQtd, []string{"pgfn-previdenciario", "--yes"}, msgQtd},
+		{"sem quantidade com --parcelas", semQtd, []string{"pgfn-previdenciario", "--parcelas", "12", "--yes"}, msgQtd},
+		{"sem quantidade em --dry-run", semQtd, []string{"pgfn-previdenciario", "--dry-run"}, msgQtd},
+		{"quantidade 0", qtdZero, []string{"pgfn-previdenciario", "--yes"}, msgQtd},
+		{"outra opção sem quantidade", umaSemQtd, []string{"pgfn-previdenciario", "--parcelas", "12", "--yes"}, msgQtd},
+		{"simples sem quantidade no resumo", semQtd, []string{"simples-nacional", "--yes"}, msgQtd},
+		{"entrada nula", semEntrada, []string{"pgfn-previdenciario", "--yes"}, msgValor},
+		{"entrada nula em --dry-run", semEntrada, []string{"pgfn-previdenciario", "--dry-run"}, msgValor},
+		{"demais ausente", semDemais, []string{"pgfn-previdenciario", "--parcelas", "12", "--yes"}, msgValor},
+		{"simples com entrada nula", semEntrada, []string{"simples-nacional", "--yes"}, msgValor},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			f := newEscritaFake(t, map[string]string{pathSimPGFN: tc.sim, pathSimSN: tc.sim})
+			out, stderr, code := execCLI(t, "", append([]string{"impostos", "parcelamento", "contratar"}, tc.args...)...)
+			if code != ExitError || !strings.Contains(stderr, tc.want) || len(f.writes) != 0 {
+				t.Fatalf("código %d, escritas %q, stderr %q", code, f.writes, stderr)
+			}
+			if strings.Contains(out+stderr, "POST") || strings.Contains(stderr, "confissão de dívida") {
+				t.Errorf("mostrou a requisição ou o resumo:\nstdout %s\nstderr %s", out, stderr)
+			}
+		})
+	}
+	// Só a opção escolhida precisa dos valores: a de 24 está completa.
+	f := newEscritaFake(t, map[string]string{pathSimPGFN: `{"parcelas":[{"quantidade":12,"valorEntrada":null},{"quantidade":24,"valorEntrada":300,"valorDemaisParcelas":140.25}]}`})
+	if _, stderr, code := execCLI(t, "", "impostos", "parcelamento", "contratar", "pgfn-previdenciario", "--parcelas", "24", "--yes"); code != ExitOK || len(f.writes) != 1 || !strings.Contains(f.writes[0], `{"quantidadeParcelas":24}`) {
+		t.Errorf("opção 24 completa: código %d, escritas %q, %s", code, f.writes, stderr)
+	}
+}
+
+// Custo adicional sem valor aparece como "não informado" na confirmação, não como R$ 0,00.
+func TestParcelamentoContratarCustoNaoInformado(t *testing.T) {
+	sim := `{"parcelas":[{"quantidade":12,"valorEntrada":500,"valorDemaisParcelas":250.5}],"cobrarServicoAdicional":true,"valorServicoAdicional":null}`
+	f := newEscritaFake(t, map[string]string{pathSimPGFN: sim})
+	_, stderr, code := execCLI(t, "", "impostos", "parcelamento", "contratar", "pgfn-previdenciario", "--yes")
+	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(stderr, "serviço adicional não informado; emissão de guia não informado") || strings.Contains(stderr, "R$ 0,00") {
+		t.Errorf("código %d, stderr %s", code, stderr)
+	}
+}

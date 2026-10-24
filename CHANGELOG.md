@@ -7,6 +7,13 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz impostos parcelamento contratar` não contrata mais quando a simulação traz uma opção sem a
+  quantidade de parcelas (antes enviava `{"quantidadeParcelas":0}`) ou a opção escolhida sem o
+  valor das parcelas (antes mostrava R$ 0,00 na confirmação): pede para contratar pelo painel.
+  Custos adicionais sem valor aparecem como "não informado" (#489).
+
 ### Security
 
 - `ctbz api` com uma URL absoluta de outro host enviava para lá os cookies da sessão. Agora o

@@ -178,6 +178,8 @@ ctbz impostos parcelamento contratar especializado --negociacao VENCIDOS
   mensalidade e, no terminal, pede para digitar `confirmo`.
 - A CLI sempre roda a simulação antes. Na PGFN, `--parcelas` escolhe uma das opções da
   simulação (padrão: a primeira, como no painel). No Simples, a quantidade não é escolhida aqui.
+- Se a simulação vier sem a quantidade de parcelas ou sem o valor das parcelas da opção
+  escolhida, a CLI não contrata (nem com `--yes`) e pede para contratar pelo painel.
 - O especializado vira um pedido de atendimento: a saída traz o `id` (idTicket) e o detalhe
   do pedido.
 - Depois de contratar, acompanhe com `ctbz impostos parcelamentos`.
