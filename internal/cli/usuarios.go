@@ -59,8 +59,10 @@ func newUsuariosConvidarCmd() *cobra.Command {
 total: todas as ações e todas as informações, inclusive financeiras.
 
 A CLI recusa e-mails da Contabilizei (inclusive de subdomínios), e-mails que já têm acesso
-ou convite, e convites quando o serviço está indisponível ou o limite de usuários ativos
-(todos menos o principal) foi atingido.
+ou convite, e convites quando o serviço está indisponível ou o limite de usuários
+secundários ativos (como o painel conta) foi atingido. Se algum usuário da lista vier com
+tipo ou situação vazia ou desconhecida, não dá para conferir o limite: a CLI não convida e
+pede para usar o painel.
 
 Risco alto: não há como revogar o convite antes do aceite; depois, só com ctbz usuarios
 desativar. Aceita --yes e --dry-run.`,
@@ -88,12 +90,19 @@ desativar. Aceita --yes e --dry-run.`,
 			if err != nil {
 				return err
 			}
+			// O limite conta os secundários ativos, como o front. Tipo ou situação vazia ou
+			// desconhecida impede a conta: recusa sem escrita, em vez de errar para mais ou
+			// para menos (#818, #972).
 			ativos := 0
 			for _, u := range us {
 				if strings.EqualFold(u.Email, email) {
 					return fmt.Errorf("%s já está na lista de usuários (%s)", email, u.Status)
 				}
-				if u.Tipo != api.UsuarioPrincipal && u.Status == api.UsuarioAtivo { // tipo desconhecido também conta (#818)
+				if !tipoUsuarioConhecido(u.Tipo) || !statusUsuarioConhecido(u.Status) {
+					return fmt.Errorf("lendo usuários: o usuário %q veio com tipo %q e situação %q, e sem eles não dá para conferir "+
+						"o limite de usuários; convide pelo painel", firstNonEmpty(u.IDTexto(), u.Email), u.Tipo, u.Status)
+				}
+				if u.Tipo == api.UsuarioSecundario && u.Status == api.UsuarioAtivo {
 					ativos++
 				}
 			}
@@ -211,6 +220,14 @@ func usuarioCompleto(u *api.UsuarioEmpresa, id string) error {
 		}
 	}
 	return nil
+}
+
+func tipoUsuarioConhecido(t string) bool {
+	return t == api.UsuarioPrincipal || t == api.UsuarioSecundario
+}
+
+func statusUsuarioConhecido(s string) bool {
+	return s == api.UsuarioAtivo || s == api.UsuarioInativo || s == api.UsuarioConviteEnviado
 }
 
 // usuarioPor acha um usuário da empresa.
