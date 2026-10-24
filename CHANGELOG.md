@@ -39,6 +39,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz notas entrada classificar --produto` e `reclassificar` recusam, sem enviar nada, uma
   nota com algum item sem quantidade total (ou com total zero), em vez de gravar as
   quantidades zeradas e apagar a distribuição da nota (#716).
+- `ctbz prolabore definir` não envia mais `sairGestaoInteligente: true` quando a Contabilizei
+  não informa quantos sócios estão na gestão inteligente: recusa antes de escrever (também no
+  `--dry-run`) e pede para usar o painel. O resumo também avisa quando o pedido tira a empresa
+  da gestão inteligente sem que o sócio esteja nela (#729).
 
 ### Security
 

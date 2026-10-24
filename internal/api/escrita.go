@@ -390,7 +390,7 @@ func exemploProdutos() []json.RawMessage {
 // fictícia (o último sócio na gestão inteligente).
 func exemploGestao(tipo string, valor, minimo *float64) func(context.Context, Sender) error {
 	return func(ctx context.Context, s Sender) error {
-		atual := GestaoSocio{ValorMaximoProlabore: ptr(8157.41), SalarioMinimo: ptr(1518.0), QtdSocioGestaoInteligente: 1, ElegivelNoMotor: true}
+		atual := GestaoSocio{ValorMaximoProlabore: ptr(8157.41), SalarioMinimo: ptr(1518.0), QtdSocioGestaoInteligente: ptr(1), ElegivelNoMotor: true}
 		a, err := NovaAlteracaoGestao(atual, tipo, valor, minimo)
 		if err != nil {
 			return err

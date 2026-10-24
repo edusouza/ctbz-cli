@@ -178,7 +178,10 @@ func consequenciaGestao(atual api.GestaoSocio, alt api.AlteracaoGestao, dash *ap
 	switch {
 	case alt.SairGestaoInteligente && atual.TipoGerenciamentoProlabore == api.GerenciamentoInteligente:
 		linhas = append(linhas, "A empresa sai da gestão inteligente: era o último sócio nela.")
-	case alt.TipoGerenciamento != api.GerenciamentoInteligente && atual.QtdSocioGestaoInteligente > 1:
+	case alt.SairGestaoInteligente:
+		// Como no painel, o pedido leva a saída mesmo que este sócio não esteja na gestão inteligente.
+		linhas = append(linhas, "O pedido tira a empresa da gestão inteligente, como o painel faz quando há no máximo um sócio nela.")
+	case alt.TipoGerenciamento != api.GerenciamentoInteligente:
 		linhas = append(linhas, "A empresa permanece na gestão inteligente para os outros sócios.")
 	}
 	if dash.PodeAlterar != nil && !*dash.PodeAlterar {

@@ -6,12 +6,12 @@ import (
 )
 
 func TestNovaAlteracaoGestao(t *testing.T) {
-	atual := GestaoSocio{ValorMaximoProlabore: ptr(8157.41), SalarioMinimo: ptr(1518.0), QtdSocioGestaoInteligente: 2, ElegivelNoMotor: true}
+	atual := GestaoSocio{ValorMaximoProlabore: ptr(8157.41), SalarioMinimo: ptr(1518.0), QtdSocioGestaoInteligente: ptr(2), ElegivelNoMotor: true}
 	a, err := NovaAlteracaoGestao(atual, GerenciamentoTetoINSS, nil, nil)
 	if err != nil || *a.ValorProlabore != 8157.41 || a.SairGestaoInteligente || a.ModoEdicaoProlaboreMin {
 		t.Errorf("teto com outro sócio na GI: %+v, %v", a, err)
 	}
-	atual.QtdSocioGestaoInteligente, atual.ValorProlaboreMinimo = 1, ptr(2000.0)
+	atual.QtdSocioGestaoInteligente, atual.ValorProlaboreMinimo = ptr(1), ptr(2000.0)
 	a, err = NovaAlteracaoGestao(atual, GerenciamentoSalarioMinimo, nil, nil)
 	if err != nil || *a.ValorProlabore != 1518 || !a.SairGestaoInteligente || !a.ModoEdicaoProlaboreMin {
 		t.Errorf("salário mínimo, último na GI: %+v, %v", a, err)
@@ -19,6 +19,12 @@ func TestNovaAlteracaoGestao(t *testing.T) {
 	a, err = NovaAlteracaoGestao(atual, GerenciamentoInteligente, nil, nil)
 	if err != nil || a.ValorProlabore != nil || a.ValorProlaboreMinimo != nil || a.SairGestaoInteligente {
 		t.Errorf("inteligente sem piso: %+v, %v", a, err)
+	}
+	// Na gestão inteligente sairGestaoInteligente é sempre false: a quantidade não é usada.
+	semQtd := atual
+	semQtd.QtdSocioGestaoInteligente = nil
+	if a, err = NovaAlteracaoGestao(semQtd, GerenciamentoInteligente, nil, nil); err != nil || a.SairGestaoInteligente {
+		t.Errorf("inteligente sem quantidade na GI: %+v, %v", a, err)
 	}
 
 	for _, tc := range []struct {
@@ -34,6 +40,9 @@ func TestNovaAlteracaoGestao(t *testing.T) {
 		{GerenciamentoInteligente, nil, ptr(-1.0), nil, "deve ser positivo"},
 		{GerenciamentoInteligente, nil, nil, func(g *GestaoSocio) { g.ElegivelNoMotor = false }, "não é elegível"},
 		{GerenciamentoTetoINSS, nil, nil, func(g *GestaoSocio) { g.ValorMaximoProlabore = nil }, "teto do INSS"},
+		{GerenciamentoTetoINSS, nil, nil, func(g *GestaoSocio) { g.QtdSocioGestaoInteligente = nil }, "quantos sócios estão na gestão inteligente"},
+		{GerenciamentoSalarioMinimo, nil, nil, func(g *GestaoSocio) { g.QtdSocioGestaoInteligente = nil }, "quantos sócios estão na gestão inteligente"},
+		{GerenciamentoPersonalizado, ptr(3000.0), nil, func(g *GestaoSocio) { g.QtdSocioGestaoInteligente = nil }, "quantos sócios estão na gestão inteligente"},
 		{"OUTRO", nil, nil, nil, "desconhecido"},
 	} {
 		g := atual

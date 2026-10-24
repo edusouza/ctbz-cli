@@ -31,7 +31,7 @@ type GestaoSocio struct {
 	ValorProlaboreMinimo       *float64 `json:"valorProlaboreMinimo" contract:"optional"`
 	ValorMaximoProlabore       *float64 `json:"valorMaximoProlabore" contract:"optional"` // teto do INSS
 	SalarioMinimo              *float64 `json:"salarioMinimo" contract:"optional"`
-	QtdSocioGestaoInteligente  int      `json:"qtdSocioGestaoInteligente" contract:"optional"`
+	QtdSocioGestaoInteligente  *int     `json:"qtdSocioGestaoInteligente" contract:"optional"`
 	ElegivelNoMotor            bool     `json:"elegivelNoMotor" contract:"optional"`
 }
 
@@ -51,19 +51,25 @@ type AlteracaoGestao struct {
 
 // NovaAlteracaoGestao monta o corpo como o front: o valor vem do teto do INSS ou do salário
 // mínimo da gestão atual; o personalizado precisa ser pelo menos o salário mínimo; o piso
-// (minimo) só vale na gestão inteligente; e a empresa sai da gestão inteligente quando este
-// era o último sócio nela.
+// (minimo) só vale na gestão inteligente; e a empresa sai da gestão inteligente quando há no
+// máximo um sócio nela. Sem essa quantidade, recusa: o zero tiraria a empresa da gestão
+// inteligente por engano (ADR-0021).
 func NovaAlteracaoGestao(g GestaoSocio, tipo string, valor, minimo *float64) (AlteracaoGestao, error) {
 	a := AlteracaoGestao{
 		TipoGerenciamento:      tipo,
 		ModoEdicaoProlaboreMin: g.ValorProlaboreMinimo != nil,
-		SairGestaoInteligente:  tipo != GerenciamentoInteligente && g.QtdSocioGestaoInteligente <= 1,
 	}
 	if valor != nil && tipo != GerenciamentoPersonalizado {
 		return a, errors.New("o valor só é informado no pró-labore personalizado")
 	}
 	if minimo != nil && tipo != GerenciamentoInteligente {
 		return a, errors.New("o valor mínimo só vale na gestão inteligente")
+	}
+	if tipo != GerenciamentoInteligente {
+		if g.QtdSocioGestaoInteligente == nil {
+			return a, errors.New("a Contabilizei não informou quantos sócios estão na gestão inteligente: use o painel")
+		}
+		a.SairGestaoInteligente = *g.QtdSocioGestaoInteligente <= 1
 	}
 	switch tipo {
 	case GerenciamentoTetoINSS:
