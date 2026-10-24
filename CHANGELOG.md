@@ -47,6 +47,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   inicial 0 quando a Contabilizei não informa esses dados da conta (zero, nulo, ausente ou uma
   data anterior a 1990): a edição reenvia todos os campos, então a CLI recusa (código 2) e pede
   `--abertura` ou `--saldo-inicial`, sem enviar nada nem no `--dry-run` (#573).
+- `ctbz pendencias conciliacao resolver` lê as pendências abertas antes de confirmar: recusa
+  (código 2, sem enviar nada, nem no `--dry-run`) ids que não estão abertos, ids ou
+  contrapartes repetidos, `NOTAFISCAL` e `MOVIMENTACAO` no mesmo pedido, pendências de tipos
+  diferentes juntas e ids do tipo errado para a origem, e o resumo do `confirmo` mostra os
+  campos de cada pendência (data, valor) em vez de só os números digitados (#543).
 
 ### Security
 

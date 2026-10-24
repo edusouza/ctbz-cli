@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -183,6 +184,12 @@ apagada). Três formas, como no painel:
 Motivos que envolvem sócio exigem --socio ID. --nota-ativacao informa o número da nota no
 fluxo de ativação contábil. Os ids das pendências vêm de ctbz pendencias conciliacao --listar.
 
+Antes de pedir a confirmação, a CLI lê as pendências abertas dos últimos 12 meses (o mesmo
+período de --listar) e recusa ids que não estejam entre elas, ids ou contrapartes repetidos,
+NOTAFISCAL e MOVIMENTACAO no mesmo pedido e pendências de tipos diferentes juntas. Com
+--vincular, os ids precisam ser do tipo que a origem concilia. O resumo mostra os campos de
+cada pendência como a API os devolve (data, valor…).
+
 No painel, algumas opções só valem para itens abaixo de R$ 1.000,00; a CLI não conhece a lista
 exata, e a Contabilizei recusa o pedido se a regra não for atendida.
 
@@ -201,15 +208,27 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			if err != nil {
 				return err
 			}
+			if r := repetidos(ids); len(r) > 0 {
+				return usageError{fmt.Errorf("id de pendência repetido: %s; informe cada pendência uma vez", juntarIDs(r))}
+			}
 			if len(vincular) == 0 && motivo == "" {
 				return usageError{errors.New("informe --vincular ORIGEM:ID ou --motivo MOTIVO")}
 			}
 			req := api.ResolucaoConciliacao{IDPendencia: ids}
 			var resumo []string
+			vistas := map[api.Contraparte]bool{}
 			for _, v := range vincular {
 				c, err := parseContraparte(v)
 				if err != nil {
 					return usageError{err}
+				}
+				if vistas[c] {
+					return usageError{fmt.Errorf("contraparte repetida: %s:%d; informe cada uma uma vez", c.Origem, c.ID)}
+				}
+				vistas[c] = true
+				if len(req.Contraparte) > 0 && req.Contraparte[0].Origem != c.Origem {
+					return usageError{errors.New("não misture NOTAFISCAL e MOVIMENTACAO no mesmo pedido: notas conciliam " +
+						"recebimentos sem nota fiscal, e movimentações conciliam notas sem recebimento")}
 				}
 				req.Contraparte = append(req.Contraparte, c)
 				resumo = append(resumo, fmt.Sprintf("vincular %s %d", c.Origem, c.ID))
@@ -249,8 +268,23 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			if err != nil {
 				return err
 			}
+			// Notas conciliam recebimentos e movimentações conciliam notas; só com --motivo,
+			// o tipo vem de onde os ids estão.
+			tipos := []string{api.PendenciaNotaSemRecebimento, api.PendenciaRecebimentoSemNota}
+			if len(req.Contraparte) > 0 {
+				tipos = []string{tipoPorOrigem[req.Contraparte[0].Origem]}
+			}
+			abertas, err := pendenciasConciliacaoAbertas(ctx, g, tipos)
+			if err != nil {
+				return err
+			}
+			tipo, itens, err := conferirPendencias(ids, abertas, tipos)
+			if err != nil {
+				return err
+			}
 			op := operacao{Risco: riscoAlto, ID: strings.Join(args, ","),
-				Resumo:       fmt.Sprintf("Resolver %d pendência(s) de conciliação fiscal (%s): %s", len(ids), strings.Join(args, ", "), strings.Join(resumo, "; ")),
+				Resumo: fmt.Sprintf("Resolver %d pendência(s) de conciliação fiscal (%s) — %s: %s",
+					len(ids), rotulosTipoConciliacao[tipo], strings.Join(itens, "; "), strings.Join(resumo, "; ")),
 				Consequencia: "A resolução define a natureza fiscal do recebimento (receita tributável, empréstimo, capital…). Pode ser refeita, mas não apagada."}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.ResolverConciliacao(ctx, snd, req) })
 			if err != nil || !enviado {
@@ -280,4 +314,155 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 	cmd.Flags().StringVar(&notaAtivacao, "nota-ativacao", "", "número da nota no fluxo de ativação contábil")
 	addWriteFlags(cmd)
 	return cmd
+}
+
+// tipoPorOrigem liga a origem das contrapartes ao tipo de pendência que ela concilia.
+var tipoPorOrigem = map[string]string{
+	api.OrigemNotaFiscal:   api.PendenciaRecebimentoSemNota,
+	api.OrigemMovimentacao: api.PendenciaNotaSemRecebimento,
+}
+
+// rotulosTipoConciliacao nomeia os tipos de pendência nas mensagens.
+var rotulosTipoConciliacao = map[string]string{
+	api.PendenciaNotaSemRecebimento: "notas sem recebimento",
+	api.PendenciaRecebimentoSemNota: "recebimentos sem nota fiscal",
+}
+
+// pendenciaConciliacao é uma pendência lida de BuscarPendenciasConciliacao, com os campos que a
+// API devolveu resumidos para a confirmação.
+type pendenciaConciliacao struct {
+	tipo, descricao string
+}
+
+// pendenciasConciliacaoAbertas lê as pendências abertas dos tipos pedidos, na mesma janela de
+// ctbz pendencias conciliacao --listar, indexadas pelo id. O formato dos itens não foi
+// verificado: o id é o campo "id" (o que --listar mostra) e, sem ele, a leitura falha em vez
+// de deixar passar um id que não dá para conferir.
+func pendenciasConciliacaoAbertas(ctx context.Context, g api.Getter, tipos []string) (map[int64][]pendenciaConciliacao, error) {
+	de, ate := janelaConciliacao()
+	abertas := map[int64][]pendenciaConciliacao{}
+	for _, tipo := range tipos {
+		itens, err := api.BuscarPendenciasConciliacao(ctx, g, tipo, de, ate)
+		if err != nil {
+			return nil, fmt.Errorf("lendo as pendências de conciliação: %w", err)
+		}
+		for _, item := range itens {
+			id, descricao, err := lerPendencia(item)
+			if err != nil {
+				return nil, err
+			}
+			abertas[id] = append(abertas[id], pendenciaConciliacao{tipo: tipo, descricao: descricao})
+		}
+	}
+	return abertas, nil
+}
+
+// lerPendencia tira o id de um item de pendência e descreve os outros campos simples (data,
+// valor, descrição…) na ordem em que a API os devolveu, sem caracteres de controle.
+func lerPendencia(item json.RawMessage) (int64, string, error) {
+	errSemID := errors.New("pendência de conciliação sem id numérico na resposta: o formato não é o esperado; resolva pelo painel")
+	v, err := output.FromJSON(item)
+	if err != nil {
+		return 0, "", fmt.Errorf("lendo uma pendência de conciliação: %w", err)
+	}
+	rec, ok := v.(*output.Record)
+	if !ok {
+		return 0, "", errSemID
+	}
+	var id int64
+	var campos []string
+	for _, f := range rec.Fields {
+		var texto string
+		switch x := f.Value.(type) {
+		case json.Number:
+			texto = x.String()
+		case string:
+			texto = x
+		case bool:
+			texto = strconv.FormatBool(x)
+		default: // nulo, objeto ou lista
+			continue
+		}
+		if f.Key == "id" {
+			if id, err = strconv.ParseInt(texto, 10, 64); err != nil || id <= 0 {
+				return 0, "", errSemID
+			}
+			continue
+		}
+		if texto = strings.Join(strings.Fields(semControle(texto)), " "); texto != "" {
+			campos = append(campos, semControle(f.Key)+" "+texto)
+		}
+	}
+	if id == 0 {
+		return 0, "", errSemID
+	}
+	return id, strings.Join(campos, ", "), nil
+}
+
+// conferirPendencias recusa ids que não estão abertos, que aparecem em mais de um tipo ou
+// que misturam tipos, e devolve o tipo e a descrição de cada pendência, na ordem dos ids.
+func conferirPendencias(ids []int64, abertas map[int64][]pendenciaConciliacao, tipos []string) (string, []string, error) {
+	var ausentes []int64
+	for _, id := range ids {
+		switch ps := abertas[id]; {
+		case len(ps) == 0:
+			ausentes = append(ausentes, id)
+		case len(ps) > 1:
+			return "", nil, usageError{fmt.Errorf("a pendência %d aparece entre as %s e entre os %s; use --vincular para indicar o tipo ou resolva pelo painel",
+				id, rotulosTipoConciliacao[api.PendenciaNotaSemRecebimento], rotulosTipoConciliacao[api.PendenciaRecebimentoSemNota])}
+		}
+	}
+	if len(ausentes) > 0 {
+		var rotulos []string
+		for _, t := range tipos {
+			rotulos = append(rotulos, rotulosTipoConciliacao[t])
+		}
+		listar := "notas|recebimentos"
+		if len(tipos) == 1 && tipos[0] == api.PendenciaNotaSemRecebimento {
+			listar = "notas"
+		} else if len(tipos) == 1 {
+			listar = "recebimentos"
+		}
+		verbo := "não está"
+		if len(ausentes) > 1 {
+			verbo = "não estão"
+		}
+		return "", nil, usageError{fmt.Errorf("%s %s entre as pendências abertas (%s) dos últimos 12 meses; confira os ids com ctbz pendencias conciliacao --listar %s",
+			juntarIDs(ausentes), verbo, strings.Join(rotulos, " ou "), listar)}
+	}
+	tipo := abertas[ids[0]][0].tipo
+	itens := make([]string, 0, len(ids))
+	for _, id := range ids {
+		p := abertas[id][0]
+		if p.tipo != tipo {
+			return "", nil, usageError{fmt.Errorf("as pendências misturam %s (%d) e %s (%d); resolva cada tipo num pedido separado",
+				rotulosTipoConciliacao[tipo], ids[0], rotulosTipoConciliacao[p.tipo], id)}
+		}
+		item := strconv.FormatInt(id, 10)
+		if p.descricao != "" {
+			item += " [" + p.descricao + "]"
+		}
+		itens = append(itens, item)
+	}
+	return tipo, itens, nil
+}
+
+// repetidos devolve os ids que aparecem mais de uma vez, na ordem da primeira repetição.
+func repetidos(ids []int64) []int64 {
+	vistos := map[int64]int{}
+	var out []int64
+	for _, id := range ids {
+		if vistos[id]++; vistos[id] == 2 {
+			out = append(out, id)
+		}
+	}
+	return out
+}
+
+func juntarIDs(ids []int64) string {
+	s := make([]string, len(ids))
+	for i, id := range ids {
+		s[i] = strconv.FormatInt(id, 10)
+	}
+	return strings.Join(s, ", ")
 }
