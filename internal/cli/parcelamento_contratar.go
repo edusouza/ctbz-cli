@@ -18,21 +18,36 @@ const avisosParcelamento = "Contratar é uma confissão de dívida perante a Rec
 	"Não dá para desfazer pela CLI nem pelo painel."
 
 // opcaoEscolhida acha a opção de parcelas: --parcelas (validado) ou a primeira, como o painel.
+// Uma opção sem quantidade, ou a escolhida sem os valores do resumo, é erro de leitura
+// (ADR-0021): a contratação não vai com quantidade 0 nem com valores desconhecidos.
 func opcaoEscolhida(sim *api.SimulacaoParcelamento, parcelas int) (*api.OpcaoParcelas, error) {
 	if len(sim.Parcelas) == 0 {
 		return nil, nil
 	}
-	if parcelas == 0 {
-		return &sim.Parcelas[0], nil
-	}
 	var aceitas []string
-	for i, p := range sim.Parcelas {
-		if p.Quantidade == parcelas {
-			return &sim.Parcelas[i], nil
+	for _, p := range sim.Parcelas {
+		if p.Quantidade <= 0 {
+			return nil, errors.New("a simulação trouxe uma opção sem a quantidade de parcelas; contrate pelo painel")
 		}
 		aceitas = append(aceitas, fmt.Sprint(p.Quantidade))
 	}
-	return nil, usageError{fmt.Errorf("%d parcelas não é uma opção; use %s (ver ctbz impostos parcelamento simular)", parcelas, strings.Join(aceitas, ", "))}
+	opcao := &sim.Parcelas[0]
+	if parcelas != 0 {
+		opcao = nil
+		for i, p := range sim.Parcelas {
+			if p.Quantidade == parcelas {
+				opcao = &sim.Parcelas[i]
+				break
+			}
+		}
+		if opcao == nil {
+			return nil, usageError{fmt.Errorf("%d parcelas não é uma opção; use %s (ver ctbz impostos parcelamento simular)", parcelas, strings.Join(aceitas, ", "))}
+		}
+	}
+	if opcao.ValorEntrada == nil || opcao.ValorDemaisParcelas == nil {
+		return nil, fmt.Errorf("a simulação não trouxe o valor das parcelas da opção de %d parcelas; contrate pelo painel", opcao.Quantidade)
+	}
+	return opcao, nil
 }
 
 func newParcelamentoContratarCmd() *cobra.Command {
@@ -96,7 +111,7 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			consequencia := avisosParcelamento
 			if sim.CobrarServicoAdicional || sim.ValorEmissaoGuia != nil {
 				consequencia += fmt.Sprintf(" Cobrados na próxima mensalidade: serviço adicional %s; emissão de guia %s.",
-					formatarCentavos(centavosPtr(sim.ValorServicoAdicional)), formatarCentavos(centavosPtr(sim.ValorEmissaoGuia)))
+					valorOuNaoInformado(sim.ValorServicoAdicional), valorOuNaoInformado(sim.ValorEmissaoGuia))
 			}
 			if !strings.HasPrefix(tipo, "pgfn-") {
 				qtd = 0 // só a PGFN envia a quantidade
@@ -148,4 +163,12 @@ func centavosPtr(v *float64) int64 {
 		return 0
 	}
 	return centavos(*v)
+}
+
+// valorOuNaoInformado formata um custo da simulação; sem valor, não mostra R$ 0,00.
+func valorOuNaoInformado(v *float64) string {
+	if v == nil {
+		return "não informado"
+	}
+	return formatarCentavos(centavos(*v))
 }
