@@ -36,6 +36,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   ou ambíguos). O ajuste de centavo só cobre o arredondamento dos percentuais: nunca envia
   valor negativo nem dá centavo a quem pediu 0%, e outras diferenças são recusadas com o erro
   de soma (#770, #777, #779).
+- `ctbz notas entrada classificar --produto` e `reclassificar` recusam, sem enviar nada, uma
+  nota com algum item sem quantidade total (ou com total zero), em vez de gravar as
+  quantidades zeradas e apagar a distribuição da nota (#716).
 
 ### Security
 

@@ -145,7 +145,8 @@ ctbz notas entrada reclassificar 1000000000000701 --como estoque --mes 2026-09
   nota (um ID por vez; repita `--produto` para outros itens). Os itens não citados ficam como
   estão, em geral com a pré-classificação sugerida. Quantidades usam ponto decimal (`2.5`).
 - A CLI confere as regras do painel antes de enviar: nenhuma quantidade negativa e, em cada
-  item, a soma igual à quantidade total (a coluna Quantidade de `produtos`).
+  item, a soma igual à quantidade total (a coluna Quantidade de `produtos`). Se a Contabilizei
+  devolver um item sem quantidade total (ou com 0), a CLI não envia nada: use o painel.
 - `reclassificar` muda uma nota da lista "classificadas": `--como` põe toda a quantidade de
   cada item numa só opção; `--produto` funciona como acima. A nota fica `PROCESSANDO` até a
   Contabilizei aplicar.
