@@ -15,8 +15,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   Custos adicionais sem valor aparecem como "não informado" (#489).
 - `ctbz usuarios ativar|desativar` reenvia o id exatamente como listado (número acima de 2^53
   ou texto), recusa sem escrita usuário sem id, tipo ou status e só desativa usuários
-  secundários; o limite do `ctbz usuarios convidar` conta todo ativo que não seja o
-  principal (#818).
+  secundários. O limite do `ctbz usuarios convidar` conta os secundários ativos, como o
+  painel, e o convite é recusado sem escrita se algum usuário da lista vier com tipo ou
+  situação vazia ou desconhecida (#818, #972).
 
 ### Security
 
