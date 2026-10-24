@@ -84,6 +84,43 @@ func TestProlaboreDefinirValidacoes(t *testing.T) {
 	}
 }
 
+// Sem a quantidade de sócios na gestão inteligente, sairGestaoInteligente sairia true por
+// engano (#729): a CLI recusa antes de escrever, também no --dry-run.
+func TestProlaboreDefinirSemQtdGestaoInteligente(t *testing.T) {
+	for nome, gestao := range map[string]string{
+		"ausente": strings.Replace(fixture(t, "gestao_socio"), `"qtdSocioGestaoInteligente": 1,`, "", 1),
+		"null":    strings.Replace(fixture(t, "gestao_socio"), `"qtdSocioGestaoInteligente": 1`, `"qtdSocioGestaoInteligente": null`, 1),
+	} {
+		for _, modo := range []string{"--yes", "--dry-run"} {
+			f := prolaboreFake(t, gestao, "{}")
+			out, stderr, code := execCLI(t, "", "prolabore", "definir", "--socio", "1000000000000001", "--tipo", "teto-inss", modo)
+			if code != ExitError || len(f.writes) != 0 || strings.Contains(out, "PUT") || strings.Contains(stderr, "PUT") ||
+				!strings.Contains(stderr, "não informou quantos sócios estão na gestão inteligente") {
+				t.Errorf("%s %s: código %d, %d escritas\n%s\n%s", nome, modo, code, len(f.writes), out, stderr)
+			}
+		}
+	}
+	// Para a gestão inteligente a quantidade não é usada: segue sem ela.
+	gestao := strings.Replace(fixture(t, "gestao_socio"), `"qtdSocioGestaoInteligente": 1,`, "", 1)
+	f := prolaboreFake(t, gestao, "{}")
+	out, stderr, code := execCLI(t, "", "prolabore", "definir", "--socio", "1000000000000001", "--tipo", "inteligente", "--dry-run")
+	if code != ExitOK || len(f.writes) != 0 || !strings.Contains(out, `"sairGestaoInteligente": false`) {
+		t.Errorf("inteligente: código %d, %d escritas\n%s\n%s", code, len(f.writes), out, stderr)
+	}
+}
+
+// O corpo leva sairGestaoInteligente: true também quando o sócio não está na gestão
+// inteligente (só outro sócio está): o resumo avisa.
+func TestProlaboreDefinirAvisaSaidaGestaoInteligente(t *testing.T) {
+	gestao := strings.Replace(fixture(t, "gestao_socio"), `"INTELIGENTE"`, `"SALARIO_MINIMO"`, 1)
+	f := prolaboreFake(t, gestao, "{}")
+	_, stderr, code := execCLI(t, "", "prolabore", "definir", "--socio", "1000000000000001", "--tipo", "teto-inss", "--yes")
+	if code != ExitOK || len(f.writes) != 1 || !strings.HasSuffix(f.writes[0], `"sairGestaoInteligente":true}`) ||
+		!strings.Contains(stderr, "tira a empresa da gestão inteligente") {
+		t.Errorf("código %d, %q\n%s", code, f.writes, stderr)
+	}
+}
+
 func TestProlaboreDefinirDryRun(t *testing.T) {
 	f := prolaboreFake(t, fixture(t, "gestao_socio"), "{}")
 	out, _, code := execCLI(t, "", "prolabore", "definir", "--socio", "1000000000000001", "--tipo", "inteligente", "--minimo", "2000", "--dry-run")

@@ -124,7 +124,9 @@ ctbz prolabore zerar-sem-faturamento on|off
 
 - **Quando vale:** até o fechamento do mês (em geral dia 25), vale para o mês atual; depois,
   para o seguinte. A CLI avisa quando o mês está fechado.
-- Se o sócio era o último na gestão inteligente, a empresa sai dela (a CLI avisa no resumo).
+- Com no máximo um sócio na gestão inteligente, mudar para outro tipo tira a empresa dela,
+  mesmo que esse sócio seja outro (a CLI avisa no resumo). Se a CLI recusar por não saber
+  quantos sócios estão nela, não contorne: oriente o usuário a usar o painel.
 - `situacao: "enviado"` = aceito, mas a releitura ainda não mostra a mudança: não repita;
   confira com `ctbz prolabore` mais tarde.
 
