@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -8,17 +9,47 @@ import (
 )
 
 const (
-	pathConsultaBB  = "/api/plataforma/novo-emissor/clientes/consulta/00000000000191"
-	pathTomadores   = "/api/plataforma/novo-emissor/tomadores/init"
-	pathCEPSe       = "/api/plataforma/novo-emissor/cep/logradouro?cep=01001000"
-	pathPaises      = "/api/plataforma/notafiscal/emitir/buscarPaisesParaEmissao/"
-	pathCadastroBB  = "/api/plataforma/novo-emissor/cadastro-clientes/00000000000191"
-	pathCadastroExt = "/api/plataforma/novo-emissor/cadastro-clientes/77"
+	pathConsultaBB       = "/api/plataforma/novo-emissor/clientes/consulta/00000000000191"
+	pathTomadores        = "/api/plataforma/novo-emissor/tomadores/init"
+	pathCEPSe            = "/api/plataforma/novo-emissor/cep/logradouro?cep=01001000"
+	pathPaises           = "/api/plataforma/notafiscal/emitir/buscarPaisesParaEmissao/"
+	pathCadastroClientes = "/api/plataforma/novo-emissor/cadastro-clientes/"
+	pathCadastroBB       = "/api/plataforma/novo-emissor/cadastro-clientes/00000000000191"
+	pathCadastroExt      = "/api/plataforma/novo-emissor/cadastro-clientes/77"
 )
 
+// tomadoresFake responde como o escritaFake, mas o cadastro de um tomador que não está nos
+// GETs responde 204, como o emissor faz com um documento que não está cadastrado.
 func tomadoresFake(t *testing.T) *escritaFake {
 	t.Helper()
-	return newEscritaFake(t, map[string]string{
+	f := &escritaFake{gets: tomadoresGets(t)}
+	writeServer(t, http.StatusOK, func(w http.ResponseWriter, r *http.Request) {
+		f.mu.Lock()
+		defer f.mu.Unlock()
+		if r.Method == http.MethodGet {
+			body, ok := f.gets[r.URL.RequestURI()]
+			switch {
+			case ok:
+				io.WriteString(w, body)
+			case strings.HasPrefix(r.URL.Path, pathCadastroClientes):
+				w.WriteHeader(http.StatusNoContent)
+			default:
+				http.NotFound(w, r)
+			}
+			return
+		}
+		body, _ := io.ReadAll(r.Body)
+		f.writes = append(f.writes, r.Method+" "+r.URL.RequestURI()+" "+string(body))
+		if f.onWrite != nil {
+			f.onWrite(f)
+		}
+	})
+	return f
+}
+
+func tomadoresGets(t *testing.T) map[string]string {
+	t.Helper()
+	return map[string]string{
 		pathConsultaBB: `{"cnpj":"00000000000191","razaoSocial":"BANCO EXEMPLO SA","nomeFantasia":"","dataAbertura":"01/01/1900","atividadePrincipal":null,"naturezaJuridica":null,
 "logradouro":"Rua Exemplo","numero":"1","complemento":"","bairro":"Centro","cep":"01001000","municipio":"São Paulo","uf":"SP","email":"","telefone":"","situacaoCadastral":"ATIVA","optanteSimples":"NÃO"}`,
 		pathCEPSe:       fixture(t, "cep"),
@@ -26,11 +57,12 @@ func tomadoresFake(t *testing.T) *escritaFake {
 		pathCadastroBB:  fixture(t, "cadastro_cliente"),
 		pathCadastroExt: `{"tipoCliente":"EXTERIOR","clienteExteriorDTO":{"razaoSocialOuNome":"EXAMPLE INC","email":"","endereco":{"complemento":"","logradouro":"Main St","numero":"100","cidade":"Springfield","pais":249,"descricaoPais":"Estados Unidos","simboloPais":"US"},"id":77}}`,
 		pathTomadores:   `{"tomadores":[{"id":5,"nome":"BANCO EXEMPLO SA","cpfCnpj":"00000000000191"},{"id":77,"nome":"EXAMPLE INC","estrangeiro":true}],"emissaoSemTomador":false,"permiteEmissaoExterior":true}`,
-	})
+	}
 }
 
 func TestTomadoresAdicionarCNPJ(t *testing.T) {
 	f := tomadoresFake(t)
+	delete(f.gets, pathCadastroBB) // documento novo
 	out, stderr, code := execCLI(t, "", "notas", "tomadores", "adicionar", "--documento", "00.000.000/0001-91", "--email", "fin@exemplo.com", "--im", "123", "--yes", "-o", "json")
 	want := `POST /api/plataforma/novo-emissor/clientes/salvar-cliente-nacional {"cpfCnpj":"00000000000191","razaoSocialOuNome":"BANCO EXEMPLO SA","telefone":"","email":"fin@exemplo.com","inscricaoMunicipal":"123",` +
 		`"endereco":{"bairro":"Centro","cep":"01001000","codIbge":"3550308","complemento":"","logradouro":"Rua Exemplo","estado":"SP","numero":"1","cepInvalido":false}}`
@@ -134,5 +166,48 @@ func TestTomadoresEditarNaoEncontrado(t *testing.T) {
 	_, stderr, code := execCLI(t, "", "notas", "tomadores", "editar", "00000000000191", "--email", "a@exemplo.com", "--yes")
 	if code != ExitError || !strings.Contains(stderr, "tomador 00000000000191 não encontrado") {
 		t.Errorf("tomador inexistente: código %d, %s", code, stderr)
+	}
+}
+
+// Cadastrar um documento que já existe sobrescreveria o cadastro com a Receita e as flags,
+// apagando a IM e o que foi corrigido à mão (o emissor salva pelo documento): recusa e
+// orienta o editar, sem escrita, inclusive com --yes e --dry-run (#660).
+func TestTomadoresAdicionarDocumentoJaCadastrado(t *testing.T) {
+	for _, tc := range []struct{ documento, normalizado, flag string }{
+		{"00.000.000/0001-91", "00000000000191", "--yes"},
+		{"00.000.000/0001-91", "00000000000191", "--dry-run"},
+		{"12.abc.345/01de-35", "12ABC34501DE35", "--yes"}, // CNPJ alfanumérico
+	} {
+		f := tomadoresFake(t)
+		f.gets[pathCadastroClientes+"12ABC34501DE35"] = strings.ReplaceAll(f.gets[pathCadastroBB], "00000000000191", "12ABC34501DE35")
+		out, stderr, code := execCLI(t, "", "notas", "tomadores", "adicionar", "--documento", tc.documento, "--email", "x@exemplo.com", tc.flag)
+		if code != ExitUsage || len(f.writes) != 0 || out != "" ||
+			!strings.Contains(stderr, "tomador "+tc.normalizado+" já está cadastrado") ||
+			!strings.Contains(stderr, "ctbz notas tomadores editar "+tc.normalizado) {
+			t.Errorf("%v: código %d, %d escritas, saída %q\n%s", tc, code, len(f.writes), out, stderr)
+		}
+	}
+}
+
+// Documento novo (o cadastro responde 204) segue para a escrita; erro na leitura do cadastro
+// para antes de escrever.
+func TestTomadoresAdicionarConfereCadastro(t *testing.T) {
+	f := tomadoresFake(t)
+	delete(f.gets, pathCadastroBB)
+	out, stderr, code := execCLI(t, "", "notas", "tomadores", "adicionar", "--documento", "00000000000191", "--dry-run")
+	if code != ExitOK || len(f.writes) != 0 || !strings.Contains(out, "salvar-cliente-nacional") || !strings.Contains(stderr, "Cadastrar o tomador BANCO EXEMPLO SA") {
+		t.Errorf("documento novo, dry-run: código %d, %d escritas\n%s\n%s", code, len(f.writes), out, stderr)
+	}
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet {
+			t.Errorf("escrita inesperada: %s %s", r.Method, r.URL)
+		}
+		http.Error(w, "erro", http.StatusInternalServerError)
+	}))
+	t.Cleanup(srv.Close)
+	withSession(t, srv)
+	if _, stderr, code := execCLI(t, "", "notas", "tomadores", "adicionar", "--documento", "00000000000191", "--yes"); code != ExitError || !strings.Contains(stderr, "conferindo se o tomador 00000000000191 já está cadastrado") {
+		t.Errorf("cadastro ilegível: código %d\n%s", code, stderr)
 	}
 }

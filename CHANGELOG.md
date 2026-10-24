@@ -52,6 +52,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   contrapartes repetidos, `NOTAFISCAL` e `MOVIMENTACAO` no mesmo pedido, pendências de tipos
   diferentes juntas e ids do tipo errado para a origem, e o resumo do `confirmo` mostra os
   campos de cada pendência (data, valor) em vez de só os números digitados (#543).
+- `ctbz notas tomadores adicionar` recusa (código 2) um documento já cadastrado e indica
+  `ctbz notas tomadores editar`: antes, como o emissor salva pelo documento, trocava o cadastro
+  pelos dados da Receita e enviava `inscricaoMunicipal: null`, sem avisar no resumo (#660).
 
 ### Security
 

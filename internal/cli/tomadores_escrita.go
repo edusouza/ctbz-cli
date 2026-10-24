@@ -76,6 +76,12 @@ func tomadorNacional(ctx context.Context, g api.Getter, f tomadorFlags) (api.Cli
 	}
 	c := api.ClienteNacional{CPFCNPJ: doc}
 	pj := len(doc) == 14
+	if !pj && f.im != "" {
+		return c, usageError{errors.New("pessoa física não tem inscrição municipal")}
+	}
+	if err := recusarJaCadastrado(ctx, g, doc); err != nil {
+		return c, err
+	}
 	if pj {
 		r, err := api.BuscarConsultaCNPJ(ctx, g, doc)
 		if err != nil {
@@ -83,10 +89,23 @@ func tomadorNacional(ctx context.Context, g api.Getter, f tomadorFlags) (api.Cli
 		}
 		c.RazaoSocialOuNome, c.Email, c.Telefone = r.RazaoSocial, r.Email, r.Telefone
 		c.Endereco = api.EnderecoNacional{Logradouro: r.Logradouro, Numero: r.Numero, Complemento: r.Complemento, Bairro: r.Bairro, CEP: r.CEP, Estado: r.UF}
-	} else if f.im != "" {
-		return c, usageError{errors.New("pessoa física não tem inscrição municipal")}
 	}
 	return aplicarFlagsNacional(ctx, g, c, f)
+}
+
+// recusarJaCadastrado lê o cadastro do documento (204 = não cadastrado). O emissor salva o
+// tomador nacional pelo documento: cadastrar de novo trocaria o cadastro atual pela Receita e
+// pelas flags, apagando a inscrição municipal e o que foi corrigido à mão (#660).
+func recusarJaCadastrado(ctx context.Context, g api.Getter, doc string) error {
+	_, err := api.BuscarCadastroCliente(ctx, g, doc)
+	var he *ctbz.HTTPError
+	if errors.As(err, &he) && he.Status == 204 {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("conferindo se o tomador %s já está cadastrado: %w", doc, err)
+	}
+	return usageError{fmt.Errorf("tomador %s já está cadastrado; para corrigir os dados, use ctbz notas tomadores editar %s", doc, doc)}
 }
 
 // aplicarFlagsNacional aplica as flags informadas sobre um cadastro e confere o obrigatório.
@@ -235,8 +254,9 @@ func newTomadoresAdicionarCmd() *cobra.Command {
 Nacional (--documento): com CNPJ, a razão social e o endereço vêm da consulta à Receita, e as
 flags só completam ou corrigem; com CPF, informe --nome, --cep e --numero (logradouro e bairro
 vêm do CEP). O documento é validado pelos dígitos verificadores, inclusive o CNPJ
-alfanumérico. Se o documento já estiver cadastrado, o cadastro é atualizado (o emissor salva
-pelo documento).
+alfanumérico. Se o documento já estiver cadastrado, o comando recusa (sai com código 2) e
+indica ctbz notas tomadores editar, que parte do cadastro atual: cadastrar de novo trocaria o
+cadastro pelos dados da Receita e apagaria a inscrição municipal.
 
 Exterior (--exterior): informe --nome, --pais, --cidade, --logradouro e --numero.
 
