@@ -186,12 +186,16 @@ ctbz lucros distribuir --socio 1000000000000001=30000,00 --socio 100000000000000
   ou um valor em reais. Os sócios não citados ficam com zero.
 - A soma precisa ser o **lucro total** do exercício: o saldo na empresa mais o já distribuído
   (a regra do painel). A CLI calcula em centavos; quando os percentuais não fecham por
-  arredondamento, o centavo de diferença vai para o último sócio citado em percentual. Os
-  percentuais enviados são calculados a partir dos valores finais e sempre somam 100,00%
+  arredondamento (no máximo meio centavo por sócio com percentual não nulo), cada centavo de
+  diferença vai para o último sócio citado em percentual que arredondou no sentido oposto.
+  Quem pediu 0% nunca recebe centavo e nenhum valor fica negativo; qualquer outra diferença
+  é recusada com o erro de soma. Os percentuais enviados são calculados a partir dos valores finais e sempre somam 100,00%
   (com três partes iguais, um sócio fica com 33,34%); o resumo mostra os percentuais
   enviados.
 - A CLI recusa sem exercício aberto, quando o painel não deixa alterar (com o motivo), depois
-  da data limite e com restrições no informe (pendência documental ou débitos federais).
+  da data limite e com restrições no informe (pendência documental ou débitos federais). Também
+  recusa, pedindo para distribuir pelo painel, quando a Contabilizei não informa o saldo ou o
+  total já distribuído, ou lista um sócio sem id ou o mesmo sócio duas vezes.
 - Risco alto: são os rendimentos isentos que os sócios declaram no IRPF. A CLI mostra a parte
   de cada um e pede `confirmo`. Dá para refazer enquanto a distribuição puder ser alterada.
 - Depois do envio, a CLI relê a distribuição: `registrado` quando o valor relido é o enviado,

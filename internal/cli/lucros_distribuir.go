@@ -63,7 +63,10 @@ enquanto a distribuição puder ser alterada. Aceita --yes e --dry-run.`,
 			if err != nil {
 				return err
 			}
-			total := centavosPtr(d.Saldo) + centavosPtr(d.TotalDistribuido)
+			total, err := lucroTotal(d)
+			if err != nil {
+				return err
+			}
 			if total <= 0 {
 				return errors.New("não há lucro para distribuir no exercício")
 			}
@@ -196,11 +199,49 @@ func nomesSocios(cmd *cobra.Command, g api.Getter, d *api.DistribuicaoLucros) (m
 	return nomes, nil
 }
 
+// lucroTotal é o lucro que as partes precisam somar: o saldo na empresa mais o já
+// distribuído, como no painel. Um dos dois ausente é erro de leitura, não zero (ADR-0021):
+// sem ele, os percentuais sairiam de um total menor que o real.
+func lucroTotal(d *api.DistribuicaoLucros) (int64, error) {
+	if d.Saldo == nil {
+		return 0, fmt.Errorf("a Contabilizei não informou o saldo de lucros do exercício %d; distribua pelo painel", d.Ano)
+	}
+	if d.TotalDistribuido == nil {
+		return 0, fmt.Errorf("a Contabilizei não informou o total já distribuído do exercício %d; distribua pelo painel", d.Ano)
+	}
+	return centavos(*d.Saldo) + centavos(*d.TotalDistribuido), nil
+}
+
+// conferirIDsSocios recusa a distribuição cujos sócios não dá para identificar: o id de cada
+// item vai como idSocio na escrita, e um id ausente ou repetido iria nulo ou ambíguo.
+func conferirIDsSocios(lucros []api.LucroSocio) error {
+	vistos := map[string]bool{}
+	for _, l := range lucros {
+		id := idTexto(l.ID)
+		switch l.ID.(type) {
+		case float64, string:
+		default:
+			id = ""
+		}
+		if strings.TrimSpace(id) == "" {
+			return errors.New("a Contabilizei listou um sócio da distribuição sem id; distribua pelo painel")
+		}
+		if vistos[id] {
+			return fmt.Errorf("a Contabilizei listou o sócio %s mais de uma vez na distribuição; distribua pelo painel", id)
+		}
+		vistos[id] = true
+	}
+	return nil
+}
+
 // montarDistribuicao calcula, em centavos, o valor e o percentual de cada sócio da
-// distribuição (os não citados ficam com zero) e confere que a soma é o total. O centavo de
-// arredondamento dos percentuais vai para o último sócio citado em percentual; os percentuais
-// enviados saem dos valores finais e somam 100,00%.
+// distribuição (os não citados ficam com zero) e confere que a soma é o total. Só a diferença
+// que o arredondamento dos percentuais explica é ajustada (ver ajustarArredondamento); os
+// percentuais enviados saem dos valores finais e somam 100,00%.
 func montarDistribuicao(lucros []api.LucroSocio, nomes map[string]string, partes []parteSocio, total int64) ([]api.DistribuicaoSocio, string, error) {
+	if err := conferirIDsSocios(lucros); err != nil {
+		return nil, "", err
+	}
 	naDistribuicao := map[string]bool{}
 	for _, l := range lucros {
 		naDistribuicao[idTexto(l.ID)] = true
@@ -212,20 +253,15 @@ func montarDistribuicao(lucros []api.LucroSocio, nomes map[string]string, partes
 		}
 		porID[partes[i].id] = &partes[i]
 	}
-	var ultimoPct *parteSocio
 	var soma int64
 	for i := range partes {
 		p := &partes[i]
 		if p.percentual {
 			p.centavos = (total*p.centesimos + 5000) / 10000
-			ultimoPct = p
 		}
 		soma += p.centavos
 	}
-	if d := total - soma; ultimoPct != nil && d != 0 && abs64(d) <= int64(len(partes)) {
-		ultimoPct.centavos += d
-		soma += d
-	}
+	soma += ajustarArredondamento(partes, total, total-soma)
 	if soma != total {
 		return nil, "", usageError{fmt.Errorf("a soma das partes (%s) deve ser igual ao lucro total do exercício (%s)", formatarCentavos(soma), formatarCentavos(total))}
 	}
@@ -245,6 +281,47 @@ func montarDistribuicao(lucros []api.LucroSocio, nomes map[string]string, partes
 		resumo = append(resumo, fmt.Sprintf("%s %s%% (%s)", firstNonEmpty(nomes[id], id), strings.Replace(fmt.Sprintf("%d.%02d", pct/100, pct%100), ".", ",", 1), formatarCentavos(cent)))
 	}
 	return itens, strings.Join(resumo, "; "), nil
+}
+
+// ajustarArredondamento acerta a diferença d (total - soma) que vem do arredondamento dos
+// percentuais e devolve quanto ajustou: 0 quando d não se explica por arredondamento, e a soma
+// fica errada. Cada percentual não nulo arredonda no máximo meio centavo, então |d| não passa
+// de meio centavo por sócio com percentual não nulo. Cada centavo vai (ou sai) de um sócio
+// diferente, do último citado para o primeiro, entre os que arredondaram no sentido oposto:
+// quem pediu 0% nunca ganha centavo e ninguém fica abaixo de zero (#779).
+func ajustarArredondamento(partes []parteSocio, total, d int64) int64 {
+	var naoNulos int64
+	for _, p := range partes {
+		if p.percentual && p.centesimos > 0 {
+			naoNulos++
+		}
+	}
+	if d == 0 || 2*abs64(d) > naoNulos {
+		return 0
+	}
+	passo := int64(1)
+	if d < 0 {
+		passo = -1
+	}
+	var ajustar []*parteSocio
+	for i := len(partes) - 1; i >= 0 && int64(len(ajustar)) < abs64(d); i-- {
+		p := &partes[i]
+		if !p.percentual || p.centesimos == 0 {
+			continue
+		}
+		// erro > 0: arredondou para cima (pode perder um centavo); < 0: para baixo (pode ganhar).
+		erro := p.centavos*10000 - total*p.centesimos
+		if erro*passo < 0 {
+			ajustar = append(ajustar, p)
+		}
+	}
+	if int64(len(ajustar)) < abs64(d) {
+		return 0
+	}
+	for _, p := range ajustar {
+		p.centavos += passo
+	}
+	return d
 }
 
 // percentuaisDe calcula, em centésimos de ponto, o percentual de cada valor sobre o total

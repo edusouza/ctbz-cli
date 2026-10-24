@@ -61,8 +61,8 @@ que o sócio está declarando e só envia o aceite com a sua confirmação expl�
 
 1. Pergunta como dividir. O padrão é a proporção das quotas do contrato social; uma divisão
    desproporcional precisa estar prevista no contrato.
-2. A soma precisa ser o lucro total do exercício; a CLI distribui os centavos. Por percentual ou
-   por valor:
+2. A soma precisa ser o lucro total do exercício; a CLI só acerta o centavo de arredondamento
+   dos percentuais e recusa outras diferenças. Por percentual ou por valor:
    ```sh
    ctbz lucros distribuir --socio ID1=60% --socio ID2=40% --dry-run
    ctbz lucros distribuir --socio ID1=30000,00 --socio ID2=20000,00 --dry-run
