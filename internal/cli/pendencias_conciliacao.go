@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -46,8 +47,8 @@ Com --fail-on-pendencias, o comando termina com código 4 quando há algo a conc
 				if !ok {
 					return usageError{fmt.Errorf("--listar deve ser notas ou recebimentos: %q", listar)}
 				}
-				ate := now()
-				itens, err := api.BuscarPendenciasConciliacao(cmd.Context(), sessionGetter{s}, tipo, ate.AddDate(-1, 0, 0), ate)
+				de, ate := janelaConciliacao()
+				itens, err := api.BuscarPendenciasConciliacao(cmd.Context(), sessionGetter{s}, tipo, de, ate)
 				if err != nil {
 					return err
 				}
@@ -84,6 +85,12 @@ Com --fail-on-pendencias, o comando termina com código 4 quando há algo a conc
 	cmd.Flags().BoolVar(&failOnPendencias, "fail-on-pendencias", false, "termina com código 4 se houver algo a conciliar")
 	cmd.AddCommand(newConciliacaoMotivosCmd(), newConciliacaoCandidatosCmd(), newConciliacaoDetalhesCmd(), newConciliacaoResolverCmd())
 	return cmd
+}
+
+// janelaConciliacao é o período das pendências lidas: os últimos 12 meses, como no painel.
+func janelaConciliacao() (de, ate time.Time) {
+	ate = now()
+	return ate.AddDate(-1, 0, 0), ate
 }
 
 func conciliacaoRecord(c *api.ConciliacaoResumo) *output.Record {

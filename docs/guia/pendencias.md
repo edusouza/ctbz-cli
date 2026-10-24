@@ -169,6 +169,12 @@ ctbz pendencias conciliacao detalhes --recebimento 123         # como uma pendê
 - `--vincular ORIGEM:ID` aceita `NOTAFISCAL` (para pendências de recebimento) e `MOVIMENTACAO`
   (para pendências de nota). Com `--vincular` e `--motivo` juntos, a conciliação fica com a
   diferença justificada.
+- Antes da confirmação, a CLI lê as pendências abertas dos últimos 12 meses (o período de
+  `--listar`) e mostra os campos de cada uma (data, valor…). Recusa, com código 2 e sem enviar
+  nada (nem no `--dry-run`): ids que não estejam entre elas, ids ou contrapartes repetidos,
+  `NOTAFISCAL` e `MOVIMENTACAO` juntos, pendências de nota e de recebimento no mesmo pedido e,
+  com `--vincular`, ids do outro tipo. Uma pendência mais antiga que 12 meses se resolve pelo
+  painel.
 - Motivos que envolvem sócio (AFAC, empréstimo do sócio, integralização de capital, devolução
   de lucros antecipados) exigem `--socio ID`. Essa lista foi deduzida do painel e pode mudar.
 - No painel, algumas opções só valem para itens abaixo de R$ 1.000,00. A CLI não conhece a lista
