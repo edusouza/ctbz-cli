@@ -12,6 +12,10 @@ a rotina não reabre, mas a classificação ainda pode ser trocada com ctbz extr
 enquanto o período estiver aberto). Opções com sócio exigem --socio, exceto quando há um só
 sócio, que é escolhido sozinho como no painel.
 
+--classificacao casa primeiro com o id da opção, depois com o nome escrito exatamente como na
+lista e, por último, com o nome sem diferenciar maiúsculas. Um nome que casa com mais de uma
+opção é recusado como uso incorreto, listando os candidatos: nesse caso, use o id.
+
 Pede confirmação (--yes em scripts) e aceita --dry-run.
 
 ## Uso
