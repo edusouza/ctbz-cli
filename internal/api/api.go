@@ -61,7 +61,7 @@ func Endpoints() []Endpoint {
 		{Name: "central_rotinas", LivePath: PathCentralRotinas, Type: CentralRotinas{}},
 		{Name: "checklist_onboarding", LivePath: PathChecklistInit, Type: ChecklistOnboarding{}},     // sintética (ADR-0021)
 		{Name: "central_rotinas_init", LivePath: PathCentralRotinasInit, Type: CentralRotinasInit{}}, // sintética (ADR-0021)
-		{Name: "reclassificar_init", Type: []PendenciaReclassificacao{}},                             // sintética (ADR-0021); ids de central_rotinas
+		{Name: "reclassificar_init", Type: []PendenciaReclassificacao{}},                             // sintética (ADR-0021); sem LivePath: os ids vêm de central_rotinas
 		{Name: "conciliacao_resumo", LivePath: PathConciliacaoInit, Type: ConciliacaoResumo{}},
 		{Name: "conciliacao_pendencias", LivePath: PathConciliacaoPendencias + "?status=PENDENTE&tipoPendencia=" + PendenciaNotaSemRecebimento, Type: PaginaConciliacao{}},
 		{Name: "chamados_em_andamento", LivePath: PathChamadosEmAndamento, Type: []Chamado{}},

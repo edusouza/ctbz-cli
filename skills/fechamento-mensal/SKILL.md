@@ -97,7 +97,8 @@ ctbz extratos contas --competencia M -o json      # opções aceitas (RECEITA p/
 
 Rotinas que pedem reclassificação (coluna `pendencias` de `ctbz rotinas`):
 `ctbz rotinas reclassificar ID` (lista as opções) → `--classificacao "Opção" [--socio ID]`
-(risco médio; conclui a rotina).
+(risco médio; conclui a rotina). Nome que casa com mais de uma opção sai com código 2 e os
+candidatos: repita com o id da opção.
 
 ## 3. Caixa (dinheiro em espécie)
 
