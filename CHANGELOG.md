@@ -43,6 +43,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   não informa quantos sócios estão na gestão inteligente: recusa antes de escrever (também no
   `--dry-run`) e pede para usar o painel. O resumo também avisa quando o pedido tira a empresa
   da gestão inteligente sem que o sócio esteja nela (#729).
+- `ctbz contas-bancarias editar` não envia mais a data de abertura 1969-12-31 nem o saldo
+  inicial 0 quando a Contabilizei não informa esses dados da conta (zero, nulo, ausente ou uma
+  data anterior a 1990): a edição reenvia todos os campos, então a CLI recusa (código 2) e pede
+  `--abertura` ou `--saldo-inicial`, sem enviar nada nem no `--dry-run` (#573).
 
 ### Security
 

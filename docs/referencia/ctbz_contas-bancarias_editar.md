@@ -3,8 +3,10 @@
 Corrige os dados de uma conta bancária cadastrada
 
 Corrige banco, agência, conta, data de abertura ou saldo inicial de uma conta (risco médio:
-dá para editar de novo). Só as flags informadas mudam. O painel pode bloquear a edição (por
-exemplo, com extratos já classificados); nesse caso a CLI mostra o motivo.
+dá para editar de novo). Só as flags informadas mudam; como a edição reenvia todos os campos,
+se a Contabilizei não informar a abertura ou o saldo inicial da conta, informe --abertura ou
+--saldo-inicial. O painel pode bloquear a edição (por exemplo, com extratos já classificados);
+nesse caso a CLI mostra o motivo.
 A data de abertura define desde quando a Contabilizei vai pedir os extratos desta conta.
 
 Pede confirmação (--yes em scripts) e aceita --dry-run.
