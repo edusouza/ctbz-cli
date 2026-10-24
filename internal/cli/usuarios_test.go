@@ -186,14 +186,31 @@ func TestUsuariosJSON(t *testing.T) {
 	}
 }
 
-func TestUsuariosConvidarLimiteContaNaoPrincipais(t *testing.T) {
-	// Todo ativo que não é o principal conta no limite, inclusive de tipo desconhecido (#818).
-	f := usuariosFake(t, `{"ativo":true,"limite":1}`)
-	f.gets[pathUsuarios] = `[{"id":101,"email":"dono@example.com","tipo":"USUARIO_PRINCIPAL","status":"ATIVO"},` +
-		`{"id":105,"email":"x@example.com","tipo":"USUARIO_GESTOR","status":"ATIVO"}]`
-	f.onWrite = nil
-	_, stderr, code := execCLI(t, "", "usuarios", "convidar", "nova@example.com", "--yes")
-	if code != ExitError || len(f.writes) != 0 || !strings.Contains(stderr, "número máximo de 1 usuários") {
-		t.Errorf("código %d, %d escritas, %q", code, len(f.writes), stderr)
+func TestUsuariosConvidarLimite(t *testing.T) {
+	const principal = `{"id":101,"email":"dono@example.com","tipo":"USUARIO_PRINCIPAL","status":"ATIVO"}`
+	for _, tc := range []struct {
+		nome, outro    string
+		code, escritas int
+		want           string
+	}{
+		// O limite conta os secundários ativos, como o painel (#972).
+		{"secundário ativo", `{"id":105,"email":"x@example.com","tipo":"USUARIO_SECUNDARIO","status":"ATIVO"}`, ExitError, 0, "número máximo de 1 usuários"},
+		{"secundário inativo", `{"id":105,"email":"x@example.com","tipo":"USUARIO_SECUNDARIO","status":"INATIVO"}`, ExitOK, 1, ""},
+		{"convite pendente", `{"id":105,"email":"x@example.com","tipo":"USUARIO_SECUNDARIO","status":"CONVITE_ENVIADO"}`, ExitOK, 1, ""},
+		// Tipo ou situação vazia ou desconhecida: não dá para conferir o limite (#818, #972).
+		{"tipo desconhecido", `{"id":105,"email":"x@example.com","tipo":"USUARIO_GESTOR","status":"ATIVO"}`, ExitError, 0, `tipo "USUARIO_GESTOR"`},
+		{"sem situação", `{"id":106,"email":"x@example.com","tipo":"USUARIO_SECUNDARIO"}`, ExitError, 0, `situação ""`},
+		{"sem tipo", `{"id":107,"email":"x@example.com","status":"ATIVO"}`, ExitError, 0, `tipo ""`},
+	} {
+		f := usuariosFake(t, `{"ativo":true,"limite":1}`)
+		f.gets[pathUsuarios] = "[" + principal + "," + tc.outro + "]"
+		f.onWrite = nil
+		_, stderr, code := execCLI(t, "", "usuarios", "convidar", "nova@example.com", "--yes")
+		if code != tc.code || len(f.writes) != tc.escritas || !strings.Contains(stderr, tc.want) {
+			t.Errorf("%s: código %d, %d escritas\n%s", tc.nome, code, len(f.writes), stderr)
+		}
+		if desconhecido := strings.Contains(tc.want, `"`); desconhecido != strings.Contains(stderr, "convide pelo painel") {
+			t.Errorf("%s: só a recusa por dado desconhecido manda usar o painel:\n%s", tc.nome, stderr)
+		}
 	}
 }
