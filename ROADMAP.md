@@ -17,14 +17,18 @@ Princípios:
   [docs/api/escrita](docs/api/escrita/README.md). Os itens marcados como *investigação* dependem de descobrir
   parâmetros ainda não testados.
 
-Labels usadas: `épico`, `versão: vX.Y`, `contexto: …`, `tipo: funcionalidade|investigação|infra|documentação` e, nas
-escritas, `risco: baixo|médio|alto`.
+Labels usadas: `épico`, `versão: vX.Y`, `contexto: …`, `tipo: funcionalidade|investigação|infra|documentação`,
+nas escritas, `risco: baixo|médio|alto` e, nas correções, `prioridade: crítica|alta|média|baixa`.
+
+Depois da v1.9, as versões deixam de ser por contexto: a v1.9.1 corrige só os achados críticos e cada versão
+seguinte fecha **um tema** de correção, com os achados de review que continuam válidos na `main` (triagem de
+23/10/2026).
 
 ## Visão geral
 
 | Versão | Contexto | Épico | Funcionalidades | Situação |
 |---|---|---|---|---|
-| **v0.1** | Login e dados da empresa | [#1](https://github.com/edusouza/ctbz-cli/issues/1) | 8 | em andamento (7/8) |
+| **v0.1** | Login e dados da empresa | [#1](https://github.com/edusouza/ctbz-cli/issues/1) | 8 | concluída (#9 passou para a v1.17) |
 | **v0.2** | Impostos | [#10](https://github.com/edusouza/ctbz-cli/issues/10) | 6 | concluída |
 | **v0.3** | Pendências, rotinas e atendimento | [#17](https://github.com/edusouza/ctbz-cli/issues/17) | 5 | concluída |
 | **v0.4** | Mensalidade e pagamentos da Contabilizei | [#23](https://github.com/edusouza/ctbz-cli/issues/23) | 4 | concluída |
@@ -43,6 +47,17 @@ escritas, `risco: baixo|médio|alto`.
 | **v1.8** | Conta, usuários e acessos | [#218](https://github.com/edusouza/ctbz-cli/issues/218) | 4 | concluída |
 | **v1.8.1** | Correções do primeiro uso real de ponta a ponta | — | 6 | concluída |
 | **v1.9** | Segunda via da mensalidade, extratos em CSV/XLS e diagnóstico | — | 5 | concluída |
+| **v1.9.1** | Correções críticas | [#943](https://github.com/edusouza/ctbz-cli/issues/943) | 16 | planejada |
+| **v1.10** | Saída segura: caracteres de controle, CSV, segredos e dados pessoais | [#944](https://github.com/edusouza/ctbz-cli/issues/944) | 50 | planejada |
+| **v1.11** | Escrita segura e `--dry-run` | [#945](https://github.com/edusouza/ctbz-cli/issues/945) | 78 | planejada |
+| **v1.12** | Depois do envio: releitura, situação e orientação | [#946](https://github.com/edusouza/ctbz-cli/issues/946) | 66 | planejada |
+| **v1.13** | Validação de entrada | [#947](https://github.com/edusouza/ctbz-cli/issues/947) | 54 | planejada |
+| **v1.14** | Leitura de dados e contratos da API | [#948](https://github.com/edusouza/ctbz-cli/issues/948) | 96 | planejada |
+| **v1.15** | Testes | [#949](https://github.com/edusouza/ctbz-cli/issues/949) | 75 | planejada |
+| **v1.16** | Documentação e skills | [#950](https://github.com/edusouza/ctbz-cli/issues/950) | 75 | planejada |
+| **v1.17** | Infra, manutenção e notas de release | [#951](https://github.com/edusouza/ctbz-cli/issues/951) | 85 | planejada |
+
+Nas versões de correção, a coluna Funcionalidades conta as sub-issues do épico.
 
 ## v0.1 — Login e dados da empresa
 
@@ -59,7 +74,7 @@ Base da CLI: autenticar na Contabilizei (usuário/senha + OTP por e-mail + sele�
 | ✅ | [#6](https://github.com/edusouza/ctbz-cli/issues/6) | Testes de contrato da API | infra |
 | ✅ | [#7](https://github.com/edusouza/ctbz-cli/issues/7) | Listar empresas do usuário e trocar de empresa | funcionalidade |
 | ✅ | [#8](https://github.com/edusouza/ctbz-cli/issues/8) | Dados completos da empresa: sócios, endereço, atividades e certificado | funcionalidade |
-| ⬜ | [#9](https://github.com/edusouza/ctbz-cli/issues/9) | Validar OTP automático com Gmail real (gws) | investigação |
+| ➡️ | [#9](https://github.com/edusouza/ctbz-cli/issues/9) | Validar OTP automático com Gmail real (gws) (passou para a v1.17) | investigação |
 
 Fora de escopo: CI e releases (v1.0); Ações que alteram dados.
 
@@ -349,6 +364,134 @@ que o banco aceita e diagnosticar uma chamada que falha.
 | ✅ | [#899](https://github.com/edusouza/ctbz-cli/issues/899) | `extratos importar` aceita CSV/XLS quando o banco declara o formato | funcionalidade | médio |
 | ✅ | [#901](https://github.com/edusouza/ctbz-cli/issues/901) | `--substituir` relê a competência depois de uma falha | bug | médio |
 | ✅ | [#851](https://github.com/edusouza/ctbz-cli/issues/851) | `ctbz mensalidade segunda-via`: Pix copia e cola e linha digitável | funcionalidade | médio |
+
+## Versões de correção (triagem de 23/10/2026)
+
+Os code reviews da v0.x à v1.9 deixaram 671 issues de achados abertas. Cada uma foi conferida contra a `main`
+(`758b36f`): as 78 já corrigidas, obsoletas ou duplicadas foram fechadas com comentário, e as 593 válidas (mais
+duas novas, #941 e #942) receberam `prioridade: …` reavaliada e entraram no épico do seu tema. A `severity:`
+original do review ficou só como histórico.
+
+Critério de prioridade:
+
+- **crítica** — pode enviar escrita errada ou irreversível, perder dados, vazar segredo ou dado pessoal, ou
+  quebrar o contrato público (ADR-0017).
+- **alta** — leitura que entrega dado errado em silêncio, orientação que leva a repetir uma escrita, caracteres
+  de controle da API no terminal, injeção de fórmula no CSV.
+- **média** — caso de borda, erro confuso, `--dry-run` que aborta, validação faltando, teste faltando em escrita.
+- **baixa** — testes de leitura, documentação, estilo, manutenção.
+
+Cada épico agrupa as sub-issues em frentes; cada frente tende a virar um PR que fecha várias de uma vez.
+
+| Versão | Épico | Crítica | Alta | Média | Baixa |
+|---|---|---|---|---|---|
+| v1.9.1 | [#943](https://github.com/edusouza/ctbz-cli/issues/943) | 16 | — | — | — |
+| v1.10 | [#944](https://github.com/edusouza/ctbz-cli/issues/944) | — | 43 | 5 | 2 |
+| v1.11 | [#945](https://github.com/edusouza/ctbz-cli/issues/945) | — | 24 | 43 | 11 |
+| v1.12 | [#946](https://github.com/edusouza/ctbz-cli/issues/946) | — | 19 | 41 | 6 |
+| v1.13 | [#947](https://github.com/edusouza/ctbz-cli/issues/947) | — | 4 | 38 | 12 |
+| v1.14 | [#948](https://github.com/edusouza/ctbz-cli/issues/948) | — | 5 | 40 | 51 |
+| v1.15 | [#949](https://github.com/edusouza/ctbz-cli/issues/949) | — | — | 25 | 50 |
+| v1.16 | [#950](https://github.com/edusouza/ctbz-cli/issues/950) | — | — | 2 | 73 |
+| v1.17 | [#951](https://github.com/edusouza/ctbz-cli/issues/951) | — | — | 4 | 81 |
+
+## v1.9.1 — Correções críticas
+
+Épico: [#943](https://github.com/edusouza/ctbz-cli/issues/943) · versão de correção
+
+Patch só com o que pode enviar uma escrita errada ou irreversível à Contabilizei ou vazar a sessão. Quase tudo é
+o mesmo padrão: um campo ausente da API, ou um argumento repetido ou ambíguo, vira zero, `null` ou o primeiro
+candidato numa escrita, contra a ADR-0021. As correções são guardas pequenas antes de `escrever`.
+
+| | Issue | Correção | Contexto |
+|---|---|---|---|
+| ⬜ | [#941](https://github.com/edusouza/ctbz-cli/issues/941) | `ctbz api` com URL absoluta envia os cookies da sessão para qualquer host | autenticação |
+| ⬜ | [#489](https://github.com/edusouza/ctbz-cli/issues/489) | `parcelamento contratar`: quantidade ausente vira `quantidadeParcelas: 0` | impostos |
+| ⬜ | [#428](https://github.com/edusouza/ctbz-cli/issues/428) | `rotinas reclassificar`: `idLancamento` 0 / `idPendencia` null ao concluir a rotina | contabilidade |
+| ⬜ | [#435](https://github.com/edusouza/ctbz-cli/issues/435) | `--classificacao` por nome ignora maiúsculas e escolhe a primeira opção | contabilidade |
+| ⬜ | [#543](https://github.com/edusouza/ctbz-cli/issues/543) | `conciliacao resolver` não confere se os ids são pendências abertas | pendências |
+| ⬜ | [#573](https://github.com/edusouza/ctbz-cli/issues/573) | `contas-bancarias editar` envia `dataSaldoInicial` 1969-12-31 sem `--abertura` | documentos |
+| ⬜ | [#619](https://github.com/edusouza/ctbz-cli/issues/619) | `--pendencia` repetido envia o mesmo documento duas vezes | documentos |
+| ⬜ | [#628](https://github.com/edusouza/ctbz-cli/issues/628) | `documentos enviar`: pendência sem competência vai como `{"mes":0,"ano":0}` | documentos |
+| ⬜ | [#652](https://github.com/edusouza/ctbz-cli/issues/652) | `sem-aplicacao`: pendência sem competência vai como `{"mes":0,"ano":0}` | documentos |
+| ⬜ | [#660](https://github.com/edusouza/ctbz-cli/issues/660) | `tomadores adicionar` de documento já cadastrado sobrescreve o cadastro | notas fiscais |
+| ⬜ | [#716](https://github.com/edusouza/ctbz-cli/issues/716) | `notas entrada reclassificar --como` envia as cinco quantidades zeradas | notas fiscais |
+| ⬜ | [#729](https://github.com/edusouza/ctbz-cli/issues/729) | `prolabore definir`: campo ausente tira a empresa da gestão inteligente | pró-labore |
+| ⬜ | [#770](https://github.com/edusouza/ctbz-cli/issues/770) | `lucros distribuir`: total que valida a soma trata `nil` como 0 | pró-labore |
+| ⬜ | [#777](https://github.com/edusouza/ctbz-cli/issues/777) | `lucros distribuir`: sócio sem `id` vai como `idSocio: null` | pró-labore |
+| ⬜ | [#779](https://github.com/edusouza/ctbz-cli/issues/779) | `lucros distribuir`: ajuste de centavo absorve diferenças que não são arredondamento | pró-labore |
+| ⬜ | [#818](https://github.com/edusouza/ctbz-cli/issues/818) | `usuarios`: id como `any` e `tipo` ausente desligam a trava do administrador | conta |
+
+Fora de escopo: achados de prioridade alta que não enviam escrita errada (v1.10 em diante).
+
+## v1.10 — Saída segura: caracteres de controle, CSV, segredos e dados pessoais
+
+Épico: [#944](https://github.com/edusouza/ctbz-cli/issues/944) · 50 sub-issues
+
+Texto vindo da API chega ao terminal, ao CSV, ao prompt de confirmação e às mensagens de erro sem filtro de
+caracteres de controle, ANSI e bidi, e o CSV não neutraliza fórmulas. Segredos e dados pessoais aparecem no
+`--dry-run`, no `--verbose` e no `acoes.jsonl`. A maior parte se resolve na camada, não comando a comando.
+
+Frentes: filtro central de caracteres de controle em `internal/output`, no prompt e em `WriteError`; injeção de
+fórmula no CSV; segredos no `--dry-run`, no `--verbose` e nos erros (ADR da política do verbose primeiro, #914);
+dados pessoais no `acoes.jsonl` (ADR).
+
+## v1.11 — Escrita segura e `--dry-run`
+
+Épico: [#945](https://github.com/edusouza/ctbz-cli/issues/945) · 78 sub-issues
+
+O que a CLI mostra e confere antes de enviar: confirmação de risco alto que omite custo ou promete reversão,
+alvo mal identificado, risco declarado abaixo da ADR-0018, nulo exibido como R$ 0,00, estado já aplicado,
+escolha ambígua do alvo, ordem da exclusão no `--substituir` e o `--dry-run` que aborta nas pré-leituras em vez
+de simular (decisão em ADR, aplicada a todos os comandos).
+
+## v1.12 — Depois do envio: releitura, situação e orientação
+
+Épico: [#946](https://github.com/edusouza/ctbz-cli/issues/946) · 66 sub-issues
+
+O que a CLI diz e devolve depois de enviar: uma regra comum de "resultado incerto" para 5xx, 2xx ilegível e
+falha na segunda requisição; releitura que falha sai com `situacao: enviado` e aviso, em vez de erro; `situacao`
+conferida no relido; "pode repetir" só numa lista de permissão; chave ausente na Central não vira "nada a fazer".
+
+## v1.13 — Validação de entrada
+
+Épico: [#947](https://github.com/edusouza/ctbz-cli/issues/947) · 54 sub-issues
+
+Resolução por nome ou código sem ambiguidade, `parseValor`, datas com fuso da máquina, ids repetidos ou crus,
+flags ignoradas em silêncio e validação de arquivos e downloads.
+
+## v1.14 — Leitura de dados e contratos da API
+
+Épico: [#948](https://github.com/edusouza/ctbz-cli/issues/948) · 96 sub-issues
+
+Começa por religar o monitor semanal dos contratos ao vivo ([#942](https://github.com/edusouza/ctbz-cli/issues/942)).
+Depois: nulo lido como R$ 0,00 ou `false`, erro HTTP tratado como "vazio", paginação e truncamento, parse que
+descarta erro em silêncio, contratos nunca verificados numa conta real e chaves de saída já publicadas
+(documentar ou criar alias, sem quebrar a ADR-0017).
+
+## v1.15 — Testes
+
+Épico: [#949](https://github.com/edusouza/ctbz-cli/issues/949) · 75 sub-issues
+
+Uma matriz de testes para cada escrita (`--dry-run`, recusa do `confirmo`, sem terminal, 4xx, 5xx e releitura
+com falha), o mecanismo de goldens e o gravador multipart, fixtures irreais e asserções fracas.
+
+## v1.16 — Documentação e skills
+
+Épico: [#950](https://github.com/edusouza/ctbz-cli/issues/950) · 75 sub-issues
+
+"Recomendação para a CLI" desatualizada em `docs/api/escrita`, guias sem chaves de saída, `situacao`,
+`--yes`/`--dry-run`/`confirmo`, ajuda e README, ADRs, critérios de investigação fechados sem registro e as
+skills.
+
+## v1.17 — Infra, manutenção e notas de release
+
+Épico: [#951](https://github.com/edusouza/ctbz-cli/issues/951) · 85 sub-issues
+
+Actions fixadas por SHA e `persist-credentials: false`, catálogo do monitor, ordem de `Escritas()`
+([#412](https://github.com/edusouza/ctbz-cli/issues/412), que absorveu as repetições por PR), `operacao.ID` com
+argumento cru, comentários errados e código morto, o OTP com Gmail real (#9) e o que faltou nas notas de release
+e nas seções já publicadas deste roadmap.
 
 ## Fora do roadmap de escrita
 
