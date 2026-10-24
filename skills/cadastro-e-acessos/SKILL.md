@@ -67,7 +67,9 @@ ctbz usuarios ativar ID               # médio
 ```
 
 Antes de convidar, deixe claro que não há perfil restrito e que o convite não pode ser
-revogado antes do aceite (só desativando depois). O administrador não pode ser desativado.
+revogado antes do aceite (só desativando depois). Só usuários secundários podem ser
+desativados (o administrador, nunca); usuário sem id, tipo ou status na lista é recusado
+sem escrita: mande o usuário ao painel.
 
 ## Credenciais de órgãos públicos
 

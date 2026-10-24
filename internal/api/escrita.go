@@ -337,7 +337,7 @@ func Escritas() []Escrita {
 			return ConvidarUsuario(ctx, s, "convidado@example.com")
 		}},
 		{Name: "usuarios_desativar", Exemplo: func(ctx context.Context, s Sender) error {
-			return AtivarUsuarioEmpresa(ctx, s, 102, false)
+			return AtivarUsuarioEmpresa(ctx, s, json.RawMessage("102"), false)
 		}},
 		{Name: "credenciais_atualizar", Exemplo: func(ctx context.Context, s Sender) error {
 			// Segredos fictícios e mascarados: o golden nunca guarda uma senha.

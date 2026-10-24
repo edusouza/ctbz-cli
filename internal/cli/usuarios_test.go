@@ -122,3 +122,95 @@ func TestUsuariosSemControle(t *testing.T) {
 		t.Errorf("desativar: código %d, %q", code, stderr)
 	}
 }
+
+func TestUsuariosCamposAusentes(t *testing.T) {
+	// Usuário sem id, tipo ou status é erro de leitura, nunca uma escrita (#818, ADR-0021).
+	for _, tc := range []struct {
+		nome, lista string
+		args        []string
+		want        string
+	}{
+		{"sem id", `[{"nome":"X","email":"x@example.com","tipo":"USUARIO_SECUNDARIO","status":"INATIVO"}]`, []string{"ativar", ""}, "sem id"},
+		{"id nulo", `[{"id":null,"email":"x@example.com","tipo":"USUARIO_SECUNDARIO","status":"ATIVO"}]`, []string{"desativar", ""}, "sem id"},
+		{"sem tipo", `[{"id":101,"nome":"X","email":"x@example.com","status":"ATIVO"}]`, []string{"desativar", "101"}, "sem tipo"},
+		{"sem tipo ativar", `[{"id":101,"email":"x@example.com","status":"INATIVO"}]`, []string{"ativar", "101"}, "sem tipo"},
+		{"sem status", `[{"id":102,"email":"x@example.com","tipo":"USUARIO_SECUNDARIO"}]`, []string{"ativar", "102"}, "sem status"},
+		{"sem status desativar", `[{"id":102,"email":"x@example.com","tipo":"USUARIO_SECUNDARIO","status":""}]`, []string{"desativar", "102"}, "sem status"},
+		{"tipo desconhecido", `[{"id":105,"email":"x@example.com","tipo":"USUARIO_GESTOR","status":"ATIVO"}]`, []string{"desativar", "105"}, "tipo USUARIO_GESTOR"},
+		{"lista vazia", `[]`, []string{"desativar", "102"}, "usuário não encontrado"},
+	} {
+		for _, flag := range []string{"--yes", "--dry-run"} {
+			f := usuariosFake(t, fixture(t, "status_multiusuario"))
+			f.gets[pathUsuarios], f.onWrite = tc.lista, nil
+			out, stderr, code := execCLI(t, "", append([]string{"usuarios"}, append(tc.args, flag)...)...)
+			if code != ExitError || !strings.Contains(stderr, tc.want) || len(f.writes) != 0 || strings.Contains(out+stderr, "idUsuarioEmpresa") {
+				t.Errorf("%s %s: código %d, %d escritas, %q\n%s (quero %q)", tc.nome, flag, code, len(f.writes), stderr, out, tc.want)
+			}
+		}
+	}
+}
+
+func TestUsuariosIDBruto(t *testing.T) {
+	// O id volta exatamente como listado: número acima de 2^53 e texto (#818).
+	lista := `[{"id":9007199254740993,"email":"a@example.com","tipo":"USUARIO_SECUNDARIO","status":"INATIVO"},` +
+		`{"id":"abc-7","email":"b@example.com","tipo":"USUARIO_SECUNDARIO","status":"ATIVO"}]`
+	f := usuariosFake(t, fixture(t, "status_multiusuario"))
+	f.gets[pathUsuarios], f.onWrite = lista, nil
+	out, stderr, code := execCLI(t, "", "usuarios", "-o", "csv")
+	if code != ExitOK || out != "id,nome,email,tipo,status\n9007199254740993,,a@example.com,USUARIO_SECUNDARIO,INATIVO\nabc-7,,b@example.com,USUARIO_SECUNDARIO,ATIVO\n" {
+		t.Errorf("lista: código %d, %s\n%s", code, stderr, out)
+	}
+	for _, tc := range []struct{ args, want string }{
+		{"ativar 9007199254740993", `PUT /api/multiusuario/usuarios/ativar {"idUsuarioEmpresa":9007199254740993,"ativo":true}`},
+		{"desativar abc-7", `PUT /api/multiusuario/usuarios/ativar {"idUsuarioEmpresa":"abc-7","ativo":false}`},
+	} {
+		f.writes = nil
+		_, stderr, code := execCLI(t, "", append([]string{"usuarios"}, append(strings.Fields(tc.args), "--yes")...)...)
+		if code != ExitOK || len(f.writes) != 1 || f.writes[0] != tc.want {
+			t.Errorf("%s: código %d, %q\n%s", tc.args, code, f.writes, stderr)
+		}
+	}
+	// O texto com aspas não é o id listado.
+	f.writes = nil
+	if _, _, code := execCLI(t, "", "usuarios", "desativar", `"abc-7"`, "--yes"); code != ExitError || len(f.writes) != 0 {
+		t.Errorf("id com aspas: código %d, %q", code, f.writes)
+	}
+}
+
+func TestUsuariosJSON(t *testing.T) {
+	// O id sai como hoje: texto, inclusive o numérico (ADR-0017).
+	usuariosFake(t, fixture(t, "status_multiusuario"))
+	out, stderr, code := execCLI(t, "", "usuarios", "-o", "json")
+	if code != ExitOK || !strings.Contains(out, `"id": "101"`) || !strings.Contains(out, `"nome": null`) {
+		t.Errorf("código %d, %s\n%s", code, stderr, out)
+	}
+}
+
+func TestUsuariosConvidarLimite(t *testing.T) {
+	const principal = `{"id":101,"email":"dono@example.com","tipo":"USUARIO_PRINCIPAL","status":"ATIVO"}`
+	for _, tc := range []struct {
+		nome, outro    string
+		code, escritas int
+		want           string
+	}{
+		// O limite conta os secundários ativos, como o painel (#972).
+		{"secundário ativo", `{"id":105,"email":"x@example.com","tipo":"USUARIO_SECUNDARIO","status":"ATIVO"}`, ExitError, 0, "número máximo de 1 usuários"},
+		{"secundário inativo", `{"id":105,"email":"x@example.com","tipo":"USUARIO_SECUNDARIO","status":"INATIVO"}`, ExitOK, 1, ""},
+		{"convite pendente", `{"id":105,"email":"x@example.com","tipo":"USUARIO_SECUNDARIO","status":"CONVITE_ENVIADO"}`, ExitOK, 1, ""},
+		// Tipo ou situação vazia ou desconhecida: não dá para conferir o limite (#818, #972).
+		{"tipo desconhecido", `{"id":105,"email":"x@example.com","tipo":"USUARIO_GESTOR","status":"ATIVO"}`, ExitError, 0, `tipo "USUARIO_GESTOR"`},
+		{"sem situação", `{"id":106,"email":"x@example.com","tipo":"USUARIO_SECUNDARIO"}`, ExitError, 0, `situação ""`},
+		{"sem tipo", `{"id":107,"email":"x@example.com","status":"ATIVO"}`, ExitError, 0, `tipo ""`},
+	} {
+		f := usuariosFake(t, `{"ativo":true,"limite":1}`)
+		f.gets[pathUsuarios] = "[" + principal + "," + tc.outro + "]"
+		f.onWrite = nil
+		_, stderr, code := execCLI(t, "", "usuarios", "convidar", "nova@example.com", "--yes")
+		if code != tc.code || len(f.writes) != tc.escritas || !strings.Contains(stderr, tc.want) {
+			t.Errorf("%s: código %d, %d escritas\n%s", tc.nome, code, len(f.writes), stderr)
+		}
+		if desconhecido := strings.Contains(tc.want, `"`); desconhecido != strings.Contains(stderr, "convide pelo painel") {
+			t.Errorf("%s: só a recusa por dado desconhecido manda usar o painel:\n%s", tc.nome, stderr)
+		}
+	}
+}

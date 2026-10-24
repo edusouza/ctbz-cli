@@ -13,6 +13,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   quantidade de parcelas (antes enviava `{"quantidadeParcelas":0}`) ou a opção escolhida sem o
   valor das parcelas (antes mostrava R$ 0,00 na confirmação): pede para contratar pelo painel.
   Custos adicionais sem valor aparecem como "não informado" (#489).
+- `ctbz usuarios ativar|desativar` reenvia o id exatamente como listado (número acima de 2^53
+  ou texto), recusa sem escrita usuário sem id, tipo ou status e só desativa usuários
+  secundários. O limite do `ctbz usuarios convidar` conta os secundários ativos, como o
+  painel, e o convite é recusado sem escrita se algum usuário da lista vier com tipo ou
+  situação vazia ou desconhecida (#818, #972).
 
 ### Security
 
