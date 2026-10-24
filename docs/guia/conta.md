@@ -27,10 +27,12 @@ ctbz usuarios ativar 102
   da empresa, inclusive financeiras. Não há como revogar o convite antes do aceite; depois, só
   desativando o usuário. Por isso o convite é de risco alto (`confirmo`).
 - A CLI recusa e-mails da Contabilizei (inclusive de subdomínios), e-mails que já estão na
-  lista e convites quando o serviço está indisponível ou o limite de usuários secundários
-  ativos foi atingido.
-- `desativar` é a única forma de revogar um acesso; o administrador não pode ser desativado.
-  `ativar` devolve o acesso. Os dois são de risco médio e reversíveis.
+  lista e convites quando o serviço está indisponível ou o limite de usuários ativos (todos
+  menos o principal) foi atingido.
+- `desativar` é a única forma de revogar um acesso; só usuários secundários podem ser
+  desativados (o administrador, nunca). `ativar` devolve o acesso. Os dois são de risco médio
+  e reversíveis. Se a lista trouxer o usuário sem id, tipo ou situação, a CLI recusa sem
+  enviar nada; use o painel.
 - Não se sabe se desativar um convite ainda não aceito o cancela; a CLI avisa no resumo.
 - O e-mail convidado não vai para o registro de ações (`ctbz acoes`), que só guarda o comando
   e o resultado.

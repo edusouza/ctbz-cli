@@ -42,7 +42,7 @@ desativar|ativar.`,
 				{Key: "tipo", Header: "Tipo"}, {Key: "status", Header: "Situação"},
 			}}
 			for _, u := range us {
-				l.Append(nilIfEmpty(idTexto(u.ID)), nilIfEmpty(u.Nome), nilIfEmpty(u.Email), nilIfEmpty(u.Tipo), nilIfEmpty(u.Status))
+				l.Append(nilIfEmpty(u.IDTexto()), nilIfEmpty(u.Nome), nilIfEmpty(u.Email), nilIfEmpty(u.Tipo), nilIfEmpty(u.Status))
 			}
 			return output.Write(s.out, f, l)
 		},
@@ -59,8 +59,8 @@ func newUsuariosConvidarCmd() *cobra.Command {
 total: todas as ações e todas as informações, inclusive financeiras.
 
 A CLI recusa e-mails da Contabilizei (inclusive de subdomínios), e-mails que já têm acesso
-ou convite, e convites quando o serviço está indisponível ou o limite de usuários secundários
-ativos foi atingido.
+ou convite, e convites quando o serviço está indisponível ou o limite de usuários ativos
+(todos menos o principal) foi atingido.
 
 Risco alto: não há como revogar o convite antes do aceite; depois, só com ctbz usuarios
 desativar. Aceita --yes e --dry-run.`,
@@ -93,7 +93,7 @@ desativar. Aceita --yes e --dry-run.`,
 				if strings.EqualFold(u.Email, email) {
 					return fmt.Errorf("%s já está na lista de usuários (%s)", email, u.Status)
 				}
-				if u.Tipo == api.UsuarioSecundario && u.Status == api.UsuarioAtivo {
+				if u.Tipo != api.UsuarioPrincipal && u.Status == api.UsuarioAtivo { // tipo desconhecido também conta (#818)
 					ativos++
 				}
 			}
@@ -108,7 +108,7 @@ desativar. Aceita --yes e --dry-run.`,
 			u, err := usuarioPor(cmd, g, func(u api.UsuarioEmpresa) bool { return strings.EqualFold(u.Email, email) })
 			situacao, id := "enviado", any(nil)
 			if err == nil {
-				situacao, id = firstNonEmpty(u.Status, situacao), nilIfEmpty(idTexto(u.ID))
+				situacao, id = firstNonEmpty(u.Status, situacao), nilIfEmpty(u.IDTexto())
 			}
 			return output.Write(s.out, f, resultadoEscrita("convidar", situacao, id).Add("email", "E-mail", email))
 		},
@@ -150,7 +150,8 @@ func newUsuariosAtivarCmd(ativar bool) *cobra.Command {
 		Use:   use,
 		Short: short,
 		Long: short + `. O ID está em ctbz usuarios. Desativar é a única forma de revogar o
-acesso, e o administrador da empresa (usuário principal) não pode ser desativado.
+acesso, e só usuários secundários podem ser desativados: o administrador da empresa
+(usuário principal), nunca.
 
 Risco médio: reversível com ativar ou desativar. Aceita --yes e --dry-run.`,
 		Example: "  ctbz usuarios " + acao + " 102",
@@ -162,13 +163,18 @@ Risco médio: reversível com ativar ou desativar. Aceita --yes e --dry-run.`,
 			}
 			s := streamsOf(cmd)
 			g := sessionGetter{s}
-			u, err := usuarioPor(cmd, g, func(u api.UsuarioEmpresa) bool { return idTexto(u.ID) == args[0] })
+			u, err := usuarioPor(cmd, g, func(u api.UsuarioEmpresa) bool { return u.IDTexto() == args[0] })
 			if err != nil {
+				return err
+			}
+			if err := usuarioCompleto(u, args[0]); err != nil {
 				return err
 			}
 			switch {
 			case !ativar && u.Tipo == api.UsuarioPrincipal:
 				return errors.New("não é possível desativar o administrador da empresa")
+			case !ativar && u.Tipo != api.UsuarioSecundario:
+				return fmt.Errorf("só usuários secundários podem ser desativados, e %s é do tipo %s; use o painel", args[0], u.Tipo)
 			case ativar && u.Status == api.UsuarioConviteEnviado:
 				return errors.New("o convite ainda não foi aceito: não há acesso para ativar")
 			case ativar == (u.Status == api.UsuarioAtivo) && u.Status != api.UsuarioConviteEnviado:
@@ -184,7 +190,7 @@ Risco médio: reversível com ativar ou desativar. Aceita --yes e --dry-run.`,
 			if err != nil || !enviado {
 				return err
 			}
-			relido, err := usuarioPor(cmd, g, func(x api.UsuarioEmpresa) bool { return idTexto(x.ID) == args[0] })
+			relido, err := usuarioPor(cmd, g, func(x api.UsuarioEmpresa) bool { return x.IDTexto() == args[0] })
 			situacao := "enviado"
 			if err == nil && relido.Status != u.Status {
 				situacao = relido.Status
@@ -194,6 +200,17 @@ Risco médio: reversível com ativar ou desativar. Aceita --yes e --dry-run.`,
 	}
 	addWriteFlags(cmd)
 	return cmd
+}
+
+// usuarioCompleto recusa um usuário sem id, tipo ou situação: sem eles a escrita sairia com id
+// nulo ou passaria pela trava do administrador (#818, ADR-0021).
+func usuarioCompleto(u *api.UsuarioEmpresa, id string) error {
+	for _, c := range []struct{ nome, valor string }{{"id", u.IDTexto()}, {"tipo", u.Tipo}, {"status", u.Status}} {
+		if c.valor == "" {
+			return fmt.Errorf("lendo usuários: o usuário %q veio sem %s; use o painel", id, c.nome)
+		}
+	}
+	return nil
 }
 
 // usuarioPor acha um usuário da empresa.

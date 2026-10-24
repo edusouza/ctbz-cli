@@ -6,8 +6,8 @@ Envia um convite por e-mail para uma pessoa acessar a empresa no painel. O acess
 total: todas as ações e todas as informações, inclusive financeiras.
 
 A CLI recusa e-mails da Contabilizei (inclusive de subdomínios), e-mails que já têm acesso
-ou convite, e convites quando o serviço está indisponível ou o limite de usuários secundários
-ativos foi atingido.
+ou convite, e convites quando o serviço está indisponível ou o limite de usuários ativos
+(todos menos o principal) foi atingido.
 
 Risco alto: não há como revogar o convite antes do aceite; depois, só com ctbz usuarios
 desativar. Aceita --yes e --dry-run.
