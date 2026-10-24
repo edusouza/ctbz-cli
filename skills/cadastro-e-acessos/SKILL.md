@@ -55,7 +55,9 @@ Confira o banco no resumo do `--dry-run` (nome e código) antes de confirmar: h�
 repetidos e pares nacional/internacional (`077` Banco Inter S.A. e `077-1` Banco Inter -
 Internacional). Se a CLI disser que o código corresponde a mais de um banco, pergunte qual é e
 passe o **id** em `--banco`.
-A data de abertura define desde quando a Contabilizei pede extratos. Atualize o dossiê.
+A data de abertura define desde quando a Contabilizei pede extratos. Se `editar` recusar
+dizendo que a Contabilizei não informou a abertura ou o saldo inicial da conta, pergunte o
+valor ao usuário e passe `--abertura` ou `--saldo-inicial`; não invente. Atualize o dossiê.
 
 ## Usuários com acesso
 

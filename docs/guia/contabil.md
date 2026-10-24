@@ -316,6 +316,9 @@ ctbz contas-bancarias editar 1000000000000001 --abertura 2024-02-01
   este CNPJ.
 - A data de abertura define desde quando a Contabilizei vai pedir os extratos da conta.
 - A conta é digitada com dígito (`12345-6`); a CLI envia sem o hífen, como o painel.
+- A edição reenvia todos os campos da conta. Se a Contabilizei não informar a data de abertura
+  (ou informar uma anterior a 1990) ou o saldo inicial, `editar` recusa (código 2) e pede
+  `--abertura` ou `--saldo-inicial`, em vez de enviar 1969-12-31 ou saldo 0.
 - O painel pode bloquear a edição (por exemplo, com extratos já classificados); a CLI mostra
   o motivo.
 
