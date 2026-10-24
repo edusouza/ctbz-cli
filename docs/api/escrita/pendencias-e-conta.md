@@ -388,7 +388,8 @@ Módulo `9649` (`app.*.js`), telas `#/multiusuario` (lista) e `#/convite-usuario
 - `GET /api/multiusuario/usuarios-e-invites/consultar` → `[{id, nome, email, tipo: "USUARIO_PRINCIPAL"|"USUARIO_SECUNDARIO", status: "ATIVO"|"INATIVO"|"CONVITE_ENVIADO"}]`.
 - `GET /api/multiusuario/status/servico` → `{ativo: bool, limite: number}`. O front bloqueia o convite se
   `!ativo` ("O serviço está indisponivel no momento.") ou se os secundários ativos ≥ `limite` ("Você já cadastrou o
-  número máximo de N usuários.").
+  número máximo de N usuários."). A CLI conta da mesma forma e, se algum item vier com `tipo` ou `status` vazio ou
+  fora dos valores acima, recusa o convite sem escrita, porque não dá para conferir o limite.
 
 #### `POST /api/multiusuario/invites/enviar`
 
