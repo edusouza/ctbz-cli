@@ -97,11 +97,25 @@ func metadados(d DocumentoPendente, comValor bool) metadadosDocumento {
 	return m
 }
 
-func competencia(d DocumentoPendente) competenciaJSON {
-	if c := d.Propriedades.Competencia; c != nil {
-		return competenciaJSON{Mes: c.Mes, Ano: c.Ano}
+// competenciaValida diz se mês e ano formam uma competência (zerados vêm de campo ausente).
+func competenciaValida(mes, ano int) bool { return mes >= 1 && mes <= 12 && ano > 0 }
+
+// MesAno devolve a competência da pendência. Ausente ou fora do intervalo é erro, nunca uma
+// escrita com {"mes":0,"ano":0} (ADR-0021).
+func (d DocumentoPendente) MesAno() (mes, ano int, err error) {
+	c := d.Propriedades.Competencia
+	if c == nil {
+		return 0, 0, fmt.Errorf("a pendência %s veio sem competência; use o painel", d.Propriedades.IDTexto())
 	}
-	return competenciaJSON{}
+	if !competenciaValida(c.Mes, c.Ano) {
+		return 0, 0, fmt.Errorf("a pendência %s veio com competência inválida (mês %d, ano %d); use o painel", d.Propriedades.IDTexto(), c.Mes, c.Ano)
+	}
+	return c.Mes, c.Ano, nil
+}
+
+func competencia(d DocumentoPendente) (competenciaJSON, error) {
+	mes, ano, err := d.MesAno()
+	return competenciaJSON{Mes: mes, Ano: ano}, err
 }
 
 func jsonTexto(v any) string {
@@ -117,10 +131,14 @@ const (
 
 // EnviarDocumento envia um arquivo para uma pendência (tipo e metadados vêm do init).
 func EnviarDocumento(ctx context.Context, s Sender, d DocumentoPendente, nomeArquivo string, conteudo []byte) error {
+	c, err := competencia(d)
+	if err != nil {
+		return err
+	}
 	return s.SendMultipart(ctx, "POST", PathEnviarDocumento, []Campo{
 		{Nome: "arquivo", Arquivo: nomeArquivo, Conteudo: conteudo, Tipo: TipoArquivo(nomeArquivo)},
 		{Nome: "tipoDocumento", Valor: d.Tipo},
-		{Nome: "competencia", Valor: jsonTexto(competencia(d))},
+		{Nome: "competencia", Valor: jsonTexto(c)},
 		{Nome: "metadados", Valor: jsonTexto(metadados(d, true))},
 		{Nome: "ordemArquivoCompetencia", Valor: "null"},
 	}, nil)
@@ -134,7 +152,11 @@ func EnviarDocumentoConsolidado(ctx context.Context, s Sender, ds []DocumentoPen
 	}
 	itens := make([]item, len(ds))
 	for i, d := range ds {
-		itens[i] = item{competencia(d), metadados(d, false)}
+		c, err := competencia(d)
+		if err != nil {
+			return err
+		}
+		itens[i] = item{c, metadados(d, false)}
 	}
 	tipo := ""
 	if len(ds) > 0 {
@@ -201,6 +223,11 @@ func (r ResultadoSemAplicacao) CompetenciasComErroTexto() []string {
 
 // DeclararSemAplicacao declara que não houve aplicação na conta nas competências.
 func DeclararSemAplicacao(ctx context.Context, s Sender, d DeclaracaoSemAplicacao) (*ResultadoSemAplicacao, error) {
+	for _, c := range d.CompetenciasPendentes {
+		if !competenciaValida(c.Mes, c.Ano) {
+			return nil, fmt.Errorf("a pendência %s está com competência inválida (mês %d, ano %d); use o painel", strings.Trim(string(c.ID), `"`), c.Mes, c.Ano)
+		}
+	}
 	var r ResultadoSemAplicacao
 	if err := s.Send(ctx, "POST", PathSemAplicacao, d, &r); err != nil {
 		return nil, err

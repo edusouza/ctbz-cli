@@ -25,6 +25,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz rotinas reclassificar --classificacao NOME` recusa como uso incorreto (código 2) um nome que
   casa com mais de uma opção, listando os candidatos para escolher pelo id, em vez de usar a
   primeira; o id e o nome exato têm precedência sobre o nome sem diferenciar maiúsculas (#435).
+- `ctbz documentos enviar`, `sem-arquivo` e `sem-aplicacao` aparam e deduplicam os ids de
+  `--pendencia`, na ordem: `--pendencia 601 --pendencia 601` (ou `601,601`) vira um envio para
+  uma pendência, e não mais um envio consolidado em duplicidade; id vazio é erro de uso (código 2).
+  `documentos enviar` e `sem-aplicacao` recusam, antes de enviar (também no `--dry-run`), a
+  pendência que vem sem competência ou com mês/ano inválidos, em vez de mandar
+  `{"mes":0,"ano":0}` (#628, #652, #619).
 
 ### Security
 

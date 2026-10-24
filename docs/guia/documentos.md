@@ -38,7 +38,9 @@ Pendência         Tipo                          Competência  Conta            
 - O tipo do documento e os metadados (competência, conta, investimento) vêm da pendência, nunca
   são digitados.
 - Com várias `--pendencia` do mesmo tipo, o arquivo vai uma vez só para todas ("em um arquivo
-  único" no painel).
+  único" no painel). Id repetido conta uma vez só; id vazio (como em `601,`) é erro de uso.
+- Pendência que vem sem competência (ou com mês/ano inválidos) é recusada antes do envio, aqui e
+  em `sem-aplicacao`: use o painel.
 - Risco médio: o documento entra na contabilidade e resolve a pendência; não há exclusão pela API.
 - Extratos de movimentação bancária usam `ctbz extratos importar`.
 
