@@ -7,6 +7,13 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Security
+
+- `ctbz api` com uma URL absoluta de outro host enviava para lá os cookies da sessão. Agora o
+  cliente HTTP recusa toda requisição cujo esquema, host ou porta difira do painel (ou com
+  usuário e senha antes do host), e o `ctbz api` recusa a URL antes de qualquer envio, com
+  código de saída 2; URLs do próprio painel continuam aceitas (#941).
+
 ## [1.9.0] - 2026-10-23
 
 O que faltou no primeiro uso real: gerar a segunda via da mensalidade atrasada com Pix copia

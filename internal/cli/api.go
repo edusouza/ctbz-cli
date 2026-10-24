@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -29,6 +30,10 @@ func newAPICmd() *cobra.Command {
 
 CAMINHO relativo é resolvido contra o BFF da plataforma (/api/plataforma/);
 caminhos absolutos ("/api/legado/...") alcançam as demais APIs do app.
+
+ctbz api só aceita caminhos relativos ou URLs do próprio painel (https://app.contabilizei.com.br/...):
+uma URL de outro host (ou com outro esquema, outra porta ou usuário antes do host) é recusada
+antes de qualquer envio, com código de saída 2, para que os cookies da sessão não saiam do painel.
 
 No Git Bash do Windows (e em agentes que rodam por ele), um argumento que começa com "/" vira
 caminho do Windows ("C:/Program Files/Git/api/...") antes de chegar à CLI. Comece o caminho
@@ -62,6 +67,9 @@ Respostas HTTP 4xx/5xx terminam com código de saída 1.`,
 			}
 			caminho, err := caminhoAPI(args[0])
 			if err != nil {
+				return err
+			}
+			if caminho, err = caminhoDoPainel(caminho); err != nil {
 				return err
 			}
 			s := streamsOf(cmd)
@@ -149,6 +157,30 @@ func caminhoAPI(p string) (string, error) {
 		p = "/" + strings.TrimLeft(p, "/")
 	}
 	return p, nil
+}
+
+// caminhoDoPainel recusa, antes de qualquer envio (inclusive a conferência da sessão das
+// escritas), uma URL de outro host: os cookies da sessão só vão para o próprio painel (#941).
+// Uma URL do painel vira o caminho dela, com a query.
+func caminhoDoPainel(p string) (string, error) {
+	i := strings.Index(p, "://")
+	if i <= 0 || strings.ContainsAny(p[:i], "/?#") {
+		return p, nil
+	}
+	u, err := url.Parse(p)
+	if err != nil {
+		return "", usageError{fmt.Errorf("URL inválida: %w", err)}
+	}
+	base := baseURL()
+	if store, err := ctbz.DefaultStore(); err == nil {
+		if sess, err := store.LoadSession(); err == nil {
+			base = sess.BaseURL
+		}
+	}
+	if err := ctbz.NewClient(base).ConferirOrigem(u); err != nil {
+		return "", usageError{err}
+	}
+	return u.RequestURI(), nil
 }
 
 // camposFormulario interpreta os -F: "campo=valor" é texto e "campo=@arquivo[;type=tipo]" é

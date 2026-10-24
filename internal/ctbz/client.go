@@ -58,14 +58,74 @@ type Response struct {
 	Location string
 }
 
+// URL resolve path contra BaseURL. Uma URL absoluta fica como está; Do só a envia se for do
+// próprio BaseURL (ConferirOrigem).
 func (c *Client) URL(path string) string {
-	if strings.HasPrefix(path, "http://") || strings.HasPrefix(path, "https://") {
+	if urlAbsoluta(path) {
 		return path
 	}
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}
 	return c.BaseURL + path
+}
+
+// urlAbsoluta diz se path começa com http:// ou https://, em qualquer caixa.
+func urlAbsoluta(path string) bool {
+	for _, esquema := range []string{"http://", "https://"} {
+		if len(path) >= len(esquema) && strings.EqualFold(path[:len(esquema)], esquema) {
+			return true
+		}
+	}
+	return false
+}
+
+// ForaDoHostError recusa uma requisição para fora do BaseURL: os cookies da sessão só vão
+// para o próprio painel, venha a URL de onde vier (#941).
+type ForaDoHostError struct {
+	Destino string // esquema e host da URL recusada, sem usuário e senha
+	Painel  string // BaseURL do client
+}
+
+func (e *ForaDoHostError) Error() string {
+	host := e.Painel
+	if u, err := url.Parse(e.Painel); err == nil && u.Host != "" {
+		host = u.Host
+	}
+	return fmt.Sprintf("caminho fora de %s: a URL aponta para %s, e a sessão só é enviada ao próprio painel; "+
+		"use um caminho relativo (ex.: /api/legado/...) ou uma URL que comece com %s", host, e.Destino, e.Painel)
+}
+
+// ConferirOrigem aceita u só se tiver o mesmo esquema, host e porta de BaseURL, sem usuário e
+// senha antes do host (o truque https://app.contabilizei.com.br@outro-host/).
+func (c *Client) ConferirOrigem(u *url.URL) error {
+	painel, err := url.Parse(c.BaseURL)
+	if err != nil {
+		return fmt.Errorf("endereço do painel inválido %q: %w", c.BaseURL, err)
+	}
+	if u.User == nil && strings.EqualFold(u.Scheme, painel.Scheme) && strings.EqualFold(u.Hostname(), painel.Hostname()) &&
+		porta(u) == porta(painel) && u.Host != "" {
+		return nil
+	}
+	destino := u.Scheme + "://" + u.Host
+	if u.User != nil {
+		destino += " (com usuário e senha antes do host)"
+	}
+	return &ForaDoHostError{Destino: destino, Painel: c.BaseURL}
+}
+
+// porta devolve a porta de u, com a padrão do esquema quando omitida.
+func porta(u *url.URL) string {
+	if p := u.Port(); p != "" {
+		return p
+	}
+	switch strings.ToLower(u.Scheme) {
+	case "http":
+		return "80"
+	case "https":
+		return "443"
+	}
+	return ""
 }
 
 // Do executa uma requisição enviando os cookies da sessão e absorvendo os
@@ -82,6 +142,9 @@ func (c *Client) Do(ctx context.Context, method, path string, body io.Reader, he
 	}
 	req, err := http.NewRequestWithContext(ctx, method, c.URL(path), body)
 	if err != nil {
+		return nil, err
+	}
+	if err := c.ConferirOrigem(req.URL); err != nil {
 		return nil, err
 	}
 	req.Header.Set("User-Agent", c.UserAgent)
@@ -165,7 +228,7 @@ func (c *Client) Send(ctx context.Context, method, path string, body io.Reader, 
 // ResolvePath completa um caminho relativo com o BFF da plataforma
 // ("dadosempresa/get" → "/api/plataforma/dadosempresa/get"); absolutos ficam como estão.
 func ResolvePath(path string) string {
-	if !strings.HasPrefix(path, "/") && !strings.HasPrefix(path, "http") {
+	if !strings.HasPrefix(path, "/") && !urlAbsoluta(path) {
 		return "/api/plataforma/" + path
 	}
 	return path
