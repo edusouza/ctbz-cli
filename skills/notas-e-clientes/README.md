@@ -71,7 +71,8 @@ ctbz notas tomadores editar 00000000000191 --email novo@cliente.com --dry-run
 ctbz notas tomadores remover 00000000000191 --dry-run
 ```
 
-Cadastrar um documento que já existe atualiza o cadastro.
+Um documento já cadastrado não é cadastrado de novo: `adicionar` recusa e indica `editar`, que
+corrige o cadastro atual sem apagar a inscrição municipal.
 
 ### Emissor e alíquotas
 

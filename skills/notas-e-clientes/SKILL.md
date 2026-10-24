@@ -62,7 +62,8 @@ ctbz notas tomadores editar 00000000000191 --email novo@cliente.com --dry-run   
 ctbz notas tomadores remover 00000000000191 --dry-run
 ```
 
-Cadastrar um documento que já existe atualiza o cadastro. `--im` (inscrição municipal) só para
+`adicionar` recusa um documento já cadastrado (código 2) e indica `editar`: use `editar`, que
+parte do cadastro atual, para corrigir um tomador existente. `--im` (inscrição municipal) só para
 pessoa jurídica; `--telefone` só nacional.
 
 ## Emissor e alíquotas
