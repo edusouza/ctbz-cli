@@ -59,15 +59,18 @@ A Central de Rotinas tem os seus próprios aceites (`ctbz pendencias termos`, `t
 
 1. Pergunte como dividir. O padrão é a proporção das quotas do contrato social; uma
    distribuição desproporcional precisa estar prevista no contrato, então avise.
-2. A soma precisa ser o **lucro total** (`saldo` + `total_distribuido`); a CLI distribui os
-   centavos. IDs dos sócios: `socios[].id` de `ctbz lucros`.
+2. A soma precisa ser o **lucro total** (`saldo` + `total_distribuido`); a CLI só acerta o
+   centavo de arredondamento dos percentuais (nunca para quem pediu 0%) e recusa qualquer
+   outra diferença. IDs dos sócios: `socios[].id` de `ctbz lucros`.
    ```sh
    ctbz lucros distribuir --socio ID1=60% --socio ID2=40% --dry-run
    ctbz lucros distribuir --socio ID1=30000,00 --socio ID2=20000,00 --dry-run
    ```
    Sócios não citados ficam com zero.
 3. A CLI recusa sem exercício aberto, com `pode_alterar: false` (mostra o `motivo`), depois da
-   `data_limite` ou com restrições. Resolva a causa; não contorne.
+   `data_limite` ou com restrições. Resolva a causa; não contorne. Quando a recusa é por dado
+   ausente da Contabilizei (saldo, total distribuído ou id de sócio), a distribuição é pelo
+   painel.
 4. **Risco alto:** são os lucros que cada sócio declara no IRPF. Dá para refazer enquanto
    `pode_alterar` for verdadeiro. O exercício de 2026 em diante cai inteiro na regra nova
    (Lei 15.270/2025, art. 6º-A da Lei 9.250):

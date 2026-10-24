@@ -31,6 +31,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   `documentos enviar` e `sem-aplicacao` recusam, antes de enviar (também no `--dry-run`), a
   pendência que vem sem competência ou com mês/ano inválidos, em vez de mandar
   `{"mes":0,"ano":0}` (#628, #652, #619).
+- `ctbz lucros distribuir` recusa, pedindo para distribuir pelo painel, quando a Contabilizei
+  não informa o saldo ou o total já distribuído (antes contavam como zero e os percentuais
+  saíam de um total menor) ou lista um sócio sem id ou repetido (antes iam como `idSocio: null`
+  ou ambíguos). O ajuste de centavo só cobre o arredondamento dos percentuais: nunca envia
+  valor negativo nem dá centavo a quem pediu 0%, e outras diferenças são recusadas com o erro
+  de soma (#770, #777, #779).
 
 ### Security
 
