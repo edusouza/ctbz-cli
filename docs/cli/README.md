@@ -142,7 +142,10 @@ As credenciais (`CTBZ_USER`, `CTBZ_PASSWORD`) nunca são gravadas.
 - **Cookies gerenciados à mão** (`map[string]*http.Cookie`) em vez de
   `net/http/cookiejar`: o jar não permite exportar os cookies com metadados, e é
   preciso serializá-los entre execuções. Cookies vencidos não são enviados; qualquer
-  `Set-Cookie` das respostas é absorvido e salvo.
+  `Set-Cookie` das respostas é absorvido e salvo. Como não há jar para restringir o
+  domínio, `Client.Do` recusa (`ForaDoHostError`) toda requisição cujo esquema, host ou
+  porta difira do `BaseURL`, ou que traga usuário e senha antes do host: os cookies da sessão
+  nunca saem para outro host, venha a URL do `ctbz api` ou de um redirecionamento.
 - **Redirecionamentos manuais**: o resultado do login vem no fragmento do `Location`
   (`/login#incorreto`), que se perde se o cliente HTTP segue o redirecionamento sozinho.
 - **Corpo do OTP como `text/plain`**, idêntico ao `fetch` do navegador.
