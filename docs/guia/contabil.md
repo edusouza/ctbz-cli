@@ -184,6 +184,12 @@ ctbz extratos excluir --conta-bancaria 1000000000000001 --competencia 2026-09
 informações adicionais se perdem e não dá para desfazer (só reimportar e reclassificar). Se os
 contadores já concluíram a classificação do extrato, ele não pode mais ser excluído.
 
+Uma competência presa em `PROCESSANDO` (visto com o Banco Inter depois de um PDF recusado) não
+sai desse estado com `excluir`: a Contabilizei responde 200 e nada muda. A confirmação avisa
+disso e, se a releitura ainda mostra `PROCESSANDO`, o comando termina com erro (código 1), sem
+informar a exclusão. O que destravou o mês foi importar o OFX pela tela "Importar extrato" do
+painel, que mostra o botão de importar nesse estado; a outra saída é um chamado.
+
 ## Lançar no caixa
 
 Recebimentos e pagamentos em dinheiro entram no caixa da competência. É uma escrita de

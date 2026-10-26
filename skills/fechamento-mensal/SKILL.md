@@ -68,6 +68,9 @@ dispensa importação) cujo mês `M` falta:
    `ctbz extratos`.
 
 Importou o mês errado? `ctbz extratos excluir` é **risco alto** (perde as classificações).
+Não use `excluir` para destravar um mês em `PROCESSANDO`: a Contabilizei aceita e nada muda, e a
+CLI termina com erro. Peça ao usuário para importar o OFX (ou o PDF) pela tela "Importar extrato"
+do painel, que funciona nesse estado, ou para abrir um chamado.
 
 ## 2. Classificar lançamentos do extrato
 

@@ -8,6 +8,11 @@ informações adicionais das movimentações se perdem; não dá para desfazer, 
 reclassificar. Se os contadores já concluíram a classificação, o painel não deixa excluir, e a
 CLI também não.
 
+Com a competência em processamento (PROCESSANDO, já visto depois de um arquivo recusado), a
+Contabilizei aceita a exclusão sem mudar nada. A confirmação avisa disso e, se a releitura
+ainda mostra PROCESSANDO, o comando termina com erro em vez de informar a exclusão: importe o
+arquivo pela tela "Importar extrato" do painel ou abra um chamado.
+
 Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.
 
 ## Uso
