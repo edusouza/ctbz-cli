@@ -127,7 +127,11 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
 - Antes de enviar, a CLI confere o tamanho (até 30 MB), se o banco aceita o formato do arquivo
   e se há um período anterior com importação pendente. Contas integradas não precisam de
   importação. Formato que o banco não aceita: a mensagem mostra a lista dele (ex.: "o banco
-  desta conta aceita extratos em PDF, XLS ou CSV; este arquivo é .ofx").
+  desta conta aceita extratos em OFX ou PDF; este arquivo é .csv").
+- **OFX fora da lista do banco** passa com um aviso no stderr, porque a tela "Importar extrato"
+  do painel aceita OFX de qualquer banco. O Banco Inter, por exemplo, lista só PDF, XLS e CSV, e
+  o painel importou o OFX dele (26/10/2026). Se o arquivo não servir, a recusa vem da
+  Contabilizei no envio, com o motivo.
 - **CSV, XLS e outros formatos que o banco aceita** (fora OFX e PDF) vão pela Central de
   Documentos, como no painel, porque a tela "Importar extrato" só aceita OFX e PDF. É um envio só,
   sem conferência de saldo. A Contabilizei importa o arquivo **manualmente, em até 45 dias**. O
@@ -179,6 +183,17 @@ ctbz extratos excluir --conta-bancaria 1000000000000001 --competencia 2026-09
 `excluir` é de **risco alto**: a importação volta a ficar pendente, as classificações e
 informações adicionais se perdem e não dá para desfazer (só reimportar e reclassificar). Se os
 contadores já concluíram a classificação do extrato, ele não pode mais ser excluído.
+
+Uma competência presa em `PROCESSANDO` (visto com o Banco Inter depois de um PDF recusado) não
+sai desse estado com `excluir`: a Contabilizei responde 200 e nada muda. A confirmação avisa
+disso e, se a competência estava e continua `PROCESSANDO`, o comando termina com erro (código
+1), sem informar a exclusão. O que destravou o mês foi importar o OFX pela tela "Importar
+extrato" do painel, que mostra o botão de importar nesse estado; a outra saída é um chamado.
+
+Já um extrato `IMPORTADO` pode passar a `PROCESSANDO` logo depois da exclusão, e por minutos.
+Aí a exclusão valeu: o comando informa `excluido` com `situacao_extrato` `PROCESSANDO` e avisa
+para esperar a competência sair desse estado e conferir com `ctbz extratos` antes de importar
+de novo.
 
 ## Lançar no caixa
 
