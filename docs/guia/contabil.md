@@ -186,9 +186,14 @@ contadores já concluíram a classificação do extrato, ele não pode mais ser 
 
 Uma competência presa em `PROCESSANDO` (visto com o Banco Inter depois de um PDF recusado) não
 sai desse estado com `excluir`: a Contabilizei responde 200 e nada muda. A confirmação avisa
-disso e, se a releitura ainda mostra `PROCESSANDO`, o comando termina com erro (código 1), sem
-informar a exclusão. O que destravou o mês foi importar o OFX pela tela "Importar extrato" do
-painel, que mostra o botão de importar nesse estado; a outra saída é um chamado.
+disso e, se a competência estava e continua `PROCESSANDO`, o comando termina com erro (código
+1), sem informar a exclusão. O que destravou o mês foi importar o OFX pela tela "Importar
+extrato" do painel, que mostra o botão de importar nesse estado; a outra saída é um chamado.
+
+Já um extrato `IMPORTADO` pode passar a `PROCESSANDO` logo depois da exclusão, e por minutos.
+Aí a exclusão valeu: o comando informa `excluido` com `situacao_extrato` `PROCESSANDO` e avisa
+para esperar a competência sair desse estado e conferir com `ctbz extratos` antes de importar
+de novo.
 
 ## Lançar no caixa
 

@@ -618,9 +618,11 @@ reclassificar. Se os contadores já concluíram a classificação, o painel não
 CLI também não.
 
 Com a competência em processamento (PROCESSANDO, já visto depois de um arquivo recusado), a
-Contabilizei aceita a exclusão sem mudar nada. A confirmação avisa disso e, se a releitura
-ainda mostra PROCESSANDO, o comando termina com erro em vez de informar a exclusão: importe o
-arquivo pela tela "Importar extrato" do painel ou abra um chamado.
+Contabilizei pode aceitar a exclusão sem mudar nada. A confirmação avisa disso e, se a
+competência estava e continua PROCESSANDO, o comando termina com erro em vez de informar a
+exclusão: importe o arquivo pela tela "Importar extrato" do painel ou abra um chamado. Se ela
+só passou a PROCESSANDO depois do envio (já visto com um extrato IMPORTADO), a exclusão vale:
+espere a competência sair desse estado e confira com ctbz extratos antes de importar de novo.
 
 Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 		Example: `  ctbz extratos excluir --conta-bancaria 1000000000000001 --competencia 2026-09`,
@@ -648,7 +650,8 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(alvo.conta), Resumo: fmt.Sprintf("Excluir o extrato de %s da conta %d", mes, alvo.conta),
 				Consequencia: "A importação volta a ficar pendente e você terá de importar um novo arquivo. As classificações e informações adicionais das movimentações se perdem. Não dá para desfazer."}
 			// Em PROCESSANDO, o DELETE já respondeu 200 sem mudar nada (#1012): avisa antes e confere depois.
-			if sit, err := situacaoExtratoAlvo(ctx, g, alvo); err == nil && sit == "PROCESSANDO" {
+			antes, errAntes := situacaoExtratoAlvo(ctx, g, alvo)
+			if errAntes == nil && antes == "PROCESSANDO" {
 				op.Consequencia += fmt.Sprintf(" O extrato de %s está em processamento: a exclusão pode não ter efeito (já visto depois de um arquivo recusado).", mes)
 			}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.ExcluirExtrato(ctx, snd, alvo.conta, alvo.ano(), alvo.mesNum()) })
@@ -656,16 +659,25 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 				return err
 			}
 			var situacaoExtrato any
-			if sit, err := situacaoExtratoAlvo(ctx, g, alvo); err != nil {
+			lembrete := fmt.Sprintf("Não se esqueça de importar o extrato de %s de novo (ctbz extratos importar).", mes)
+			sit, err := situacaoExtratoAlvo(ctx, g, alvo)
+			switch {
+			case err != nil:
 				fmt.Fprintln(s.err, "aviso: extrato excluído, mas não foi possível reler os extratos:", err)
-			} else if sit == "PROCESSANDO" {
-				return fmt.Errorf("a Contabilizei aceitou a exclusão, mas o extrato de %s continua PROCESSANDO: nada mudou. "+
+			case sit == "PROCESSANDO" && errAntes == nil && antes == "PROCESSANDO":
+				// Só aqui o PROCESSANDO depois do envio indica que a exclusão pode não ter tido efeito.
+				return fmt.Errorf("a Contabilizei aceitou a exclusão, mas o extrato de %s estava e continua PROCESSANDO: não foi possível confirmar a exclusão. "+
 					"Enquanto ele estiver em processamento, a CLI não importa outro arquivo: importe o OFX ou o PDF pela tela "+
 					"\"Importar extrato\" do painel ou abra um chamado", mes)
-			} else {
+			case sit == "PROCESSANDO":
+				// Depois de excluir um extrato IMPORTADO, a competência já foi vista PROCESSANDO por minutos (#901).
+				situacaoExtrato = sit
+				lembrete = fmt.Sprintf("aviso: extrato excluído, e a competência de %s está PROCESSANDO; espere ela sair desse estado e confira com "+
+					"`ctbz extratos` antes de importar de novo (ctbz extratos importar).", mes)
+			default:
 				situacaoExtrato = nilIfEmpty(sit)
 			}
-			fmt.Fprintf(s.err, "Não se esqueça de importar o extrato de %s de novo (ctbz extratos importar).\n", mes)
+			fmt.Fprintln(s.err, lembrete)
 			rec := resultadoEscrita("excluir-extrato", "excluido", alvo.conta).
 				Add("competencia", "Competência", mes).
 				Add("situacao_extrato", "Situação do extrato", situacaoExtrato)

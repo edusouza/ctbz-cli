@@ -9,9 +9,11 @@ reclassificar. Se os contadores já concluíram a classificação, o painel não
 CLI também não.
 
 Com a competência em processamento (PROCESSANDO, já visto depois de um arquivo recusado), a
-Contabilizei aceita a exclusão sem mudar nada. A confirmação avisa disso e, se a releitura
-ainda mostra PROCESSANDO, o comando termina com erro em vez de informar a exclusão: importe o
-arquivo pela tela "Importar extrato" do painel ou abra um chamado.
+Contabilizei pode aceitar a exclusão sem mudar nada. A confirmação avisa disso e, se a
+competência estava e continua PROCESSANDO, o comando termina com erro em vez de informar a
+exclusão: importe o arquivo pela tela "Importar extrato" do painel ou abra um chamado. Se ela
+só passou a PROCESSANDO depois do envio (já visto com um extrato IMPORTADO), a exclusão vale:
+espere a competência sair desse estado e confira com ctbz extratos antes de importar de novo.
 
 Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.
 
