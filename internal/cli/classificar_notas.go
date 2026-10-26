@@ -255,6 +255,12 @@ func distribuir(cmd *cobra.Command, g api.Getter, idNota string, como *classific
 	resumos := make([]string, len(itens))
 	for i, p := range itens {
 		id := idTexto(p.ID)
+		// Sem quantidadeTotal (ausente lê como 0) a soma 0 = 0 passaria e o corpo levaria as
+		// quantidades zeradas, apagando a distribuição da nota (ADR-0021).
+		if p.QuantidadeTotal <= 0 {
+			return nil, "", fmt.Errorf("lendo os itens da nota %s: o item %s (%s) veio sem quantidade total positiva; use o painel",
+				idNota, id, p.Descricao)
+		}
 		q, citado := novas[id]
 		switch {
 		case como != nil:

@@ -145,3 +145,43 @@ func TestReclassificarDryRun(t *testing.T) {
 		t.Errorf("código %d, %d escritas\n%s", code, len(f.writes), out)
 	}
 }
+
+// Um item sem quantidadeTotal (ou com total <= 0) não pode virar uma escrita com as
+// quantidades zeradas (ADR-0021): o comando recusa antes de montar o corpo, em todos os modos.
+func TestClassificacaoSemQuantidadeTotal(t *testing.T) {
+	const pathProdutos = "/api/emissor/classificacaonotas/listarprodutos/701"
+	const classificada = `{"total":1,"cursor":null,"list":[{"id":701,"razaoSocial":"Fornecedor Fictício","valor":150.25,"tipoClassificacao":"USO_CONSUMO"}]}`
+	itens := map[string]string{
+		"ausente": `[{"id":11,"descricao":"Papel A4 500 folhas","quantidadeConsumo":5},` +
+			`{"id":12,"descricao":"Toner para impressora","quantidadeTotal":1,"quantidadeEstoque":1}]`,
+		"zero": `[{"id":11,"descricao":"Papel A4 500 folhas","quantidadeTotal":0,"quantidadeConsumo":0},` +
+			`{"id":12,"descricao":"Toner para impressora","quantidadeTotal":1,"quantidadeEstoque":1}]`,
+		"negativo": `[{"id":11,"descricao":"Papel A4 500 folhas","quantidadeTotal":-5,"quantidadeConsumo":-5},` +
+			`{"id":12,"descricao":"Toner para impressora","quantidadeTotal":1,"quantidadeEstoque":1}]`,
+	}
+	modos := [][]string{
+		{"reclassificar", "701", "--como", "estoque"},
+		{"reclassificar", "701", "--produto", "11:estoque=5"},
+		{"reclassificar", "701", "--produto", "12:insumo=1"}, // item 11 não citado vai no corpo como está
+		{"classificar", "701", "--produto", "11:estoque=5"},
+		{"classificar", "701", "--produto", "12:insumo=1"},
+	}
+	for nome, produtos := range itens {
+		for _, modo := range modos {
+			for _, flag := range []string{"--yes", "--dry-run"} {
+				f := classificarFake(t)
+				f.gets[pathProdutos] = produtos
+				if modo[0] == "reclassificar" {
+					f.gets[pathClassificadas] = classificada
+				}
+				args := append([]string{"notas", "entrada"}, modo...)
+				out, stderr, code := execCLI(t, "", append(args, "--mes", "2026-09", flag)...)
+				if code != ExitError || len(f.writes) != 0 || out != "" ||
+					!strings.Contains(stderr, "lendo os itens da nota 701: o item 11 (Papel A4 500 folhas) veio sem quantidade total positiva") ||
+					!strings.Contains(stderr, "use o painel") {
+					t.Errorf("%s %v %s: código %d, %d escritas, saída %q\n%s", nome, modo, flag, code, len(f.writes), out, stderr)
+				}
+			}
+		}
+	}
+}
