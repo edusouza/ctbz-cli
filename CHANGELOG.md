@@ -7,6 +7,15 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz extratos importar` importa a competência `PROCESSANDO` com o botão "Importar" do painel
+  (`exibirBotaoImportar`), como o painel: é como ela fica depois de excluir o extrato, e não sai
+  desse estado sem um novo arquivo. Antes a CLI recusava, e o mês excluído (por `extratos
+  excluir` ou por `--substituir` que falhou) só podia ser importado pelo painel. `extratos
+  excluir` recusa sem envio uma competência nesse estado (não há extrato para excluir), e as
+  mensagens depois de excluir mandam importar em vez de esperar.
+
 ## [1.9.3] - 2026-10-26
 
 Correções críticas, planejadas como v1.9.1 e lançadas depois da 1.9.2: nenhuma escrita sai mais com

@@ -52,7 +52,10 @@ dispensa importação) cujo mês `M` falta:
 4. Mensagens de "outro banco", "outra conta", "conta não cadastrada" (cadastre com
    `ctbz contas-bancarias adicionar`, skill `cadastro-e-acessos`) e período anterior pendente
    vêm traduzidas: siga o que dizem.
-5. Competência já `IMPORTADO` ou `PROCESSANDO`: a CLI recusa. Se o extrato atual está vazio
+5. Competência já `IMPORTADO` ou `PROCESSANDO`: a CLI recusa, menos `PROCESSANDO` com o botão
+   "Importar" do painel, que é como o mês fica depois de excluir o extrato: aí a CLI importa e
+   avisa (se o usuário acabou de importar esse mês, confira com `ctbz extratos` em vez de
+   importar de novo). Se o extrato atual está vazio
    (criado pelo processamento de outro mês) ou é o arquivo errado, refaça com `--substituir`
    (exclui o atual e importa): mostre o `--dry-run` e confirme com o usuário. Com lançamentos é
    risco alto (as classificações se perdem). Depois de importar, confira `quantidade_lancamentos`:
@@ -64,15 +67,15 @@ dispensa importação) cujo mês `M` falta:
    `ctbz extratos lancamentos` e mostre ao usuário antes de qualquer nova tentativa. Depois de
    um `--substituir` que excluiu o extrato antigo e falhou, nunca repita com `--substituir` sem
    conferir: se o novo arquivo entrou, ele seria excluído. A mensagem diz a situação relida da
-   competência: com `PROCESSANDO`, não importe de novo agora; espere e confira com
-   `ctbz extratos`.
+   competência e o que fazer: rodar `importar` de novo (pendente ou `PROCESSANDO` à espera de
+   um arquivo) ou esperar e conferir com `ctbz extratos` (`PROCESSANDO` sem o botão "Importar").
 
 Importou o mês errado? `ctbz extratos excluir` é **risco alto** (perde as classificações).
-Não use `excluir` para destravar um mês em `PROCESSANDO`: a Contabilizei aceita e nada muda, e a
-CLI termina com erro. Peça ao usuário para importar o OFX (ou o PDF) pela tela "Importar extrato"
-do painel, que funciona nesse estado, ou para abrir um chamado. Se o mês estava `IMPORTADO` e só
-passou a `PROCESSANDO` depois do `excluir`, a exclusão valeu (saída `excluido`): espere sair desse
-estado e confira com `ctbz extratos` antes de importar de novo.
+Depois do `excluir`, o mês fica `PROCESSANDO` com o botão "Importar" até o novo arquivo entrar
+(saída `excluido`): importe com `ctbz extratos importar`. Nesse estado não há o que excluir, e a
+CLI recusa o `excluir`. Um mês `PROCESSANDO` sem o botão não destrava com `excluir` (a
+Contabilizei aceita e nada muda, e a CLI termina com erro): peça ao usuário para importar pela
+tela "Importar extrato" do painel ou abrir um chamado.
 
 ## 2. Classificar lançamentos do extrato
 

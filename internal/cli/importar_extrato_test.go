@@ -445,3 +445,62 @@ func TestExtratosImportarErroDeServidorNoUpload(t *testing.T) {
 		}
 	}
 }
+
+// PROCESSANDO com o botão "Importar" é como a competência fica depois de excluir o extrato
+// (visto numa conta real): o painel importa, e a CLI também, com um aviso.
+func TestExtratosImportarAguardandoArquivo(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.ofx")
+	f, _ := importarFake(t, mt, "ofx")
+	f.gets[pathExtratos] = extratosAguardandoArquivo()
+	f.onWrite = func(f *escritaFake) {
+		if strings.Contains(f.writes[len(f.writes)-1], "eventoUploadExtrato") {
+			f.gets[pathExtratos] = extratosNaSituacao("IMPORTADO")
+		}
+	}
+	out, stderr, code := execCLI(t, "", append(append(baseImportar, arq), "--saldo-final", "1.234,56", "--yes", "-o", "json")...)
+	if code != ExitOK || len(f.writes) != 2 || !strings.Contains(f.writes[0], "enviar/bucket") || !strings.Contains(f.writes[1], "eventoUploadExtrato") {
+		t.Fatalf("código %d, escritas %q\n%s", code, f.writes, stderr)
+	}
+	if !strings.Contains(stderr, "A competência 09/2026 aparece como PROCESSANDO com o botão \"Importar\" do painel") ||
+		!strings.Contains(out, `"situacao_extrato": "IMPORTADO"`) {
+		t.Errorf("stderr:\n%s\nsaída:\n%s", stderr, out)
+	}
+}
+
+// Sem extrato importado (a competência espera um arquivo), excluir não envia nada.
+func TestExtratosExcluirAguardandoArquivo(t *testing.T) {
+	f := extratoFake(t)
+	f.gets[pathExtratos] = extratosAguardandoArquivo()
+	_, stderr, code := execCLI(t, "", baseExcluir...)
+	if code != ExitError || len(f.writes) != 0 || !strings.Contains(stderr, "não há extrato importado em 09/2026 para excluir") ||
+		!strings.Contains(stderr, "importe-o com ctbz extratos importar") {
+		t.Errorf("código %d, escritas %d\n%s", code, len(f.writes), stderr)
+	}
+}
+
+// Depois de excluir um extrato IMPORTADO, a competência fica PROCESSANDO com o botão
+// "Importar": a exclusão vale e o lembrete é importar de novo, sem mandar esperar.
+func TestExtratosExcluirImportadoQueFicaAguardandoArquivo(t *testing.T) {
+	f := extratoFake(t)
+	f.gets[pathExtratos] = extratosNaSituacao("IMPORTADO")
+	f.onWrite = func(f *escritaFake) { f.gets[pathExtratos] = extratosAguardandoArquivo() }
+	out, stderr, code := execCLI(t, "", append(baseExcluir, "-o", "json")...)
+	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(out, `"situacao": "excluido"`) || !strings.Contains(out, `"situacao_extrato": "PROCESSANDO"`) {
+		t.Fatalf("código %d, %d escritas\n%s\n%s", code, len(f.writes), out, stderr)
+	}
+	if !strings.Contains(stderr, "Não se esqueça de importar o extrato de 09/2026 de novo (ctbz extratos importar)") || strings.Contains(stderr, "espere") {
+		t.Errorf("stderr:\n%s", stderr)
+	}
+}
+
+// Num envio sem resposta, a competência que esperava um arquivo continua esperando: repetir é seguro.
+func TestExtratosImportarTimeoutNoUploadAguardandoArquivo(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.pdf")
+	f, _ := importarFake(t, mt, "pdf")
+	f.gets[pathExtratos] = extratosAguardandoArquivo()
+	semRespostaNoEnvio(t, f, "enviar/bucket")
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
+	if code != ExitError || !strings.Contains(stderr, "o extrato de 09/2026 continua PROCESSANDO: nada foi importado e é seguro rodar o mesmo comando de novo") {
+		t.Errorf("código %d\n%s", code, stderr)
+	}
+}

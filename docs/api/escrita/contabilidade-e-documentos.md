@@ -168,6 +168,15 @@ Convenções:
   como diz a confirmação do painel. Não se sabe se o `DELETE` dispara um reprocessamento nem em
   que situação a competência termina. Por isso a CLI relê a competência depois de uma falha e
   não afirma que ela voltou a ficar pendente.
+- **Situação depois da exclusão (observado em 26/10/2026, Banco Inter, pelo painel e pela CLI):**
+  a competência fica `PROCESSANDO` com `exibirBotaoImportar: true` em `v2/extratos`, e não sai
+  desse estado sozinha. `extrato/info` responde `quantidadeLancamentos: 0`,
+  `permiteExclusaoExtrato: true` e `permiteEditarLancamento: false`. O painel mostra o selo
+  "Processando" **com** o botão "Importar", e a importação (upload, `info-extrato`,
+  `eventoUploadExtrato`) funciona: em cerca de 20 s a competência passa a `IMPORTADO`. O mesmo
+  par (`PROCESSANDO`, `exibirBotaoImportar: true`) aparece logo depois de um `eventoUploadExtrato`,
+  enquanto o arquivo é processado. A CLI segue o `exibirBotaoImportar`, como o painel: com ele,
+  `PROCESSANDO` é importável.
 
 ### 1.7 `POST movimentacao-financeira/eventoUploadExtrato`: concluir a importação do extrato
 

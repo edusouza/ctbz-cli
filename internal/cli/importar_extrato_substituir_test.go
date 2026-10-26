@@ -13,6 +13,12 @@ func extratosNaSituacao(situacao string) string {
 	return fmt.Sprintf(`[{"ano":2026,"mes":9,"idContaBancaria":7,"banco":"Banco","agencia":"1","numeroConta":"123456","situacao":%q,"statusIntegracao":null}]`, situacao)
 }
 
+// extratosAguardandoArquivo é a lista com a competência 09/2026 como fica depois de excluir o
+// extrato (visto numa conta real): PROCESSANDO, com o botão "Importar" do painel.
+func extratosAguardandoArquivo() string {
+	return strings.Replace(extratosNaSituacao("PROCESSANDO"), `"statusIntegracao":null`, `"statusIntegracao":"PENDENTE","exibirBotaoImportar":true`, 1)
+}
+
 // substituirFake prepara um extrato já importado com a quantidade de lançamentos dada. Ao
 // excluir, a competência volta a PENDENTE; ao concluir a importação, fica IMPORTADO com 3.
 func substituirFake(t *testing.T, lancamentos string, permiteExcluir bool) (*escritaFake, string) {
@@ -165,7 +171,8 @@ func TestExtratosImportarSubstituirUploadRecusado(t *testing.T) {
 }
 
 // uploadRecusadoDepoisDeExcluir: DELETE 200, upload 400 e, depois do upload, a competência
-// relida na situação dada ("" = não aparece; "erro" = a releitura falha) (#901).
+// relida na situação dada ("" = não aparece; "erro" = a releitura falha; "aguardando" =
+// PROCESSANDO com o botão "Importar") (#901).
 func uploadRecusadoDepoisDeExcluir(t *testing.T, situacao string) (string, int, int) {
 	t.Helper()
 	f, arq := substituirFake(t, "0", true)
@@ -180,6 +187,8 @@ func uploadRecusadoDepoisDeExcluir(t *testing.T, situacao string) (string, int, 
 				delete(f.gets, pathExtratos)
 			case "":
 				f.gets[pathExtratos] = "[]"
+			case "aguardando":
+				f.gets[pathExtratos] = extratosAguardandoArquivo()
 			default:
 				f.gets[pathExtratos] = extratosNaSituacao(situacao)
 			}
@@ -218,5 +227,27 @@ func TestExtratosImportarSubstituirRecusadoOutrasSituacoes(t *testing.T) {
 		if code != ExitError || escritas != 2 || !strings.Contains(stderr, tc.want) {
 			t.Errorf("%q: código %d, escritas %d\n%s", tc.situacao, code, escritas, stderr)
 		}
+	}
+}
+
+// Depois do DELETE, a competência fica PROCESSANDO com o botão "Importar": com o upload
+// recusado, importar de novo é o caminho, sem mandar esperar.
+func TestExtratosImportarSubstituirRecusadoAguardandoArquivo(t *testing.T) {
+	stderr, code, escritas := uploadRecusadoDepoisDeExcluir(t, "aguardando")
+	want := "o extrato antigo de 09/2026 foi excluído e a competência está PROCESSANDO à espera de um arquivo (o painel mostra \"Importar\"), " +
+		"mas o novo arquivo não foi importado (rode ctbz extratos importar de novo, sem precisar de --substituir)"
+	if code != ExitError || escritas != 2 || !strings.Contains(stderr, want) || strings.Contains(stderr, "espere") {
+		t.Errorf("código %d, escritas %d\n%s", code, escritas, stderr)
+	}
+}
+
+// Sem extrato a substituir (a competência espera um arquivo), --substituir segue sem excluir.
+func TestExtratosImportarSubstituirAguardandoArquivo(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.pdf")
+	f, _ := importarFake(t, mt, "pdf")
+	f.gets[pathExtratos] = extratosAguardandoArquivo()
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--substituir", "--yes")...)
+	if code != ExitOK || len(f.writes) != 2 || strings.HasPrefix(f.writes[0], "DELETE") || !strings.Contains(stderr, "Nada a substituir") {
+		t.Errorf("código %d, escritas %q\n%s", code, f.writes, stderr)
 	}
 }

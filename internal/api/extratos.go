@@ -20,6 +20,15 @@ type Extrato struct {
 	NumeroConta      string `json:"numeroConta"`
 	Situacao         string `json:"situacao"`         // ex.: ABERTO
 	StatusIntegracao any    `json:"statusIntegracao"` // formato não verificado (vinha null)
+	// ExibirBotaoImportar é o que decide o botão "Importar" do painel (null nas competências abertas).
+	ExibirBotaoImportar *bool `json:"exibirBotaoImportar" contract:"optional"`
+}
+
+// AguardaArquivo diz se a competência está PROCESSANDO com o botão "Importar" do painel. É como
+// ela fica depois de excluir o extrato, até um novo arquivo ser importado, e também nos minutos
+// em que a Contabilizei processa um extrato recém-importado; nos dois casos o painel importa.
+func (e *Extrato) AguardaArquivo() bool {
+	return e != nil && e.Situacao == "PROCESSANDO" && e.ExibirBotaoImportar != nil && *e.ExibirBotaoImportar
 }
 
 // BuscarExtratos lista os extratos de todas as contas (a API não tem filtro).

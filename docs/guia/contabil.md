@@ -144,13 +144,18 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
   painel. Atenção: o processamento de um extrato pode deixar o mês **seguinte** como
   `IMPORTADO` sem nenhum lançamento (visto numa conta real); a mensagem avisa quando o extrato
   está vazio.
+- A exceção é `PROCESSANDO` com o botão "Importar" do painel (`exibirBotaoImportar`): é como a
+  competência fica depois de excluir o extrato, até um novo arquivo entrar, e ela não sai desse
+  estado sozinha. O painel importa nesse estado, e a CLI também, com um aviso no stderr. O mesmo
+  estado aparece nos minutos em que a Contabilizei processa um extrato recém-importado: se você
+  acabou de importar, confira com `ctbz extratos` em vez de importar de novo.
 - Para refazer a importação de um mês já importado, use `--substituir`: a CLI exclui o extrato
   atual e importa o arquivo, com uma confirmação só (o mesmo que excluir e importar no painel,
   que não tem outro jeito de reimportar). Extrato atual vazio: risco médio. Com lançamentos:
   risco alto, porque as classificações se perdem. O `--dry-run` mostra a exclusão, o envio e a
   conclusão. Se a exclusão der certo e a importação falhar, a CLI relê a competência e diz em
-  que situação ela ficou. Pendente: corrija e rode de novo, sem `--substituir`. `PROCESSANDO`
-  (já visto por minutos depois de um arquivo recusado): espere e confira com `ctbz extratos`
+  que situação ela ficou. Pendente, ou `PROCESSANDO` com o botão "Importar": corrija e rode de
+  novo, sem `--substituir`. `PROCESSANDO` sem o botão: espere e confira com `ctbz extratos`
   antes de importar de novo. Se a conexão cair ou o servidor responder com erro 5xx ao
   concluir, não se sabe se o novo arquivo entrou: confira antes de qualquer nova tentativa e não
   use `--substituir`, que excluiria o extrato novo.
@@ -184,16 +189,16 @@ ctbz extratos excluir --conta-bancaria 1000000000000001 --competencia 2026-09
 informações adicionais se perdem e não dá para desfazer (só reimportar e reclassificar). Se os
 contadores já concluíram a classificação do extrato, ele não pode mais ser excluído.
 
-Uma competência presa em `PROCESSANDO` (visto com o Banco Inter depois de um PDF recusado) não
-sai desse estado com `excluir`: a Contabilizei responde 200 e nada muda. A confirmação avisa
-disso e, se a competência estava e continua `PROCESSANDO`, o comando termina com erro (código
-1), sem informar a exclusão. O que destravou o mês foi importar o OFX pela tela "Importar
-extrato" do painel, que mostra o botão de importar nesse estado; a outra saída é um chamado.
+Depois da exclusão, a competência fica `PROCESSANDO` com o botão "Importar" do painel até um
+novo arquivo entrar (visto com o Banco Inter): a exclusão valeu, o comando informa `excluido`
+com `situacao_extrato` `PROCESSANDO`, e o próximo passo é `ctbz extratos importar`. Nesse
+estado não há extrato para excluir: `excluir` termina com erro (código 1) sem enviar nada e
+manda importar.
 
-Já um extrato `IMPORTADO` pode passar a `PROCESSANDO` logo depois da exclusão, e por minutos.
-Aí a exclusão valeu: o comando informa `excluido` com `situacao_extrato` `PROCESSANDO` e avisa
-para esperar a competência sair desse estado e conferir com `ctbz extratos` antes de importar
-de novo.
+Uma competência `PROCESSANDO` **sem** o botão "Importar" pode não sair desse estado com
+`excluir`: a Contabilizei responde 200 e nada muda. A confirmação avisa disso e, se a
+competência estava e continua `PROCESSANDO`, o comando termina com erro (código 1), sem
+informar a exclusão: importe pela tela "Importar extrato" do painel ou abra um chamado.
 
 ## Lançar no caixa
 
