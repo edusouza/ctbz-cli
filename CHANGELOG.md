@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `extratos importar` aceita OFX mesmo quando o banco não o lista entre os formatos de upload,
+  como a tela "Importar extrato" do painel, com um aviso no stderr. Antes, a CLI recusava o OFX do
+  Banco Inter, que lista só PDF, XLS e CSV, e o painel o importava (#1011).
+
 ## [1.9.0] - 2026-10-23
 
 O que faltou no primeiro uso real: gerar a segunda via da mensalidade atrasada com Pix copia

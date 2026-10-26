@@ -70,7 +70,8 @@ func newExtratosImportarCmd() *cobra.Command {
 (risco médio: entra na contabilidade; desfaça com ctbz extratos excluir).
 
 Antes de enviar, a CLI confere o tamanho (até 30 MB), se o banco aceita o formato do arquivo
-(a lista vem da Contabilizei, e a mensagem de erro a mostra), se a conta é integrada (essas
+(a lista vem da Contabilizei, e a mensagem de erro a mostra; OFX fora da lista passa com um
+aviso, porque o painel o importa assim mesmo, como no Inter), se a conta é integrada (essas
 não precisam de importação), se há um período anterior pendente e se a competência já foi
 importada ou está em processamento (o painel também não deixa importar por cima).
 CSV, XLS e os outros formatos de importação manual também são recusados sobre um extrato
@@ -154,8 +155,12 @@ enviar nada.`,
 			if err != nil {
 				return err
 			}
-			if err := validarContaUpload(ini, alvo.conta, formatoArq); err != nil {
+			aviso, err := validarContaUpload(ini, alvo.conta, formatoArq)
+			if err != nil {
 				return err
+			}
+			if aviso != "" {
+				fmt.Fprintln(s.err, aviso)
 			}
 			per, err := api.BuscarPermiteImportacao(ctx, g, alvo.conta, alvo.ano(), alvo.mesNum())
 			if err != nil {
@@ -502,26 +507,36 @@ func orientarEnvioIncerto(ctx context.Context, g api.Getter, alvo extratoAlvo, f
 		falha, mes, situacao, causa)
 }
 
-// validarContaUpload confere se a conta aceita upload no formato do arquivo.
-func validarContaUpload(ini *api.UploadExtratoInit, idConta int64, formato string) error {
+// validarContaUpload confere se a conta aceita upload no formato do arquivo. OFX fora da lista
+// passa com um aviso: o painel o importa pela tela "Importar extrato" mesmo quando o banco não
+// o lista (o Inter lista PDF, XLS e CSV), e a Contabilizei valida o arquivo no envio (#1011).
+func validarContaUpload(ini *api.UploadExtratoInit, idConta int64, formato string) (aviso string, err error) {
 	for _, b := range ini.Bancos {
 		for _, c := range b.ContasBancarias {
 			if c.ID != idConta {
 				continue
 			}
 			if c.StatusIntegracao == "INTEGRADA" {
-				return errors.New("a conta é integrada: a importação é feita automaticamente, não precisa enviar extrato")
+				return "", errors.New("a conta é integrada: a importação é feita automaticamente, não precisa enviar extrato")
 			}
 			for _, fmtOK := range b.FormatosDisponiveisUpload {
 				if strings.EqualFold(fmtOK, formato) {
-					return nil
+					return "", nil
 				}
 			}
-			return usageError{fmt.Errorf("o banco desta conta aceita extratos em %s; este arquivo é .%s",
+			if formato == "OFX" {
+				aceitos := ""
+				if len(b.FormatosDisponiveisUpload) > 0 {
+					aceitos = " (" + juntarComOu(b.FormatosDisponiveisUpload) + ")"
+				}
+				return "aviso: o banco desta conta não lista OFX entre os formatos aceitos" + aceitos + ", mas o painel importa OFX " +
+					"pela tela \"Importar extrato\"; se a Contabilizei recusar o arquivo, a mensagem diz o motivo", nil
+			}
+			return "", usageError{fmt.Errorf("o banco desta conta aceita extratos em %s; este arquivo é .%s",
 				juntarComOu(b.FormatosDisponiveisUpload), strings.ToLower(formato))}
 		}
 	}
-	return fmt.Errorf("a conta %d não aparece entre as contas para importação; veja ctbz contas-bancarias", idConta)
+	return "", fmt.Errorf("a conta %d não aparece entre as contas para importação; veja ctbz contas-bancarias", idConta)
 }
 
 // juntarComOu junta uma lista em português: "PDF", "PDF ou XLS", "PDF, XLS ou CSV".
