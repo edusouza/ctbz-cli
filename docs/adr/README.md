@@ -27,3 +27,4 @@ decisão nova, copie o [modelo](template.md) e use o próximo número (ver [ADR-
 | [0020](0020-confirmacao-e-simulacao.md) | Confirmação e simulação num helper único, com o `--dry-run` como um `Sender` | aceita |
 | [0021](0021-tipos-e-fixtures-sinteticos.md) | Tipos e fixtures sintéticos para endpoints sem captura real | aceita |
 | [0022](0022-classificacao-de-notas-de-entrada.md) | Classificar notas de entrada pela base `/api/emissor/`, reenviando os objetos como vieram | aceita |
+| [0023](0023-licenca-nao-comercial-com-uso-pela-propria-empresa.md) | Licenciar como PolyForm Noncommercial com uso pela própria empresa | aceita |

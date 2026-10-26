@@ -1,0 +1,119 @@
+# Licença do ctbz
+
+Required Notice: Copyright 2026 Eduardo Oliveira de Souza (https://github.com/edusouza/ctbz-cli)
+
+O ctbz é licenciado nos termos da PolyForm Noncommercial License 1.0.0, reproduzida
+integralmente abaixo, com a permissão adicional a seguir. Para estes termos, o "software"
+inclui o código, as skills do Claude Code, os scripts e a documentação deste repositório.
+
+## Permissão adicional
+
+Além das finalidades permitidas pela PolyForm Noncommercial License 1.0.0, também é
+finalidade permitida (*permitted purpose*) usar o software para administrar empresa da qual
+você seja titular, sócio ou administrador, inclusive em proveito comercial dessa empresa,
+desde que:
+
+1. o uso seja feito por você, ou por sócios ou empregados dessa empresa, em benefício dela;
+2. nem você nem essa empresa usem o software, alterações ou obras derivadas dele para
+   prestar serviços a terceiros mediante remuneração, direta ou indireta, nem o incluam ou
+   distribuam como parte de produto ou serviço oferecido a terceiros.
+
+Esta permissão adicional não se aplica ao fornecedor dos serviços que o software acessa, às
+organizações que o controlam, que ele controla ou que estão sob controle comum com ele, nem
+a quem age em nome ou por conta deles.
+
+Qualquer outro uso comercial depende de autorização por escrito do licenciante. Em caso de
+divergência entre esta seção e a tradução abaixo, prevalece o texto em português.
+
+## Additional Permission (English translation)
+
+In addition to the purposes permitted by the PolyForm Noncommercial License 1.0.0, it is
+also a permitted purpose to use the software to manage a company of which you are an owner,
+partner, or officer, including for that company's commercial benefit, provided that:
+
+1. the use is made by you, or by partners or employees of that company, for its benefit;
+2. neither you nor that company use the software, changes to it, or new works based on it to
+   provide services to third parties for direct or indirect compensation, nor include or
+   distribute it as part of a product or service offered to third parties.
+
+This additional permission does not apply to the provider of the services the software
+accesses, to organizations that control it, that it controls, or that are under common
+control with it, or to anyone acting on behalf of or for the account of any of them.
+
+Any other commercial use requires written permission from the licensor.
+
+---
+
+# PolyForm Noncommercial License 1.0.0
+
+<https://polyformproject.org/licenses/noncommercial/1.0.0>
+
+## Acceptance
+
+In order to get any license under these terms, you must agree to them as both strict obligations and conditions to all your licenses.
+
+## Copyright License
+
+The licensor grants you a copyright license for the software to do everything you might do with the software that would otherwise infringe the licensor's copyright in it for any permitted purpose.  However, you may only distribute the software according to [Distribution License](#distribution-license) and make changes or new works based on the software according to [Changes and New Works License](#changes-and-new-works-license).
+
+## Distribution License
+
+The licensor grants you an additional copyright license to distribute copies of the software.  Your license to distribute covers distributing the software with changes and new works permitted by [Changes and New Works License](#changes-and-new-works-license).
+
+## Notices
+
+You must ensure that anyone who gets a copy of any part of the software from you also gets a copy of these terms or the URL for them above, as well as copies of any plain-text lines beginning with `Required Notice:` that the licensor provided with the software.  For example:
+
+> Required Notice: Copyright Yoyodyne, Inc. (http://example.com)
+
+## Changes and New Works License
+
+The licensor grants you an additional copyright license to make changes and new works based on the software for any permitted purpose.
+
+## Patent License
+
+The licensor grants you a patent license for the software that covers patent claims the licensor can license, or becomes able to license, that you would infringe by using the software.
+
+## Noncommercial Purposes
+
+Any noncommercial purpose is a permitted purpose.
+
+## Personal Uses
+
+Personal use for research, experiment, and testing for the benefit of public knowledge, personal study, private entertainment, hobby projects, amateur pursuits, or religious observance, without any anticipated commercial application, is use for a permitted purpose.
+
+## Noncommercial Organizations
+
+Use by any charitable organization, educational institution, public research organization, public safety or health organization, environmental protection organization, or government institution is use for a permitted purpose regardless of the source of funding or obligations resulting from the funding.
+
+## Fair Use
+
+You may have "fair use" rights for the software under the law. These terms do not limit them.
+
+## No Other Rights
+
+These terms do not allow you to sublicense or transfer any of your licenses to anyone else, or prevent the licensor from granting licenses to anyone else.  These terms do not imply any other licenses.
+
+## Patent Defense
+
+If you make any written claim that the software infringes or contributes to infringement of any patent, your patent license for the software granted under these terms ends immediately. If your company makes such a claim, your patent license ends immediately for work on behalf of your company.
+
+## Violations
+
+The first time you are notified in writing that you have violated any of these terms, or done anything with the software not covered by your licenses, your licenses can nonetheless continue if you come into full compliance with these terms, and take practical steps to correct past violations, within 32 days of receiving notice.  Otherwise, all your licenses end immediately.
+
+## No Liability
+
+***As far as the law allows, the software comes as is, without any warranty or condition, and the licensor will not be liable to you for any damages arising out of these terms or the use or nature of the software, under any kind of legal claim.***
+
+## Definitions
+
+The **licensor** is the individual or entity offering these terms, and the **software** is the software the licensor makes available under these terms.
+
+**You** refers to the individual or entity agreeing to these terms.
+
+**Your company** is any legal entity, sole proprietorship, or other kind of organization that you work for, plus all organizations that have control over, are under the control of, or are under common control with that organization.  **Control** means ownership of substantially all the assets of an entity, or the power to direct its management and policies by vote, contract, or otherwise.  Control can be direct or indirect.
+
+**Your licenses** are all the licenses granted to you for the software under these terms.
+
+**Use** means anything you do with the software requiring one of your licenses.

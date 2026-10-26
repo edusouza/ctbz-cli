@@ -25,6 +25,14 @@ Convenções do dia a dia. Decisões maiores estão nos [ADRs](adr/README.md).
 - [ ] Linha no `CHANGELOG.md` em `[Unreleased]` quando o usuário perceber a mudança ([ADR-0003](adr/0003-versionamento-e-changelog.md))
 - [ ] ADR novo, se houve decisão com alternativas razoáveis
 - [ ] Nenhum dado pessoal real (CPF, CNPJ, nomes, e-mails, endereços, valores) em código, testes ou docs
+- [ ] `THIRD_PARTY_NOTICES` regenerado, se alguma dependência entrou ou mudou de versão (`go run ./tools/notices`)
+
+## Licença das contribuições
+
+O `ctbz` é licenciado pela PolyForm Noncommercial com uma permissão adicional ([Licença](licenca.md),
+[ADR-0023](adr/0023-licenca-nao-comercial-com-uso-pela-propria-empresa.md)). Ao abrir um PR,
+você declara que a contribuição é sua e a licencia nesses termos, e autoriza o autor do projeto
+a licenciá-la também em outros termos, inclusive comerciais.
 
 ## Idioma e nomes
 

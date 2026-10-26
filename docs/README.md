@@ -17,6 +17,7 @@ bundles JavaScript do painel) e confirmado com chamadas reais em outubro de 2026
 | [Metodologia](metodologia/README.md) | Passo a passo reproduzível da investigação, armadilhas encontradas e cuidados |
 | [Decisões (ADRs)](adr/README.md) | Por que o projeto é como é: arquitetura, processo, versionamento |
 | [Contribuindo](contribuindo.md) | Convenções de código, testes, commits e definição de pronto |
+| [Licença](licenca.md) | O que a licença permite (administrar a própria empresa) e o que não permite (lucrar com o `ctbz`) |
 
 ## Resumo em uma tela
 

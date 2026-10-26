@@ -5,6 +5,7 @@
   "author": {
     "name": "Eduardo Oliveira de Souza"
   },
+  "license": "SEE LICENSE IN LICENSE",
   "homepage": "https://github.com/edusouza/ctbz-cli",
   "repository": "https://github.com/edusouza/ctbz-cli",
   "keywords": ["contabilizei", "contabilidade", "simples-nacional", "impostos", "fator-r", "cli"]

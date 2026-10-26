@@ -7,6 +7,15 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Added
+
+- Licença: o `ctbz` passa a ser source-available, pela PolyForm Noncommercial 1.0.0 com uma
+  permissão adicional para administrar a própria empresa; prestar serviço remunerado a terceiros
+  ou incluí-lo num produto continua proibido. As releases trazem o `LICENSE` e o
+  `THIRD_PARTY_NOTICES` com as licenças das dependências
+  ([Licença](https://github.com/edusouza/ctbz-cli/blob/main/docs/licenca.md),
+  [ADR-0023](https://github.com/edusouza/ctbz-cli/blob/main/docs/adr/0023-licenca-nao-comercial-com-uso-pela-propria-empresa.md)).
+
 ## [1.9.3] - 2026-10-26
 
 Correções críticas, planejadas como v1.9.1 e lançadas depois da 1.9.2: nenhuma escrita sai mais com
