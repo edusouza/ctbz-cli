@@ -101,6 +101,9 @@ Para cada crédito sem nota ou nota sem crédito, o agente pergunta o que é e p
 - serviço recebido **sem nota emitida** → avisa que falta emitir a nota (pelo painel), porque
   justificar como outra coisa seria incorreto.
 
+Antes de confirmar, a CLI confere que cada id está entre as pendências abertas (e é do tipo
+certo para a contraparte) e mostra a data e o valor de cada uma.
+
 ### 5. Notas de entrada (compras)
 
 - **Manifestar** (você recebeu a compra?): confirmar, desconhecer ou "operação não realizada"

@@ -140,8 +140,12 @@ Para cada pendência, pergunte ao usuário o que ela é e proponha:
   que justificar como outra coisa seria incorreto.
 
 `resolver` é **risco alto**: define a natureza fiscal do dinheiro (receita tributável ou não).
-Confirmação explícita para cada um. Os formatos de `--listar`, `candidatos` e `detalhes` vêm
-como a API devolve: leia os campos que vierem.
+Confirmação explícita para cada um. Rode antes com `--dry-run`: o resumo no stderr mostra os
+campos de cada pendência (data, valor) para conferir com o usuário. A CLI recusa com código 2
+ids fora das pendências abertas dos últimos 12 meses, repetidos, de tipos misturados ou do tipo
+errado para a origem (`NOTAFISCAL` concilia recebimentos; `MOVIMENTACAO`, notas): releia
+`--listar` e corrija, sem tentar outro id às cegas. Os formatos de `--listar`, `candidatos` e
+`detalhes` vêm como a API devolve: leia os campos que vierem.
 
 ## 5. Notas de entrada (compras)
 

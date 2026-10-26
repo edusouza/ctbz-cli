@@ -14,6 +14,12 @@ apagada). Três formas, como no painel:
 Motivos que envolvem sócio exigem --socio ID. --nota-ativacao informa o número da nota no
 fluxo de ativação contábil. Os ids das pendências vêm de ctbz pendencias conciliacao --listar.
 
+Antes de pedir a confirmação, a CLI lê as pendências abertas dos últimos 12 meses (o mesmo
+período de --listar) e recusa ids que não estejam entre elas, ids ou contrapartes repetidos,
+NOTAFISCAL e MOVIMENTACAO no mesmo pedido e pendências de tipos diferentes juntas. Com
+--vincular, os ids precisam ser do tipo que a origem concilia. O resumo mostra os campos de
+cada pendência como a API os devolve (data, valor…).
+
 No painel, algumas opções só valem para itens abaixo de R$ 1.000,00; a CLI não conhece a lista
 exata, e a Contabilizei recusa o pedido se a regra não for atendida.
 
