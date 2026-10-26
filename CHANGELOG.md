@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.9.3] - 2026-10-26
+
+Correções críticas, planejadas como v1.9.1 e lançadas depois da 1.9.2: nenhuma escrita sai mais com
+um campo ausente da API, ou um argumento repetido ou ambíguo, convertido em zero, `null` ou no primeiro
+candidato, e o `ctbz api` não envia mais a sessão para outro host.
+
 ### Fixed
 
 - `ctbz impostos parcelamento contratar` não contrata mais quando a simulação traz uma opção sem a
@@ -514,7 +520,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.2...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.3...HEAD
+[1.9.3]: https://github.com/edusouza/ctbz-cli/compare/v1.9.2...v1.9.3
 [1.9.2]: https://github.com/edusouza/ctbz-cli/compare/v1.9.0...v1.9.2
 [1.9.0]: https://github.com/edusouza/ctbz-cli/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/edusouza/ctbz-cli/compare/v1.8.0...v1.8.1

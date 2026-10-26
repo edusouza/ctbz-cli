@@ -20,9 +20,9 @@ Princípios:
 Labels usadas: `épico`, `versão: vX.Y`, `contexto: …`, `tipo: funcionalidade|investigação|infra|documentação`,
 nas escritas, `risco: baixo|médio|alto` e, nas correções, `prioridade: crítica|alta|média|baixa`.
 
-Depois da v1.9, as versões deixam de ser por contexto: a v1.9.1 corrige só os achados críticos e cada versão
-seguinte fecha **um tema** de correção, com os achados de review que continuam válidos na `main` (triagem de
-23/10/2026).
+Depois da v1.9, as versões deixam de ser por contexto: a v1.9.3 (planejada como v1.9.1) corrige só os achados
+críticos e cada versão seguinte fecha **um tema** de correção, com os achados de review que continuam válidos na
+`main` (triagem de 23/10/2026).
 
 ## Visão geral
 
@@ -47,8 +47,8 @@ seguinte fecha **um tema** de correção, com os achados de review que continuam
 | **v1.8** | Conta, usuários e acessos | [#218](https://github.com/edusouza/ctbz-cli/issues/218) | 4 | concluída |
 | **v1.8.1** | Correções do primeiro uso real de ponta a ponta | — | 6 | concluída |
 | **v1.9** | Segunda via da mensalidade, extratos em CSV/XLS e diagnóstico | — | 5 | concluída |
-| **v1.9.1** | Correções críticas | [#943](https://github.com/edusouza/ctbz-cli/issues/943) | 16 | planejada |
 | **v1.9.2** | Extratos do Banco Inter: OFX e mês preso em processamento | — | 2 | concluída |
+| **v1.9.3** | Correções críticas (planejada como v1.9.1) | [#943](https://github.com/edusouza/ctbz-cli/issues/943) | 16 | concluída |
 | **v1.10** | Saída segura: caracteres de controle, CSV, segredos e dados pessoais | [#944](https://github.com/edusouza/ctbz-cli/issues/944) | 50 | planejada |
 | **v1.11** | Escrita segura e `--dry-run` | [#945](https://github.com/edusouza/ctbz-cli/issues/945) | 78 | planejada |
 | **v1.12** | Depois do envio: releitura, situação e orientação | [#946](https://github.com/edusouza/ctbz-cli/issues/946) | 66 | planejada |
@@ -399,7 +399,7 @@ Cada épico agrupa as sub-issues em frentes; cada frente tende a virar um PR que
 
 | Versão | Épico | Crítica | Alta | Média | Baixa |
 |---|---|---|---|---|---|
-| v1.9.1 | [#943](https://github.com/edusouza/ctbz-cli/issues/943) | 16 | — | — | — |
+| v1.9.3 | [#943](https://github.com/edusouza/ctbz-cli/issues/943) | 16 | — | — | — |
 | v1.10 | [#944](https://github.com/edusouza/ctbz-cli/issues/944) | — | 43 | 5 | 2 |
 | v1.11 | [#945](https://github.com/edusouza/ctbz-cli/issues/945) | — | 24 | 43 | 11 |
 | v1.12 | [#946](https://github.com/edusouza/ctbz-cli/issues/946) | — | 19 | 41 | 6 |
@@ -409,9 +409,12 @@ Cada épico agrupa as sub-issues em frentes; cada frente tende a virar um PR que
 | v1.16 | [#950](https://github.com/edusouza/ctbz-cli/issues/950) | — | — | 2 | 73 |
 | v1.17 | [#951](https://github.com/edusouza/ctbz-cli/issues/951) | — | — | 4 | 81 |
 
-## v1.9.1 — Correções críticas
+## v1.9.3 — Correções críticas
 
-Épico: [#943](https://github.com/edusouza/ctbz-cli/issues/943) · versão de correção
+Épico: [#943](https://github.com/edusouza/ctbz-cli/issues/943) · versão de correção · label `versão: v1.9.1`
+
+Planejada como v1.9.1; saiu como v1.9.3 porque a v1.9.2 foi lançada antes, e uma tag menor deixaria estas
+correções fora do `go install ...@latest`.
 
 Patch só com o que pode enviar uma escrita errada ou irreversível à Contabilizei ou vazar a sessão. Quase tudo é
 o mesmo padrão: um campo ausente da API, ou um argumento repetido ou ambíguo, vira zero, `null` ou o primeiro
@@ -419,22 +422,22 @@ candidato numa escrita, contra a ADR-0021. As correções são guardas pequenas 
 
 | | Issue | Correção | Contexto |
 |---|---|---|---|
-| ⬜ | [#941](https://github.com/edusouza/ctbz-cli/issues/941) | `ctbz api` com URL absoluta envia os cookies da sessão para qualquer host | autenticação |
-| ⬜ | [#489](https://github.com/edusouza/ctbz-cli/issues/489) | `parcelamento contratar`: quantidade ausente vira `quantidadeParcelas: 0` | impostos |
-| ⬜ | [#428](https://github.com/edusouza/ctbz-cli/issues/428) | `rotinas reclassificar`: `idLancamento` 0 / `idPendencia` null ao concluir a rotina | contabilidade |
-| ⬜ | [#435](https://github.com/edusouza/ctbz-cli/issues/435) | `--classificacao` por nome ignora maiúsculas e escolhe a primeira opção | contabilidade |
-| ⬜ | [#543](https://github.com/edusouza/ctbz-cli/issues/543) | `conciliacao resolver` não confere se os ids são pendências abertas | pendências |
-| ⬜ | [#573](https://github.com/edusouza/ctbz-cli/issues/573) | `contas-bancarias editar` envia `dataSaldoInicial` 1969-12-31 sem `--abertura` | documentos |
-| ⬜ | [#619](https://github.com/edusouza/ctbz-cli/issues/619) | `--pendencia` repetido envia o mesmo documento duas vezes | documentos |
-| ⬜ | [#628](https://github.com/edusouza/ctbz-cli/issues/628) | `documentos enviar`: pendência sem competência vai como `{"mes":0,"ano":0}` | documentos |
-| ⬜ | [#652](https://github.com/edusouza/ctbz-cli/issues/652) | `sem-aplicacao`: pendência sem competência vai como `{"mes":0,"ano":0}` | documentos |
-| ⬜ | [#660](https://github.com/edusouza/ctbz-cli/issues/660) | `tomadores adicionar` de documento já cadastrado sobrescreve o cadastro | notas fiscais |
-| ⬜ | [#716](https://github.com/edusouza/ctbz-cli/issues/716) | `notas entrada reclassificar --como` envia as cinco quantidades zeradas | notas fiscais |
-| ⬜ | [#729](https://github.com/edusouza/ctbz-cli/issues/729) | `prolabore definir`: campo ausente tira a empresa da gestão inteligente | pró-labore |
-| ⬜ | [#770](https://github.com/edusouza/ctbz-cli/issues/770) | `lucros distribuir`: total que valida a soma trata `nil` como 0 | pró-labore |
-| ⬜ | [#777](https://github.com/edusouza/ctbz-cli/issues/777) | `lucros distribuir`: sócio sem `id` vai como `idSocio: null` | pró-labore |
-| ⬜ | [#779](https://github.com/edusouza/ctbz-cli/issues/779) | `lucros distribuir`: ajuste de centavo absorve diferenças que não são arredondamento | pró-labore |
-| ⬜ | [#818](https://github.com/edusouza/ctbz-cli/issues/818) | `usuarios`: id como `any` e `tipo` ausente desligam a trava do administrador | conta |
+| ✅ | [#941](https://github.com/edusouza/ctbz-cli/issues/941) | `ctbz api` com URL absoluta envia os cookies da sessão para qualquer host | autenticação |
+| ✅ | [#489](https://github.com/edusouza/ctbz-cli/issues/489) | `parcelamento contratar`: quantidade ausente vira `quantidadeParcelas: 0` | impostos |
+| ✅ | [#428](https://github.com/edusouza/ctbz-cli/issues/428) | `rotinas reclassificar`: `idLancamento` 0 / `idPendencia` null ao concluir a rotina | contabilidade |
+| ✅ | [#435](https://github.com/edusouza/ctbz-cli/issues/435) | `--classificacao` por nome ignora maiúsculas e escolhe a primeira opção | contabilidade |
+| ✅ | [#543](https://github.com/edusouza/ctbz-cli/issues/543) | `conciliacao resolver` não confere se os ids são pendências abertas | pendências |
+| ✅ | [#573](https://github.com/edusouza/ctbz-cli/issues/573) | `contas-bancarias editar` envia `dataSaldoInicial` 1969-12-31 sem `--abertura` | documentos |
+| ✅ | [#619](https://github.com/edusouza/ctbz-cli/issues/619) | `--pendencia` repetido envia o mesmo documento duas vezes | documentos |
+| ✅ | [#628](https://github.com/edusouza/ctbz-cli/issues/628) | `documentos enviar`: pendência sem competência vai como `{"mes":0,"ano":0}` | documentos |
+| ✅ | [#652](https://github.com/edusouza/ctbz-cli/issues/652) | `sem-aplicacao`: pendência sem competência vai como `{"mes":0,"ano":0}` | documentos |
+| ✅ | [#660](https://github.com/edusouza/ctbz-cli/issues/660) | `tomadores adicionar` de documento já cadastrado sobrescreve o cadastro | notas fiscais |
+| ✅ | [#716](https://github.com/edusouza/ctbz-cli/issues/716) | `notas entrada reclassificar --como` envia as cinco quantidades zeradas | notas fiscais |
+| ✅ | [#729](https://github.com/edusouza/ctbz-cli/issues/729) | `prolabore definir`: campo ausente tira a empresa da gestão inteligente | pró-labore |
+| ✅ | [#770](https://github.com/edusouza/ctbz-cli/issues/770) | `lucros distribuir`: total que valida a soma trata `nil` como 0 | pró-labore |
+| ✅ | [#777](https://github.com/edusouza/ctbz-cli/issues/777) | `lucros distribuir`: sócio sem `id` vai como `idSocio: null` | pró-labore |
+| ✅ | [#779](https://github.com/edusouza/ctbz-cli/issues/779) | `lucros distribuir`: ajuste de centavo absorve diferenças que não são arredondamento | pró-labore |
+| ✅ | [#818](https://github.com/edusouza/ctbz-cli/issues/818) | `usuarios`: id como `any` e `tipo` ausente desligam a trava do administrador | conta |
 
 Fora de escopo: achados de prioridade alta que não enviam escrita errada (v1.10 em diante).
 
