@@ -372,7 +372,8 @@ Detalhes do `PUT gestao/{socioId}`:
 - `modoEdicaoProlaboreMin`: `true` se já havia mínimo.
 - `sairGestaoInteligente`: `tipo != INTELIGENTE && qtdSocioGestaoInteligente <= 1`. Com mais
   sócios na GI aparece o modal *"Sua empresa permanecerá na Gestão Inteligente"* / "Confirmar
-  alteração para Tradicional".
+  alteração para Tradicional". Sem `qtdSocioGestaoInteligente` no GET, a CLI recusa antes de
+  enviar em vez de assumir um valor (ADR-0021).
 - Pré: `GET prolabore/central/init` (sócios e ids), `GET prolabore/central/gestao/{socioId}` →
   `{tipoGerenciamentoProlabore, valorProlaboreMinimo, valorMaximoProlabore, salarioMinimo,
   qtdSocioGestaoInteligente, elegivelNoMotor, …}`.
