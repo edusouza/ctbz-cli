@@ -164,3 +164,56 @@ func TestContasBancariasRemover(t *testing.T) {
 		t.Errorf("bloqueada: código %d, %s", code, stderr)
 	}
 }
+
+// A edição reenvia a abertura e o saldo da conta: sem esses dados na lista (zero, null, ausente
+// ou uma data implausível como 1969-12-31), recusa em vez de enviar uma data ou um saldo errados (#573).
+func TestContasBancariasEditarSemAberturaOuSaldo(t *testing.T) {
+	const data, saldo = `"dataSaldoInicial":1704855600000`, `"vlrSaldoInicial":100,`
+	for _, tc := range []struct {
+		nome, de, para, quer string
+	}{
+		{"data zero", data, `"dataSaldoInicial":0`, "informe --abertura AAAA-MM-DD"},
+		{"data nula", data, `"dataSaldoInicial":null`, "informe --abertura AAAA-MM-DD"},
+		{"data ausente", `,` + data, ``, "informe --abertura AAAA-MM-DD"},
+		{"data implausível", data, `"dataSaldoInicial":1000`, "informe --abertura AAAA-MM-DD"},
+		{"data antes de 1990", data, `"dataSaldoInicial":315543600000`, "informe --abertura AAAA-MM-DD"},
+		{"saldo nulo", saldo, `"vlrSaldoInicial":null,`, "informe --saldo-inicial"},
+		{"saldo ausente", saldo, ``, "informe --saldo-inicial"},
+	} {
+		t.Run(tc.nome, func(t *testing.T) {
+			f := contasFake(t)
+			f.gets[pathContasBancarias] = strings.Replace(contasBancariasJSON, tc.de, tc.para, 1)
+			for _, modo := range []string{"--yes", "--dry-run"} {
+				out, stderr, code := execCLI(t, "", "contas-bancarias", "editar", "1000000000000001", "--agencia", "9", modo)
+				if code != ExitUsage || len(f.writes) != 0 || out != "" || !strings.Contains(stderr, tc.quer) {
+					t.Errorf("%s: código %d, escritas %q, saída %q\n%s", modo, code, f.writes, out, stderr)
+				}
+			}
+		})
+	}
+
+	// Com a flag que falta, envia o valor informado e mantém o resto.
+	f := contasFake(t)
+	f.gets[pathContasBancarias] = strings.Replace(strings.Replace(contasBancariasJSON, data, `"dataSaldoInicial":0`, 1), saldo, `"vlrSaldoInicial":null,`, 1)
+	if _, stderr, code := execCLI(t, "", "contas-bancarias", "editar", "1000000000000001", "--agencia", "9", "--yes"); code != ExitUsage ||
+		!strings.Contains(stderr, "informe --abertura AAAA-MM-DD e --saldo-inicial") {
+		t.Errorf("sem abertura nem saldo: código %d, %s", code, stderr)
+	}
+	out, stderr, code := execCLI(t, "", "contas-bancarias", "editar", "1000000000000001", "--agencia", "9", "--abertura", "2024-02-01", "--saldo-inicial", "0", "--dry-run")
+	if code != ExitOK || len(f.writes) != 0 || !strings.Contains(out, `"dataSaldoInicial": "2024-02-01"`) || !strings.Contains(out, `"vlrSaldoInicial": 0`) {
+		t.Errorf("dry-run com as flags: código %d, escritas %q\n%s\n%s", code, f.writes, out, stderr)
+	}
+	_, stderr, code = execCLI(t, "", "contas-bancarias", "editar", "1000000000000001", "--agencia", "9", "--abertura", "2024-02-01", "--saldo-inicial", "0", "--yes")
+	want := `POST /api/plataforma/contabancaria/salvar {"id":1000000000000001,"bancoId":33,"agencia":"9","contaCorrente":"123456","dataSaldoInicial":"2024-02-01","vlrSaldoInicial":0}`
+	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != want {
+		t.Errorf("com as flags: código %d, %q\n%s", code, f.writes, stderr)
+	}
+
+	// Com abertura e saldo na lista, só --agencia muda e o resto é reenviado como veio.
+	f = contasFake(t)
+	_, stderr, code = execCLI(t, "", "contas-bancarias", "editar", "1000000000000001", "--agencia", "9", "--yes")
+	want = `POST /api/plataforma/contabancaria/salvar {"id":1000000000000001,"bancoId":33,"agencia":"9","contaCorrente":"123456","dataSaldoInicial":"2024-01-10","vlrSaldoInicial":100}`
+	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != want {
+		t.Errorf("conta completa: código %d, %q\n%s", code, f.writes, stderr)
+	}
+}

@@ -286,14 +286,43 @@ func motivoBloqueio(d *api.DetalheContaBancaria) string {
 	return ""
 }
 
+// aberturaAtual devolve a abertura da conta na lista (AAAA-MM-DD), ou "" se a data não for
+// plausível: 0, null ou ausente viram 1969-12-31, e nenhuma conta PJ do painel é de antes de 1990.
+func aberturaAtual(ms int64) string {
+	d := api.DiaEmBrasilia(time.UnixMilli(ms))
+	if d.Year() < 1990 {
+		return ""
+	}
+	return d.Format("2006-01-02")
+}
+
+// exigirAberturaESaldo recusa a edição quando a lista não traz a abertura ou o saldo inicial e
+// a flag correspondente não foi informada: a edição reenvia os dois, e a CLI não inventa um valor.
+func exigirAberturaESaldo(temAbertura, temSaldo bool) error {
+	var faltam, flags []string
+	if !temAbertura {
+		faltam, flags = append(faltam, "uma data de abertura válida"), append(flags, "--abertura AAAA-MM-DD")
+	}
+	if !temSaldo {
+		faltam, flags = append(faltam, "o saldo inicial"), append(flags, "--saldo-inicial")
+	}
+	if len(faltam) == 0 {
+		return nil
+	}
+	return usageError{fmt.Errorf("a Contabilizei não informou %s desta conta e a edição reenvia todos os campos; informe %s",
+		strings.Join(faltam, " nem "), strings.Join(flags, " e "))}
+}
+
 func newContasBancariasEditarCmd() *cobra.Command {
 	var f contaBancariaFlags
 	cmd := &cobra.Command{
 		Use:   "editar ID",
 		Short: "Corrige os dados de uma conta bancária cadastrada",
 		Long: `Corrige banco, agência, conta, data de abertura ou saldo inicial de uma conta (risco médio:
-dá para editar de novo). Só as flags informadas mudam. O painel pode bloquear a edição (por
-exemplo, com extratos já classificados); nesse caso a CLI mostra o motivo.
+dá para editar de novo). Só as flags informadas mudam; como a edição reenvia todos os campos,
+se a Contabilizei não informar a abertura ou o saldo inicial da conta, informe --abertura ou
+--saldo-inicial. O painel pode bloquear a edição (por exemplo, com extratos já classificados);
+nesse caso a CLI mostra o motivo.
 ` + avisoAbertura + `
 
 Pede confirmação (--yes em scripts) e aceita --dry-run.`,
@@ -318,9 +347,12 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 				return fmt.Errorf("o painel não permite editar esta conta%s", motivoBloqueio(det))
 			}
 			req := api.ContaBancariaSalvar{ID: &atual.ID, Agencia: atual.Agencia, ContaCorrente: normalizarConta(atual.ContaCorrente),
-				DataSaldoInicial: api.DiaEmBrasilia(time.UnixMilli(atual.DataSaldoInicial)).Format("2006-01-02")}
+				DataSaldoInicial: aberturaAtual(atual.DataSaldoInicial)}
 			if atual.VlrSaldoInicial != nil {
 				req.VlrSaldoInicial = *atual.VlrSaldoInicial
+			}
+			if err := exigirAberturaESaldo(req.DataSaldoInicial != "" || f.abertura != "", atual.VlrSaldoInicial != nil || f.saldo != ""); err != nil {
+				return err
 			}
 			bancoAntes := nomeBanco(api.Banco{Nome: atual.NomeBanco, Codigo: atual.CodigoBanco})
 			bancoDepois, nomeResultado := bancoAntes, atual.NomeBanco
