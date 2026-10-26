@@ -86,6 +86,61 @@ func TestExtratosImportarFormatoQueOBancoNaoAceita(t *testing.T) {
 	}
 }
 
+// O painel importa OFX pela tela "Importar extrato" mesmo quando o banco não o lista (o Inter
+// lista PDF, XLS e CSV): a CLI envia com aviso e deixa a Contabilizei validar o arquivo (#1011).
+func TestExtratosImportarOFXForaDaLista(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.ofx")
+	f, nome := importarFake(t, mt, "ofx")
+	bancoAceita(f, `"PDF","XLS","CSV"`)
+	out, stderr, code := execCLI(t, "", append(baseImportar, arq, "--saldo-final", "1.234,56", "--yes", "-o", "json")...)
+	if code != ExitOK || len(f.writes) != 2 {
+		t.Fatalf("código %d, escritas %q\n%s", code, f.writes, stderr)
+	}
+	if !strings.HasPrefix(f.writes[0], "POST /api/plataforma/upload-documentos/extrato/enviar/bucket") ||
+		!strings.HasPrefix(f.writes[1], "POST /api/plataforma/movimentacao-financeira/eventoUploadExtrato") {
+		t.Errorf("OFX fora da lista deve ir pela tela \"Importar extrato\":\n%q", f.writes)
+	}
+	want := "aviso: o banco desta conta não lista OFX entre os formatos aceitos (PDF, XLS ou CSV), mas o painel importa OFX " +
+		"pela tela \"Importar extrato\"; se a Contabilizei recusar o arquivo, a mensagem diz o motivo"
+	if !strings.Contains(stderr, want) {
+		t.Errorf("stderr sem o aviso:\n%s", stderr)
+	}
+	for _, w := range []string{`"situacao": "importado"`, `"importacao": "automatica"`, `"arquivo": "` + nome + `"`, `"saldo_ultimo_dia": 1234.56`} {
+		if !strings.Contains(out, w) {
+			t.Errorf("saída sem %s:\n%s", w, out)
+		}
+	}
+}
+
+// Sem a lista de formatos (#596), o aviso não mostra parênteses vazios.
+func TestExtratosImportarOFXSemListaDeFormatos(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.ofx")
+	f, _ := importarFake(t, mt, "ofx")
+	bancoAceita(f, ``)
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--saldo-final", "1.234,56", "--yes")...)
+	want := "aviso: o banco desta conta não lista OFX entre os formatos aceitos, mas o painel importa OFX"
+	if code != ExitOK || len(f.writes) != 2 || !strings.Contains(stderr, want) {
+		t.Errorf("código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+}
+
+// O aviso só aparece quando o OFX está fora da lista, e PDF fora da lista continua recusado.
+func TestExtratosImportarOFXNaListaSemAviso(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.ofx")
+	f, _ := importarFake(t, mt, "ofx")
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--saldo-final", "1.234,56", "--yes")...)
+	if code != ExitOK || strings.Contains(stderr, "não lista OFX") {
+		t.Errorf("código %d, stderr:\n%s", code, stderr)
+	}
+	pdf, _ := arquivoExtrato(t, "extrato.pdf")
+	f, _ = importarFake(t, mt, "pdf")
+	bancoAceita(f, `"XLS","CSV"`)
+	_, stderr, code = execCLI(t, "", append(baseImportar, pdf, "--yes")...)
+	if code != ExitUsage || len(f.writes) != 0 || !strings.Contains(stderr, "o banco desta conta aceita extratos em XLS ou CSV; este arquivo é .pdf") {
+		t.Errorf("pdf fora da lista: código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+}
+
 func TestExtratosImportarCSVRecusado(t *testing.T) {
 	arq, mt := arquivoExtrato(t, "extrato.csv")
 	f, _ := importarFake(t, mt, "csv")
