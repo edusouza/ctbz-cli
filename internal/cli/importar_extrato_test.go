@@ -63,12 +63,35 @@ func TestExtratosImportarOFX(t *testing.T) {
 	}
 }
 
+// --saldo-final é sempre o valor enviado: a Contabilizei já leu R$ 0,00 de um OFX com saldo
+// (Banco Inter), e a diferença do lido só vira aviso.
 func TestExtratosImportarSaldoDiferente(t *testing.T) {
 	arq, mt := arquivoExtrato(t, "extrato.ofx")
 	f, _ := importarFake(t, mt, "ofx")
-	_, stderr, code := execCLI(t, "", append(append(baseImportar, arq), "--saldo-final", "1000", "--yes")...)
-	if code != ExitError || len(f.writes) != 1 || !strings.Contains(stderr, "diferente de --saldo-final R$ 1.000,00 (importação não concluída)") {
-		t.Errorf("código %d, %d escritas, %s", code, len(f.writes), stderr)
+	out, stderr, code := execCLI(t, "", append(append(baseImportar, arq), "--saldo-final", "1000", "--yes", "-o", "json")...)
+	if code != ExitOK || len(f.writes) != 2 || !strings.Contains(f.writes[1], `"respostas":[{"tipo":"SALDO_ULTIMO_MES","data":"2026-10-04T10:00:00.000Z","valor":1000}]`) {
+		t.Fatalf("código %d, escritas %q\n%s", code, f.writes, stderr)
+	}
+	if !strings.Contains(stderr, "aviso: a Contabilizei leu o saldo do último dia como R$ 1.234,56; vai o de --saldo-final, R$ 1.000,00") ||
+		!strings.Contains(out, `"saldo_ultimo_dia": 1000`) {
+		t.Errorf("stderr:\n%s\nsaída:\n%s", stderr, out)
+	}
+}
+
+// Sem saldo lido, --saldo-final preenche o valor; sem a flag, a importação para e pede a flag.
+func TestExtratosImportarSaldoNaoLido(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.ofx")
+	f, nome := importarFake(t, mt, "ofx")
+	f.gets["/api/plataforma/movimentacao-financeira/info-extrato/7/2026/9/"+nome] = `{"infoExtrato":{"saldoUltimoDia":null,"extratoForaPeriodo":false}}`
+	_, stderr, code := execCLI(t, "", append(append(baseImportar, arq), "--saldo-final", "719,17", "--yes")...)
+	if code != ExitOK || len(f.writes) != 2 || !strings.Contains(f.writes[1], `"valor":719.17}`) ||
+		!strings.Contains(stderr, "aviso: a Contabilizei não leu o saldo do último dia do arquivo; vai o de --saldo-final, R$ 719,17") {
+		t.Fatalf("com a flag: código %d, escritas %q\n%s", code, f.writes, stderr)
+	}
+	f.writes = nil
+	_, stderr, code = execCLI(t, "", append(baseImportar, arq, "--yes")...)
+	if code != ExitError || len(f.writes) != 1 || !strings.Contains(stderr, "informe-o com --saldo-final (importação não concluída)") {
+		t.Errorf("sem a flag: código %d, %d escritas\n%s", code, len(f.writes), stderr)
 	}
 }
 

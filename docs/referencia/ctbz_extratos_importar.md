@@ -18,8 +18,9 @@ importado, para a importação manual não duplicar os lançamentos, e não acei
 OFX e PDF passam pela tela "Importar extrato":
 
   1. envia o arquivo;
-  2. no OFX, lê o saldo do último dia que a Contabilizei encontrou e pede para confirmar
-     (ou compara com --saldo-final; diferente, a importação para);
+  2. no OFX, lê o saldo do último dia que a Contabilizei encontrou e pede para confirmar;
+     com --saldo-final, vai sempre o valor da flag (a Contabilizei já leu R$ 0,00 de um OFX
+     com saldo), e uma diferença do lido só gera um aviso;
   3. conclui a importação.
 
 Os demais formatos que o banco aceita (CSV, XLS…) vão pela Central de Documentos, como no
@@ -79,7 +80,7 @@ ctbz extratos importar ARQUIVO [flags]
       --competencia string   competência AAAA-MM (obrigatória)
       --conta-bancaria int   id da conta bancária (ver ctbz contas-bancarias) (obrigatória)
       --dry-run              mostra a requisição que seria enviada, sem enviar
-      --saldo-final string   saldo do último dia esperado (OFX); diferente do lido, a importação para
+      --saldo-final string   saldo do último dia (OFX): vai sempre este valor, mesmo diferente do lido pela Contabilizei
       --substituir           se o extrato do mês já foi importado, exclui-o antes e importa este arquivo (como excluir e importar no painel)
   -y, --yes                  envia sem pedir confirmação (obrigatório sem terminal)
 ```

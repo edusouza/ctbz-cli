@@ -46,9 +46,10 @@ dispensa importação) cujo mês `M` falta:
    ctbz extratos importar ARQ --conta-bancaria ID --competencia M --saldo-final 1.234,56 --dry-run
    ctbz extratos importar ARQ --conta-bancaria ID --competencia M --saldo-final 1.234,56 --yes
    ```
-   `--saldo-final` só vale para OFX. Sempre informe: com `--yes` e sem ele, a CLI aceita sem
-   conferir o saldo que a Contabilizei leu. Saldo diferente = a importação para; confira o
-   arquivo com o usuário. Em PDF, omita a flag.
+   `--saldo-final` só vale para OFX. Sempre informe o saldo do arquivo: é o valor enviado, mesmo
+   que a Contabilizei tenha lido outro (já leu R$ 0,00 de um OFX do Banco Inter). Sem a flag,
+   com `--yes` vai o saldo lido, sem conferência. Se o stderr avisar que o saldo lido é
+   diferente, mostre os dois valores ao usuário. Em PDF, omita a flag.
 4. Mensagens de "outro banco", "outra conta", "conta não cadastrada" (cadastre com
    `ctbz contas-bancarias adicionar`, skill `cadastro-e-acessos`) e período anterior pendente
    vêm traduzidas: siga o que dizem.

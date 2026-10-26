@@ -15,6 +15,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   excluir` ou por `--substituir` que falhou) só podia ser importado pelo painel. `extratos
   excluir` recusa sem envio uma competência nesse estado (não há extrato para excluir), e as
   mensagens depois de excluir mandam importar em vez de esperar.
+- `ctbz extratos importar --saldo-final` sempre envia o valor da flag como saldo do último dia do
+  OFX, como quem corrige o campo na tela do painel. Antes a flag só comparava com o saldo lido
+  pela Contabilizei e parava a importação se fosse diferente, e o saldo ficava zerado quando a
+  Contabilizei lia R$ 0,00 (visto com um OFX do Banco Inter). A diferença, ou a falta de saldo
+  lido, agora só gera um aviso no stderr.
 
 ## [1.9.3] - 2026-10-26
 

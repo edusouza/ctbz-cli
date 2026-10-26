@@ -165,9 +165,11 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
 - "Não reconheceu o arquivo como extrato bancário": tente o OFX do banco ou o PDF baixado
   direto do internet banking (não um PDF gerado por outro programa); se continuar, abra um
   chamado no painel.
-- No OFX, a Contabilizei lê o saldo do último dia do arquivo e a CLI pede para conferir. Em
-  scripts, `--saldo-final 1.234,56` compara com o valor esperado: se for diferente, a importação
-  para.
+- No OFX, a Contabilizei lê o saldo do último dia do arquivo e a CLI pede para conferir. Com
+  `--saldo-final 1.234,56`, vai sempre esse valor, como quem corrige o campo na tela do painel:
+  a Contabilizei já leu R$ 0,00 de um OFX do Banco Inter com saldo. Se o valor lido for
+  diferente, ou se nenhum for lido, a CLI só avisa no stderr. Informe sempre o saldo final do
+  arquivo (`<LEDGERBAL>` → `<BALAMT>` no OFX) para o mês não ficar com saldo zero.
 - Se a importação parar depois do envio (saldo recusado, extrato de outra competência), o
   arquivo fica enviado mas o extrato não é efetivado; corrija e rode de novo.
 - Se a conexão cair ou o servidor responder com erro 5xx (502, 504…) no envio do arquivo (o
