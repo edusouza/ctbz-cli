@@ -7,6 +7,10 @@ Chama qualquer endpoint da plataforma com os cookies da sessão.
 CAMINHO relativo é resolvido contra o BFF da plataforma (/api/plataforma/);
 caminhos absolutos ("/api/legado/...") alcançam as demais APIs do app.
 
+ctbz api só aceita caminhos relativos ou URLs do próprio painel (https://app.contabilizei.com.br/...):
+uma URL de outro host (ou com outro esquema, outra porta ou usuário antes do host) é recusada
+antes de qualquer envio, com código de saída 2, para que os cookies da sessão não saiam do painel.
+
 No Git Bash do Windows (e em agentes que rodam por ele), um argumento que começa com "/" vira
 caminho do Windows ("C:/Program Files/Git/api/...") antes de chegar à CLI. Comece o caminho
 com "//" ("//api/legado/..."), que funciona em qualquer shell, ou rode com MSYS_NO_PATHCONV=1.

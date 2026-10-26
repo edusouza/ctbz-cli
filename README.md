@@ -239,6 +239,9 @@ export CTBZ_OUTPUT=json        # muda o padrão
   `ctbz api dadosempresa/get`.
 - `ctbz api` sai em JSON por padrão e ignora `CTBZ_OUTPUT`. Com `-o table` ou `-o csv`, listas
   de objetos viram tabelas. `--raw` imprime o corpo exatamente como veio.
+- `ctbz api` só aceita caminhos relativos ou URLs do próprio painel
+  (`https://app.contabilizei.com.br/...`): uma URL de outro host é recusada antes de qualquer
+  envio, com código `2`, para que os cookies da sessão não saiam do painel.
 
 Códigos de saída: `0` sucesso, `1` erro (inclusive confirmação de escrita recusada), `2` uso
 incorreto (comando, flag ou argumento inválido; escrita sem terminal e sem `--yes`),
