@@ -13,6 +13,14 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   quantidade de parcelas (antes enviava `{"quantidadeParcelas":0}`) ou a opção escolhida sem o
   valor das parcelas (antes mostrava R$ 0,00 na confirmação): pede para contratar pelo painel.
   Custos adicionais sem valor aparecem como "não informado" (#489).
+- `extratos importar` aceita OFX mesmo quando o banco não o lista entre os formatos de upload,
+  como a tela "Importar extrato" do painel, com um aviso no stderr. Antes, a CLI recusava o OFX do
+  Banco Inter, que lista só PDF, XLS e CSV, e o painel o importava (#1011).
+- `extratos excluir` não informa mais "excluido" quando a competência estava e continua
+  `PROCESSANDO` depois do envio: a Contabilizei aceita a exclusão sem mudar nada nesse estado. A
+  confirmação avisa do risco antes, e o comando termina com erro (código 1), orientando importar
+  pelo painel ou abrir um chamado. Um extrato `IMPORTADO` que passa a `PROCESSANDO` depois do
+  envio continua informado como excluído, com aviso para esperar e conferir (#1012, #1022).
 
 ### Security
 

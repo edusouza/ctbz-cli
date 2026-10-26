@@ -29,9 +29,10 @@ começar.
 Para cada conta **não integrada** (`integracao` vazio; a Conta PJ Contabilizei é integrada e
 dispensa importação) cujo mês `M` falta:
 
-1. Peça o arquivo OFX (preferível) ou PDF do mês ao usuário: o caminho no disco. Se o banco só
-   aceita outros formatos (a CLI recusa e lista os aceitos, ex.: "PDF, XLS ou CSV"), ou se o PDF
-   é recusado, use o CSV/XLS do internet banking. Esses formatos vão pela Central de Documentos e
+1. Peça o arquivo OFX (preferível) ou PDF do mês ao usuário: o caminho no disco. O OFX passa
+   mesmo quando o banco não o lista (a CLI avisa no stderr, como o Banco Inter, que lista "PDF,
+   XLS ou CSV"): tente-o antes do CSV/XLS. Se o banco não aceita PDF (a CLI recusa e lista os
+   aceitos), ou se o OFX e o PDF são recusados, use o CSV/XLS do internet banking. Esses formatos vão pela Central de Documentos e
    a Contabilizei os importa **manualmente, em até 45 dias** (`importacao: "manual"`,
    `situacao: "enviado"`). Avise o usuário e registre no dossiê que o mês aguarda essa importação.
    Até lá a competência continua `PENDENTE` em `ctbz extratos`, o que é o esperado: **nunca
@@ -67,6 +68,11 @@ dispensa importação) cujo mês `M` falta:
    `ctbz extratos`.
 
 Importou o mês errado? `ctbz extratos excluir` é **risco alto** (perde as classificações).
+Não use `excluir` para destravar um mês em `PROCESSANDO`: a Contabilizei aceita e nada muda, e a
+CLI termina com erro. Peça ao usuário para importar o OFX (ou o PDF) pela tela "Importar extrato"
+do painel, que funciona nesse estado, ou para abrir um chamado. Se o mês estava `IMPORTADO` e só
+passou a `PROCESSANDO` depois do `excluir`, a exclusão valeu (saída `excluido`): espere sair desse
+estado e confira com `ctbz extratos` antes de importar de novo.
 
 ## 2. Classificar lançamentos do extrato
 
