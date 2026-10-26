@@ -48,7 +48,7 @@ seguinte fecha **um tema** de correção, com os achados de review que continuam
 | **v1.8.1** | Correções do primeiro uso real de ponta a ponta | — | 6 | concluída |
 | **v1.9** | Segunda via da mensalidade, extratos em CSV/XLS e diagnóstico | — | 5 | concluída |
 | **v1.9.1** | Correções críticas | [#943](https://github.com/edusouza/ctbz-cli/issues/943) | 16 | planejada |
-| **v1.9.2** | Extratos do Banco Inter: OFX e mês preso em processamento | — | 2 | em andamento |
+| **v1.9.2** | Extratos do Banco Inter: OFX e mês preso em processamento | — | 2 | concluída |
 | **v1.10** | Saída segura: caracteres de controle, CSV, segredos e dados pessoais | [#944](https://github.com/edusouza/ctbz-cli/issues/944) | 50 | planejada |
 | **v1.11** | Escrita segura e `--dry-run` | [#945](https://github.com/edusouza/ctbz-cli/issues/945) | 78 | planejada |
 | **v1.12** | Depois do envio: releitura, situação e orientação | [#946](https://github.com/edusouza/ctbz-cli/issues/946) | 66 | planejada |
@@ -376,8 +376,8 @@ recusava. Correção curta, fora das versões por tema.
 
 | | Issue | Correção | Tipo |
 |---|---|---|---|
-| | [#1011](https://github.com/edusouza/ctbz-cli/issues/1011) | `extratos importar` aceita OFX fora da lista de formatos do banco, com aviso | bug |
-| | [#1012](https://github.com/edusouza/ctbz-cli/issues/1012) | `extratos excluir` não informa "excluido" quando a competência continua `PROCESSANDO` | bug |
+| ✅ | [#1011](https://github.com/edusouza/ctbz-cli/issues/1011) | `extratos importar` aceita OFX fora da lista de formatos do banco, com aviso | bug |
+| ✅ | [#1012](https://github.com/edusouza/ctbz-cli/issues/1012) | `extratos excluir` não informa "excluido" quando a competência continua `PROCESSANDO` | bug |
 
 ## Versões de correção (triagem de 23/10/2026)
 
