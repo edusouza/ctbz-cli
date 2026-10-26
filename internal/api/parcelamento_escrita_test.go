@@ -36,3 +36,24 @@ func TestSimularParcelamento(t *testing.T) {
 		t.Errorf("simulação = %+v, %v", s, err)
 	}
 }
+
+// senderProibido falha o teste se algo for enviado.
+type senderProibido struct{ t *testing.T }
+
+func (s senderProibido) Send(_ context.Context, method, path string, _ any, _ any) error {
+	s.t.Errorf("enviou %s %s", method, path)
+	return nil
+}
+
+func (s senderProibido) SendMultipart(_ context.Context, method, path string, _ []Campo, _ any) error {
+	s.t.Errorf("enviou %s %s", method, path)
+	return nil
+}
+
+func TestContratarParcelamentoPGFNSemQuantidade(t *testing.T) {
+	for _, n := range []int{0, -1} {
+		if _, err := ContratarParcelamento(context.Background(), senderProibido{t}, "pgfn-previdenciario", n, ""); err == nil || !strings.Contains(err.Error(), "quantidade de parcelas") {
+			t.Errorf("%d parcelas: %v", n, err)
+		}
+	}
+}

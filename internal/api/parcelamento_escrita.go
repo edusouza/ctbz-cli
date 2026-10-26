@@ -112,13 +112,16 @@ type RespostaContratacao struct {
 }
 
 // ContratarParcelamento contrata o parcelamento. O corpo depende do tipo: nenhum no Simples,
-// {quantidadeParcelas} na PGFN e {tipoNegociacao} no especializado. Não dá para desfazer.
+// {quantidadeParcelas} (positiva) na PGFN e {tipoNegociacao} no especializado. Não dá para desfazer.
 func ContratarParcelamento(ctx context.Context, s Sender, tipo string, parcelas int, negociacao string) (*RespostaContratacao, error) {
 	var body any
 	switch {
 	case tipo == TipoEspecializado:
 		body = map[string]string{"tipoNegociacao": negociacao}
 	case strings.HasPrefix(tipo, "pgfn-"):
+		if parcelas <= 0 {
+			return nil, fmt.Errorf("contratando parcelamento %s: quantidade de parcelas inválida (%d)", tipo, parcelas)
+		}
 		body = map[string]int{"quantidadeParcelas": parcelas}
 	}
 	var r RespostaContratacao
