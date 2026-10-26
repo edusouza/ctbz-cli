@@ -48,6 +48,21 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   inicial 0 quando a Contabilizei não informa esses dados da conta (zero, nulo, ausente ou uma
   data anterior a 1990): a edição reenvia todos os campos, então a CLI recusa (código 2) e pede
   `--abertura` ou `--saldo-inicial`, sem enviar nada nem no `--dry-run` (#573).
+
+### Security
+
+- `ctbz api` com uma URL absoluta de outro host enviava para lá os cookies da sessão. Agora o
+  cliente HTTP recusa toda requisição cujo esquema, host ou porta difira do painel (ou com
+  usuário e senha antes do host), e o `ctbz api` recusa a URL antes de qualquer envio, com
+  código de saída 2; URLs do próprio painel continuam aceitas (#941).
+
+## [1.9.2] - 2026-10-26
+
+O que travou o extrato do Banco Inter no uso real: a CLI recusava o OFX, que o painel importa,
+e `extratos excluir` informava a exclusão de um mês preso em `PROCESSANDO`.
+
+### Fixed
+
 - `extratos importar` aceita OFX mesmo quando o banco não o lista entre os formatos de upload,
   como a tela "Importar extrato" do painel, com um aviso no stderr. Antes, a CLI recusava o OFX do
   Banco Inter, que lista só PDF, XLS e CSV, e o painel o importava (#1011).
@@ -56,13 +71,6 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   confirmação avisa do risco antes, e o comando termina com erro (código 1), orientando importar
   pelo painel ou abrir um chamado. Um extrato `IMPORTADO` que passa a `PROCESSANDO` depois do
   envio continua informado como excluído, com aviso para esperar e conferir (#1012, #1022).
-
-### Security
-
-- `ctbz api` com uma URL absoluta de outro host enviava para lá os cookies da sessão. Agora o
-  cliente HTTP recusa toda requisição cujo esquema, host ou porta difira do painel (ou com
-  usuário e senha antes do host), e o `ctbz api` recusa a URL antes de qualquer envio, com
-  código de saída 2; URLs do próprio painel continuam aceitas (#941).
 
 ## [1.9.0] - 2026-10-23
 
@@ -498,7 +506,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.2...HEAD
+[1.9.2]: https://github.com/edusouza/ctbz-cli/compare/v1.9.0...v1.9.2
 [1.9.0]: https://github.com/edusouza/ctbz-cli/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/edusouza/ctbz-cli/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/edusouza/ctbz-cli/compare/v1.7.0...v1.8.0
