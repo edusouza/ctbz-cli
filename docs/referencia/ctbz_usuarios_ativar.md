@@ -3,7 +3,8 @@
 Devolve o acesso de um usuário desativado
 
 Devolve o acesso de um usuário desativado. O ID está em ctbz usuarios. Desativar é a única forma de revogar o
-acesso, e o administrador da empresa (usuário principal) não pode ser desativado.
+acesso, e só usuários secundários podem ser desativados: o administrador da empresa
+(usuário principal), nunca.
 
 Risco médio: reversível com ativar ou desativar. Aceita --yes e --dry-run.
 

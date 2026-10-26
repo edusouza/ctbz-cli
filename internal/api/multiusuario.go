@@ -1,6 +1,10 @@
 package api
 
-import "context"
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+)
 
 // Multiusuário: quem acessa a empresa no painel (base /api/multiusuario/). Ver
 // docs/api/escrita/pendencias-e-conta.md, seção 3.2.
@@ -21,13 +25,32 @@ const (
 )
 
 // UsuarioEmpresa é um usuário ou convite da empresa. Campos citados no front; sem captura
-// real (ADR-0021).
+// real (ADR-0021): o id, de formato incerto, fica bruto e é reenviado igual (#818).
 type UsuarioEmpresa struct {
-	ID     any    `json:"id" contract:"optional"` // o idUsuarioEmpresa de PathAtivarUsuarioEmpresa
-	Nome   string `json:"nome" contract:"optional"`
-	Email  string `json:"email" contract:"optional"`
-	Tipo   string `json:"tipo" contract:"optional"`
-	Status string `json:"status" contract:"optional"`
+	ID     json.RawMessage `json:"id" contract:"optional"` // o idUsuarioEmpresa de PathAtivarUsuarioEmpresa
+	Nome   string          `json:"nome" contract:"optional"`
+	Email  string          `json:"email" contract:"optional"`
+	Tipo   string          `json:"tipo" contract:"optional"`
+	Status string          `json:"status" contract:"optional"`
+}
+
+// IDTexto é o id como aparece na lista: o número como veio, o texto sem aspas; vazio quando
+// ausente, nulo ou de outro tipo.
+func (u UsuarioEmpresa) IDTexto() string {
+	b := bytes.TrimSpace(u.ID)
+	switch {
+	case len(b) == 0:
+	case b[0] == '"':
+		var s string
+		if json.Unmarshal(b, &s) == nil {
+			return s
+		}
+	case b[0] == '-' || '0' <= b[0] && b[0] <= '9':
+		if json.Valid(b) {
+			return string(b)
+		}
+	}
+	return ""
 }
 
 // BuscarUsuariosEmpresa lista os usuários e os convites da empresa.
@@ -60,9 +83,10 @@ func ConvidarUsuario(ctx context.Context, s Sender, email string) error {
 }
 
 // AtivarUsuarioEmpresa ativa ou desativa o acesso de um usuário (a única forma de revogar).
-func AtivarUsuarioEmpresa(ctx context.Context, s Sender, idUsuarioEmpresa any, ativo bool) error {
+// O id vai bruto, como veio em BuscarUsuariosEmpresa.
+func AtivarUsuarioEmpresa(ctx context.Context, s Sender, idUsuarioEmpresa json.RawMessage, ativo bool) error {
 	return s.Send(ctx, "PUT", PathAtivarUsuarioEmpresa, struct {
-		IDUsuarioEmpresa any  `json:"idUsuarioEmpresa"`
-		Ativo            bool `json:"ativo"`
+		IDUsuarioEmpresa json.RawMessage `json:"idUsuarioEmpresa"`
+		Ativo            bool            `json:"ativo"`
 	}{idUsuarioEmpresa, ativo}, nil)
 }
