@@ -53,8 +53,10 @@ ctbz notas tomadores editar 00000000000191 --email novo@exemplo.com
 - Com CNPJ, a razão social e o endereço vêm da consulta à Receita; as flags completam ou
   corrigem. Com CPF, informe nome, CEP e número (logradouro e bairro vêm do CEP).
 - O documento é validado pelos dígitos verificadores, inclusive o CNPJ alfanumérico.
-- O emissor salva o tomador nacional pelo documento: cadastrar um documento que já existe
-  atualiza o cadastro.
+- O emissor salva o tomador nacional pelo documento, e cadastrar de novo trocaria o cadastro
+  pelos dados da Receita (apagando a inscrição municipal). Por isso `adicionar` recusa um
+  documento já cadastrado (código 2) e indica `ctbz notas tomadores editar`, que parte do
+  cadastro atual.
 - Tomadores do exterior são editados pelo id (coluna `id` de `ctbz notas tomadores`).
 - Risco médio: os dados vão para as notas futuras; dá para editar de novo.
 

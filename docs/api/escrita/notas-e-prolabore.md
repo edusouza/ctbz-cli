@@ -278,6 +278,10 @@ ctbz tomadores editar  <documento> --email ...      # GET cadastro-clientes + me
 ctbz tomadores excluir <documento|id> [--yes]
 ```
 
+Como `salvar-cliente-nacional` faz upsert, o `adicionar` da CLI lê antes
+`cadastro-clientes/{documento}` e recusa um documento já cadastrado (só o 204 segue),
+indicando o `editar` (#660).
+
 ---
 
 ## 3. Notas de entrada (NF-e de compra), base `/api/emissor/`

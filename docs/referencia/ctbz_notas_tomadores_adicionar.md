@@ -7,8 +7,9 @@ Cadastra um tomador para as notas (risco médio: dá para editar depois).
 Nacional (--documento): com CNPJ, a razão social e o endereço vêm da consulta à Receita, e as
 flags só completam ou corrigem; com CPF, informe --nome, --cep e --numero (logradouro e bairro
 vêm do CEP). O documento é validado pelos dígitos verificadores, inclusive o CNPJ
-alfanumérico. Se o documento já estiver cadastrado, o cadastro é atualizado (o emissor salva
-pelo documento).
+alfanumérico. Se o documento já estiver cadastrado, o comando recusa (sai com código 2) e
+indica ctbz notas tomadores editar, que parte do cadastro atual: cadastrar de novo trocaria o
+cadastro pelos dados da Receita e apagaria a inscrição municipal.
 
 Exterior (--exterior): informe --nome, --pais, --cidade, --logradouro e --numero.
 
