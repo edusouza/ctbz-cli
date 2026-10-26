@@ -48,6 +48,14 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   inicial 0 quando a Contabilizei não informa esses dados da conta (zero, nulo, ausente ou uma
   data anterior a 1990): a edição reenvia todos os campos, então a CLI recusa (código 2) e pede
   `--abertura` ou `--saldo-inicial`, sem enviar nada nem no `--dry-run` (#573).
+- `extratos importar` aceita OFX mesmo quando o banco não o lista entre os formatos de upload,
+  como a tela "Importar extrato" do painel, com um aviso no stderr. Antes, a CLI recusava o OFX do
+  Banco Inter, que lista só PDF, XLS e CSV, e o painel o importava (#1011).
+- `extratos excluir` não informa mais "excluido" quando a competência estava e continua
+  `PROCESSANDO` depois do envio: a Contabilizei aceita a exclusão sem mudar nada nesse estado. A
+  confirmação avisa do risco antes, e o comando termina com erro (código 1), orientando importar
+  pelo painel ou abrir um chamado. Um extrato `IMPORTADO` que passa a `PROCESSANDO` depois do
+  envio continua informado como excluído, com aviso para esperar e conferir (#1012, #1022).
 
 ### Security
 

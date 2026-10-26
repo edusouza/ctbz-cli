@@ -268,6 +268,8 @@ O nome "bucket" indica apenas que o backend grava o arquivo no storage.
 - **Formatos:** só `.ofx` e `.pdf` (`extencoesValidas: [".pdf",".ofx",".PDF",".OFX"]`,
   `acceptedFiles: "application/pdf,.ofx"`), até **30 MB**, **mesmo que o banco declare outros**
   em `formatosDisponiveisUpload` (conferido no chunk `movimentacao-financeira` em 23/10/2026).
+  O contrário também vale: a tela não consulta essa lista, e um `.ofx` do Banco Inter, que lista só
+  `["PDF","XLS","CSV"]`, foi importado por ela em 26/10/2026. A CLI segue a tela no OFX (#1011).
   Os outros formatos vão pelo caminho (b).
   Se o banco tem `importacaoManualParaPdf` e o arquivo é PDF, a tela mostra o erro "ErroImportacaoManual".
 - **Erros conhecidos:**
