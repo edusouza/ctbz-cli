@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.9.2] - 2026-10-26
+
+O que travou o extrato do Banco Inter no uso real: a CLI recusava o OFX, que o painel importa,
+e `extratos excluir` informava a exclusão de um mês preso em `PROCESSANDO`.
+
 ### Fixed
 
 - `extratos importar` aceita OFX mesmo quando o banco não o lista entre os formatos de upload,
@@ -452,7 +457,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.2...HEAD
+[1.9.2]: https://github.com/edusouza/ctbz-cli/compare/v1.9.0...v1.9.2
 [1.9.0]: https://github.com/edusouza/ctbz-cli/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/edusouza/ctbz-cli/compare/v1.8.0...v1.8.1
 [1.8.0]: https://github.com/edusouza/ctbz-cli/compare/v1.7.0...v1.8.0
