@@ -124,3 +124,101 @@ func TestDocumentosSemAplicacao(t *testing.T) {
 		t.Errorf("outra conta: código %d, %s", code, stderr)
 	}
 }
+
+// initCompetencia é o init das pendências 601 e 602 de extrato de aplicação, com a
+// competência da 602 trocada por comp602 (JSON do campo, ou "" para omiti-lo).
+func initCompetencia(comp602 string) string {
+	campo := ""
+	if comp602 != "" {
+		campo = `,"competencia":` + comp602
+	}
+	return `{"documentos":[
+{"tipo":"EXTRATO_APLICACAO_FINANCEIRA","propriedades":{"idPendencia":"1000000000000601","idContaBancaria":7,"competencia":{"mes":8,"ano":2026}}},
+{"tipo":"EXTRATO_APLICACAO_FINANCEIRA","propriedades":{"idPendencia":"1000000000000602","idContaBancaria":7` + campo + `}}]}`
+}
+
+// Pendência sem competência (ou com mês/ano inválidos) é erro de leitura antes de escrever,
+// com --yes e com --dry-run: nunca sai {"mes":0,"ano":0} nem "00/0" (#628, #652).
+func TestDocumentosCompetenciaInvalida(t *testing.T) {
+	arq := arquivoPDF(t)
+	const pathInit602 = "/api/plataforma/documentos/envio-documento/init?id=1000000000000602"
+	comandos := map[string][]string{
+		"enviar":             {"documentos", "enviar", arq, "--pendencia", "1000000000000602"},
+		"enviar consolidado": {"documentos", "enviar", arq, "--pendencia", "1000000000000601", "--pendencia", "1000000000000602"},
+		"sem-aplicacao":      {"documentos", "sem-aplicacao", "--conta-bancaria", "7", "--pendencia", "1000000000000602"},
+		"sem-aplicacao duas": {"documentos", "sem-aplicacao", "--conta-bancaria", "7", "--pendencia", "1000000000000601,1000000000000602"},
+	}
+	competencias := map[string]string{
+		"ausente":  "",
+		"nula":     "null",
+		"zerada":   `{"mes":0,"ano":0}`,
+		"sem ano":  `{"mes":8}`,
+		"mês 13":   `{"mes":13,"ano":2026}`,
+		"mês zero": `{"mes":0,"ano":2026}`,
+	}
+	for nomeComp, comp := range competencias {
+		for nomeCmd, args := range comandos {
+			for _, modo := range []string{"--yes", "--dry-run"} {
+				f := documentoFake(t)
+				f.gets[pathInit602] = initCompetencia(comp)
+				f.gets[pathEnvioInit2] = initCompetencia(comp)
+				out, stderr, code := execCLI(t, "", append(append([]string{}, args...), modo)...)
+				if code != ExitError || len(f.writes) != 0 || out != "" || !strings.Contains(stderr, "pendência 1000000000000602") ||
+					!strings.Contains(stderr, "competência") || !strings.Contains(stderr, "painel") || strings.Contains(stderr, "00/0") {
+					t.Errorf("%s, competência %s, %s: código %d, escritas %q\n%s\n%s", nomeCmd, nomeComp, modo, code, f.writes, out, stderr)
+				}
+			}
+		}
+	}
+}
+
+// Ids de --pendencia são aparados e deduplicados na ordem; id vazio é erro de uso (#619).
+func TestDocumentosPendenciaRepetida(t *testing.T) {
+	arq := arquivoPDF(t)
+	const id = "1000000000000601"
+	for _, ids := range [][]string{{"--pendencia", id, "--pendencia", id}, {"--pendencia", id + "," + id}, {"--pendencia", id + ", " + id + " "}} {
+		f := documentoFake(t)
+		_, stderr, code := execCLI(t, "", append(append([]string{"documentos", "enviar", arq}, ids...), "--yes")...)
+		if code != ExitOK || len(f.writes) != 1 || !strings.HasPrefix(f.writes[0], "POST /api/plataforma/documentos/envio-documento/enviar ") ||
+			!strings.Contains(stderr, "para 1 pendência(s) (08/2026)") {
+			t.Errorf("enviar %q: código %d, %q\n%s", ids, code, f.writes, stderr)
+		}
+	}
+
+	// Repetida entre outras: consolidado com cada pendência uma vez, na ordem.
+	f := documentoFake(t)
+	_, stderr, code := execCLI(t, "", "documentos", "enviar", arq, "--pendencia", id+",1000000000000602,"+id, "--yes")
+	if code != ExitOK || len(f.writes) != 1 || !strings.HasPrefix(f.writes[0], "POST /api/plataforma/documentos/envio-documento/enviar/consolidado ") ||
+		strings.Count(f.writes[0], `"idPendencia":"`+id+`"`) != 1 || !strings.Contains(stderr, "para 2 pendência(s) (08/2026, 09/2026)") {
+		t.Errorf("consolidado: código %d, %q\n%s", code, f.writes, stderr)
+	}
+
+	f = documentoFake(t)
+	f.gets["/api/plataforma/documentos/envio-documento/init?id=1000000000000603"] = fixture(t, "envio_documento_init")
+	_, stderr, code = execCLI(t, "", "documentos", "sem-arquivo", "--pendencia", "1000000000000603, 1000000000000603", "--yes")
+	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != `POST /api/plataforma/documentos/envio-documento/enviar/sem-arquivo [{"idPendencia":"1000000000000603","tipo":"ESTOQUE"}]` ||
+		!strings.Contains(stderr, "em 1 pendência(s)") {
+		t.Errorf("sem-arquivo: código %d, %q\n%s", code, f.writes, stderr)
+	}
+
+	f = documentoFake(t)
+	_, stderr, code = execCLI(t, "", "documentos", "sem-aplicacao", "--conta-bancaria", "7", "--pendencia", id, "--pendencia", " "+id, "--yes")
+	want := `POST /api/plataforma/upload-documentos/extrato-aplicacao-financeira/enviar/sem-aplicacao-financeira {"tipoDocumento":"EXTRATO_APLICACAO_FINANCEIRA","competenciasPendentes":[{"id":"1000000000000601","mes":8,"ano":2026}],"idContaBancaria":7,"tipoPendencia":"EXTRATO_APLICACAO_FINANCEIRA"}`
+	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != want {
+		t.Errorf("sem-aplicacao: código %d, %q\n%s", code, f.writes, stderr)
+	}
+
+	// Id vazio (vírgula sobrando ou só espaços): erro de uso, sem escrever.
+	vazios := map[string][]string{
+		"enviar":        {"documentos", "enviar", arq, "--pendencia", id + ","},
+		"sem-arquivo":   {"documentos", "sem-arquivo", "--pendencia", " "},
+		"sem-aplicacao": {"documentos", "sem-aplicacao", "--conta-bancaria", "7", "--pendencia", id + ",,1000000000000602"},
+	}
+	for nome, args := range vazios {
+		f := documentoFake(t)
+		_, stderr, code := execCLI(t, "", append(args, "--yes")...)
+		if code != ExitUsage || len(f.writes) != 0 || !strings.Contains(stderr, "id vazio") {
+			t.Errorf("%s com id vazio: código %d, %q\n%s", nome, code, f.writes, stderr)
+		}
+	}
+}

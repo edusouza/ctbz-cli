@@ -116,12 +116,34 @@ existe com ctbz documentos sem-arquivo.`,
 	return cmd
 }
 
-// documentosDasPendencias lê o init e devolve os documentos das pendências pedidas, na ordem,
-// todos do mesmo tipo.
-func documentosDasPendencias(ctx context.Context, g api.Getter, ids []string) ([]api.DocumentoPendente, error) {
+// idsUnicos apara os ids de --pendencia e tira os repetidos, mantendo a ordem: a mesma
+// pendência duas vezes viraria um envio consolidado em duplicidade. Id vazio é erro de uso.
+func idsUnicos(ids []string) ([]string, error) {
+	vistos := map[string]bool{}
+	var unicos []string
+	for _, id := range ids {
+		id = strings.TrimSpace(id)
+		if id == "" {
+			return nil, usageError{errors.New("--pendencia com id vazio; informe os ids separados por vírgula (ver ctbz documentos pendentes)")}
+		}
+		if !vistos[id] {
+			vistos[id] = true
+			unicos = append(unicos, id)
+		}
+	}
+	return unicos, nil
+}
+
+// documentosDasPendencias lê o init e devolve os ids sem repetição e os documentos das
+// pendências pedidas, na ordem, todos do mesmo tipo.
+func documentosDasPendencias(ctx context.Context, g api.Getter, ids []string) ([]string, []api.DocumentoPendente, error) {
+	ids, err := idsUnicos(ids)
+	if err != nil {
+		return nil, nil, err
+	}
 	ini, err := api.BuscarEnvioDocumento(ctx, g, ids)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	porID := map[string]api.DocumentoPendente{}
 	for _, d := range ini.Documentos {
@@ -131,14 +153,14 @@ func documentosDasPendencias(ctx context.Context, g api.Getter, ids []string) ([
 	for _, id := range ids {
 		d, ok := porID[id]
 		if !ok {
-			return nil, fmt.Errorf("a pendência %s não pede documento (ou já foi resolvida); veja ctbz documentos pendentes", id)
+			return nil, nil, fmt.Errorf("a pendência %s não pede documento (ou já foi resolvida); veja ctbz documentos pendentes", id)
 		}
 		if len(ds) > 0 && d.Tipo != ds[0].Tipo {
-			return nil, usageError{fmt.Errorf("as pendências têm tipos diferentes (%s e %s); envie um arquivo por tipo", ds[0].Tipo, d.Tipo)}
+			return nil, nil, usageError{fmt.Errorf("as pendências têm tipos diferentes (%s e %s); envie um arquivo por tipo", ds[0].Tipo, d.Tipo)}
 		}
 		ds = append(ds, d)
 	}
-	return ds, nil
+	return ids, ds, nil
 }
 
 // pendenciasAbertas relê o init e conta quantas das pendências ainda pedem documento.
@@ -192,12 +214,17 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 			s := streamsOf(cmd)
 			ctx := cmd.Context()
 			g := sessionGetter{s}
-			ds, err := documentosDasPendencias(ctx, g, ids)
+			ids, ds, err := documentosDasPendencias(ctx, g, ids)
 			if err != nil {
 				return err
 			}
 			if ds[0].Tipo == api.TipoExtratoMovimentacoes {
 				return usageError{errors.New("extrato de movimentação se envia com ctbz extratos importar")}
+			}
+			for _, d := range ds {
+				if _, _, err := d.MesAno(); err != nil {
+					return err
+				}
 			}
 			conteudo, err := os.ReadFile(args[0])
 			if err != nil {
@@ -271,7 +298,7 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			s := streamsOf(cmd)
 			ctx := cmd.Context()
 			g := sessionGetter{s}
-			ds, err := documentosDasPendencias(ctx, g, ids)
+			ids, ds, err := documentosDasPendencias(ctx, g, ids)
 			if err != nil {
 				return err
 			}
@@ -337,7 +364,7 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			s := streamsOf(cmd)
 			ctx := cmd.Context()
 			g := sessionGetter{s}
-			ds, err := documentosDasPendencias(ctx, g, ids)
+			ids, ds, err := documentosDasPendencias(ctx, g, ids)
 			if err != nil {
 				return err
 			}
@@ -351,10 +378,11 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 				if rawTexto(doc.Propriedades.IDContaBancaria) != idConta {
 					return usageError{fmt.Errorf("a pendência %s é de outra conta (%v)", doc.Propriedades.IDTexto(), rawTexto(doc.Propriedades.IDContaBancaria))}
 				}
-				c := api.CompetenciaPendente{ID: doc.Propriedades.IDPendencia}
-				if doc.Propriedades.Competencia != nil {
-					c.Mes, c.Ano = doc.Propriedades.Competencia.Mes, doc.Propriedades.Competencia.Ano
+				mes, ano, err := doc.MesAno()
+				if err != nil {
+					return err
 				}
+				c := api.CompetenciaPendente{ID: doc.Propriedades.IDPendencia, Mes: mes, Ano: ano}
 				d.CompetenciasPendentes = append(d.CompetenciasPendentes, c)
 				comps = append(comps, fmt.Sprintf("%02d/%d", c.Mes, c.Ano))
 			}
