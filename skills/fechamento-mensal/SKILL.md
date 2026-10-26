@@ -29,9 +29,10 @@ começar.
 Para cada conta **não integrada** (`integracao` vazio; a Conta PJ Contabilizei é integrada e
 dispensa importação) cujo mês `M` falta:
 
-1. Peça o arquivo OFX (preferível) ou PDF do mês ao usuário: o caminho no disco. Se o banco só
-   aceita outros formatos (a CLI recusa e lista os aceitos, ex.: "PDF, XLS ou CSV"), ou se o PDF
-   é recusado, use o CSV/XLS do internet banking. Esses formatos vão pela Central de Documentos e
+1. Peça o arquivo OFX (preferível) ou PDF do mês ao usuário: o caminho no disco. O OFX passa
+   mesmo quando o banco não o lista (a CLI avisa no stderr, como o Banco Inter, que lista "PDF,
+   XLS ou CSV"): tente-o antes do CSV/XLS. Se o banco não aceita PDF (a CLI recusa e lista os
+   aceitos), ou se o OFX e o PDF são recusados, use o CSV/XLS do internet banking. Esses formatos vão pela Central de Documentos e
    a Contabilizei os importa **manualmente, em até 45 dias** (`importacao: "manual"`,
    `situacao: "enviado"`). Avise o usuário e registre no dossiê que o mês aguarda essa importação.
    Até lá a competência continua `PENDENTE` em `ctbz extratos`, o que é o esperado: **nunca

@@ -127,7 +127,11 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
 - Antes de enviar, a CLI confere o tamanho (até 30 MB), se o banco aceita o formato do arquivo
   e se há um período anterior com importação pendente. Contas integradas não precisam de
   importação. Formato que o banco não aceita: a mensagem mostra a lista dele (ex.: "o banco
-  desta conta aceita extratos em PDF, XLS ou CSV; este arquivo é .ofx").
+  desta conta aceita extratos em OFX ou PDF; este arquivo é .csv").
+- **OFX fora da lista do banco** passa com um aviso no stderr, porque a tela "Importar extrato"
+  do painel aceita OFX de qualquer banco. O Banco Inter, por exemplo, lista só PDF, XLS e CSV, e
+  o painel importou o OFX dele (26/10/2026). Se o arquivo não servir, a recusa vem da
+  Contabilizei no envio, com o motivo.
 - **CSV, XLS e outros formatos que o banco aceita** (fora OFX e PDF) vão pela Central de
   Documentos, como no painel, porque a tela "Importar extrato" só aceita OFX e PDF. É um envio só,
   sem conferência de saldo. A Contabilizei importa o arquivo **manualmente, em até 45 dias**. O
