@@ -6,7 +6,8 @@ Importa o extrato do mês de uma conta bancária, como a tela "Importar extrato"
 (risco médio: entra na contabilidade; desfaça com ctbz extratos excluir).
 
 Antes de enviar, a CLI confere o tamanho (até 30 MB), se o banco aceita o formato do arquivo
-(a lista vem da Contabilizei, e a mensagem de erro a mostra), se a conta é integrada (essas
+(a lista vem da Contabilizei, e a mensagem de erro a mostra; OFX fora da lista passa com um
+aviso, porque o painel o importa assim mesmo, como no Inter), se a conta é integrada (essas
 não precisam de importação), se há um período anterior pendente e se a competência já foi
 importada ou está em processamento (o painel também não deixa importar por cima).
 CSV, XLS e os outros formatos de importação manual também são recusados sobre um extrato
