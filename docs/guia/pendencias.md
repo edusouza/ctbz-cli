@@ -244,6 +244,11 @@ ctbz rotinas reclassificar 1000000000000501 --classificacao "Aporte de Capital"
 ```
 
 - Opções com sócio exigem `--socio`; com um único sócio, ele é escolhido sozinho, como no painel.
+- `--classificacao` casa primeiro com o id, depois com o nome exato e, por último, com o nome sem
+  diferenciar maiúsculas. Um nome que casa com mais de uma opção é recusado (código 2) com a
+  lista dos candidatos: use o id.
+- Se a resposta da Contabilizei vier sem o id da pendência, do lançamento, da opção ou do sócio,
+  ou sem opções, a CLI para antes de enviar (código 1): conclua a rotina pelo painel.
 - Vários ids podem ir de uma vez, com a mesma classificação para todos.
 - Pede confirmação (`--yes` em scripts) e aceita `--dry-run` ([Ações que alteram dados](escrita.md)).
 

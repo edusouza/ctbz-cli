@@ -18,6 +18,13 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   secundários. O limite do `ctbz usuarios convidar` conta os secundários ativos, como o
   painel, e o convite é recusado sem escrita se algum usuário da lista vier com tipo ou
   situação vazia ou desconhecida (#818, #972).
+- `ctbz rotinas reclassificar` para antes de enviar, com erro de leitura, quando a pendência vem sem
+  `idPendencia` (ausente ou `null`), sem `idLancamento`, sem opções de classificação ou com a
+  opção ou o sócio escolhido sem id, em vez de concluir a rotina com ids zerados; sem valor, o
+  resumo diz "valor não informado" em vez de R$ 0,00 (#428).
+- `ctbz rotinas reclassificar --classificacao NOME` recusa como uso incorreto (código 2) um nome que
+  casa com mais de uma opção, listando os candidatos para escolher pelo id, em vez de usar a
+  primeira; o id e o nome exato têm precedência sobre o nome sem diferenciar maiúsculas (#435).
 
 ### Security
 
