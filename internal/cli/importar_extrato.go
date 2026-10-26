@@ -70,7 +70,8 @@ func newExtratosImportarCmd() *cobra.Command {
 (risco médio: entra na contabilidade; desfaça com ctbz extratos excluir).
 
 Antes de enviar, a CLI confere o tamanho (até 30 MB), se o banco aceita o formato do arquivo
-(a lista vem da Contabilizei, e a mensagem de erro a mostra), se a conta é integrada (essas
+(a lista vem da Contabilizei, e a mensagem de erro a mostra; OFX fora da lista passa com um
+aviso, porque o painel o importa assim mesmo, como no Inter), se a conta é integrada (essas
 não precisam de importação), se há um período anterior pendente e se a competência já foi
 importada ou está em processamento (o painel também não deixa importar por cima).
 CSV, XLS e os outros formatos de importação manual também são recusados sobre um extrato
@@ -154,8 +155,12 @@ enviar nada.`,
 			if err != nil {
 				return err
 			}
-			if err := validarContaUpload(ini, alvo.conta, formatoArq); err != nil {
+			aviso, err := validarContaUpload(ini, alvo.conta, formatoArq)
+			if err != nil {
 				return err
+			}
+			if aviso != "" {
+				fmt.Fprintln(s.err, aviso)
 			}
 			per, err := api.BuscarPermiteImportacao(ctx, g, alvo.conta, alvo.ano(), alvo.mesNum())
 			if err != nil {
@@ -502,26 +507,36 @@ func orientarEnvioIncerto(ctx context.Context, g api.Getter, alvo extratoAlvo, f
 		falha, mes, situacao, causa)
 }
 
-// validarContaUpload confere se a conta aceita upload no formato do arquivo.
-func validarContaUpload(ini *api.UploadExtratoInit, idConta int64, formato string) error {
+// validarContaUpload confere se a conta aceita upload no formato do arquivo. OFX fora da lista
+// passa com um aviso: o painel o importa pela tela "Importar extrato" mesmo quando o banco não
+// o lista (o Inter lista PDF, XLS e CSV), e a Contabilizei valida o arquivo no envio (#1011).
+func validarContaUpload(ini *api.UploadExtratoInit, idConta int64, formato string) (aviso string, err error) {
 	for _, b := range ini.Bancos {
 		for _, c := range b.ContasBancarias {
 			if c.ID != idConta {
 				continue
 			}
 			if c.StatusIntegracao == "INTEGRADA" {
-				return errors.New("a conta é integrada: a importação é feita automaticamente, não precisa enviar extrato")
+				return "", errors.New("a conta é integrada: a importação é feita automaticamente, não precisa enviar extrato")
 			}
 			for _, fmtOK := range b.FormatosDisponiveisUpload {
 				if strings.EqualFold(fmtOK, formato) {
-					return nil
+					return "", nil
 				}
 			}
-			return usageError{fmt.Errorf("o banco desta conta aceita extratos em %s; este arquivo é .%s",
+			if formato == "OFX" {
+				aceitos := ""
+				if len(b.FormatosDisponiveisUpload) > 0 {
+					aceitos = " (" + juntarComOu(b.FormatosDisponiveisUpload) + ")"
+				}
+				return "aviso: o banco desta conta não lista OFX entre os formatos aceitos" + aceitos + ", mas o painel importa OFX " +
+					"pela tela \"Importar extrato\"; se a Contabilizei recusar o arquivo, a mensagem diz o motivo", nil
+			}
+			return "", usageError{fmt.Errorf("o banco desta conta aceita extratos em %s; este arquivo é .%s",
 				juntarComOu(b.FormatosDisponiveisUpload), strings.ToLower(formato))}
 		}
 	}
-	return fmt.Errorf("a conta %d não aparece entre as contas para importação; veja ctbz contas-bancarias", idConta)
+	return "", fmt.Errorf("a conta %d não aparece entre as contas para importação; veja ctbz contas-bancarias", idConta)
 }
 
 // juntarComOu junta uma lista em português: "PDF", "PDF ou XLS", "PDF, XLS ou CSV".
@@ -602,6 +617,13 @@ informações adicionais das movimentações se perdem; não dá para desfazer, 
 reclassificar. Se os contadores já concluíram a classificação, o painel não deixa excluir, e a
 CLI também não.
 
+Com a competência em processamento (PROCESSANDO, já visto depois de um arquivo recusado), a
+Contabilizei pode aceitar a exclusão sem mudar nada. A confirmação avisa disso e, se a
+competência estava e continua PROCESSANDO, o comando termina com erro em vez de informar a
+exclusão: importe o arquivo pela tela "Importar extrato" do painel ou abra um chamado. Se ela
+só passou a PROCESSANDO depois do envio (já visto com um extrato IMPORTADO), a exclusão vale:
+espere a competência sair desse estado e confira com ctbz extratos antes de importar de novo.
+
 Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 		Example: `  ctbz extratos excluir --conta-bancaria 1000000000000001 --competencia 2026-09`,
 		Args:    exactArgs(0, "nenhum argumento"),
@@ -624,21 +646,40 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			if !info.PermiteExclusaoExtrato {
 				return errors.New("este extrato não pode ser excluído: os contadores já concluíram a classificação dele")
 			}
-			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(alvo.conta), Resumo: fmt.Sprintf("Excluir o extrato de %s da conta %d", alvo.mes.Format("01/2006"), alvo.conta),
+			mes := alvo.mes.Format("01/2006")
+			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(alvo.conta), Resumo: fmt.Sprintf("Excluir o extrato de %s da conta %d", mes, alvo.conta),
 				Consequencia: "A importação volta a ficar pendente e você terá de importar um novo arquivo. As classificações e informações adicionais das movimentações se perdem. Não dá para desfazer."}
+			// Em PROCESSANDO, o DELETE já respondeu 200 sem mudar nada (#1012): avisa antes e confere depois.
+			antes, errAntes := situacaoExtratoAlvo(ctx, g, alvo)
+			if errAntes == nil && antes == "PROCESSANDO" {
+				op.Consequencia += fmt.Sprintf(" O extrato de %s está em processamento: a exclusão pode não ter efeito (já visto depois de um arquivo recusado).", mes)
+			}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.ExcluirExtrato(ctx, snd, alvo.conta, alvo.ano(), alvo.mesNum()) })
 			if err != nil || !enviado {
 				return err
 			}
 			var situacaoExtrato any
-			if sit, err := situacaoExtratoAlvo(ctx, g, alvo); err != nil {
+			lembrete := fmt.Sprintf("Não se esqueça de importar o extrato de %s de novo (ctbz extratos importar).", mes)
+			sit, err := situacaoExtratoAlvo(ctx, g, alvo)
+			switch {
+			case err != nil:
 				fmt.Fprintln(s.err, "aviso: extrato excluído, mas não foi possível reler os extratos:", err)
-			} else {
+			case sit == "PROCESSANDO" && errAntes == nil && antes == "PROCESSANDO":
+				// Só aqui o PROCESSANDO depois do envio indica que a exclusão pode não ter tido efeito.
+				return fmt.Errorf("a Contabilizei aceitou a exclusão, mas o extrato de %s estava e continua PROCESSANDO: não foi possível confirmar a exclusão. "+
+					"Enquanto ele estiver em processamento, a CLI não importa outro arquivo: importe o OFX ou o PDF pela tela "+
+					"\"Importar extrato\" do painel ou abra um chamado", mes)
+			case sit == "PROCESSANDO":
+				// Depois de excluir um extrato IMPORTADO, a competência já foi vista PROCESSANDO por minutos (#901).
+				situacaoExtrato = sit
+				lembrete = fmt.Sprintf("aviso: extrato excluído, e a competência de %s está PROCESSANDO; espere ela sair desse estado e confira com "+
+					"`ctbz extratos` antes de importar de novo (ctbz extratos importar).", mes)
+			default:
 				situacaoExtrato = nilIfEmpty(sit)
 			}
-			fmt.Fprintf(s.err, "Não se esqueça de importar o extrato de %s de novo (ctbz extratos importar).\n", alvo.mes.Format("01/2006"))
+			fmt.Fprintln(s.err, lembrete)
 			rec := resultadoEscrita("excluir-extrato", "excluido", alvo.conta).
-				Add("competencia", "Competência", alvo.mes.Format("01/2006")).
+				Add("competencia", "Competência", mes).
 				Add("situacao_extrato", "Situação do extrato", situacaoExtrato)
 			return output.Write(s.out, f, rec)
 		},

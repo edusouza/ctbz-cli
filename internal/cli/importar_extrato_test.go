@@ -159,6 +159,90 @@ func TestExtratosExcluir(t *testing.T) {
 	}
 }
 
+var baseExcluir = []string{"extratos", "excluir", "--conta-bancaria", "7", "--competencia", "2026-09", "--yes"}
+
+const avisoExcluirProcessando = "O extrato de 09/2026 está em processamento: a exclusão pode não ter efeito (já visto depois de um arquivo recusado)."
+
+// Em PROCESSANDO, o DELETE responde 200 e nada muda (#1012): a CLI não pode dizer "excluido".
+func TestExtratosExcluirContinuaProcessando(t *testing.T) {
+	f := extratoFake(t)
+	f.gets[pathExtratos] = extratosNaSituacao("PROCESSANDO")
+	out, stderr, code := execCLI(t, "", append(baseExcluir, "-o", "json")...)
+	if code != ExitError || len(f.writes) != 1 || !strings.HasPrefix(f.writes[0], "DELETE /api/plataforma/movimentacao-financeira/extrato?") {
+		t.Fatalf("código %d, %q\n%s", code, f.writes, stderr)
+	}
+	want := "a Contabilizei aceitou a exclusão, mas o extrato de 09/2026 estava e continua PROCESSANDO: não foi possível confirmar a exclusão. " +
+		"Enquanto ele estiver em processamento, a CLI não importa outro arquivo: importe o OFX ou o PDF pela tela " +
+		"\"Importar extrato\" do painel ou abra um chamado"
+	if !strings.Contains(stderr, avisoExcluirProcessando) || !strings.Contains(stderr, want) {
+		t.Errorf("stderr:\n%s", stderr)
+	}
+	if strings.Contains(out, "excluido") || strings.Contains(stderr, "Não se esqueça de importar") {
+		t.Errorf("não pode afirmar a exclusão:\n%s\n%s", out, stderr)
+	}
+}
+
+// Se a competência sai de PROCESSANDO depois do envio, a exclusão vale, e o aviso só antecipou o risco.
+func TestExtratosExcluirProcessandoQueMuda(t *testing.T) {
+	f := extratoFake(t)
+	f.gets[pathExtratos] = extratosNaSituacao("PROCESSANDO")
+	f.onWrite = func(f *escritaFake) { f.gets[pathExtratos] = extratosNaSituacao("PENDENTE") }
+	out, stderr, code := execCLI(t, "", append(baseExcluir, "-o", "json")...)
+	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(stderr, avisoExcluirProcessando) {
+		t.Fatalf("código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+	if !strings.Contains(out, `"situacao": "excluido"`) || !strings.Contains(out, `"situacao_extrato": "PENDENTE"`) {
+		t.Errorf("saída:\n%s", out)
+	}
+}
+
+// Um extrato IMPORTADO que passa a PROCESSANDO depois do DELETE foi excluído (#901): a CLI
+// informa a exclusão e manda esperar, em vez de dizer que nada mudou (#1022).
+func TestExtratosExcluirImportadoQueFicaProcessando(t *testing.T) {
+	f := extratoFake(t)
+	f.gets[pathExtratos] = extratosNaSituacao("IMPORTADO")
+	f.onWrite = func(f *escritaFake) { f.gets[pathExtratos] = extratosNaSituacao("PROCESSANDO") }
+	out, stderr, code := execCLI(t, "", append(baseExcluir, "-o", "json")...)
+	if code != ExitOK || len(f.writes) != 1 {
+		t.Fatalf("código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+	if !strings.Contains(out, `"situacao": "excluido"`) || !strings.Contains(out, `"situacao_extrato": "PROCESSANDO"`) {
+		t.Errorf("saída:\n%s", out)
+	}
+	want := "aviso: extrato excluído, e a competência de 09/2026 está PROCESSANDO; espere ela sair desse estado e confira com " +
+		"`ctbz extratos` antes de importar de novo (ctbz extratos importar)."
+	if !strings.Contains(stderr, want) || strings.Contains(stderr, "não foi possível confirmar") || strings.Contains(stderr, avisoExcluirProcessando) {
+		t.Errorf("stderr:\n%s", stderr)
+	}
+}
+
+// Sem a situação de antes do envio, um PROCESSANDO depois não prova que nada mudou: a
+// exclusão é informada, com o aviso de esperar.
+func TestExtratosExcluirSemSituacaoAntes(t *testing.T) {
+	f := extratoFake(t)
+	delete(f.gets, pathExtratos)
+	f.onWrite = func(f *escritaFake) { f.gets[pathExtratos] = extratosNaSituacao("PROCESSANDO") }
+	out, stderr, code := execCLI(t, "", append(baseExcluir, "-o", "json")...)
+	if code != ExitOK || len(f.writes) != 1 {
+		t.Fatalf("código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+	if !strings.Contains(out, `"situacao": "excluido"`) || !strings.Contains(out, `"situacao_extrato": "PROCESSANDO"`) ||
+		!strings.Contains(stderr, "espere ela sair desse estado") {
+		t.Errorf("saída:\n%s\n%s", out, stderr)
+	}
+}
+
+// Fora de PROCESSANDO, a confirmação não traz o aviso.
+func TestExtratosExcluirImportadoSemAviso(t *testing.T) {
+	f := extratoFake(t)
+	f.gets[pathExtratos] = extratosNaSituacao("IMPORTADO")
+	f.onWrite = func(f *escritaFake) { f.gets[pathExtratos] = extratosNaSituacao("PENDENTE") }
+	_, stderr, code := execCLI(t, "", baseExcluir...)
+	if code != ExitOK || strings.Contains(stderr, "está em processamento") {
+		t.Errorf("código %d\n%s", code, stderr)
+	}
+}
+
 // semRespostaNoEnvio faz a escrita cujo caminho contém trecho estourar o prazo do cliente.
 func semRespostaNoEnvio(t *testing.T, f *escritaFake, trecho string) {
 	t.Helper()
