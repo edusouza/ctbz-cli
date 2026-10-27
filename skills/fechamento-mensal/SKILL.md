@@ -53,17 +53,22 @@ dispensa importação) cujo mês `M` falta:
    `ctbz contas-bancarias adicionar`, skill `cadastro-e-acessos`) e período anterior pendente
    vêm traduzidas: siga o que dizem.
 5. Competência já `IMPORTADO` ou `PROCESSANDO`: a CLI recusa, menos `PROCESSANDO` com o botão
-   "Importar" do painel, que é como o mês fica depois de excluir o extrato: aí a CLI importa e
-   avisa (se o usuário acabou de importar esse mês, confira com `ctbz extratos` em vez de
-   importar de novo). Se o extrato atual está vazio
+   "Importar" do painel e sem lançamentos, que é como o mês fica depois de excluir o extrato:
+   aí a CLI importa e avisa. O mesmo par aparece logo depois de uma importação; a CLI só aceita
+   quando `extrato/info` confirma zero lançamentos e não houve importação da conta pela CLI nos
+   últimos 30 minutos. Se ela recusar dizendo que o extrato pode estar em processamento, não
+   insista nem use `--substituir`: espere, rode `ctbz extratos` e mostre ao usuário. Depois de
+   importar com a competência ainda `PROCESSANDO`, nunca rode `importar` de novo para o mesmo
+   mês, mesmo com o botão "Importar" visível. Se o extrato atual está vazio
    (criado pelo processamento de outro mês) ou é o arquivo errado, refaça com `--substituir`
    (exclui o atual e importa): mostre o `--dry-run` e confirme com o usuário. Com lançamentos é
    risco alto (as classificações se perdem). Depois de importar, confira `quantidade_lancamentos`:
    zero com um arquivo que tem movimentações é problema.
 6. Conexão caiu ou o servidor respondeu com erro 5xx (502, 504…) no envio do arquivo: a CLI
    relê a competência e diz se é seguro repetir ("nada foi importado e é seguro rodar o mesmo
-   comando de novo"). Só repita nesse caso, uma vez. Se ela mandar conferir (competência
-   `IMPORTADO`/`PROCESSANDO`, ou queda/5xx ao concluir), rode `ctbz extratos` e
+   comando de novo"), o que só acontece com a competência pendente. Só repita nesse caso, uma
+   vez. Se ela mandar conferir (qualquer outra situação, inclusive `PROCESSANDO` com o botão
+   "Importar", ou queda/5xx ao concluir), rode `ctbz extratos` e
    `ctbz extratos lancamentos` e mostre ao usuário antes de qualquer nova tentativa. Depois de
    um `--substituir` que excluiu o extrato antigo e falhou, nunca repita com `--substituir` sem
    conferir: se o novo arquivo entrou, ele seria excluído. A mensagem diz a situação relida da
@@ -72,8 +77,10 @@ dispensa importação) cujo mês `M` falta:
 
 Importou o mês errado? `ctbz extratos excluir` é **risco alto** (perde as classificações).
 Depois do `excluir`, o mês fica `PROCESSANDO` com o botão "Importar" até o novo arquivo entrar
-(saída `excluido`): importe com `ctbz extratos importar`. Nesse estado não há o que excluir, e a
-CLI recusa o `excluir`. Um mês `PROCESSANDO` sem o botão não destrava com `excluir` (a
+(saída `excluido`): importe com `ctbz extratos importar`. Nesse estado, sem lançamentos, não há
+o que excluir, e a CLI recusa o `excluir`; com lançamentos, é um extrato recém-importado em
+processamento: espere ele ficar `IMPORTADO` e rode o `excluir` de novo. Um mês `PROCESSANDO`
+sem o botão não destrava com `excluir` (a
 Contabilizei aceita e nada muda, e a CLI termina com erro): peça ao usuário para importar pela
 tela "Importar extrato" do painel ou abrir um chamado.
 

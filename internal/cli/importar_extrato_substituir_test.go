@@ -241,13 +241,16 @@ func TestExtratosImportarSubstituirRecusadoAguardandoArquivo(t *testing.T) {
 	}
 }
 
-// Sem extrato a substituir (a competência espera um arquivo), --substituir segue sem excluir.
+// Sem extrato a substituir (a competência espera um arquivo e não tem lançamentos),
+// --substituir segue sem excluir.
 func TestExtratosImportarSubstituirAguardandoArquivo(t *testing.T) {
 	arq, mt := arquivoExtrato(t, "extrato.pdf")
 	f, _ := importarFake(t, mt, "pdf")
 	f.gets[pathExtratos] = extratosAguardandoArquivo()
+	f.gets[pathInfoExtrato9] = infoComLancamentos("0")
 	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--substituir", "--yes")...)
-	if code != ExitOK || len(f.writes) != 2 || strings.HasPrefix(f.writes[0], "DELETE") || !strings.Contains(stderr, "Nada a substituir") {
+	if code != ExitOK || len(f.writes) != 2 || strings.HasPrefix(f.writes[0], "DELETE") ||
+		!strings.Contains(stderr, "Nada a substituir: a competência 09/2026 está sem lançamentos, à espera de um arquivo; segue a importação sem excluir.") {
 		t.Errorf("código %d, escritas %q\n%s", code, f.writes, stderr)
 	}
 }

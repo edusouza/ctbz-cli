@@ -57,8 +57,10 @@ traduzidas e o agente segue o que dizem (conta nova: skill
 [`cadastro-e-acessos`](../cadastro-e-acessos/README.md)).
 
 Competência já `IMPORTADO` ou `PROCESSANDO`: a CLI recusa, como o painel. A exceção, também como
-no painel, é `PROCESSANDO` com o botão "Importar", que é como o mês fica depois de excluir o
-extrato: aí a CLI importa, com um aviso. O processamento de um
+no painel, é `PROCESSANDO` com o botão "Importar" e sem lançamentos, que é como o mês fica depois
+de excluir o extrato: aí a CLI importa, com um aviso. Como o mesmo estado aparece logo depois de
+uma importação, a CLI confere a quantidade de lançamentos e o registro de ações antes, e recusa
+se o extrato pode estar em processamento, para não importar o mês duas vezes. O processamento de um
 extrato pode deixar o mês seguinte `IMPORTADO` sem nenhum lançamento, e a mensagem avisa quando
 o extrato está vazio. Para refazer a importação (extrato vazio ou arquivo errado), o agente usa
 `--substituir`, que exclui o extrato atual e importa o arquivo numa confirmação só: mostra o

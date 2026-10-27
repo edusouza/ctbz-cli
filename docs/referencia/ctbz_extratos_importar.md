@@ -9,9 +9,15 @@ Antes de enviar, a CLI confere o tamanho (até 30 MB), se o banco aceita o forma
 (a lista vem da Contabilizei, e a mensagem de erro a mostra; OFX fora da lista passa com um
 aviso, porque o painel o importa assim mesmo, como no Inter), se a conta é integrada (essas
 não precisam de importação), se há um período anterior pendente e se a competência já foi
-importada ou está em processamento (o painel também não deixa importar por cima). Uma
-competência PROCESSANDO com o botão "Importar" do painel é importada, como no painel: é como
-ela fica depois de excluir o extrato, até um novo arquivo entrar.
+importada ou está em processamento: recusa IMPORTADO (o painel não mostra "Importar" nesse
+caso) e PROCESSANDO.
+
+A exceção é PROCESSANDO com o botão "Importar" do painel e sem nenhum lançamento: é como a
+competência fica depois de excluir o extrato, até um novo arquivo entrar, e aí a CLI importa,
+como o painel. O mesmo par (PROCESSANDO com o botão) aparece nos minutos em que a Contabilizei
+processa um extrato recém-importado; por isso a CLI só importa se extrato/info confirma zero
+lançamentos e se o registro de ações (ctbz acoes) não tem uma importação desta conta concluída
+há menos de 30 minutos. Senão, recusa e manda conferir com ctbz extratos.
 CSV, XLS e os outros formatos de importação manual também são recusados sobre um extrato
 importado, para a importação manual não duplicar os lançamentos, e não aceitam --substituir.
 
@@ -28,8 +34,9 @@ em até 45 dias. O resultado sai com situacao "enviado" e importacao "manual". A
 a competência continua PENDENTE em ctbz extratos, o que é o esperado: não envie o arquivo de
 novo; acompanhe na Central de Documentos do painel.
 
-Ao final, a CLI relê a competência: em processamento, avisa para conferir depois; importada
-sem nenhum lançamento, avisa no stderr.
+Ao final, a CLI relê a competência: em processamento, avisa para conferir depois e não
+importar de novo (o botão "Importar" do painel pode continuar visível enquanto isso);
+importada sem nenhum lançamento, avisa no stderr.
 
 Para refazer a importação de um mês já importado (ex.: um extrato vazio criado pelo
 processamento de outro mês, ou o arquivo errado), use --substituir: a CLI exclui o extrato
@@ -47,11 +54,12 @@ Se a importação parar depois do envio (saldo recusado, extrato de outra compet
 arquivo fica enviado mas o extrato não é efetivado; corrija e rode o comando de novo.
 
 Se a conexão cair ou o servidor responder com erro 5xx (502, 504…) no envio do arquivo, a CLI
-relê a situação do extrato: se a competência continua como estava (ex.: PENDENTE), nada foi
+relê a situação do extrato: se a competência continua pendente (ou não aparece), nada foi
 efetivado e é seguro rodar o mesmo comando de novo (o arquivo vai com o mesmo nome e substitui
-o anterior). Se isso acontecer ao concluir a importação, ou se a competência já aparecer como
-IMPORTADO ou PROCESSANDO, a importação pode ter sido aplicada: confira com ctbz extratos e ctbz
-extratos lancamentos antes de repetir, para não importar duas vezes.
+o anterior). Se isso acontecer ao concluir a importação, ou se a competência aparecer em
+qualquer outra situação (IMPORTADO, PROCESSANDO com ou sem o botão "Importar"…), a importação
+pode ter sido aplicada: confira com ctbz extratos e ctbz extratos lancamentos antes de
+repetir, para não importar duas vezes.
 
 Pede confirmação (--yes em scripts) e aceita --dry-run, que mostra o envio e a conclusão sem
 enviar nada.

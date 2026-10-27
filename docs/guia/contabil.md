@@ -144,11 +144,15 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
   painel. Atenção: o processamento de um extrato pode deixar o mês **seguinte** como
   `IMPORTADO` sem nenhum lançamento (visto numa conta real); a mensagem avisa quando o extrato
   está vazio.
-- A exceção é `PROCESSANDO` com o botão "Importar" do painel (`exibirBotaoImportar`): é como a
-  competência fica depois de excluir o extrato, até um novo arquivo entrar, e ela não sai desse
-  estado sozinha. O painel importa nesse estado, e a CLI também, com um aviso no stderr. O mesmo
-  estado aparece nos minutos em que a Contabilizei processa um extrato recém-importado: se você
-  acabou de importar, confira com `ctbz extratos` em vez de importar de novo.
+- A exceção é `PROCESSANDO` com o botão "Importar" do painel (`exibirBotaoImportar`) e sem
+  nenhum lançamento: é como a competência fica depois de excluir o extrato, até um novo arquivo
+  entrar, e ela não sai desse estado sozinha. O painel importa nesse estado, e a CLI também,
+  com um aviso no stderr e no resumo da confirmação. O mesmo par (`PROCESSANDO` com o botão)
+  aparece nos minutos em que a Contabilizei processa um extrato recém-importado, e importar de
+  novo duplicaria os lançamentos. Por isso a CLI só importa se `extrato/info` confirma zero
+  lançamentos e se o registro de ações (`ctbz acoes`) não tem uma importação da mesma conta
+  concluída há menos de 30 minutos; senão, termina com erro sem enviar nada e manda conferir
+  com `ctbz extratos`.
 - Para refazer a importação de um mês já importado, use `--substituir`: a CLI exclui o extrato
   atual e importa o arquivo, com uma confirmação só (o mesmo que excluir e importar no painel,
   que não tem outro jeito de reimportar). Extrato atual vazio: risco médio. Com lançamentos:
@@ -160,8 +164,9 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
   concluir, não se sabe se o novo arquivo entrou: confira antes de qualquer nova tentativa e não
   use `--substituir`, que excluiria o extrato novo.
 - Depois de importar, a CLI relê a competência. Se ela ainda está `PROCESSANDO`, confira em
-  alguns minutos com `ctbz extratos lancamentos`; se terminou `IMPORTADO` sem nenhum lançamento,
-  a CLI avisa no stderr. O JSON traz `quantidade_lancamentos`.
+  alguns minutos com `ctbz extratos lancamentos` e não importe de novo, mesmo que o painel ainda
+  mostre o botão "Importar"; se terminou `IMPORTADO` sem nenhum lançamento, a CLI avisa no
+  stderr. O JSON traz `quantidade_lancamentos`.
 - "Não reconheceu o arquivo como extrato bancário": tente o OFX do banco ou o PDF baixado
   direto do internet banking (não um PDF gerado por outro programa); se continuar, abra um
   chamado no painel.
@@ -171,12 +176,12 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
 - Se a importação parar depois do envio (saldo recusado, extrato de outra competência), o
   arquivo fica enviado mas o extrato não é efetivado; corrija e rode de novo.
 - Se a conexão cair ou o servidor responder com erro 5xx (502, 504…) no envio do arquivo (o
-  envio tem prazo de 3 minutos), a CLI relê a situação da competência. Se ela continua como
-  estava (ex.: `PENDENTE`), nada foi importado e é seguro rodar o mesmo comando de novo: o
-  arquivo vai com o mesmo nome e substitui o anterior. Se ela já aparece como `IMPORTADO` ou
-  `PROCESSANDO`, ou se a queda ou o 5xx aconteceu ao concluir a importação, a importação pode
-  ter sido aplicada: confira com `ctbz extratos` e `ctbz extratos lancamentos` antes de repetir,
-  para não importar duas vezes.
+  envio tem prazo de 3 minutos), a CLI relê a situação da competência. Só se ela continua
+  pendente (`PENDENTE`, `ABERTO` ou fora da lista), nada foi importado e é seguro rodar o mesmo
+  comando de novo: o arquivo vai com o mesmo nome e substitui o anterior. Em qualquer outra
+  situação (`IMPORTADO`, `PROCESSANDO` com ou sem o botão "Importar"…), ou se a queda ou o 5xx
+  aconteceu ao concluir a importação, a importação pode ter sido aplicada: confira com
+  `ctbz extratos` e `ctbz extratos lancamentos` antes de repetir, para não importar duas vezes.
 - Erros conhecidos viram mensagens claras: extrato de outro banco, outra conta ou agência, conta
   não cadastrada (cadastre com `ctbz contas-bancarias adicionar`).
 - Para desfazer, use `ctbz extratos excluir`:
@@ -189,11 +194,17 @@ ctbz extratos excluir --conta-bancaria 1000000000000001 --competencia 2026-09
 informações adicionais se perdem e não dá para desfazer (só reimportar e reclassificar). Se os
 contadores já concluíram a classificação do extrato, ele não pode mais ser excluído.
 
-Depois da exclusão, a competência fica `PROCESSANDO` com o botão "Importar" do painel até um
-novo arquivo entrar (visto com o Banco Inter): a exclusão valeu, o comando informa `excluido`
-com `situacao_extrato` `PROCESSANDO`, e o próximo passo é `ctbz extratos importar`. Nesse
-estado não há extrato para excluir: `excluir` termina com erro (código 1) sem enviar nada e
-manda importar.
+Antes de enviar, `excluir` lê a situação da competência; se essa leitura falhar, termina com
+erro (código 1) sem enviar nada, porque sem ela não daria para confirmar a exclusão depois.
+
+Depois da exclusão, a competência fica `PROCESSANDO` com o botão "Importar" do painel e sem
+lançamentos até um novo arquivo entrar (visto com o Banco Inter): a exclusão valeu, o comando
+informa `excluido` com `situacao_extrato` `PROCESSANDO`, e o próximo passo é
+`ctbz extratos importar`. Nesse estado não há extrato para excluir: `excluir` termina com erro
+(código 1) sem enviar nada e manda importar. Se a competência está `PROCESSANDO` com o botão,
+mas `extrato/info` mostra lançamentos (ou não diz quantos), é um extrato recém-importado em
+processamento: `excluir` também termina sem enviar nada e manda esperar ele aparecer como
+`IMPORTADO` e rodar de novo.
 
 Uma competência `PROCESSANDO` **sem** o botão "Importar" pode não sair desse estado com
 `excluir`: a Contabilizei responde 200 e nada muda. A confirmação avisa disso e, se a

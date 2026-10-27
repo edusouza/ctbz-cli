@@ -175,8 +175,11 @@ Convenções:
   "Processando" **com** o botão "Importar", e a importação (upload, `info-extrato`,
   `eventoUploadExtrato`) funciona: em cerca de 20 s a competência passa a `IMPORTADO`. O mesmo
   par (`PROCESSANDO`, `exibirBotaoImportar: true`) aparece logo depois de um `eventoUploadExtrato`,
-  enquanto o arquivo é processado. A CLI segue o `exibirBotaoImportar`, como o painel: com ele,
-  `PROCESSANDO` é importável.
+  enquanto o arquivo é processado, e `v2/extratos` não distingue os dois casos. Por isso a CLI só
+  importa sobre esse par quando `extrato/info` responde `quantidadeLancamentos: 0` e o registro
+  local (`acoes.jsonl`) não tem um `eventoUploadExtrato` da mesma conta há menos de 30 minutos;
+  com lançamentos, sem a contagem ou com a leitura falhando, recusa (#1035). O `DELETE` também
+  só é recusado como "nada a excluir" com `quantidadeLancamentos: 0` (#1037).
 
 ### 1.7 `POST movimentacao-financeira/eventoUploadExtrato`: concluir a importação do extrato
 
@@ -214,11 +217,16 @@ Convenções:
   - `GET movimentacao-financeira/extrato/info?idContaBancaria&ano&mes` traz `quantidadeLancamentos`
     (e `urlDownloadExtrato`, uma URL assinada do OFX gerado, que a CLI não usa nem mostra);
   - `GET movimentacao-financeira/v2/extratos` traz `exibirBotaoImportar: false` nas competências
-    `IMPORTADO`: o painel não oferece importar de novo sem excluir antes (seção 1.6).
+    `IMPORTADO`: o painel não oferece importar de novo sem excluir antes (seção 1.6). Enquanto o
+    extrato recém-importado é processado, a competência fica `PROCESSANDO` com
+    `exibirBotaoImportar: true` (o mesmo par de depois de uma exclusão, seção 1.6).
 
-  Por isso a CLI recusa importar sobre uma competência `IMPORTADO` ou `PROCESSANDO` (com a
-  mensagem certa quando ela está vazia), avisa depois de importar quando a competência termina
-  sem lançamentos e oferece `--substituir`, que faz o caminho do painel para reimportar: o
+  Por isso a CLI recusa importar sobre uma competência `IMPORTADO` (com a mensagem certa quando
+  ela está vazia) ou `PROCESSANDO` sem o botão "Importar". `PROCESSANDO` com
+  `exibirBotaoImportar: true` só é importável nas condições da seção 1.6 (zero lançamentos em
+  `extrato/info` e nenhuma importação recente da conta no registro local). A CLI avisa depois de
+  importar quando a competência termina sem lançamentos ou ainda em processamento (aí, para não
+  importar de novo) e oferece `--substituir`, que faz o caminho do painel para reimportar: o
   `DELETE` da seção 1.6 e, em seguida, o envio e a conclusão, numa confirmação só.
 
 ### 1.8 `GET movimentacao-financeira/permiteImportacao/{idContaBancaria}/{ano}/{mes}` (só leitura)

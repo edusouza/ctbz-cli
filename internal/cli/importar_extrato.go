@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -73,9 +74,15 @@ Antes de enviar, a CLI confere o tamanho (até 30 MB), se o banco aceita o forma
 (a lista vem da Contabilizei, e a mensagem de erro a mostra; OFX fora da lista passa com um
 aviso, porque o painel o importa assim mesmo, como no Inter), se a conta é integrada (essas
 não precisam de importação), se há um período anterior pendente e se a competência já foi
-importada ou está em processamento (o painel também não deixa importar por cima). Uma
-competência PROCESSANDO com o botão "Importar" do painel é importada, como no painel: é como
-ela fica depois de excluir o extrato, até um novo arquivo entrar.
+importada ou está em processamento: recusa IMPORTADO (o painel não mostra "Importar" nesse
+caso) e PROCESSANDO.
+
+A exceção é PROCESSANDO com o botão "Importar" do painel e sem nenhum lançamento: é como a
+competência fica depois de excluir o extrato, até um novo arquivo entrar, e aí a CLI importa,
+como o painel. O mesmo par (PROCESSANDO com o botão) aparece nos minutos em que a Contabilizei
+processa um extrato recém-importado; por isso a CLI só importa se extrato/info confirma zero
+lançamentos e se o registro de ações (ctbz acoes) não tem uma importação desta conta concluída
+há menos de 30 minutos. Senão, recusa e manda conferir com ctbz extratos.
 CSV, XLS e os outros formatos de importação manual também são recusados sobre um extrato
 importado, para a importação manual não duplicar os lançamentos, e não aceitam --substituir.
 
@@ -92,8 +99,9 @@ em até 45 dias. O resultado sai com situacao "enviado" e importacao "manual". A
 a competência continua PENDENTE em ctbz extratos, o que é o esperado: não envie o arquivo de
 novo; acompanhe na Central de Documentos do painel.
 
-Ao final, a CLI relê a competência: em processamento, avisa para conferir depois; importada
-sem nenhum lançamento, avisa no stderr.
+Ao final, a CLI relê a competência: em processamento, avisa para conferir depois e não
+importar de novo (o botão "Importar" do painel pode continuar visível enquanto isso);
+importada sem nenhum lançamento, avisa no stderr.
 
 Para refazer a importação de um mês já importado (ex.: um extrato vazio criado pelo
 processamento de outro mês, ou o arquivo errado), use --substituir: a CLI exclui o extrato
@@ -111,11 +119,12 @@ Se a importação parar depois do envio (saldo recusado, extrato de outra compet
 arquivo fica enviado mas o extrato não é efetivado; corrija e rode o comando de novo.
 
 Se a conexão cair ou o servidor responder com erro 5xx (502, 504…) no envio do arquivo, a CLI
-relê a situação do extrato: se a competência continua como estava (ex.: PENDENTE), nada foi
+relê a situação do extrato: se a competência continua pendente (ou não aparece), nada foi
 efetivado e é seguro rodar o mesmo comando de novo (o arquivo vai com o mesmo nome e substitui
-o anterior). Se isso acontecer ao concluir a importação, ou se a competência já aparecer como
-IMPORTADO ou PROCESSANDO, a importação pode ter sido aplicada: confira com ctbz extratos e ctbz
-extratos lancamentos antes de repetir, para não importar duas vezes.
+o anterior). Se isso acontecer ao concluir a importação, ou se a competência aparecer em
+qualquer outra situação (IMPORTADO, PROCESSANDO com ou sem o botão "Importar"…), a importação
+pode ter sido aplicada: confira com ctbz extratos e ctbz extratos lancamentos antes de
+repetir, para não importar duas vezes.
 
 Pede confirmação (--yes em scripts) e aceita --dry-run, que mostra o envio e a conclusão sem
 enviar nada.`,
@@ -174,7 +183,7 @@ enviar nada.`,
 			// CSV, XLS e outros formatos fora da tela "Importar extrato" vão pela Central de
 			// Documentos, num envio só, e a Contabilizei os importa manualmente (#899).
 			manual := !api.ImportacaoAutomatica(formatoArq)
-			existente, err := competenciaImportavel(ctx, s, g, alvo, substituir, manual)
+			existente, aguardando, err := competenciaImportavel(ctx, s, g, alvo, substituir, manual)
 			if err != nil {
 				return err
 			}
@@ -227,6 +236,11 @@ enviar nada.`,
 					op.Risco = riscoAlto
 					op.Consequencia = "O extrato atual é excluído antes do envio: as classificações e informações adicionais das movimentações se perdem e não dá para desfazer."
 				}
+			}
+			if aguardando {
+				// O resumo é o que a confirmação sempre mostra, inclusive com --yes.
+				op.Resumo += "; a competência está PROCESSANDO com o botão \"Importar\" do painel e sem lançamentos, como fica depois de " +
+					"excluir o extrato (se este mês acabou de ser importado, não confirme)"
 			}
 			var saldo *float64
 			// importarArquivo envia o arquivo, confirma o saldo (OFX) e conclui a importação.
@@ -355,70 +369,146 @@ type extratoExistente struct {
 // vazio diz se o extrato existente sabidamente não tem lançamentos (nada se perde ao excluir).
 func (e *extratoExistente) vazio() bool { return e.lancamentos != nil && *e.lancamentos == 0 }
 
-// competenciaImportavel recusa importar sobre um extrato já importado ou em processamento,
-// como o painel, que não mostra "Importar" nesses casos. Um extrato IMPORTADO pode estar
-// vazio: o processamento de um extrato de outro mês pode criar o do mês seguinte sem
-// lançamentos (#855). Com substituir, um extrato IMPORTADO que o painel deixa excluir é
-// devolvido para ser excluído antes do envio, o mesmo caminho do painel (excluir e importar).
-// No envio manual (CSV, XLS…), substituir é recusado: o arquivo só é importado em até 45 dias,
-// e a exclusão deixaria o mês sem extrato até lá (#920). Sem substituir, a recusa não sugere
-// --substituir: um arquivo manual por cima do importado poderia duplicar os lançamentos (#921).
-// PROCESSANDO só é recusado sem o botão "Importar" do painel: com ele, a competência espera um
-// arquivo (é como ela fica depois de excluir o extrato) e é tratada como pendente.
-func competenciaImportavel(ctx context.Context, s streams, g api.Getter, alvo extratoAlvo, substituir, manual bool) (*extratoExistente, error) {
+// competenciaImportavel recusa importar sobre um extrato IMPORTADO (o painel não mostra
+// "Importar" nesse caso) ou PROCESSANDO. Um extrato IMPORTADO pode estar vazio: o
+// processamento de um extrato de outro mês pode criar o do mês seguinte sem lançamentos
+// (#855). Com substituir, um extrato IMPORTADO que o painel deixa excluir é devolvido para ser
+// excluído antes do envio, o mesmo caminho do painel (excluir e importar). No envio manual
+// (CSV, XLS…), substituir é recusado: o arquivo só é importado em até 45 dias, e a exclusão
+// deixaria o mês sem extrato até lá (#920). Sem substituir, a recusa não sugere --substituir:
+// um arquivo manual por cima do importado poderia duplicar os lançamentos (#921).
+//
+// A exceção é PROCESSANDO com o botão "Importar" do painel quando a competência está
+// comprovadamente vazia (aguardando = true): é como ela fica depois de excluir o extrato. O
+// mesmo par aparece logo depois de uma importação, e importar de novo duplicaria os
+// lançamentos (#1035): por isso só segue com extrato/info confirmando zero lançamentos e sem
+// uma importação recente da conta em acoes.jsonl (lista de permissão, não de bloqueio).
+func competenciaImportavel(ctx context.Context, s streams, g api.Getter, alvo extratoAlvo, substituir, manual bool) (existente *extratoExistente, aguardando bool, err error) {
 	e, err := extratoDoAlvo(ctx, g, alvo)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 	mes := alvo.mes.Format("01/2006")
 	switch situacaoDe(e) {
 	case "PROCESSANDO":
 		if !e.AguardaArquivo() {
-			return nil, fmt.Errorf("o extrato de %s ainda está em processamento; aguarde e confira com `ctbz extratos`", mes)
+			return nil, false, fmt.Errorf("o extrato de %s ainda está em processamento; aguarde e confira com `ctbz extratos`", mes)
 		}
-		fmt.Fprintf(s.err, "A competência %s aparece como PROCESSANDO com o botão \"Importar\" do painel, como fica depois de excluir o extrato: "+
-			"segue a importação. Se o extrato deste mês acabou de ser importado, ele ainda está sendo processado: em vez de importar de novo, "+
-			"confira com `ctbz extratos` em alguns minutos.\n", mes)
+		if err := aguardaArquivoVazio(ctx, g, alvo); err != nil {
+			return nil, false, err
+		}
+		fmt.Fprintf(s.err, "A competência %s aparece como PROCESSANDO com o botão \"Importar\" do painel e sem lançamentos, como fica depois "+
+			"de excluir o extrato: segue a importação.\n", mes)
+		if substituir {
+			fmt.Fprintf(s.err, "Nada a substituir: a competência %s está sem lançamentos, à espera de um arquivo; segue a importação sem excluir.\n", mes)
+		}
+		return nil, true, nil
 	case "IMPORTADO":
 		if manual && substituir {
-			return nil, usageError{fmt.Errorf("--substituir só vale para OFX e PDF: este formato vai pela Central de Documentos e a "+
+			return nil, false, usageError{fmt.Errorf("--substituir só vale para OFX e PDF: este formato vai pela Central de Documentos e a "+
 				"Contabilizei o importa manualmente, em até 45 dias, e excluir o extrato atual deixaria %s sem extrato até lá; se é "+
 				"isso mesmo, exclua antes com `ctbz extratos excluir` e envie o arquivo sem --substituir", mes)}
 		}
 		if manual {
-			return nil, fmt.Errorf("o extrato de %s já foi importado (veja %s); um arquivo que não é OFX nem PDF iria para a "+
+			return nil, false, fmt.Errorf("o extrato de %s já foi importado (veja %s); um arquivo que não é OFX nem PDF iria para a "+
 				"importação manual e poderia duplicar os lançamentos. Se ele complementa o extrato importado, envie-o pela "+
 				"Central de Documentos do painel", mes, comandoConferirExtrato(alvo))
 		}
 		info, err := api.BuscarExtratoInfo(ctx, g, alvo.conta, alvo.ano(), alvo.mesNum())
 		if substituir {
 			if err != nil {
-				return nil, err
+				return nil, false, err
 			}
 			if !info.PermiteExclusaoExtrato {
-				return nil, fmt.Errorf("o extrato de %s não pode ser substituído: os contadores já concluíram a classificação dele (o painel também não deixa excluir)", mes)
+				return nil, false, fmt.Errorf("o extrato de %s não pode ser substituído: os contadores já concluíram a classificação dele (o painel também não deixa excluir)", mes)
 			}
-			return &extratoExistente{lancamentos: info.QuantidadeLancamentos}, nil
+			return &extratoExistente{lancamentos: info.QuantidadeLancamentos}, false, nil
 		}
 		if err == nil && info.QuantidadeLancamentos != nil && *info.QuantidadeLancamentos == 0 {
-			return nil, fmt.Errorf("o extrato de %s já aparece como IMPORTADO, mas sem nenhum lançamento (o processamento do extrato de outro mês "+
+			return nil, false, fmt.Errorf("o extrato de %s já aparece como IMPORTADO, mas sem nenhum lançamento (o processamento do extrato de outro mês "+
 				"pode tê-lo criado vazio); para trocá-lo por este arquivo, rode o mesmo comando com --substituir", mes)
 		}
-		return nil, fmt.Errorf("o extrato de %s já foi importado (veja %s); para trocá-lo por este arquivo, rode o mesmo comando com --substituir "+
+		return nil, false, fmt.Errorf("o extrato de %s já foi importado (veja %s); para trocá-lo por este arquivo, rode o mesmo comando com --substituir "+
 			"(risco alto: exclui o extrato atual e as classificações dele)", mes, comandoConferirExtrato(alvo))
 	}
 	if substituir {
 		fmt.Fprintf(s.err, "Nada a substituir: o extrato de %s não foi importado; segue a importação normal.\n", mes)
 	}
-	return nil, nil
+	return nil, false, nil
+}
+
+// janelaProcessamento é por quanto tempo depois de concluir uma importação pela CLI uma
+// competência PROCESSANDO com o botão "Importar" ainda é tratada como extrato recém-importado.
+const janelaProcessamento = 30 * time.Minute
+
+// aguardaArquivoVazio confirma que a competência PROCESSANDO com o botão "Importar" está à
+// espera de um arquivo, e não processando um extrato recém-importado: extrato/info precisa
+// dizer zero lançamentos e acoes.jsonl não pode ter uma importação recente da conta. Sem essa
+// prova, recusa.
+func aguardaArquivoVazio(ctx context.Context, g api.Getter, alvo extratoAlvo) error {
+	mes := alvo.mes.Format("01/2006")
+	conferir := fmt.Sprintf("confira com `ctbz extratos` e %s em alguns minutos em vez de importar de novo", comandoConferirExtrato(alvo))
+	if quando, ok := importacaoRecente(alvo.conta); ok {
+		return fmt.Errorf("o extrato de %s aparece como PROCESSANDO com o botão \"Importar\" do painel, e a CLI enviou a conclusão de uma importação desta "+
+			"conta às %s, há menos de %d minutos: o extrato pode estar sendo processado; %s", mes, quando.Local().Format("15:04"),
+			int(janelaProcessamento.Minutes()), conferir)
+	}
+	info, err := api.BuscarExtratoInfo(ctx, g, alvo.conta, alvo.ano(), alvo.mesNum())
+	switch {
+	case err != nil:
+		return fmt.Errorf("o extrato de %s aparece como PROCESSANDO com o botão \"Importar\" do painel, estado que também aparece logo depois "+
+			"de uma importação, e não foi possível contar os lançamentos (%v); %s", mes, err, conferir)
+	case info.QuantidadeLancamentos == nil:
+		return fmt.Errorf("o extrato de %s aparece como PROCESSANDO com o botão \"Importar\" do painel, estado que também aparece logo depois "+
+			"de uma importação, e a Contabilizei não informou quantos lançamentos ele tem; %s", mes, conferir)
+	case *info.QuantidadeLancamentos != 0:
+		return fmt.Errorf("o extrato de %s ainda está em processamento (PROCESSANDO com o botão \"Importar\" do painel e %d lançamentos), como "+
+			"fica logo depois de uma importação; %s. Para trocá-lo por outro arquivo, espere ele ficar IMPORTADO e use --substituir",
+			mes, *info.QuantidadeLancamentos, conferir)
+	}
+	return nil
+}
+
+// importacaoRecente procura em acoes.jsonl uma conclusão de importação (eventoUploadExtrato)
+// da conta, na empresa da sessão, enviada ou sem resposta há menos de janelaProcessamento. O
+// registro não guarda a competência: vale qualquer mês da conta. Sem registro, devolve false.
+func importacaoRecente(conta int64) (time.Time, bool) {
+	store, err := ctbz.DefaultStore()
+	if err != nil {
+		return time.Time{}, false
+	}
+	cnpj := ""
+	if sess, err := store.LoadSession(); err == nil {
+		cnpj = currentCNPJ(sess)
+		if cnpj == "" {
+			cnpj = sess.CNPJ
+		}
+	}
+	acoes, _, err := store.LoadAcoes()
+	if err != nil {
+		return time.Time{}, false
+	}
+	limite := now().Add(-janelaProcessamento)
+	id := fmt.Sprint(conta)
+	for i := len(acoes) - 1; i >= 0; i-- {
+		a := acoes[i]
+		if a.ID == id && strings.HasSuffix(a.Caminho, api.PathEventoUploadExtrato) && a.Resultado != ctbz.ResultadoRecusada &&
+			a.Data.After(limite) && (cnpj == "" || a.CNPJ == "" || a.CNPJ == cnpj) {
+			return a.Data, true
+		}
+	}
+	return time.Time{}, false
 }
 
 // conferirImportado relê o extrato depois da importação e devolve quantos lançamentos ele tem
-// (nil se não deu para saber). Em processamento, orienta a conferir depois; importado sem
+// (nil se não deu para saber). Em processamento, orienta a conferir depois e a não importar de
+// novo: o botão "Importar" do painel pode continuar visível nesse estado (#1035). Importado sem
 // lançamentos, avisa: a competência pareceria resolvida sem nada dentro.
 func conferirImportado(ctx context.Context, s streams, g api.Getter, alvo extratoAlvo, sit string) any {
 	if sit == "PROCESSANDO" {
-		fmt.Fprintf(s.err, "A Contabilizei está processando o extrato; em alguns minutos confira com `ctbz extratos` e %s.\n", comandoConferirExtrato(alvo))
+		fmt.Fprintf(s.err, "A Contabilizei está processando o extrato; em alguns minutos confira com `ctbz extratos` e %s. Não rode "+
+			"`ctbz extratos importar` de novo para este mês, mesmo que o painel ainda mostre o botão \"Importar\": a importação foi concluída.\n",
+			comandoConferirExtrato(alvo))
 	}
 	if sit != "IMPORTADO" {
 		return nil
@@ -513,10 +603,15 @@ func (e *importacaoIncerta) Error() string { return e.err.Error() }
 
 func (e *importacaoIncerta) Unwrap() error { return e.err }
 
+// situacoesSemImportacao são as situações em que a competência sabidamente não tem extrato
+// importado nem em processamento.
+var situacoesSemImportacao = map[string]bool{"": true, "PENDENTE": true, "ABERTO": true}
+
 // orientarEnvioIncerto explica uma falha de resultado incerto no envio do arquivo (passo 1).
-// Sem a conclusão (passo 3), nada entra na contabilidade: se a competência não está importada
-// nem em processamento, repetir é seguro e só substitui o arquivo, que vai com o mesmo nome. Em
-// PROCESSANDO com o botão "Importar" do painel, a competência continua à espera de um arquivo.
+// Sem a conclusão (passo 3), nada entra na contabilidade: só se a competência continua sem
+// importação (lista de permissão, #874), repetir é seguro e só substitui o arquivo, que vai com
+// o mesmo nome. Qualquer outra situação, inclusive PROCESSANDO com o botão "Importar" do painel
+// (que também é o estado logo depois de uma importação, #1036), manda conferir antes de repetir.
 func orientarEnvioIncerto(ctx context.Context, g api.Getter, alvo extratoAlvo, falha string, causa error) error {
 	mes := alvo.mes.Format("01/2006")
 	e, rerr := extratoDoAlvo(ctx, g, alvo)
@@ -525,9 +620,13 @@ func orientarEnvioIncerto(ctx context.Context, g api.Getter, alvo extratoAlvo, f
 	case rerr != nil:
 		return &importacaoIncerta{fmt.Errorf("%s no envio do arquivo e a escrita pode ou não ter sido aplicada; confira antes de repetir: %w (e não foi possível reler a situação do extrato: %v)",
 			falha, causa, rerr)}
-	case sit == "IMPORTADO" || sit == "PROCESSANDO" && !e.AguardaArquivo():
+	case e.AguardaArquivo():
+		return &importacaoIncerta{fmt.Errorf("%s no envio do arquivo e o extrato de %s aparece como PROCESSANDO com o botão \"Importar\" do painel, "+
+			"como fica depois de excluir o extrato e também logo depois de uma importação; confira com `ctbz extratos` e %s antes de repetir: %w",
+			falha, mes, comandoConferirExtrato(alvo), causa)}
+	case !situacoesSemImportacao[sit]:
 		return &importacaoIncerta{fmt.Errorf("%s no envio do arquivo e o extrato de %s aparece como %s; confira com %s antes de repetir: %w",
-			falha, mes, sit, comandoConferirExtrato(alvo), causa)}
+			falha, mes, semControle(sit), comandoConferirExtrato(alvo), causa)}
 	}
 	situacao := "não aparece entre os extratos"
 	if sit != "" {
@@ -647,9 +746,15 @@ informações adicionais das movimentações se perdem; não dá para desfazer, 
 reclassificar. Se os contadores já concluíram a classificação, o painel não deixa excluir, e a
 CLI também não.
 
-Depois da exclusão, a competência fica PROCESSANDO com o botão "Importar" do painel até um novo
-arquivo entrar: importe-o com ctbz extratos importar. Nesse estado não há o que excluir, e o
-comando termina com erro sem enviar nada.
+Antes de enviar, a CLI lê a situação da competência; se a leitura falhar, termina com erro
+sem enviar nada (sem ela não dá para confirmar a exclusão depois).
+
+Depois da exclusão, a competência fica PROCESSANDO com o botão "Importar" do painel e sem
+lançamentos até um novo arquivo entrar: importe-o com ctbz extratos importar. Nesse estado
+não há o que excluir, e o comando termina com erro sem enviar nada. O mesmo par (PROCESSANDO
+com o botão) aparece nos minutos em que a Contabilizei processa um extrato recém-importado: se
+extrato/info mostra lançamentos (ou não diz quantos), o comando também termina sem enviar
+nada, mas manda esperar o processamento terminar e rodar de novo.
 
 Com a competência em processamento sem o botão "Importar" (já visto depois de um arquivo
 recusado), a Contabilizei pode aceitar a exclusão sem mudar nada. A confirmação avisa disso e,
@@ -683,16 +788,29 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			mes := alvo.mes.Format("01/2006")
 			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(alvo.conta), Resumo: fmt.Sprintf("Excluir o extrato de %s da conta %d", mes, alvo.conta),
 				Consequencia: "A importação volta a ficar pendente e você terá de importar um novo arquivo. As classificações e informações adicionais das movimentações se perdem. Não dá para desfazer."}
-			// Em PROCESSANDO, o DELETE já respondeu 200 sem mudar nada (#1012): avisa antes e confere depois.
-			extAntes, errAntes := extratoDoAlvo(ctx, g, alvo)
-			antes := situacaoDe(extAntes)
-			if errAntes == nil && extAntes.AguardaArquivo() {
-				// É como a competência fica depois de excluir: não há extrato para excluir.
-				return fmt.Errorf("não há extrato importado em %s para excluir: a competência está PROCESSANDO à espera de um arquivo "+
-					"(o painel mostra \"Importar\"); importe-o com ctbz extratos importar. Se o extrato acabou de ser importado, ele ainda "+
-					"está sendo processado: espere alguns minutos e confira com `ctbz extratos`", mes)
+			// Em PROCESSANDO, o DELETE já respondeu 200 sem mudar nada (#1012): avisa antes e confere
+			// depois. Sem a leitura de antes, a de depois não confirma nada (#1038): não envia.
+			extAntes, err := extratoDoAlvo(ctx, g, alvo)
+			if err != nil {
+				return fmt.Errorf("lendo a situação do extrato de %s antes de excluir (nada foi enviado): %w", mes, err)
 			}
-			if errAntes == nil && antes == "PROCESSANDO" {
+			antes := situacaoDe(extAntes)
+			if extAntes.AguardaArquivo() {
+				// Sem lançamentos, é como a competência fica depois de excluir: não há o que excluir.
+				// Com lançamentos (ou sem a contagem), é um extrato recém-importado em processamento (#1037).
+				if info.QuantidadeLancamentos != nil && *info.QuantidadeLancamentos == 0 {
+					return fmt.Errorf("não há extrato importado em %s para excluir: a competência está PROCESSANDO à espera de um arquivo "+
+						"(o painel mostra \"Importar\") e sem nenhum lançamento; importe-o com ctbz extratos importar", mes)
+				}
+				lancs := "a Contabilizei não informou quantos lançamentos ele tem"
+				if info.QuantidadeLancamentos != nil {
+					lancs = fmt.Sprintf("ele tem %d lançamentos", *info.QuantidadeLancamentos)
+				}
+				return fmt.Errorf("o extrato de %s está em processamento (PROCESSANDO com o botão \"Importar\" do painel, como fica logo depois "+
+					"de uma importação) e %s: nada foi enviado. Espere alguns minutos, confira com `ctbz extratos` e rode o comando de novo "+
+					"quando ele aparecer como IMPORTADO", mes, lancs)
+			}
+			if antes == "PROCESSANDO" {
 				op.Consequencia += fmt.Sprintf(" O extrato de %s está em processamento: a exclusão pode não ter efeito (já visto depois de um arquivo recusado).", mes)
 			}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.ExcluirExtrato(ctx, snd, alvo.conta, alvo.ano(), alvo.mesNum()) })
@@ -707,17 +825,19 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			case err != nil:
 				fmt.Fprintln(s.err, "aviso: extrato excluído, mas não foi possível reler os extratos:", err)
 			case depois.AguardaArquivo():
-				// Depois de excluir, a competência fica PROCESSANDO com o botão "Importar" até o novo arquivo.
+				// Depois de excluir, a competência fica PROCESSANDO com o botão "Importar" até o novo
+				// arquivo. Antes ela não estava assim (seria recusada acima), então a exclusão mudou algo.
 				situacaoExtrato = sit
 				lembrete = fmt.Sprintf("Não se esqueça de importar o extrato de %s de novo (ctbz extratos importar); até lá a competência "+
 					"aparece como PROCESSANDO, com o botão \"Importar\" no painel.", mes)
-			case sit == "PROCESSANDO" && errAntes == nil && antes == "PROCESSANDO":
+			case sit == "PROCESSANDO" && antes == "PROCESSANDO":
 				// Só aqui o PROCESSANDO depois do envio indica que a exclusão pode não ter tido efeito.
 				return fmt.Errorf("a Contabilizei aceitou a exclusão, mas o extrato de %s estava e continua PROCESSANDO: não foi possível confirmar a exclusão. "+
 					"Enquanto ele estiver em processamento, a CLI não importa outro arquivo: importe o OFX ou o PDF pela tela "+
 					"\"Importar extrato\" do painel ou abra um chamado", mes)
 			case sit == "PROCESSANDO":
-				// Depois de excluir um extrato IMPORTADO, a competência já foi vista PROCESSANDO por minutos (#901).
+				// PROCESSANDO sem o botão "Importar" depois de excluir um extrato que não estava
+				// PROCESSANDO: a exclusão valeu, mas a competência ainda não aguarda arquivo (#901).
 				situacaoExtrato = sit
 				lembrete = fmt.Sprintf("aviso: extrato excluído, e a competência de %s está PROCESSANDO; espere ela sair desse estado e confira com "+
 					"`ctbz extratos` antes de importar de novo (ctbz extratos importar).", mes)

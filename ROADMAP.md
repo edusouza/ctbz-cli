@@ -49,6 +49,7 @@ críticos e cada versão seguinte fecha **um tema** de correção, com os achado
 | **v1.9** | Segunda via da mensalidade, extratos em CSV/XLS e diagnóstico | — | 5 | concluída |
 | **v1.9.2** | Extratos do Banco Inter: OFX e mês preso em processamento | — | 2 | concluída |
 | **v1.9.3** | Correções críticas (planejada como v1.9.1) | [#943](https://github.com/edusouza/ctbz-cli/issues/943) | 16 | concluída |
+| **v1.9.4** | Extratos do Banco Inter: mês excluído e saldo do último dia | [#1034](https://github.com/edusouza/ctbz-cli/issues/1034) | 8 | em andamento |
 | **v1.10** | Saída segura: caracteres de controle, CSV, segredos e dados pessoais | [#944](https://github.com/edusouza/ctbz-cli/issues/944) | 50 | planejada |
 | **v1.11** | Escrita segura e `--dry-run` | [#945](https://github.com/edusouza/ctbz-cli/issues/945) | 78 | planejada |
 | **v1.12** | Depois do envio: releitura, situação e orientação | [#946](https://github.com/edusouza/ctbz-cli/issues/946) | 66 | planejada |
@@ -440,6 +441,25 @@ candidato numa escrita, contra a ADR-0021. As correções são guardas pequenas 
 | ✅ | [#818](https://github.com/edusouza/ctbz-cli/issues/818) | `usuarios`: id como `any` e `tipo` ausente desligam a trava do administrador | conta |
 
 Fora de escopo: achados de prioridade alta que não enviam escrita errada (v1.10 em diante).
+
+## v1.9.4 — Extratos do Banco Inter: mês excluído e saldo do último dia
+
+Review: [#1034](https://github.com/edusouza/ctbz-cli/issues/1034) · label `versão: v1.9.4`
+
+Continuação da v1.9.2 no uso real (26/10/2026): depois de excluir o extrato, o mês fica `PROCESSANDO` com o botão
+"Importar" e a CLI recusava importar (#1031). Correção curta, fora das versões por tema. As issues abaixo são os
+achados do review adversarial da PR, todos corrigidos nela.
+
+| | Issue | Correção | Tipo |
+|---|---|---|---|
+| ✅ | [#1035](https://github.com/edusouza/ctbz-cli/issues/1035) | `PROCESSANDO` com o botão só é importável com zero lançamentos e sem importação recente | bug |
+| ✅ | [#1036](https://github.com/edusouza/ctbz-cli/issues/1036) | envio incerto só diz "seguro repetir" com a competência pendente | bug |
+| ✅ | [#1037](https://github.com/edusouza/ctbz-cli/issues/1037) | `excluir` não afirma "não há extrato" quando há lançamentos | bug |
+| ✅ | [#1038](https://github.com/edusouza/ctbz-cli/issues/1038) | `excluir` exige a leitura da situação antes de enviar | bug |
+| ✅ | [#1039](https://github.com/edusouza/ctbz-cli/issues/1039) | comentários e ajuda descrevem o comportamento atual | manutenção |
+| ✅ | [#1040](https://github.com/edusouza/ctbz-cli/issues/1040) | doc de API (seção 1.7) sem "recusa todo `PROCESSANDO`" | documentação |
+| ✅ | [#1041](https://github.com/edusouza/ctbz-cli/issues/1041) | fixture com `exibirBotaoImportar` e teste de `AguardaArquivo` | testes |
+| ✅ | [#1042](https://github.com/edusouza/ctbz-cli/issues/1042) | PR com `Closes #N` e versão no ROADMAP | manutenção |
 
 ## v1.10 — Saída segura: caracteres de controle, CSV, segredos e dados pessoais
 
