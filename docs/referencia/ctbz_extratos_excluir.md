@@ -8,9 +8,15 @@ informações adicionais das movimentações se perdem; não dá para desfazer, 
 reclassificar. Se os contadores já concluíram a classificação, o painel não deixa excluir, e a
 CLI também não.
 
-Depois da exclusão, a competência fica PROCESSANDO com o botão "Importar" do painel até um novo
-arquivo entrar: importe-o com ctbz extratos importar. Nesse estado não há o que excluir, e o
-comando termina com erro sem enviar nada.
+Antes de enviar, a CLI lê a situação da competência; se a leitura falhar, termina com erro
+sem enviar nada (sem ela não dá para confirmar a exclusão depois).
+
+Depois da exclusão, a competência fica PROCESSANDO com o botão "Importar" do painel e sem
+lançamentos até um novo arquivo entrar: importe-o com ctbz extratos importar. Nesse estado
+não há o que excluir, e o comando termina com erro sem enviar nada. O mesmo par (PROCESSANDO
+com o botão) aparece nos minutos em que a Contabilizei processa um extrato recém-importado: se
+extrato/info mostra lançamentos (ou não diz quantos), o comando também termina sem enviar
+nada, mas manda esperar o processamento terminar e rodar de novo.
 
 Com a competência em processamento sem o botão "Importar" (já visto depois de um arquivo
 recusado), a Contabilizei pode aceitar a exclusão sem mudar nada. A confirmação avisa disso e,

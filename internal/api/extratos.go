@@ -27,6 +27,8 @@ type Extrato struct {
 // AguardaArquivo diz se a competência está PROCESSANDO com o botão "Importar" do painel. É como
 // ela fica depois de excluir o extrato, até um novo arquivo ser importado, e também nos minutos
 // em que a Contabilizei processa um extrato recém-importado; nos dois casos o painel importa.
+// Sozinho, não prova que a competência está vazia: quem vai importar ou excluir confere
+// extrato/info (quantidadeLancamentos 0 depois de excluir).
 func (e *Extrato) AguardaArquivo() bool {
 	return e != nil && e.Situacao == "PROCESSANDO" && e.ExibirBotaoImportar != nil && *e.ExibirBotaoImportar
 }

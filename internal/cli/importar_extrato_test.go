@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/edusouza/ctbz-cli/internal/ctbz"
 )
 
 // arquivoExtrato cria um arquivo com data de modificação fixa (entra no nome enviado).
@@ -239,19 +241,16 @@ func TestExtratosExcluirImportadoQueFicaProcessando(t *testing.T) {
 	}
 }
 
-// Sem a situação de antes do envio, um PROCESSANDO depois não prova que nada mudou: a
-// exclusão é informada, com o aviso de esperar.
+// Sem a situação de antes do envio, a releitura depois não confirma a exclusão (um PROCESSANDO
+// com o botão "Importar" seria lido como excluído, #1038): a CLI não envia nada.
 func TestExtratosExcluirSemSituacaoAntes(t *testing.T) {
 	f := extratoFake(t)
 	delete(f.gets, pathExtratos)
-	f.onWrite = func(f *escritaFake) { f.gets[pathExtratos] = extratosNaSituacao("PROCESSANDO") }
+	f.onWrite = func(f *escritaFake) { f.gets[pathExtratos] = extratosAguardandoArquivo() }
 	out, stderr, code := execCLI(t, "", append(baseExcluir, "-o", "json")...)
-	if code != ExitOK || len(f.writes) != 1 {
-		t.Fatalf("código %d, %d escritas\n%s", code, len(f.writes), stderr)
-	}
-	if !strings.Contains(out, `"situacao": "excluido"`) || !strings.Contains(out, `"situacao_extrato": "PROCESSANDO"`) ||
-		!strings.Contains(stderr, "espere ela sair desse estado") {
-		t.Errorf("saída:\n%s\n%s", out, stderr)
+	if code != ExitError || len(f.writes) != 0 || strings.Contains(out, "excluido") ||
+		!strings.Contains(stderr, "lendo a situação do extrato de 09/2026 antes de excluir (nada foi enviado)") {
+		t.Errorf("código %d, %d escritas\n%s\n%s", code, len(f.writes), out, stderr)
 	}
 }
 
@@ -469,12 +468,19 @@ func TestExtratosImportarErroDeServidorNoUpload(t *testing.T) {
 	}
 }
 
-// PROCESSANDO com o botão "Importar" é como a competência fica depois de excluir o extrato
-// (visto numa conta real): o painel importa, e a CLI também, com um aviso.
+// infoComLancamentos é a resposta de extrato/info com a quantidade de lançamentos dada
+// (texto JSON: "0", "3", "null").
+func infoComLancamentos(qtd string) string {
+	return `{"permiteEditarLancamento":false,"permiteExclusaoExtrato":true,"quantidadeLancamentos":` + qtd + `}`
+}
+
+// PROCESSANDO com o botão "Importar" e zero lançamentos é como a competência fica depois de
+// excluir o extrato (visto numa conta real): o painel importa, e a CLI também, com um aviso.
 func TestExtratosImportarAguardandoArquivo(t *testing.T) {
 	arq, mt := arquivoExtrato(t, "extrato.ofx")
 	f, _ := importarFake(t, mt, "ofx")
 	f.gets[pathExtratos] = extratosAguardandoArquivo()
+	f.gets[pathInfoExtrato9] = infoComLancamentos("0")
 	f.onWrite = func(f *escritaFake) {
 		if strings.Contains(f.writes[len(f.writes)-1], "eventoUploadExtrato") {
 			f.gets[pathExtratos] = extratosNaSituacao("IMPORTADO")
@@ -484,20 +490,117 @@ func TestExtratosImportarAguardandoArquivo(t *testing.T) {
 	if code != ExitOK || len(f.writes) != 2 || !strings.Contains(f.writes[0], "enviar/bucket") || !strings.Contains(f.writes[1], "eventoUploadExtrato") {
 		t.Fatalf("código %d, escritas %q\n%s", code, f.writes, stderr)
 	}
-	if !strings.Contains(stderr, "A competência 09/2026 aparece como PROCESSANDO com o botão \"Importar\" do painel") ||
+	if !strings.Contains(stderr, "A competência 09/2026 aparece como PROCESSANDO com o botão \"Importar\" do painel e sem lançamentos") ||
+		!strings.Contains(stderr, "em 09/2026; a competência está PROCESSANDO com o botão \"Importar\" do painel e sem lançamentos, "+
+			"como fica depois de excluir o extrato (se este mês acabou de ser importado, não confirme) (risco médio)") ||
 		!strings.Contains(out, `"situacao_extrato": "IMPORTADO"`) {
 		t.Errorf("stderr:\n%s\nsaída:\n%s", stderr, out)
 	}
 }
 
-// Sem extrato importado (a competência espera um arquivo), excluir não envia nada.
+// O mesmo par aparece logo depois de uma importação (#1035): sem extrato/info provar zero
+// lançamentos, a CLI não envia nada, nem com --yes.
+func TestExtratosImportarAguardandoArquivoSemProva(t *testing.T) {
+	casos := map[string]struct{ info, want string }{
+		"com lançamentos": {infoComLancamentos("3"), "ainda está em processamento (PROCESSANDO com o botão \"Importar\" do painel e 3 lançamentos)"},
+		"sem a contagem":  {infoComLancamentos("null"), "a Contabilizei não informou quantos lançamentos ele tem"},
+		"info com erro":   {"", "não foi possível contar os lançamentos"},
+	}
+	for nome, c := range casos {
+		for _, extra := range [][]string{{"--yes"}, {"--substituir", "--yes"}} {
+			arq, mt := arquivoExtrato(t, "extrato.ofx")
+			f, _ := importarFake(t, mt, "ofx")
+			f.gets[pathExtratos] = extratosAguardandoArquivo()
+			if c.info != "" {
+				f.gets[pathInfoExtrato9] = c.info
+			}
+			_, stderr, code := execCLI(t, "", append(append(append(baseImportar, arq), "--saldo-final", "1.234,56"), extra...)...)
+			if code != ExitError || len(f.writes) != 0 || !strings.Contains(stderr, c.want) ||
+				!strings.Contains(stderr, "em vez de importar de novo") || strings.Contains(stderr, "Nada a substituir") {
+				t.Errorf("%s %v: código %d, escritas %q\n%s", nome, extra, code, f.writes, stderr)
+			}
+		}
+	}
+}
+
+// Uma conclusão de importação da conta registrada há pouco em acoes.jsonl também barra: o
+// extrato/info de um extrato recém-importado pode ainda não ter os lançamentos (#1035).
+func TestExtratosImportarAguardandoArquivoImportacaoRecente(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.ofx")
+	f, _ := importarFake(t, mt, "ofx")
+	f.gets[pathExtratos] = extratosAguardandoArquivo()
+	f.gets[pathInfoExtrato9] = infoComLancamentos("0")
+	store, err := ctbz.DefaultStore()
+	if err != nil {
+		t.Fatal(err)
+	}
+	evento := ctbz.Acao{Data: now().Add(-10 * time.Minute), Comando: "ctbz extratos importar", Metodo: "POST",
+		Caminho: "/api/plataforma/movimentacao-financeira/eventoUploadExtrato", Status: 200, Resultado: ctbz.ResultadoEnviada, ID: "7"}
+	if err := store.AppendAcao(evento); err != nil {
+		t.Fatal(err)
+	}
+	_, stderr, code := execCLI(t, "", append(append(baseImportar, arq), "--saldo-final", "1.234,56", "--yes")...)
+	if code != ExitError || len(f.writes) != 0 || !strings.Contains(stderr, "a CLI enviou a conclusão de uma importação desta conta às") {
+		t.Fatalf("recente: código %d, escritas %q\n%s", code, f.writes, stderr)
+	}
+	// Fora da janela, de outra conta ou recusada, não conta.
+	for _, a := range []ctbz.Acao{
+		{Data: now().Add(-2 * time.Hour), Caminho: evento.Caminho, Resultado: ctbz.ResultadoEnviada, ID: "7"},
+		{Data: now().Add(-time.Minute), Caminho: evento.Caminho, Resultado: ctbz.ResultadoEnviada, ID: "8"},
+		{Data: now().Add(-time.Minute), Caminho: evento.Caminho, Resultado: ctbz.ResultadoRecusada, ID: "7"},
+	} {
+		os.Remove(filepath.Join(store.Dir, "acoes.jsonl"))
+		if err := store.AppendAcao(a); err != nil {
+			t.Fatal(err)
+		}
+		f.writes = nil
+		_, stderr, code := execCLI(t, "", append(append(baseImportar, arq), "--saldo-final", "1.234,56", "--yes")...)
+		if code != ExitOK || len(f.writes) != 2 {
+			t.Errorf("%+v: código %d, escritas %q\n%s", a, code, f.writes, stderr)
+		}
+	}
+}
+
+// Depois de importar, em processamento, a CLI manda não importar de novo: o botão "Importar"
+// pode continuar visível (#1035).
+func TestExtratosImportarTerminaAguardandoArquivo(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.ofx")
+	f, _ := importarFake(t, mt, "ofx")
+	f.onWrite = func(f *escritaFake) {
+		if strings.Contains(f.writes[len(f.writes)-1], "eventoUploadExtrato") {
+			f.gets[pathExtratos] = extratosAguardandoArquivo()
+		}
+	}
+	_, stderr, code := execCLI(t, "", append(append(baseImportar, arq), "--saldo-final", "1.234,56", "--yes")...)
+	if code != ExitOK || !strings.Contains(stderr, "Não rode `ctbz extratos importar` de novo para este mês, mesmo que o painel ainda mostre o botão \"Importar\"") {
+		t.Errorf("código %d\n%s", code, stderr)
+	}
+}
+
+// Sem extrato importado (a competência espera um arquivo e não tem lançamentos), excluir não envia nada.
 func TestExtratosExcluirAguardandoArquivo(t *testing.T) {
 	f := extratoFake(t)
 	f.gets[pathExtratos] = extratosAguardandoArquivo()
+	f.gets[pathInfoExtrato] = infoComLancamentos("0")
 	_, stderr, code := execCLI(t, "", baseExcluir...)
 	if code != ExitError || len(f.writes) != 0 || !strings.Contains(stderr, "não há extrato importado em 09/2026 para excluir") ||
 		!strings.Contains(stderr, "importe-o com ctbz extratos importar") {
 		t.Errorf("código %d, escritas %d\n%s", code, len(f.writes), stderr)
+	}
+}
+
+// Com lançamentos (ou sem a contagem), o mesmo par é um extrato recém-importado em
+// processamento: a CLI não afirma que não há extrato e manda esperar (#1037).
+func TestExtratosExcluirAguardandoArquivoComLancamentos(t *testing.T) {
+	for qtd, want := range map[string]string{"3": "e ele tem 3 lançamentos: nada foi enviado", "null": "a Contabilizei não informou quantos lançamentos ele tem"} {
+		f := extratoFake(t)
+		f.gets[pathExtratos] = extratosAguardandoArquivo()
+		f.gets[pathInfoExtrato] = infoComLancamentos(qtd)
+		_, stderr, code := execCLI(t, "", baseExcluir...)
+		if code != ExitError || len(f.writes) != 0 || !strings.Contains(stderr, want) || strings.Contains(stderr, "não há extrato importado") ||
+			!strings.Contains(stderr, "rode o comando de novo quando ele aparecer como IMPORTADO") {
+			t.Errorf("%s: código %d, escritas %d\n%s", qtd, code, len(f.writes), stderr)
+		}
 	}
 }
 
@@ -516,14 +619,30 @@ func TestExtratosExcluirImportadoQueFicaAguardandoArquivo(t *testing.T) {
 	}
 }
 
-// Num envio sem resposta, a competência que esperava um arquivo continua esperando: repetir é seguro.
+// Num envio sem resposta com a competência PROCESSANDO com o botão "Importar", não dá para
+// afirmar que repetir é seguro: o par também é o de uma importação recém-concluída (#1036).
 func TestExtratosImportarTimeoutNoUploadAguardandoArquivo(t *testing.T) {
 	arq, mt := arquivoExtrato(t, "extrato.pdf")
 	f, _ := importarFake(t, mt, "pdf")
 	f.gets[pathExtratos] = extratosAguardandoArquivo()
+	f.gets[pathInfoExtrato9] = infoComLancamentos("0")
 	semRespostaNoEnvio(t, f, "enviar/bucket")
 	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
-	if code != ExitError || !strings.Contains(stderr, "o extrato de 09/2026 continua PROCESSANDO: nada foi importado e é seguro rodar o mesmo comando de novo") {
+	if code != ExitError || strings.Contains(stderr, "é seguro rodar") ||
+		!strings.Contains(stderr, "aparece como PROCESSANDO com o botão \"Importar\" do painel, como fica depois de excluir o extrato e também logo depois de uma importação") ||
+		!strings.Contains(stderr, "antes de repetir") {
+		t.Errorf("código %d\n%s", code, stderr)
+	}
+}
+
+// Situações fora da lista de permissão (desconhecidas inclusive) mandam conferir (#874, #1036).
+func TestExtratosImportarTimeoutNoUploadSituacaoDesconhecida(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.pdf")
+	f, _ := importarFake(t, mt, "pdf")
+	semRespostaNoEnvio(t, f, "enviar/bucket")
+	f.onWrite = func(f *escritaFake) { f.gets[pathExtratos] = extratosNaSituacao("EM_ANALISE") }
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
+	if code != ExitError || strings.Contains(stderr, "é seguro rodar") || !strings.Contains(stderr, "aparece como EM_ANALISE; confira com") {
 		t.Errorf("código %d\n%s", code, stderr)
 	}
 }
