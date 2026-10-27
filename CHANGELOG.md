@@ -16,6 +16,40 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   ([Licença](https://github.com/edusouza/ctbz-cli/blob/main/docs/licenca.md),
   [ADR-0023](https://github.com/edusouza/ctbz-cli/blob/main/docs/adr/0023-licenca-nao-comercial-com-uso-pela-propria-empresa.md)).
 
+## [1.9.4] - 2026-10-27
+
+Extratos do Banco Inter, continuação da 1.9.2 no uso real: o mês excluído volta a ser importável pela CLI e
+`--saldo-final` corrige o saldo do último dia que a Contabilizei leu como zero ou não leu.
+
+### Fixed
+
+- `ctbz extratos importar` importa a competência `PROCESSANDO` com o botão "Importar" do painel
+  (`exibirBotaoImportar`) e sem lançamentos, como o painel: é como ela fica depois de excluir o
+  extrato, e não sai desse estado sem um novo arquivo. Antes a CLI recusava, e o mês excluído
+  (por `extratos excluir` ou por `--substituir` que falhou) só podia ser importado pelo painel.
+  Como o mesmo par aparece logo depois de uma importação, a CLI só importa se `extrato/info`
+  confirma zero lançamentos e se `ctbz acoes` não tem uma importação da mesma conta há menos de
+  30 minutos; senão, recusa sem enviar nada (#1035). Depois de importar com a competência ainda
+  em processamento, a CLI avisa para não importar de novo. `extratos excluir` recusa sem envio
+  uma competência nesse estado: sem lançamentos, porque não há extrato para excluir; com
+  lançamentos, porque é um extrato em processamento (#1037). As mensagens depois de excluir
+  mandam importar em vez de esperar.
+- `ctbz extratos importar`: numa queda ou erro 5xx no envio do arquivo, "é seguro rodar o mesmo
+  comando de novo" só aparece com a competência pendente; em qualquer outra situação, inclusive
+  `PROCESSANDO` com o botão "Importar", a CLI manda conferir antes de repetir (#1036).
+- `ctbz extratos excluir` termina com erro, sem enviar nada, quando não consegue ler a situação
+  da competência antes da exclusão; sem ela, a releitura depois não confirma nada (#1038).
+- `ctbz extratos importar --saldo-final` envia o valor da flag como saldo do último dia do OFX
+  quando a Contabilizei não lê saldo nenhum ou lê R$ 0,00 (visto com um OFX do Banco Inter, que
+  ficava com o saldo zerado), com um aviso no stderr, como quem corrige o campo na tela do
+  painel. Saldo lido diferente e não zero continua parando a importação, como antes (ADR-0024);
+  no terminal, sem `--yes`, a CLI mostra os dois valores e pergunta qual vai. O resumo da
+  confirmação mostra o saldo de `--saldo-final` (#1043).
+- `ctbz extratos importar`: o resultado ganha `saldo_lido` (o saldo do último dia que a
+  Contabilizei leu do OFX, nulo se não leu) e `saldo_divergente` (verdadeiro quando foi o de
+  `--saldo-final` no lugar de um lido diferente ou ausente), para scripts e agentes não
+  dependerem do stderr (#1044).
+
 ## [1.9.3] - 2026-10-26
 
 Correções críticas, planejadas como v1.9.1 e lançadas depois da 1.9.2: nenhuma escrita sai mais com
@@ -529,7 +563,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.3...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.4...HEAD
+[1.9.4]: https://github.com/edusouza/ctbz-cli/compare/v1.9.3...v1.9.4
 [1.9.3]: https://github.com/edusouza/ctbz-cli/compare/v1.9.2...v1.9.3
 [1.9.2]: https://github.com/edusouza/ctbz-cli/compare/v1.9.0...v1.9.2
 [1.9.0]: https://github.com/edusouza/ctbz-cli/compare/v1.8.1...v1.9.0

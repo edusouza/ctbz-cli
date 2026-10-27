@@ -168,6 +168,18 @@ Convenções:
   como diz a confirmação do painel. Não se sabe se o `DELETE` dispara um reprocessamento nem em
   que situação a competência termina. Por isso a CLI relê a competência depois de uma falha e
   não afirma que ela voltou a ficar pendente.
+- **Situação depois da exclusão (observado em 26/10/2026, Banco Inter, pelo painel e pela CLI):**
+  a competência fica `PROCESSANDO` com `exibirBotaoImportar: true` em `v2/extratos`, e não sai
+  desse estado sozinha. `extrato/info` responde `quantidadeLancamentos: 0`,
+  `permiteExclusaoExtrato: true` e `permiteEditarLancamento: false`. O painel mostra o selo
+  "Processando" **com** o botão "Importar", e a importação (upload, `info-extrato`,
+  `eventoUploadExtrato`) funciona: em cerca de 20 s a competência passa a `IMPORTADO`. O mesmo
+  par (`PROCESSANDO`, `exibirBotaoImportar: true`) aparece logo depois de um `eventoUploadExtrato`,
+  enquanto o arquivo é processado, e `v2/extratos` não distingue os dois casos. Por isso a CLI só
+  importa sobre esse par quando `extrato/info` responde `quantidadeLancamentos: 0` e o registro
+  local (`acoes.jsonl`) não tem um `eventoUploadExtrato` da mesma conta há menos de 30 minutos;
+  com lançamentos, sem a contagem ou com a leitura falhando, recusa (#1035). O `DELETE` também
+  só é recusado como "nada a excluir" com `quantidadeLancamentos: 0` (#1037).
 
 ### 1.7 `POST movimentacao-financeira/eventoUploadExtrato`: concluir a importação do extrato
 
@@ -205,11 +217,16 @@ Convenções:
   - `GET movimentacao-financeira/extrato/info?idContaBancaria&ano&mes` traz `quantidadeLancamentos`
     (e `urlDownloadExtrato`, uma URL assinada do OFX gerado, que a CLI não usa nem mostra);
   - `GET movimentacao-financeira/v2/extratos` traz `exibirBotaoImportar: false` nas competências
-    `IMPORTADO`: o painel não oferece importar de novo sem excluir antes (seção 1.6).
+    `IMPORTADO`: o painel não oferece importar de novo sem excluir antes (seção 1.6). Enquanto o
+    extrato recém-importado é processado, a competência fica `PROCESSANDO` com
+    `exibirBotaoImportar: true` (o mesmo par de depois de uma exclusão, seção 1.6).
 
-  Por isso a CLI recusa importar sobre uma competência `IMPORTADO` ou `PROCESSANDO` (com a
-  mensagem certa quando ela está vazia), avisa depois de importar quando a competência termina
-  sem lançamentos e oferece `--substituir`, que faz o caminho do painel para reimportar: o
+  Por isso a CLI recusa importar sobre uma competência `IMPORTADO` (com a mensagem certa quando
+  ela está vazia) ou `PROCESSANDO` sem o botão "Importar". `PROCESSANDO` com
+  `exibirBotaoImportar: true` só é importável nas condições da seção 1.6 (zero lançamentos em
+  `extrato/info` e nenhuma importação recente da conta no registro local). A CLI avisa depois de
+  importar quando a competência termina sem lançamentos ou ainda em processamento (aí, para não
+  importar de novo) e oferece `--substituir`, que faz o caminho do painel para reimportar: o
   `DELETE` da seção 1.6 e, em seguida, o envio e a conclusão, numa confirmação só.
 
 ### 1.8 `GET movimentacao-financeira/permiteImportacao/{idContaBancaria}/{ano}/{mes}` (só leitura)
@@ -419,14 +436,18 @@ ctbz contas-bancarias adicionar --banco <id|código> --agencia 1234 --conta 1234
 ctbz contas-bancarias editar <id> [--agencia …] [--conta …] [--abertura …]
 ctbz contas-bancarias remover <id>                 # risco alto: confirmação + --yes
 ctbz extrato importar arquivo.ofx --conta-bancaria <id> --competencia 2026-09 \
-                      [--saldo-final 1234.56]      # permiteImportacao → bucket → info-extrato → eventoUploadExtrato
+                      [--saldo-final 1.234,56]     # permiteImportacao → bucket → info-extrato → eventoUploadExtrato
 ctbz extrato enviar arquivo.pdf --conta-bancaria <id> --competencia 2026-09   # rota Central de Documentos
 ctbz aplicacoes sem-movimento --conta-bancaria <id> --pendencia <id>…        # sem-aplicacao-financeira
 ```
 
 Para `importar`, recomenda-se o fluxo (a). Ele valida período, banco e conta e devolve o
-saldo do último dia, que a CLI pode mostrar e confirmar ou receber via `--saldo-final`. O `nomeArquivo` deve ser
-gerado no mesmo formato do front.
+saldo do último dia (`info-extrato`), que vai como `valor` em `SALDO_ULTIMO_MES` (seção 1.7). A
+CLI mostra e confirma o saldo lido. Com `--saldo-final`, o campo da tela do painel é editável e
+a CLI faz o mesmo nos casos em que a leitura falha (ADR-0024): igual ao lido, vai o lido; lido
+ausente ou R$ 0,00 (visto com um OFX do Banco Inter que tinha saldo), vai o da flag, com aviso;
+lido diferente e não zero, a importação para antes do `eventoUploadExtrato`, a menos que a
+troca seja confirmada no terminal. O `nomeArquivo` deve ser gerado no mesmo formato do front.
 
 ---
 

@@ -110,4 +110,7 @@ quer dizer aceita pela Contabilizei, mas ainda não visível na releitura: não 
 
 `extratos importar` acrescenta `competencia`, `importacao` (`automatica` para OFX/PDF; `manual`
 para CSV/XLS, que a Contabilizei importa em até 45 dias, com `situacao: "enviado"`), `arquivo`,
-`saldo_ultimo_dia`, `situacao_extrato`, `quantidade_lancamentos` e `substituiu_extrato`.
+`saldo_ultimo_dia` (o saldo enviado na conclusão do OFX), `saldo_lido` (o que a Contabilizei
+leu do arquivo; nulo se não leu, no PDF e no envio manual), `saldo_divergente` (verdadeiro quando
+foi o de `--saldo-final` no lugar de um lido diferente ou ausente), `situacao_extrato`,
+`quantidade_lancamentos` e `substituiu_extrato`.

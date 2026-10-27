@@ -40,39 +40,57 @@ dispensa importação) cujo mês `M` falta:
    de uma falha de conexão; peça ao usuário para conferir na Central de Documentos do painel.
    CSV/XLS não aceitam `--substituir` e são recusados sobre um extrato já importado.
 2. Num OFX, leia o saldo final no próprio arquivo (`<LEDGERBAL>` → `<BALAMT>`) e mostre ao
-   usuário para conferir.
+   usuário. Só siga para o `--yes` depois do "ok" dele sobre esse valor: a conferência vem
+   antes da importação, não depois.
 3. Simule e importe (risco médio):
    ```sh
    ctbz extratos importar ARQ --conta-bancaria ID --competencia M --saldo-final 1.234,56 --dry-run
    ctbz extratos importar ARQ --conta-bancaria ID --competencia M --saldo-final 1.234,56 --yes
    ```
-   `--saldo-final` só vale para OFX. Sempre informe: com `--yes` e sem ele, a CLI aceita sem
-   conferir o saldo que a Contabilizei leu. Saldo diferente = a importação para; confira o
-   arquivo com o usuário. Em PDF, omita a flag.
+   `--saldo-final` só vale para OFX. Sempre informe o saldo do arquivo. Se a Contabilizei não
+   leu saldo ou leu R$ 0,00 (já aconteceu com um OFX do Banco Inter), vai o da flag, com aviso
+   no stderr. Se ela leu outro valor não zero, a importação **para** antes da conclusão (código
+   1) com os dois valores na mensagem: mostre-os ao usuário e confira o arquivo; não troque o
+   valor da flag pelo lido sem o "ok" dele. Se o certo é o do arquivo, peça ao usuário para
+   rodar o comando no terminal dele, sem `--yes`, e confirmar a troca. Sem a flag, com `--yes`
+   vai o saldo lido, sem conferência. No JSON, `saldo_divergente: true` diz que foi o da flag no
+   lugar de um lido diferente ou ausente (`saldo_lido`): informe ao usuário. Em PDF, omita a
+   flag. Com `--substituir`, a divergência só aparece depois da exclusão do extrato antigo:
+   confira o saldo antes.
 4. Mensagens de "outro banco", "outra conta", "conta não cadastrada" (cadastre com
    `ctbz contas-bancarias adicionar`, skill `cadastro-e-acessos`) e período anterior pendente
    vêm traduzidas: siga o que dizem.
-5. Competência já `IMPORTADO` ou `PROCESSANDO`: a CLI recusa. Se o extrato atual está vazio
+5. Competência já `IMPORTADO` ou `PROCESSANDO`: a CLI recusa, menos `PROCESSANDO` com o botão
+   "Importar" do painel e sem lançamentos, que é como o mês fica depois de excluir o extrato:
+   aí a CLI importa e avisa. O mesmo par aparece logo depois de uma importação; a CLI só aceita
+   quando `extrato/info` confirma zero lançamentos e não houve importação da conta pela CLI nos
+   últimos 30 minutos. Se ela recusar dizendo que o extrato pode estar em processamento, não
+   insista nem use `--substituir`: espere, rode `ctbz extratos` e mostre ao usuário. Depois de
+   importar com a competência ainda `PROCESSANDO`, nunca rode `importar` de novo para o mesmo
+   mês, mesmo com o botão "Importar" visível. Se o extrato atual está vazio
    (criado pelo processamento de outro mês) ou é o arquivo errado, refaça com `--substituir`
    (exclui o atual e importa): mostre o `--dry-run` e confirme com o usuário. Com lançamentos é
    risco alto (as classificações se perdem). Depois de importar, confira `quantidade_lancamentos`:
    zero com um arquivo que tem movimentações é problema.
 6. Conexão caiu ou o servidor respondeu com erro 5xx (502, 504…) no envio do arquivo: a CLI
    relê a competência e diz se é seguro repetir ("nada foi importado e é seguro rodar o mesmo
-   comando de novo"). Só repita nesse caso, uma vez. Se ela mandar conferir (competência
-   `IMPORTADO`/`PROCESSANDO`, ou queda/5xx ao concluir), rode `ctbz extratos` e
+   comando de novo"), o que só acontece com a competência pendente. Só repita nesse caso, uma
+   vez. Se ela mandar conferir (qualquer outra situação, inclusive `PROCESSANDO` com o botão
+   "Importar", ou queda/5xx ao concluir), rode `ctbz extratos` e
    `ctbz extratos lancamentos` e mostre ao usuário antes de qualquer nova tentativa. Depois de
    um `--substituir` que excluiu o extrato antigo e falhou, nunca repita com `--substituir` sem
    conferir: se o novo arquivo entrou, ele seria excluído. A mensagem diz a situação relida da
-   competência: com `PROCESSANDO`, não importe de novo agora; espere e confira com
-   `ctbz extratos`.
+   competência e o que fazer: rodar `importar` de novo (pendente ou `PROCESSANDO` à espera de
+   um arquivo) ou esperar e conferir com `ctbz extratos` (`PROCESSANDO` sem o botão "Importar").
 
 Importou o mês errado? `ctbz extratos excluir` é **risco alto** (perde as classificações).
-Não use `excluir` para destravar um mês em `PROCESSANDO`: a Contabilizei aceita e nada muda, e a
-CLI termina com erro. Peça ao usuário para importar o OFX (ou o PDF) pela tela "Importar extrato"
-do painel, que funciona nesse estado, ou para abrir um chamado. Se o mês estava `IMPORTADO` e só
-passou a `PROCESSANDO` depois do `excluir`, a exclusão valeu (saída `excluido`): espere sair desse
-estado e confira com `ctbz extratos` antes de importar de novo.
+Depois do `excluir`, o mês fica `PROCESSANDO` com o botão "Importar" até o novo arquivo entrar
+(saída `excluido`): importe com `ctbz extratos importar`. Nesse estado, sem lançamentos, não há
+o que excluir, e a CLI recusa o `excluir`; com lançamentos, é um extrato recém-importado em
+processamento: espere ele ficar `IMPORTADO` e rode o `excluir` de novo. Um mês `PROCESSANDO`
+sem o botão não destrava com `excluir` (a
+Contabilizei aceita e nada muda, e a CLI termina com erro): peça ao usuário para importar pela
+tela "Importar extrato" do painel ou abrir um chamado.
 
 ## 2. Classificar lançamentos do extrato
 

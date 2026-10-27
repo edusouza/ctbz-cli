@@ -91,3 +91,4 @@ nav:
       - "0021 Fixtures sintéticas": adr/0021-tipos-e-fixtures-sinteticos.md
       - "0022 Classificação de notas de entrada": adr/0022-classificacao-de-notas-de-entrada.md
       - "0023 Licença": adr/0023-licenca-nao-comercial-com-uso-pela-propria-empresa.md
+      - "0024 Saldo final do extrato": adr/0024-saldo-final-do-extrato.md

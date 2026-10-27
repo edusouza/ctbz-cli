@@ -98,6 +98,7 @@ func Endpoints() []Endpoint {
 		{Name: "caixa_categorias", LivePath: PathCaixa(2026, 9), Type: CaixaCategorias{}}, // sintética (ADR-0021)
 		{Name: "contas_usuario", LivePath: PathContasUsuario, Type: []ContaUsuario{}},
 		{Name: "contas_usuario_competencia", LivePath: PathContasUsuarioCompetencia(2026, 9, OrigemExtrato), Type: []ContaUsuarioCompetencia{}}, // sintética (ADR-0021)
+		// extratos: exibirBotaoImportar e a competência PROCESSANDO são sintéticos (ADR-0021, #1041).
 		{Name: "extratos", LivePath: PathExtratos, Type: []Extrato{}},
 		{Name: "lancamentos_extrato", Type: []LancamentoExtrato{}},                                // sintética (ADR-0021), no formato real (#852); a conta vem de extratos
 		{Name: "permite_importacao", Type: PermiteImportacao{}},                                   // sintética (ADR-0021); a conta vem de extratos

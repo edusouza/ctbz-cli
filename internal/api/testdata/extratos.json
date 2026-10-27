@@ -7,7 +7,8 @@
     "mes": 10,
     "numeroConta": "000000000",
     "situacao": "ABERTO",
-    "statusIntegracao": null
+    "statusIntegracao": null,
+    "exibirBotaoImportar": null
   },
   {
     "agencia": "0000",
@@ -27,6 +28,18 @@
     "mes": 8,
     "numeroConta": "000000000",
     "situacao": "IMPORTADO",
-    "statusIntegracao": "INTEGRADA"
+    "statusIntegracao": "INTEGRADA",
+    "exibirBotaoImportar": false
+  },
+  {
+    "agencia": "0000",
+    "ano": 2026,
+    "banco": "Contabilizei Conta PJ",
+    "idContaBancaria": 1000000000000001,
+    "mes": 7,
+    "numeroConta": "000000000",
+    "situacao": "PROCESSANDO",
+    "statusIntegracao": "PENDENTE",
+    "exibirBotaoImportar": true
   }
 ]

@@ -8,12 +8,22 @@ informações adicionais das movimentações se perdem; não dá para desfazer, 
 reclassificar. Se os contadores já concluíram a classificação, o painel não deixa excluir, e a
 CLI também não.
 
-Com a competência em processamento (PROCESSANDO, já visto depois de um arquivo recusado), a
-Contabilizei pode aceitar a exclusão sem mudar nada. A confirmação avisa disso e, se a
-competência estava e continua PROCESSANDO, o comando termina com erro em vez de informar a
+Antes de enviar, a CLI lê a situação da competência; se a leitura falhar, termina com erro
+sem enviar nada (sem ela não dá para confirmar a exclusão depois).
+
+Depois da exclusão, a competência fica PROCESSANDO com o botão "Importar" do painel e sem
+lançamentos até um novo arquivo entrar: importe-o com ctbz extratos importar. Nesse estado
+não há o que excluir, e o comando termina com erro sem enviar nada. O mesmo par (PROCESSANDO
+com o botão) aparece nos minutos em que a Contabilizei processa um extrato recém-importado: se
+extrato/info mostra lançamentos (ou não diz quantos), o comando também termina sem enviar
+nada, mas manda esperar o processamento terminar e rodar de novo.
+
+Com a competência em processamento sem o botão "Importar" (já visto depois de um arquivo
+recusado), a Contabilizei pode aceitar a exclusão sem mudar nada. A confirmação avisa disso e,
+se a competência estava e continua PROCESSANDO, o comando termina com erro em vez de informar a
 exclusão: importe o arquivo pela tela "Importar extrato" do painel ou abra um chamado. Se ela
-só passou a PROCESSANDO depois do envio (já visto com um extrato IMPORTADO), a exclusão vale:
-espere a competência sair desse estado e confira com ctbz extratos antes de importar de novo.
+só passou a PROCESSANDO depois do envio, sem o botão, a exclusão vale: espere a competência sair
+desse estado e confira com ctbz extratos antes de importar de novo.
 
 Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.
 

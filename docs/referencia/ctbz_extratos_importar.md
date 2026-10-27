@@ -9,7 +9,15 @@ Antes de enviar, a CLI confere o tamanho (até 30 MB), se o banco aceita o forma
 (a lista vem da Contabilizei, e a mensagem de erro a mostra; OFX fora da lista passa com um
 aviso, porque o painel o importa assim mesmo, como no Inter), se a conta é integrada (essas
 não precisam de importação), se há um período anterior pendente e se a competência já foi
-importada ou está em processamento (o painel também não deixa importar por cima).
+importada ou está em processamento: recusa IMPORTADO (o painel não mostra "Importar" nesse
+caso) e PROCESSANDO.
+
+A exceção é PROCESSANDO com o botão "Importar" do painel e sem nenhum lançamento: é como a
+competência fica depois de excluir o extrato, até um novo arquivo entrar, e aí a CLI importa,
+como o painel. O mesmo par (PROCESSANDO com o botão) aparece nos minutos em que a Contabilizei
+processa um extrato recém-importado; por isso a CLI só importa se extrato/info confirma zero
+lançamentos e se o registro de ações (ctbz acoes) não tem uma importação desta conta concluída
+há menos de 30 minutos. Senão, recusa e manda conferir com ctbz extratos.
 CSV, XLS e os outros formatos de importação manual também são recusados sobre um extrato
 importado, para a importação manual não duplicar os lançamentos, e não aceitam --substituir.
 
@@ -17,8 +25,16 @@ OFX e PDF passam pela tela "Importar extrato":
 
   1. envia o arquivo;
   2. no OFX, lê o saldo do último dia que a Contabilizei encontrou e pede para confirmar
-     (ou compara com --saldo-final; diferente, a importação para);
+     (--yes aceita o lido). Com --saldo-final igual ao lido, segue. Se a Contabilizei não leu
+     saldo ou leu R$ 0,00 (visto com um OFX do Banco Inter que tinha saldo), vai o da flag,
+     com um aviso. Lido diferente e não zero: no terminal, sem --yes, a CLI mostra os dois e
+     pergunta se vai o da flag; com --yes ou sem terminal, a importação para;
   3. conclui a importação.
+
+O resultado traz saldo_ultimo_dia (o enviado), saldo_lido (o que a Contabilizei leu, nulo se
+não leu) e saldo_divergente (verdadeiro quando foi o de --saldo-final no lugar de um lido
+diferente ou ausente). Com --substituir, o saldo lido só é conhecido depois da exclusão: se
+ele divergir e a importação parar, o extrato antigo já foi excluído.
 
 Os demais formatos que o banco aceita (CSV, XLS…) vão pela Central de Documentos, como no
 painel: um envio só, sem conclusão nem saldo, e a Contabilizei importa o arquivo manualmente,
@@ -26,8 +42,9 @@ em até 45 dias. O resultado sai com situacao "enviado" e importacao "manual". A
 a competência continua PENDENTE em ctbz extratos, o que é o esperado: não envie o arquivo de
 novo; acompanhe na Central de Documentos do painel.
 
-Ao final, a CLI relê a competência: em processamento, avisa para conferir depois; importada
-sem nenhum lançamento, avisa no stderr.
+Ao final, a CLI relê a competência: em processamento, avisa para conferir depois e não
+importar de novo (o botão "Importar" do painel pode continuar visível enquanto isso);
+importada sem nenhum lançamento, avisa no stderr.
 
 Para refazer a importação de um mês já importado (ex.: um extrato vazio criado pelo
 processamento de outro mês, ou o arquivo errado), use --substituir: a CLI exclui o extrato
@@ -35,9 +52,9 @@ atual e importa o arquivo, com uma confirmação só, como excluir e importar no
 extrato atual tem lançamentos, o risco é alto (as classificações se perdem; digite
 "confirmo"); se está vazio, é médio. Se os contadores já concluíram a classificação, o painel
 não deixa excluir, e a CLI também não. Se a exclusão der certo e a importação falhar, a CLI
-relê a competência e diz em que situação ela ficou: pendente, corrija e rode o comando de novo,
-sem --substituir; PROCESSANDO (já visto depois de um arquivo recusado), espere e confira com
-ctbz extratos antes de importar de novo. Se a conexão cair ou o
+relê a competência e diz em que situação ela ficou: pendente ou PROCESSANDO com o botão
+"Importar" do painel, corrija e rode o comando de novo, sem --substituir; PROCESSANDO sem o
+botão, espere e confira com ctbz extratos antes de importar de novo. Se a conexão cair ou o
 servidor responder com erro 5xx ao concluir, não se sabe se o novo arquivo entrou: confira
 antes de qualquer nova tentativa, e não use --substituir, que excluiria o extrato novo.
 
@@ -45,11 +62,12 @@ Se a importação parar depois do envio (saldo recusado, extrato de outra compet
 arquivo fica enviado mas o extrato não é efetivado; corrija e rode o comando de novo.
 
 Se a conexão cair ou o servidor responder com erro 5xx (502, 504…) no envio do arquivo, a CLI
-relê a situação do extrato: se a competência continua como estava (ex.: PENDENTE), nada foi
+relê a situação do extrato: se a competência continua pendente (ou não aparece), nada foi
 efetivado e é seguro rodar o mesmo comando de novo (o arquivo vai com o mesmo nome e substitui
-o anterior). Se isso acontecer ao concluir a importação, ou se a competência já aparecer como
-IMPORTADO ou PROCESSANDO, a importação pode ter sido aplicada: confira com ctbz extratos e ctbz
-extratos lancamentos antes de repetir, para não importar duas vezes.
+o anterior). Se isso acontecer ao concluir a importação, ou se a competência aparecer em
+qualquer outra situação (IMPORTADO, PROCESSANDO com ou sem o botão "Importar"…), a importação
+pode ter sido aplicada: confira com ctbz extratos e ctbz extratos lancamentos antes de
+repetir, para não importar duas vezes.
 
 Pede confirmação (--yes em scripts) e aceita --dry-run, que mostra o envio e a conclusão sem
 enviar nada.
@@ -77,7 +95,7 @@ ctbz extratos importar ARQUIVO [flags]
       --competencia string   competência AAAA-MM (obrigatória)
       --conta-bancaria int   id da conta bancária (ver ctbz contas-bancarias) (obrigatória)
       --dry-run              mostra a requisição que seria enviada, sem enviar
-      --saldo-final string   saldo do último dia esperado (OFX); diferente do lido, a importação para
+      --saldo-final string   saldo do último dia (OFX): vai no lugar de um saldo lido zero ou ausente; diferente de um lido não zero, a importação para (no terminal, pergunta)
       --substituir           se o extrato do mês já foi importado, exclui-o antes e importa este arquivo (como excluir e importar no painel)
   -y, --yes                  envia sem pedir confirmação (obrigatório sem terminal)
 ```
