@@ -294,3 +294,12 @@ go test ./...
 ```
 
 Os testes simulam o fluxo de login com um servidor local, sem tocar na Contabilizei.
+
+## Licença
+
+Source-available, pela [PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0/)
+com uma permissão adicional: você pode usar o `ctbz` para administrar a sua própria empresa,
+mas não para prestar serviço remunerado a terceiros nem como parte de um produto. O fornecedor
+do serviço que a CLI acessa não recebe essa permissão. Texto completo no [`LICENSE`](LICENSE),
+resumo em [docs/licenca.md](docs/licenca.md) e licenças das dependências no
+[`THIRD_PARTY_NOTICES`](THIRD_PARTY_NOTICES).

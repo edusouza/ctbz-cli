@@ -26,6 +26,7 @@ go run ./tools/gendocs                    # regenera docs/referencia (teste queb
 python3 scripts/gerar-comandos-skill.py   # regenera skills/assessor/references/comandos.md depois do gendocs
 go run ./tools/capture NOME               # captura, poda e anonimiza uma fixture em internal/api/testdata
 go run ./tools/releasenotes vX.Y.0        # notas da release a partir do CHANGELOG
+go run ./tools/notices                    # regenera THIRD_PARTY_NOTICES (teste quebra se faltar dependência do go.mod)
 
 pip install -r docs/requirements.txt && mkdocs build --strict   # docs (também no CI)
 python3 -m unittest discover -s scripts                          # testes dos scripts Python
@@ -107,6 +108,8 @@ erro/confirmação recusada, `2` uso incorreto, `3` login pendente, `4` atençã
   comandos, campos JSON ou fluxos mudam,
   linha em `[Unreleased]` do `CHANGELOG.md`, ADR se houve decisão com alternativas.
 - Nenhum dado pessoal real (CPF, CNPJ, nomes, e-mails, valores) em código, testes, fixtures ou docs.
+- Licença (ADR-0023): PolyForm Noncommercial + permissão adicional para administrar a própria
+  empresa (`LICENSE`); não chamar o projeto de open source.
 - Release: mover `[Unreleased]` para `[X.Y.0]` no CHANGELOG, atualizar links e `ROADMAP.md`; após
   o merge, `git tag -a vX.Y.0` dispara GoReleaser (`.github/workflows/release.yml`).
 

@@ -203,6 +203,12 @@ As análises (Fator R, distribuição de lucros, limites do Simples) são **esti
 não substituem o contador responsável. Em caso de dúvida jurídica ou fora do padrão, o agente
 diz que é preciso confirmar com a Contabilizei.
 
+## Licença
+
+As skills seguem a mesma licença do `ctbz` ([`LICENSE`](../LICENSE)): use-as para administrar a
+sua própria empresa, mas não para prestar serviço remunerado a terceiros nem como parte de um
+produto. Resumo em [docs/licenca.md](../docs/licenca.md).
+
 ## Solução de problemas
 
 | Sintoma | Causa e o que fazer |
