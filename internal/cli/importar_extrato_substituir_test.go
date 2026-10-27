@@ -254,3 +254,31 @@ func TestExtratosImportarSubstituirAguardandoArquivo(t *testing.T) {
 		t.Errorf("código %d, escritas %q\n%s", code, f.writes, stderr)
 	}
 }
+
+// Com --substituir, o saldo lido só é conhecido depois da exclusão: a confirmação avisa, e a
+// divergência para a importação com o extrato antigo já excluído, dizendo em que situação a
+// competência ficou (#1043).
+func TestExtratosImportarSubstituirSaldoDivergente(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.ofx")
+	f, _ := importarFake(t, mt, "ofx")
+	f.gets[pathExtratos] = extratosNaSituacao("IMPORTADO")
+	f.gets[pathInfoExtrato9] = `{"permiteEditarLancamento":true,"permiteExclusaoExtrato":true,"quantidadeLancamentos":3}`
+	f.onWrite = func(f *escritaFake) {
+		if strings.HasPrefix(f.writes[len(f.writes)-1], "DELETE ") {
+			f.gets[pathExtratos] = extratosNaSituacao("PENDENTE")
+		}
+	}
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--substituir", "--saldo-final", "1000", "--yes")...)
+	if code != ExitError || len(f.writes) != 2 || !strings.HasPrefix(f.writes[0], "DELETE ") || !strings.Contains(f.writes[1], "enviar/bucket") {
+		t.Fatalf("código %d, escritas %q\n%s", code, f.writes, stderr)
+	}
+	for _, want := range []string{
+		"O saldo lido pela Contabilizei só é conhecido depois da exclusão: se ele for diferente de --saldo-final e não zero, a importação para com o extrato atual já excluído.",
+		"o extrato antigo de 09/2026 foi excluído e a competência está PENDENTE, mas o novo arquivo não foi importado",
+		"diferente de --saldo-final R$ 1.000,00 (importação não concluída)",
+	} {
+		if !strings.Contains(stderr, want) {
+			t.Errorf("stderr sem %q:\n%s", want, stderr)
+		}
+	}
+}

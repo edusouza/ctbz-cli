@@ -436,14 +436,18 @@ ctbz contas-bancarias adicionar --banco <id|código> --agencia 1234 --conta 1234
 ctbz contas-bancarias editar <id> [--agencia …] [--conta …] [--abertura …]
 ctbz contas-bancarias remover <id>                 # risco alto: confirmação + --yes
 ctbz extrato importar arquivo.ofx --conta-bancaria <id> --competencia 2026-09 \
-                      [--saldo-final 1234.56]      # permiteImportacao → bucket → info-extrato → eventoUploadExtrato
+                      [--saldo-final 1.234,56]     # permiteImportacao → bucket → info-extrato → eventoUploadExtrato
 ctbz extrato enviar arquivo.pdf --conta-bancaria <id> --competencia 2026-09   # rota Central de Documentos
 ctbz aplicacoes sem-movimento --conta-bancaria <id> --pendencia <id>…        # sem-aplicacao-financeira
 ```
 
 Para `importar`, recomenda-se o fluxo (a). Ele valida período, banco e conta e devolve o
-saldo do último dia, que a CLI pode mostrar e confirmar ou receber via `--saldo-final`. O `nomeArquivo` deve ser
-gerado no mesmo formato do front.
+saldo do último dia (`info-extrato`), que vai como `valor` em `SALDO_ULTIMO_MES` (seção 1.7). A
+CLI mostra e confirma o saldo lido. Com `--saldo-final`, o campo da tela do painel é editável e
+a CLI faz o mesmo nos casos em que a leitura falha (ADR-0024): igual ao lido, vai o lido; lido
+ausente ou R$ 0,00 (visto com um OFX do Banco Inter que tinha saldo), vai o da flag, com aviso;
+lido diferente e não zero, a importação para antes do `eventoUploadExtrato`, a menos que a
+troca seja confirmada no terminal. O `nomeArquivo` deve ser gerado no mesmo formato do front.
 
 ---
 

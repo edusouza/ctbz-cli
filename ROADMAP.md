@@ -49,7 +49,7 @@ críticos e cada versão seguinte fecha **um tema** de correção, com os achado
 | **v1.9** | Segunda via da mensalidade, extratos em CSV/XLS e diagnóstico | — | 5 | concluída |
 | **v1.9.2** | Extratos do Banco Inter: OFX e mês preso em processamento | — | 2 | concluída |
 | **v1.9.3** | Correções críticas (planejada como v1.9.1) | [#943](https://github.com/edusouza/ctbz-cli/issues/943) | 16 | concluída |
-| **v1.9.4** | Extratos do Banco Inter: mês excluído e saldo do último dia | [#1034](https://github.com/edusouza/ctbz-cli/issues/1034) | 8 | em andamento |
+| **v1.9.4** | Extratos do Banco Inter: mês excluído e saldo do último dia | [#1034](https://github.com/edusouza/ctbz-cli/issues/1034) | 11 | em andamento |
 | **v1.10** | Saída segura: caracteres de controle, CSV, segredos e dados pessoais | [#944](https://github.com/edusouza/ctbz-cli/issues/944) | 50 | planejada |
 | **v1.11** | Escrita segura e `--dry-run` | [#945](https://github.com/edusouza/ctbz-cli/issues/945) | 78 | planejada |
 | **v1.12** | Depois do envio: releitura, situação e orientação | [#946](https://github.com/edusouza/ctbz-cli/issues/946) | 66 | planejada |
@@ -447,7 +447,8 @@ Fora de escopo: achados de prioridade alta que não enviam escrita errada (v1.10
 Review: [#1034](https://github.com/edusouza/ctbz-cli/issues/1034) · label `versão: v1.9.4`
 
 Continuação da v1.9.2 no uso real (26/10/2026): depois de excluir o extrato, o mês fica `PROCESSANDO` com o botão
-"Importar" e a CLI recusava importar (#1031). Correção curta, fora das versões por tema. As issues abaixo são os
+"Importar" e a CLI recusava importar (#1031), e a Contabilizei leu R$ 0,00 como saldo do último dia de um OFX
+com saldo (#1032). Correção curta, fora das versões por tema. As issues abaixo são os
 achados do review adversarial da PR, todos corrigidos nela.
 
 | | Issue | Correção | Tipo |
@@ -460,6 +461,9 @@ achados do review adversarial da PR, todos corrigidos nela.
 | ✅ | [#1040](https://github.com/edusouza/ctbz-cli/issues/1040) | doc de API (seção 1.7) sem "recusa todo `PROCESSANDO`" | documentação |
 | ✅ | [#1041](https://github.com/edusouza/ctbz-cli/issues/1041) | fixture com `exibirBotaoImportar` e teste de `AguardaArquivo` | testes |
 | ✅ | [#1042](https://github.com/edusouza/ctbz-cli/issues/1042) | PR com `Closes #N` e versão no ROADMAP | manutenção |
+| ✅ | [#1043](https://github.com/edusouza/ctbz-cli/issues/1043) | `--saldo-final` só substitui saldo lido zero ou ausente (ADR-0024) | bug |
+| ✅ | [#1044](https://github.com/edusouza/ctbz-cli/issues/1044) | resultado com `saldo_lido` e `saldo_divergente` | bug |
+| ✅ | [#1045](https://github.com/edusouza/ctbz-cli/issues/1045) | doc de API do saldo coerente com a regra | documentação |
 
 ## v1.10 — Saída segura: caracteres de controle, CSV, segredos e dados pessoais
 

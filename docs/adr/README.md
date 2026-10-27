@@ -27,3 +27,4 @@ decisão nova, copie o [modelo](template.md) e use o próximo número (ver [ADR-
 | [0020](0020-confirmacao-e-simulacao.md) | Confirmação e simulação num helper único, com o `--dry-run` como um `Sender` | aceita |
 | [0021](0021-tipos-e-fixtures-sinteticos.md) | Tipos e fixtures sintéticos para endpoints sem captura real | aceita |
 | [0022](0022-classificacao-de-notas-de-entrada.md) | Classificar notas de entrada pela base `/api/emissor/`, reenviando os objetos como vieram | aceita |
+| [0024](0024-saldo-final-do-extrato.md) | Usar `--saldo-final` só no lugar de um saldo lido zero ou ausente | aceita |
