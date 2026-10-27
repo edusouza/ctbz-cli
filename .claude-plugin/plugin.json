@@ -1,6 +1,6 @@
 {
   "name": "ctbz",
-  "version": "1.9.3",
+  "version": "1.9.4",
   "description": "Skills que fazem um agente operar a Contabilizei pela CLI ctbz como um assessor contábil: checkup do CNPJ, fechamento do mês, impostos, planejamento tributário (Fator R), lucros e informe de rendimentos, notas e clientes, cadastro e acessos.",
   "author": {
     "name": "Eduardo Oliveira de Souza"
