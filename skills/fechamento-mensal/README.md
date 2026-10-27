@@ -56,15 +56,19 @@ Mensagens como "outro banco", "conta não cadastrada" ou "período anterior pend
 traduzidas e o agente segue o que dizem (conta nova: skill
 [`cadastro-e-acessos`](../cadastro-e-acessos/README.md)).
 
-Competência já `IMPORTADO` ou `PROCESSANDO`: a CLI recusa, como o painel. O processamento de um
+Competência já `IMPORTADO` ou `PROCESSANDO`: a CLI recusa, como o painel. A exceção, também como
+no painel, é `PROCESSANDO` com o botão "Importar" e sem lançamentos, que é como o mês fica depois
+de excluir o extrato: aí a CLI importa, com um aviso. Como o mesmo estado aparece logo depois de
+uma importação, a CLI confere a quantidade de lançamentos e o registro de ações antes, e recusa
+se o extrato pode estar em processamento, para não importar o mês duas vezes. O processamento de um
 extrato pode deixar o mês seguinte `IMPORTADO` sem nenhum lançamento, e a mensagem avisa quando
 o extrato está vazio. Para refazer a importação (extrato vazio ou arquivo errado), o agente usa
 `--substituir`, que exclui o extrato atual e importa o arquivo numa confirmação só: mostra o
 `--dry-run` (exclusão, envio e conclusão) e pede o seu "ok". Com o extrato atual vazio é risco
 médio; com lançamentos é **risco alto**, porque as classificações se perdem sem desfazer. O
 JSON traz `substituiu_extrato`. Se a exclusão der certo e o novo arquivo falhar, a CLI relê a
-competência e diz em que situação ela ficou. Com `PROCESSANDO`, o agente espera e confere antes
-de tentar de novo.
+competência e diz em que situação ela ficou. À espera de um arquivo, o agente importa de novo;
+com `PROCESSANDO` sem o botão "Importar", espera e confere antes de tentar de novo.
 
 Depois de importar, o agente confere `quantidade_lancamentos`: zero com um arquivo que tem
 movimentações é problema, e a CLI avisa no stderr.
