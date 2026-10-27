@@ -49,7 +49,7 @@ críticos e cada versão seguinte fecha **um tema** de correção, com os achado
 | **v1.9** | Segunda via da mensalidade, extratos em CSV/XLS e diagnóstico | — | 5 | concluída |
 | **v1.9.2** | Extratos do Banco Inter: OFX e mês preso em processamento | — | 2 | concluída |
 | **v1.9.3** | Correções críticas (planejada como v1.9.1) | [#943](https://github.com/edusouza/ctbz-cli/issues/943) | 16 | concluída |
-| **v1.9.4** | Extratos do Banco Inter: mês excluído e saldo do último dia | [#1034](https://github.com/edusouza/ctbz-cli/issues/1034) | 11 | em andamento |
+| **v1.9.4** | Extratos do Banco Inter: mês excluído e saldo do último dia | [#1034](https://github.com/edusouza/ctbz-cli/issues/1034) | 11 | concluída |
 | **v1.10** | Saída segura: caracteres de controle, CSV, segredos e dados pessoais | [#944](https://github.com/edusouza/ctbz-cli/issues/944) | 50 | planejada |
 | **v1.11** | Escrita segura e `--dry-run` | [#945](https://github.com/edusouza/ctbz-cli/issues/945) | 78 | planejada |
 | **v1.12** | Depois do envio: releitura, situação e orientação | [#946](https://github.com/edusouza/ctbz-cli/issues/946) | 66 | planejada |

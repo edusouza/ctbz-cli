@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.9.4] - 2026-10-27
+
+Extratos do Banco Inter, continuação da 1.9.2 no uso real: o mês excluído volta a ser importável pela CLI e
+`--saldo-final` corrige o saldo do último dia que a Contabilizei leu como zero ou não leu.
+
 ### Fixed
 
 - `ctbz extratos importar` importa a competência `PROCESSANDO` com o botão "Importar" do painel
@@ -549,7 +554,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.3...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.4...HEAD
+[1.9.4]: https://github.com/edusouza/ctbz-cli/compare/v1.9.3...v1.9.4
 [1.9.3]: https://github.com/edusouza/ctbz-cli/compare/v1.9.2...v1.9.3
 [1.9.2]: https://github.com/edusouza/ctbz-cli/compare/v1.9.0...v1.9.2
 [1.9.0]: https://github.com/edusouza/ctbz-cli/compare/v1.8.1...v1.9.0
