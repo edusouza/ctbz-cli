@@ -40,16 +40,23 @@ dispensa importação) cujo mês `M` falta:
    de uma falha de conexão; peça ao usuário para conferir na Central de Documentos do painel.
    CSV/XLS não aceitam `--substituir` e são recusados sobre um extrato já importado.
 2. Num OFX, leia o saldo final no próprio arquivo (`<LEDGERBAL>` → `<BALAMT>`) e mostre ao
-   usuário para conferir.
+   usuário. Só siga para o `--yes` depois do "ok" dele sobre esse valor: a conferência vem
+   antes da importação, não depois.
 3. Simule e importe (risco médio):
    ```sh
    ctbz extratos importar ARQ --conta-bancaria ID --competencia M --saldo-final 1.234,56 --dry-run
    ctbz extratos importar ARQ --conta-bancaria ID --competencia M --saldo-final 1.234,56 --yes
    ```
-   `--saldo-final` só vale para OFX. Sempre informe o saldo do arquivo: é o valor enviado, mesmo
-   que a Contabilizei tenha lido outro (já leu R$ 0,00 de um OFX do Banco Inter). Sem a flag,
-   com `--yes` vai o saldo lido, sem conferência. Se o stderr avisar que o saldo lido é
-   diferente, mostre os dois valores ao usuário. Em PDF, omita a flag.
+   `--saldo-final` só vale para OFX. Sempre informe o saldo do arquivo. Se a Contabilizei não
+   leu saldo ou leu R$ 0,00 (já aconteceu com um OFX do Banco Inter), vai o da flag, com aviso
+   no stderr. Se ela leu outro valor não zero, a importação **para** antes da conclusão (código
+   1) com os dois valores na mensagem: mostre-os ao usuário e confira o arquivo; não troque o
+   valor da flag pelo lido sem o "ok" dele. Se o certo é o do arquivo, peça ao usuário para
+   rodar o comando no terminal dele, sem `--yes`, e confirmar a troca. Sem a flag, com `--yes`
+   vai o saldo lido, sem conferência. No JSON, `saldo_divergente: true` diz que foi o da flag no
+   lugar de um lido diferente ou ausente (`saldo_lido`): informe ao usuário. Em PDF, omita a
+   flag. Com `--substituir`, a divergência só aparece depois da exclusão do extrato antigo:
+   confira o saldo antes.
 4. Mensagens de "outro banco", "outra conta", "conta não cadastrada" (cadastre com
    `ctbz contas-bancarias adicionar`, skill `cadastro-e-acessos`) e período anterior pendente
    vêm traduzidas: siga o que dizem.

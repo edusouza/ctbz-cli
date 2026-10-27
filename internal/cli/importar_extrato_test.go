@@ -65,35 +65,96 @@ func TestExtratosImportarOFX(t *testing.T) {
 	}
 }
 
-// --saldo-final é sempre o valor enviado: a Contabilizei já leu R$ 0,00 de um OFX com saldo
-// (Banco Inter), e a diferença do lido só vira aviso.
+// infoSaldo é a resposta de info-extrato com o saldo do último dia dado (texto JSON).
+func infoSaldo(saldo string) string {
+	return `{"infoExtrato":{"saldoUltimoDia":` + saldo + `,"extratoForaPeriodo":false}}`
+}
+
+// Lido diferente e não zero é indício de --saldo-final errado: sem terminal (ou com --yes), a
+// importação para antes da conclusão, como antes da #1032 (#1043, ADR-0024).
 func TestExtratosImportarSaldoDiferente(t *testing.T) {
 	arq, mt := arquivoExtrato(t, "extrato.ofx")
 	f, _ := importarFake(t, mt, "ofx")
-	out, stderr, code := execCLI(t, "", append(append(baseImportar, arq), "--saldo-final", "1000", "--yes", "-o", "json")...)
-	if code != ExitOK || len(f.writes) != 2 || !strings.Contains(f.writes[1], `"respostas":[{"tipo":"SALDO_ULTIMO_MES","data":"2026-10-04T10:00:00.000Z","valor":1000}]`) {
+	_, stderr, code := execCLI(t, "", append(append(baseImportar, arq), "--saldo-final", "1000", "--yes", "-o", "json")...)
+	if code != ExitError || len(f.writes) != 1 || strings.Contains(strings.Join(f.writes, "\n"), "eventoUploadExtrato") {
 		t.Fatalf("código %d, escritas %q\n%s", code, f.writes, stderr)
 	}
-	if !strings.Contains(stderr, "aviso: a Contabilizei leu o saldo do último dia como R$ 1.234,56; vai o de --saldo-final, R$ 1.000,00") ||
-		!strings.Contains(out, `"saldo_ultimo_dia": 1000`) {
-		t.Errorf("stderr:\n%s\nsaída:\n%s", stderr, out)
+	want := "Saldo do último dia lido pela Contabilizei: R$ 1.234,56, diferente de --saldo-final R$ 1.000,00 (importação não concluída)"
+	if !strings.Contains(stderr, want) || !strings.Contains(stderr, "com saldo do último dia R$ 1.000,00 (--saldo-final) (risco médio)") {
+		t.Errorf("stderr:\n%s", stderr)
 	}
 }
 
-// Sem saldo lido, --saldo-final preenche o valor; sem a flag, a importação para e pede a flag.
+// No terminal, sem --yes, a CLI mostra os dois valores e pergunta qual vai.
+func TestExtratosImportarSaldoDiferenteTerminal(t *testing.T) {
+	old := isTerminal
+	isTerminal = func(io.Reader) bool { return true }
+	t.Cleanup(func() { isTerminal = old })
+	arq, mt := arquivoExtrato(t, "extrato.ofx")
+	f, _ := importarFake(t, mt, "ofx")
+	out, stderr, code := execCLI(t, "s\ns\n", append(append(baseImportar, arq), "--saldo-final", "1000", "-o", "json")...)
+	pergunta := "Saldo do último dia lido pela Contabilizei: R$ 1.234,56, diferente de --saldo-final R$ 1.000,00. Enviar o de --saldo-final, R$ 1.000,00? [s/N]"
+	if code != ExitOK || len(f.writes) != 2 || !strings.Contains(f.writes[1], `"valor":1000}`) || !strings.Contains(stderr, pergunta) {
+		t.Fatalf("aceito: código %d, escritas %q\n%s", code, f.writes, stderr)
+	}
+	if !strings.Contains(out, `"saldo_ultimo_dia": 1000`) || !strings.Contains(out, `"saldo_lido": 1234.56`) || !strings.Contains(out, `"saldo_divergente": true`) {
+		t.Errorf("saída:\n%s", out)
+	}
+	f, _ = importarFake(t, mt, "ofx")
+	_, stderr, code = execCLI(t, "s\nn\n", append(append(baseImportar, arq), "--saldo-final", "1000")...)
+	if code != ExitError || len(f.writes) != 1 || !strings.Contains(stderr, "saldo não confirmado") {
+		t.Errorf("recusado: código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+}
+
+// Igual ao lido: vai o lido, sem divergência.
+func TestExtratosImportarSaldoIgual(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.ofx")
+	f, _ := importarFake(t, mt, "ofx")
+	out, stderr, code := execCLI(t, "", append(append(baseImportar, arq), "--saldo-final", "1.234,56", "--yes", "-o", "csv")...)
+	if code != ExitOK || len(f.writes) != 2 || !strings.Contains(stderr, "Saldo do último dia: R$ 1.234,56 (lido pela Contabilizei e igual a --saldo-final)") {
+		t.Fatalf("código %d, escritas %q\n%s", code, f.writes, stderr)
+	}
+	if !strings.Contains(out, "saldo_ultimo_dia,saldo_lido,saldo_divergente") || !strings.Contains(out, ",1234.56,1234.56,false,") {
+		t.Errorf("saída:\n%s", out)
+	}
+}
+
+// Lido R$ 0,00 (o caso do Banco Inter) ou nenhum: --saldo-final preenche o valor, com aviso, e
+// o resultado marca a divergência; sem a flag, sem saldo lido a importação para e pede a flag.
 func TestExtratosImportarSaldoNaoLido(t *testing.T) {
+	for _, c := range []struct{ lido, aviso, saidaLido string }{
+		{"null", "aviso: a Contabilizei não leu o saldo do último dia do arquivo; vai o de --saldo-final, R$ 719,17", `"saldo_lido": null`},
+		{"0", "aviso: a Contabilizei leu o saldo do último dia como R$ 0,00; vai o de --saldo-final, R$ 719,17", `"saldo_lido": 0`},
+	} {
+		arq, mt := arquivoExtrato(t, "extrato.ofx")
+		f, nome := importarFake(t, mt, "ofx")
+		f.gets["/api/plataforma/movimentacao-financeira/info-extrato/7/2026/9/"+nome] = infoSaldo(c.lido)
+		out, stderr, code := execCLI(t, "", append(append(baseImportar, arq), "--saldo-final", "719,17", "--yes", "-o", "json")...)
+		if code != ExitOK || len(f.writes) != 2 || !strings.Contains(f.writes[1], `"valor":719.17}`) || !strings.Contains(stderr, c.aviso) {
+			t.Fatalf("lido %s com a flag: código %d, escritas %q\n%s", c.lido, code, f.writes, stderr)
+		}
+		if !strings.Contains(out, `"saldo_ultimo_dia": 719.17`) || !strings.Contains(out, c.saidaLido) || !strings.Contains(out, `"saldo_divergente": true`) {
+			t.Errorf("lido %s: saída:\n%s", c.lido, out)
+		}
+	}
 	arq, mt := arquivoExtrato(t, "extrato.ofx")
 	f, nome := importarFake(t, mt, "ofx")
-	f.gets["/api/plataforma/movimentacao-financeira/info-extrato/7/2026/9/"+nome] = `{"infoExtrato":{"saldoUltimoDia":null,"extratoForaPeriodo":false}}`
-	_, stderr, code := execCLI(t, "", append(append(baseImportar, arq), "--saldo-final", "719,17", "--yes")...)
-	if code != ExitOK || len(f.writes) != 2 || !strings.Contains(f.writes[1], `"valor":719.17}`) ||
-		!strings.Contains(stderr, "aviso: a Contabilizei não leu o saldo do último dia do arquivo; vai o de --saldo-final, R$ 719,17") {
-		t.Fatalf("com a flag: código %d, escritas %q\n%s", code, f.writes, stderr)
-	}
-	f.writes = nil
-	_, stderr, code = execCLI(t, "", append(baseImportar, arq, "--yes")...)
+	f.gets["/api/plataforma/movimentacao-financeira/info-extrato/7/2026/9/"+nome] = infoSaldo("null")
+	_, stderr, code := execCLI(t, "", append(baseImportar, arq, "--yes")...)
 	if code != ExitError || len(f.writes) != 1 || !strings.Contains(stderr, "informe-o com --saldo-final (importação não concluída)") {
 		t.Errorf("sem a flag: código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+}
+
+// No --dry-run o lido não existe: a simulação diz que a importação para se ele divergir.
+func TestExtratosImportarSaldoDryRun(t *testing.T) {
+	arq, mt := arquivoExtrato(t, "extrato.ofx")
+	f, _ := importarFake(t, mt, "ofx")
+	out, stderr, code := execCLI(t, "", append(append(baseImportar, arq), "--saldo-final", "1000", "--dry-run")...)
+	if code != ExitOK || len(f.writes) != 0 || !strings.Contains(out, `"valor": 1000`) ||
+		!strings.Contains(stderr, "Se o lido for diferente e não zero, a importação para antes da conclusão.") {
+		t.Errorf("código %d\n%s\n%s", code, out, stderr)
 	}
 }
 
@@ -491,7 +552,7 @@ func TestExtratosImportarAguardandoArquivo(t *testing.T) {
 		t.Fatalf("código %d, escritas %q\n%s", code, f.writes, stderr)
 	}
 	if !strings.Contains(stderr, "A competência 09/2026 aparece como PROCESSANDO com o botão \"Importar\" do painel e sem lançamentos") ||
-		!strings.Contains(stderr, "em 09/2026; a competência está PROCESSANDO com o botão \"Importar\" do painel e sem lançamentos, "+
+		!strings.Contains(stderr, "; a competência está PROCESSANDO com o botão \"Importar\" do painel e sem lançamentos, "+
 			"como fica depois de excluir o extrato (se este mês acabou de ser importado, não confirme) (risco médio)") ||
 		!strings.Contains(out, `"situacao_extrato": "IMPORTADO"`) {
 		t.Errorf("stderr:\n%s\nsaída:\n%s", stderr, out)

@@ -45,9 +45,11 @@ importação):
    em `ctbz extratos`, e o agente não reenvia o arquivo: a conferência é na Central de
    Documentos do painel. CSV/XLS não aceitam `--substituir` nem vão por cima de um extrato já
    importado;
-2. num OFX, lê o saldo final do próprio arquivo e mostra para você conferir;
-3. simula e importa, informando o saldo final do arquivo, que é o valor enviado mesmo se a
-   Contabilizei ler outro (ela já leu R$ 0,00 de um OFX do Banco Inter):
+2. num OFX, lê o saldo final do próprio arquivo e mostra para você conferir antes de importar;
+3. simula e importa, informando o saldo final do arquivo. Se a Contabilizei não ler saldo ou
+   ler R$ 0,00 (já aconteceu com um OFX do Banco Inter), vai o do arquivo; se ela ler outro
+   valor, a importação para e o agente mostra os dois para você decidir (a troca só é
+   confirmada no seu terminal):
 
 ```sh
 ctbz extratos importar ARQ --conta-bancaria ID --competencia 2026-09 --saldo-final 1.234,56 --dry-run

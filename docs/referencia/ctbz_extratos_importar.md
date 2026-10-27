@@ -24,10 +24,17 @@ importado, para a importação manual não duplicar os lançamentos, e não acei
 OFX e PDF passam pela tela "Importar extrato":
 
   1. envia o arquivo;
-  2. no OFX, lê o saldo do último dia que a Contabilizei encontrou e pede para confirmar;
-     com --saldo-final, vai sempre o valor da flag (a Contabilizei já leu R$ 0,00 de um OFX
-     com saldo), e uma diferença do lido só gera um aviso;
+  2. no OFX, lê o saldo do último dia que a Contabilizei encontrou e pede para confirmar
+     (--yes aceita o lido). Com --saldo-final igual ao lido, segue. Se a Contabilizei não leu
+     saldo ou leu R$ 0,00 (visto com um OFX do Banco Inter que tinha saldo), vai o da flag,
+     com um aviso. Lido diferente e não zero: no terminal, sem --yes, a CLI mostra os dois e
+     pergunta se vai o da flag; com --yes ou sem terminal, a importação para;
   3. conclui a importação.
+
+O resultado traz saldo_ultimo_dia (o enviado), saldo_lido (o que a Contabilizei leu, nulo se
+não leu) e saldo_divergente (verdadeiro quando foi o de --saldo-final no lugar de um lido
+diferente ou ausente). Com --substituir, o saldo lido só é conhecido depois da exclusão: se
+ele divergir e a importação parar, o extrato antigo já foi excluído.
 
 Os demais formatos que o banco aceita (CSV, XLS…) vão pela Central de Documentos, como no
 painel: um envio só, sem conclusão nem saldo, e a Contabilizei importa o arquivo manualmente,
@@ -88,7 +95,7 @@ ctbz extratos importar ARQUIVO [flags]
       --competencia string   competência AAAA-MM (obrigatória)
       --conta-bancaria int   id da conta bancária (ver ctbz contas-bancarias) (obrigatória)
       --dry-run              mostra a requisição que seria enviada, sem enviar
-      --saldo-final string   saldo do último dia (OFX): vai sempre este valor, mesmo diferente do lido pela Contabilizei
+      --saldo-final string   saldo do último dia (OFX): vai no lugar de um saldo lido zero ou ausente; diferente de um lido não zero, a importação para (no terminal, pergunta)
       --substituir           se o extrato do mês já foi importado, exclui-o antes e importa este arquivo (como excluir e importar no painel)
   -y, --yes                  envia sem pedir confirmação (obrigatório sem terminal)
 ```

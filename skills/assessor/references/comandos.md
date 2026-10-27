@@ -303,7 +303,7 @@ Campos do JSON de cada comando: [campos-json.md](campos-json.md).
 ```text
 --competencia string   competência AAAA-MM (obrigatória)
 --conta-bancaria int   id da conta bancária (ver ctbz contas-bancarias) (obrigatória)
---saldo-final string   saldo do último dia (OFX): vai sempre este valor, mesmo diferente do lido pela Contabilizei
+--saldo-final string   saldo do último dia (OFX): vai no lugar de um saldo lido zero ou ausente; diferente de um lido não zero, a importação para (no terminal, pergunta)
 --substituir           se o extrato do mês já foi importado, exclui-o antes e importa este arquivo (como excluir e importar no painel)
 ```
 

@@ -170,11 +170,20 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
 - "Não reconheceu o arquivo como extrato bancário": tente o OFX do banco ou o PDF baixado
   direto do internet banking (não um PDF gerado por outro programa); se continuar, abra um
   chamado no painel.
-- No OFX, a Contabilizei lê o saldo do último dia do arquivo e a CLI pede para conferir. Com
-  `--saldo-final 1.234,56`, vai sempre esse valor, como quem corrige o campo na tela do painel:
-  a Contabilizei já leu R$ 0,00 de um OFX do Banco Inter com saldo. Se o valor lido for
-  diferente, ou se nenhum for lido, a CLI só avisa no stderr. Informe sempre o saldo final do
-  arquivo (`<LEDGERBAL>` → `<BALAMT>` no OFX) para o mês não ficar com saldo zero.
+- No OFX, a Contabilizei lê o saldo do último dia do arquivo e a CLI pede para conferir. Informe
+  sempre o saldo final do arquivo (`<LEDGERBAL>` → `<BALAMT>` no OFX) com `--saldo-final
+  1.234,56`, conferido antes da importação (ADR-0024):
+    - igual ao lido: segue;
+    - a Contabilizei não leu saldo ou leu R$ 0,00 (visto com um OFX do Banco Inter que tinha
+      saldo): vai o da flag, com um aviso no stderr, como quem corrige o campo na tela do painel;
+    - lido diferente e não zero (indício de digitação, outra conta ou outro mês): no terminal,
+      sem `--yes`, a CLI mostra os dois valores e pergunta se vai o da flag; com `--yes` ou sem
+      terminal, a importação para antes da conclusão.
+
+  O resumo da confirmação mostra o saldo de `--saldo-final`, e o resultado traz `saldo_lido` e
+  `saldo_divergente`. Com `--substituir`, o saldo lido só é conhecido depois da exclusão: se a
+  importação parar pela divergência, o extrato antigo já foi excluído e a CLI diz em que
+  situação a competência ficou.
 - Se a importação parar depois do envio (saldo recusado, extrato de outra competência), o
   arquivo fica enviado mas o extrato não é efetivado; corrija e rode de novo.
 - Se a conexão cair ou o servidor responder com erro 5xx (502, 504…) no envio do arquivo (o

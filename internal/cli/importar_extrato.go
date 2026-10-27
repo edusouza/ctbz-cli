@@ -89,10 +89,17 @@ importado, para a importação manual não duplicar os lançamentos, e não acei
 OFX e PDF passam pela tela "Importar extrato":
 
   1. envia o arquivo;
-  2. no OFX, lê o saldo do último dia que a Contabilizei encontrou e pede para confirmar;
-     com --saldo-final, vai sempre o valor da flag (a Contabilizei já leu R$ 0,00 de um OFX
-     com saldo), e uma diferença do lido só gera um aviso;
+  2. no OFX, lê o saldo do último dia que a Contabilizei encontrou e pede para confirmar
+     (--yes aceita o lido). Com --saldo-final igual ao lido, segue. Se a Contabilizei não leu
+     saldo ou leu R$ 0,00 (visto com um OFX do Banco Inter que tinha saldo), vai o da flag,
+     com um aviso. Lido diferente e não zero: no terminal, sem --yes, a CLI mostra os dois e
+     pergunta se vai o da flag; com --yes ou sem terminal, a importação para;
   3. conclui a importação.
+
+O resultado traz saldo_ultimo_dia (o enviado), saldo_lido (o que a Contabilizei leu, nulo se
+não leu) e saldo_divergente (verdadeiro quando foi o de --saldo-final no lugar de um lido
+diferente ou ausente). Com --substituir, o saldo lido só é conhecido depois da exclusão: se
+ele divergir e a importação parar, o extrato antigo já foi excluído.
 
 Os demais formatos que o banco aceita (CSV, XLS…) vão pela Central de Documentos, como no
 painel: um envio só, sem conclusão nem saldo, e a Contabilizei importa o arquivo manualmente,
@@ -238,12 +245,19 @@ enviar nada.`,
 					op.Consequencia = "O extrato atual é excluído antes do envio: as classificações e informações adicionais das movimentações se perdem e não dá para desfazer."
 				}
 			}
+			if saldoEsperado != nil {
+				op.Resumo += fmt.Sprintf(", com saldo do último dia %s (--saldo-final)", formatarCentavos(*saldoEsperado))
+				if existente != nil && op.Risco == riscoAlto {
+					op.Consequencia += " O saldo lido pela Contabilizei só é conhecido depois da exclusão: se ele for diferente de --saldo-final e " +
+						"não zero, a importação para com o extrato atual já excluído."
+				}
+			}
 			if aguardando {
 				// O resumo é o que a confirmação sempre mostra, inclusive com --yes.
 				op.Resumo += "; a competência está PROCESSANDO com o botão \"Importar\" do painel e sem lançamentos, como fica depois de " +
 					"excluir o extrato (se este mês acabou de ser importado, não confirme)"
 			}
-			var saldo *float64
+			var saldo *saldoEnviado
 			// importarArquivo envia o arquivo, confirma o saldo (OFX) e conclui a importação.
 			importarArquivo := func(snd api.Sender) error {
 				if manual {
@@ -258,12 +272,12 @@ enviar nada.`,
 				}
 				evento := api.EventoUploadExtrato{Ano: alvo.ano(), Mes: alvo.mesNum(), CNPJ: cnpj, IDContaBancaria: alvo.conta, NomeArquivoStorage: nome}
 				if formatoArq == "OFX" {
-					valor, err := saldoConfirmado(ctx, snd, s, g, alvo, nome, saldoEsperado, yes)
+					sal, err := saldoConfirmado(ctx, snd, s, g, alvo, nome, saldoEsperado, yes)
 					if err != nil {
 						return err
 					}
-					saldo = &valor
-					evento.Respostas = []api.RespostaSaldo{{Tipo: "SALDO_ULTIMO_MES", Data: now().UTC().Format("2006-01-02T15:04:05.000Z"), Valor: valor}}
+					saldo = &sal
+					evento.Respostas = []api.RespostaSaldo{{Tipo: "SALDO_ULTIMO_MES", Data: now().UTC().Format("2006-01-02T15:04:05.000Z"), Valor: sal.valor}}
 				}
 				if err := api.ConcluirImportacaoExtrato(ctx, snd, evento); err != nil {
 					if falha, causa, ok := envioIncerto(err); ok {
@@ -319,7 +333,9 @@ enviar nada.`,
 				Add("competencia", "Competência", mes).
 				Add("importacao", "Importação", importacao).
 				Add("arquivo", "Arquivo", arquivoEnviado).
-				Add("saldo_ultimo_dia", "Saldo do último dia", moneyOrNil(saldo)).
+				Add("saldo_ultimo_dia", "Saldo do último dia", moneyOrNil(saldoValor(saldo))).
+				Add("saldo_lido", "Saldo lido pela Contabilizei", moneyOrNil(saldoLido(saldo))).
+				Add("saldo_divergente", "Saldo de --saldo-final no lugar do lido", saldo != nil && saldo.divergente).
 				Add("situacao_extrato", "Situação do extrato", situacaoExtrato).
 				Add("quantidade_lancamentos", "Lançamentos", quantidade).
 				Add("substituiu_extrato", "Substituiu o extrato anterior", existente != nil)
@@ -328,7 +344,7 @@ enviar nada.`,
 	}
 	addContaBancariaFlag(cmd)
 	addCompetenciaFlag(cmd)
-	cmd.Flags().StringVar(&saldoFinal, "saldo-final", "", "saldo do último dia (OFX): vai sempre este valor, mesmo diferente do lido pela Contabilizei")
+	cmd.Flags().StringVar(&saldoFinal, "saldo-final", "", "saldo do último dia (OFX): vai no lugar de um saldo lido zero ou ausente; diferente de um lido não zero, a importação para (no terminal, pergunta)")
 	cmd.Flags().BoolVar(&substituir, "substituir", false, "se o extrato do mês já foi importado, exclui-o antes e importa este arquivo (como excluir e importar no painel)")
 	addWriteFlags(cmd)
 	return cmd
@@ -692,50 +708,89 @@ func periodoLiberado(p *api.PermiteImportacao, alvo extratoAlvo) error {
 	return nil
 }
 
-// saldoConfirmado devolve o saldo do último dia que vai na conclusão do OFX. Com --saldo-final,
-// vai sempre o valor da flag, como quem corrige o campo na tela do painel: a Contabilizei já leu
-// R$ 0,00 de um OFX com saldo (Banco Inter), e a diferença só vira aviso. Sem a flag, vai o
-// saldo lido: no terminal pergunta, com --yes aceita. No --dry-run não há arquivo enviado: usa
-// --saldo-final ou zero.
-func saldoConfirmado(ctx context.Context, snd api.Sender, s streams, g api.Getter, alvo extratoAlvo, nome string, esperado *int64, yes bool) (float64, error) {
+// saldoEnviado é o saldo do último dia que vai na conclusão do OFX e o que a Contabilizei leu.
+type saldoEnviado struct {
+	valor      float64
+	lido       *float64 // nil se a Contabilizei não leu saldo (ou no --dry-run)
+	divergente bool     // o valor é o de --saldo-final, no lugar de um lido diferente ou ausente
+}
+
+// saldoConfirmado lê o saldo do último dia que a Contabilizei extraiu do OFX e decide o que vai
+// na conclusão (ADR-0024). Sem --saldo-final, vai o lido: no terminal pergunta, com --yes aceita.
+// Com --saldo-final igual ao lido, vai ele. Se a Contabilizei não leu saldo ou leu R$ 0,00 (visto
+// com um OFX do Banco Inter que tinha saldo), vai o da flag, com aviso, como quem corrige o
+// campo na tela do painel. Lido diferente e não zero é indício de flag errada (digitação, outra
+// conta ou outro mês): no terminal, sem --yes, mostra os dois e pergunta; senão, a importação
+// para (#1043). No --dry-run não há arquivo enviado: usa --saldo-final ou zero.
+func saldoConfirmado(ctx context.Context, snd api.Sender, s streams, g api.Getter, alvo extratoAlvo, nome string, esperado *int64, yes bool) (saldoEnviado, error) {
 	if _, simulado := snd.(dryRunSender); simulado {
 		if esperado != nil {
-			return reais(*esperado), nil
+			fmt.Fprintln(s.err, "Simulação: o saldo lido pela Contabilizei só é conhecido depois do envio; o corpo abaixo usa --saldo-final. "+
+				"Se o lido for diferente e não zero, a importação para antes da conclusão.")
+			return saldoEnviado{valor: reais(*esperado)}, nil
 		}
 		fmt.Fprintln(s.err, "Simulação: o saldo do último dia só é conhecido depois do envio; o corpo abaixo usa 0.")
-		return 0, nil
+		return saldoEnviado{}, nil
 	}
 	info, err := api.BuscarInfoExtrato(ctx, g, alvo.conta, alvo.ano(), alvo.mesNum(), nome)
 	if err != nil {
-		return 0, fmt.Errorf("o arquivo foi enviado, mas não foi possível ler o saldo (importação não concluída): %w", err)
+		return saldoEnviado{}, fmt.Errorf("o arquivo foi enviado, mas não foi possível ler o saldo (importação não concluída): %w", err)
 	}
 	if info.ForaDoPeriodo() {
-		return 0, fmt.Errorf("o extrato não é de %s (importação não concluída)", alvo.mes.Format("01/2006"))
+		return saldoEnviado{}, fmt.Errorf("o extrato não é de %s (importação não concluída)", alvo.mes.Format("01/2006"))
 	}
 	lido := info.Saldo()
 	if esperado != nil {
+		flag := saldoEnviado{valor: reais(*esperado), lido: lido, divergente: true}
 		switch {
 		case lido == nil:
 			fmt.Fprintf(s.err, "aviso: a Contabilizei não leu o saldo do último dia do arquivo; vai o de --saldo-final, %s\n", formatarCentavos(*esperado))
-		case *esperado != centavos(*lido):
-			fmt.Fprintf(s.err, "aviso: a Contabilizei leu o saldo do último dia como %s; vai o de --saldo-final, %s\n",
-				formatarCentavos(centavos(*lido)), formatarCentavos(*esperado))
-		default:
+			return flag, nil
+		case *esperado == centavos(*lido):
 			fmt.Fprintf(s.err, "Saldo do último dia: %s (lido pela Contabilizei e igual a --saldo-final)\n", formatarCentavos(*esperado))
+			return saldoEnviado{valor: *lido, lido: lido}, nil
+		case centavos(*lido) == 0:
+			fmt.Fprintf(s.err, "aviso: a Contabilizei leu o saldo do último dia como R$ 0,00; vai o de --saldo-final, %s\n", formatarCentavos(*esperado))
+			return flag, nil
 		}
-		return reais(*esperado), nil
+		msg := fmt.Sprintf("Saldo do último dia lido pela Contabilizei: %s, diferente de --saldo-final %s",
+			formatarCentavos(centavos(*lido)), formatarCentavos(*esperado))
+		if yes || !s.interactive {
+			return saldoEnviado{}, fmt.Errorf("%s (importação não concluída); confira o saldo final do arquivo: se o certo é o de --saldo-final, "+
+				"rode o comando num terminal, sem --yes, para confirmar a troca; se é o lido, rode sem --saldo-final", msg)
+		}
+		if !perguntar(s, msg+". Enviar o de --saldo-final, "+formatarCentavos(*esperado)+"?") {
+			return saldoEnviado{}, errors.New("saldo não confirmado (o arquivo foi enviado, mas a importação não foi concluída)")
+		}
+		return flag, nil
 	}
 	if lido == nil {
-		return 0, errors.New("a Contabilizei não leu o saldo do último dia do arquivo; informe-o com --saldo-final (importação não concluída)")
+		return saldoEnviado{}, errors.New("a Contabilizei não leu o saldo do último dia do arquivo; informe-o com --saldo-final (importação não concluída)")
 	}
 	msg := fmt.Sprintf("Saldo do último dia lido pela Contabilizei: %s", formatarCentavos(centavos(*lido)))
 	switch {
 	case yes || !s.interactive:
 		fmt.Fprintln(s.err, msg)
 	case !perguntar(s, msg+". Confere com o extrato?"):
-		return 0, errors.New("saldo não confirmado (o arquivo foi enviado, mas a importação não foi concluída)")
+		return saldoEnviado{}, errors.New("saldo não confirmado (o arquivo foi enviado, mas a importação não foi concluída)")
 	}
-	return *lido, nil
+	return saldoEnviado{valor: *lido, lido: lido}, nil
+}
+
+// saldoValor é o saldo enviado na conclusão (nil se nenhum foi enviado: PDF ou envio manual).
+func saldoValor(s *saldoEnviado) *float64 {
+	if s == nil {
+		return nil
+	}
+	return &s.valor
+}
+
+// saldoLido é o saldo que a Contabilizei leu do OFX (nil se não leu ou não houve leitura).
+func saldoLido(s *saldoEnviado) *float64 {
+	if s == nil {
+		return nil
+	}
+	return s.lido
 }
 
 // tamanhoArquivo mostra o tamanho em bytes, KB ou MB.

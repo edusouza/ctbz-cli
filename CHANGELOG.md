@@ -25,11 +25,16 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   `PROCESSANDO` com o botão "Importar", a CLI manda conferir antes de repetir (#1036).
 - `ctbz extratos excluir` termina com erro, sem enviar nada, quando não consegue ler a situação
   da competência antes da exclusão; sem ela, a releitura depois não confirma nada (#1038).
-- `ctbz extratos importar --saldo-final` sempre envia o valor da flag como saldo do último dia do
-  OFX, como quem corrige o campo na tela do painel. Antes a flag só comparava com o saldo lido
-  pela Contabilizei e parava a importação se fosse diferente, e o saldo ficava zerado quando a
-  Contabilizei lia R$ 0,00 (visto com um OFX do Banco Inter). A diferença, ou a falta de saldo
-  lido, agora só gera um aviso no stderr.
+- `ctbz extratos importar --saldo-final` envia o valor da flag como saldo do último dia do OFX
+  quando a Contabilizei não lê saldo nenhum ou lê R$ 0,00 (visto com um OFX do Banco Inter, que
+  ficava com o saldo zerado), com um aviso no stderr, como quem corrige o campo na tela do
+  painel. Saldo lido diferente e não zero continua parando a importação, como antes (ADR-0024);
+  no terminal, sem `--yes`, a CLI mostra os dois valores e pergunta qual vai. O resumo da
+  confirmação mostra o saldo de `--saldo-final` (#1043).
+- `ctbz extratos importar`: o resultado ganha `saldo_lido` (o saldo do último dia que a
+  Contabilizei leu do OFX, nulo se não leu) e `saldo_divergente` (verdadeiro quando foi o de
+  `--saldo-final` no lugar de um lido diferente ou ausente), para scripts e agentes não
+  dependerem do stderr (#1044).
 
 ## [1.9.3] - 2026-10-26
 
