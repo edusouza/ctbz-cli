@@ -23,8 +23,10 @@ inglês, que torna finalidade permitida administrar empresa da qual o usuário s
 sócio ou administrador, desde que não preste serviço remunerado a terceiros nem inclua o
 software em produto ou serviço oferecido a terceiros. A permissão não se aplica ao fornecedor do
 serviço acessado, ao seu grupo nem a quem age em nome deles; ele é descrito pelo papel, não pelo
-nome. Os avisos das dependências vão no `THIRD_PARTY_NOTICES`, gerado por `go run ./tools/notices`
-e incluído nos arquivos da release com o `LICENSE`.
+nome. Ficam fora da licença os trechos, nomes, marcas e formatos de dados de terceiros citados na
+documentação e nos testes (como os do painel da Contabilizei), que não são do autor. Os avisos
+das dependências vão no `THIRD_PARTY_NOTICES`, gerado por `go run ./tools/notices` e incluído nos
+arquivos da release com o `LICENSE`.
 
 ## Consequências
 

@@ -5,6 +5,10 @@ Required Notice: Copyright 2026 Eduardo Oliveira de Souza (https://github.com/ed
 O ctbz é licenciado nos termos da PolyForm Noncommercial License 1.0.0, reproduzida
 integralmente abaixo, com a permissão adicional a seguir. Para estes termos, o "software"
 inclui o código, as skills do Claude Code, os scripts e a documentação deste repositório.
+Não estão incluídos, e não são licenciados por estes termos, os trechos, nomes, marcas e
+formatos de dados de terceiros citados na documentação e nos testes, que pertencem aos seus
+titulares, nem o software de terceiros listado no THIRD_PARTY_NOTICES, que segue as
+próprias licenças.
 
 ## Permissão adicional
 
@@ -26,6 +30,12 @@ Qualquer outro uso comercial depende de autorização por escrito do licenciante
 divergência entre esta seção e a tradução abaixo, prevalece o texto em português.
 
 ## Additional Permission (English translation)
+
+For these terms, the "software" includes the code, the Claude Code skills, the scripts, and
+the documentation in this repository. It does not include, and these terms do not license,
+third-party excerpts, names, trademarks, and data formats quoted in the documentation and
+tests, which belong to their respective owners, nor the third-party software listed in
+THIRD_PARTY_NOTICES, which remains under its own licenses.
 
 In addition to the purposes permitted by the PolyForm Noncommercial License 1.0.0, it is
 also a permitted purpose to use the software to manage a company of which you are an owner,

@@ -26,6 +26,13 @@ com uma permissão adicional para administrar a própria empresa. O texto que va
 Qualquer outro uso comercial precisa de autorização por escrito do autor. Os motivos da escolha
 estão no [ADR-0023](adr/0023-licenca-nao-comercial-com-uso-pela-propria-empresa.md).
 
+## Material de terceiros
+
+A licença não cobre o que não é do autor. Os trechos do JavaScript do painel, os nomes, as
+marcas e os formatos de requisição e resposta da Contabilizei citados na documentação e nas
+fixtures de teste pertencem à Contabilizei e aparecem só para documentar como a CLI conversa
+com o painel.
+
 ## Software de terceiros
 
 O binário inclui a biblioteca padrão do Go e algumas dependências (Apache-2.0 e BSD-3-Clause).
