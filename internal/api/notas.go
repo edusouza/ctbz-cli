@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
 )
@@ -17,19 +18,55 @@ const (
 	FiltroNumeroNota  = "numeroNota"
 )
 
-// NotaEmitida é uma NFS-e emitida. Os campos são os lidos pelo front; a conta verificada
-// não tinha notas, por isso todos são opcionais e os de formato incerto ficam como any.
+// NotaEmitida é uma NFS-e emitida. Os campos são os lidos pelo front; todos são opcionais e
+// os de formato incerto ficam como any (dataEmissao veio como array [ano, mês, dia, h, min, s]
+// em 02/11/2026, #1052).
 type NotaEmitida struct {
-	ID                   any      `json:"id" contract:"optional"`
-	Numero               any      `json:"numero" contract:"optional"`
-	CPFCNPJTomador       string   `json:"cpfCnpjTomador" contract:"optional"`
-	NomeRazaoTomador     string   `json:"nomeRazaoTomador" contract:"optional"`
-	ValorServico         *float64 `json:"valorServico" contract:"optional"`
-	DataEmissao          any      `json:"dataEmissao" contract:"optional"`
-	DataEmissaoFormatada string   `json:"dataEmissaoFormatada" contract:"optional"`
-	StatusNotaFiscal     string   `json:"statusNotaFiscal" contract:"optional"`
-	SituacaoNota         string   `json:"situacaoNota" contract:"optional"`
-	TomadorExterior      bool     `json:"tomadorExterior" contract:"optional"`
+	ID                   any        `json:"id" contract:"optional"`
+	Numero               any        `json:"numero" contract:"optional"`
+	CPFCNPJTomador       string     `json:"cpfCnpjTomador" contract:"optional"`
+	NomeRazaoTomador     string     `json:"nomeRazaoTomador" contract:"optional"`
+	ValorServico         *float64   `json:"valorServico" contract:"optional"`
+	DataEmissao          any        `json:"dataEmissao" contract:"optional"`
+	DataEmissaoFormatada string     `json:"dataEmissaoFormatada" contract:"optional"`
+	StatusNotaFiscal     StatusNota `json:"statusNotaFiscal" contract:"optional"`
+	SituacaoNota         string     `json:"situacaoNota" contract:"optional"`
+	TomadorExterior      bool       `json:"tomadorExterior" contract:"optional"`
+}
+
+// StatusNota é o rótulo de status que o servidor monta para a listagem. Vem como objeto
+// {descricao, text, badgeType} desde 11/2026 (#1052); antes era texto, que ainda é aceito
+// (vai para Text) para não quebrar numa nova troca de formato.
+type StatusNota struct {
+	Descricao string `json:"descricao"` // ex.: "NFS-e processada com sucesso"
+	Text      string `json:"text"`      // ex.: "Emitida", o rótulo que o painel mostra
+	BadgeType string `json:"badgeType"` // ex.: "success"
+}
+
+// UnmarshalJSON aceita o objeto, um texto ou null.
+func (s *StatusNota) UnmarshalJSON(b []byte) error {
+	if string(b) == "null" {
+		return nil
+	}
+	if len(b) > 0 && b[0] == '"' {
+		*s = StatusNota{}
+		return json.Unmarshal(b, &s.Text)
+	}
+	type objeto StatusNota
+	var o objeto
+	if err := json.Unmarshal(b, &o); err != nil {
+		return fmt.Errorf("statusNotaFiscal inesperado %s", b)
+	}
+	*s = StatusNota(o)
+	return nil
+}
+
+// Rotulo devolve o texto do status para exibir: Text, ou Descricao quando Text vem vazio.
+func (s StatusNota) Rotulo() string {
+	if s.Text != "" {
+		return s.Text
+	}
+	return s.Descricao
 }
 
 // ListaNotas é uma página da listagem de notas.

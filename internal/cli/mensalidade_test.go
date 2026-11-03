@@ -52,6 +52,11 @@ func TestDataDeValor(t *testing.T) {
 		{"amanhã", "amanhã"},
 		{float64(1792497600000), "2026-10-20"}, // 20/10/2026 12:00 UTC
 		{true, "true"},
+		{[]any{float64(2026), float64(1), float64(30), float64(19), float64(1), float64(46)}, "2026-01-30"}, // LocalDateTime (#1052)
+		{[]any{float64(2026), float64(2), float64(28)}, "2026-02-28"},                                       // LocalDate
+		{[]any{float64(2026), float64(13), float64(1)}, "[2026 13 1]"},                                      // fora do calendário
+		{[]any{float64(2026), float64(1)}, "[2026 1]"},
+		{[]any{"2026", float64(1), float64(30)}, "[2026 1 30]"},
 	} {
 		got := dataDeValor(c.in)
 		if d, ok := got.(output.Date); ok {

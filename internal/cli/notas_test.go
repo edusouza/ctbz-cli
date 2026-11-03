@@ -12,7 +12,8 @@ func TestNotas(t *testing.T) {
 	withSession(t, fakeAPI(t, map[string]string{
 		pathNotas + "pagina=1&limite=10&ano=2026&mes=9": `{"total":11,"list":[
 {"id":1,"numero":101,"cpfCnpjTomador":"11.222.333/0001-81","nomeRazaoTomador":"ACME LTDA","valorServico":1000,
- "dataEmissao":1788523200000,"statusNotaFiscal":"AUTORIZADA","situacaoNota":"EMITIDA"},
+ "dataEmissao":1788523200000,"situacaoNota":"EMITIDA",
+ "statusNotaFiscal":{"descricao":"NFS-e processada com sucesso","text":"Emitida","badgeType":"success"}},
 {"id":2,"numero":"102","cpfCnpjTomador":"123.456.789-01","nomeRazaoTomador":"FULANO","valorServico":500.5,
  "dataEmissaoFormatada":"15/09/2026","statusNotaFiscal":"CANCELADA"},
 {"id":3},{"id":4},{"id":5},{"id":6},{"id":7},{"id":8},{"id":9},{"id":10}]}`,
@@ -25,15 +26,18 @@ func TestNotas(t *testing.T) {
 		t.Fatalf("código %d: %s", code, stderr)
 	}
 	lines := strings.Split(strings.TrimSpace(out), "\n")
-	if len(lines) != 12 || lines[0] != "numero,emissao,tomador,documento,valor,status,situacao" ||
-		lines[1] != "101,2026-09-04,ACME LTDA,11222333000181,1000.00,AUTORIZADA,EMITIDA" ||
+	// statusNotaFiscal vem como objeto (101 e a fixture) ou como texto (102); dataEmissao
+	// como epoch, como array (a fixture) ou ausente (102, que usa dataEmissaoFormatada).
+	if len(lines) != 13 || lines[0] != "numero,emissao,tomador,documento,valor,status,situacao" ||
+		lines[1] != "101,2026-09-04,ACME LTDA,11222333000181,1000.00,Emitida,EMITIDA" ||
 		lines[2] != "102,2026-09-15,FULANO,12345678901,500.50,CANCELADA," ||
-		lines[11] != "111,,,,0.50,," {
+		lines[11] != "111,,,,0.50,," ||
+		lines[12] != "5,2026-10-30,TOMADOR NÃO INFORMADO,,250.00,Emitida,PROCESSADO_SUCESSO" {
 		t.Errorf("CSV:\n%s", out)
 	}
 
 	_, stderr, _ = execCLI(t, "", "notas", "--de", "2026-09", "--ate", "2026-10")
-	if !strings.Contains(stderr, "Total: R$ 1.501,00 em 11 nota(s)") {
+	if !strings.Contains(stderr, "Total: R$ 1.751,00 em 12 nota(s)") {
 		t.Errorf("total no stderr: %q", stderr)
 	}
 }

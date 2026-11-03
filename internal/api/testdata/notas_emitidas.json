@@ -1,4 +1,28 @@
 {
-  "list": [],
-  "total": 0
+  "list": [
+    {
+      "cpfCnpjTomador": "",
+      "dataEmissao": [
+        2026,
+        10,
+        30,
+        19,
+        1,
+        46
+      ],
+      "dataEmissaoFormatada": "30/10/2026",
+      "id": 1000000000000201,
+      "nomeRazaoTomador": "TOMADOR NÃO INFORMADO",
+      "numero": "5",
+      "situacaoNota": "PROCESSADO_SUCESSO",
+      "statusNotaFiscal": {
+        "badgeType": "success",
+        "descricao": "NFS-e processada com sucesso",
+        "text": "Emitida"
+      },
+      "tomadorExterior": false,
+      "valorServico": 250
+    }
+  ],
+  "total": 1
 }
