@@ -18,7 +18,7 @@ import (
 // (ADR-0018). v pode ser nil (resposta ignorada) ou *string (resposta em texto puro).
 type Sender interface {
 	// Send envia body como JSON. body pode ser nil (sem corpo), []byte ou json.RawMessage
-	// (enviados como estão), JSONString (string JSON) ou qualquer valor serializável.
+	// (enviados como estão) ou qualquer valor serializável.
 	Send(ctx context.Context, method, path string, body any, v any) error
 	// SendMultipart envia um formulário multipart/form-data (upload de arquivos).
 	SendMultipart(ctx context.Context, method, path string, campos []Campo, v any) error
@@ -33,19 +33,6 @@ type Campo struct {
 	Conteudo []byte
 	// Tipo é o Content-Type do arquivo; vazio deduz pela extensão do nome.
 	Tipo string
-}
-
-// JSONString envia V serializado como uma string JSON, como o painel faz em algumas
-// escritas (JSON.stringify do objeto e o resultado como corpo JSON).
-type JSONString struct{ V any }
-
-// MarshalJSON serializa V e devolve o resultado como string JSON.
-func (s JSONString) MarshalJSON() ([]byte, error) {
-	b, err := json.Marshal(s.V)
-	if err != nil {
-		return nil, err
-	}
-	return json.Marshal(string(b))
 }
 
 // EncodeBody serializa o corpo de Sender.Send; nil devolve nil (requisição sem corpo).

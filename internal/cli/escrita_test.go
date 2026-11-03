@@ -41,7 +41,7 @@ func TestSenderJSON(t *testing.T) {
 	writes := writeServer(t, http.StatusOK, func(w http.ResponseWriter, r *http.Request) {
 		body, _ := io.ReadAll(r.Body)
 		if r.Method != "PUT" || r.URL.Path != "/api/plataforma/movimentacao-financeira/classificar" ||
-			r.Header.Get("Content-Type") != "application/json" || string(body) != `"{\"id\":7}"` {
+			r.Header.Get("Content-Type") != "application/json" || string(body) != `{"id":7}` {
 			t.Errorf("requisição inesperada: %s %s %q %s", r.Method, r.URL.Path, r.Header.Get("Content-Type"), body)
 		}
 		io.WriteString(w, `{"id":7,"situacao":"CLASSIFICADO"}`)
@@ -50,7 +50,7 @@ func TestSenderJSON(t *testing.T) {
 		Situacao string `json:"situacao"`
 	}
 	err := testSender().Send(context.Background(), "PUT", "movimentacao-financeira/classificar",
-		api.JSONString{V: map[string]int{"id": 7}}, &resp)
+		map[string]int{"id": 7}, &resp)
 	if err != nil || resp.Situacao != "CLASSIFICADO" || writes.Load() != 1 {
 		t.Fatalf("err %v, resp %+v, %d escrita(s)", err, resp, writes.Load())
 	}

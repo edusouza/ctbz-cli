@@ -111,8 +111,8 @@ func BuscarExtratoInfo(ctx context.Context, g Getter, idContaBancaria int64, ano
 	return get[ExtratoInfo](ctx, g, PathExtratoInfo(idContaBancaria, ano, mes))
 }
 
-// PathClassificarLancamento troca a classificação de um lançamento do extrato (PUT, corpo em
-// string JSON). O front escreve "/movimentacao-financeira/…", relativo à base do BFF.
+// PathClassificarLancamento troca a classificação de um lançamento do extrato (PUT, corpo JSON).
+// O front escreve "/movimentacao-financeira/…", relativo à base do BFF.
 const PathClassificarLancamento = "movimentacao-financeira/classificar"
 
 // ClassificarLancamento é o corpo de PathClassificarLancamento.
@@ -125,7 +125,7 @@ type ClassificarLancamento struct {
 // Classificar troca a classificação de um lançamento do extrato. Um 406
 // (exception/erro-negocial-406) indica que os contadores já classificaram o período.
 func Classificar(ctx context.Context, s Sender, req ClassificarLancamento) error {
-	return s.Send(ctx, "PUT", PathClassificarLancamento, JSONString{req}, nil)
+	return s.Send(ctx, "PUT", PathClassificarLancamento, req, nil)
 }
 
 // Data é uma data de resposta que pode vir como epoch em milissegundos ou como texto ISO.
@@ -153,7 +153,7 @@ func (d *Data) UnmarshalJSON(b []byte) error {
 	return fmt.Errorf("data inesperada %q", s)
 }
 
-// PathDesmembrar divide um lançamento do extrato em partes (PUT, corpo em string JSON).
+// PathDesmembrar divide um lançamento do extrato em partes (PUT, corpo JSON).
 // Ver docs/api/escrita/contabilidade-e-documentos.md, seção 1.4.
 const PathDesmembrar = "movimentacao-financeira/desmembrar"
 
@@ -173,7 +173,7 @@ type LancamentoFilho struct {
 
 // Desmembrar divide um lançamento do extrato. Desfaz-se com DesfazerDesmembramento.
 func Desmembrar(ctx context.Context, s Sender, req Desmembramento) error {
-	return s.Send(ctx, "PUT", PathDesmembrar, JSONString{req}, nil)
+	return s.Send(ctx, "PUT", PathDesmembrar, req, nil)
 }
 
 // PathDesfazerDesmembramento volta um lançamento desmembrado ao original. O front repete o id

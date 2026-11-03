@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz extratos classificar` e `ctbz extratos desmembrar` enviam o corpo como objeto JSON. Antes
+  iam como string JSON (o objeto serializado duas vezes), e a Contabilizei recusava o
+  `classificar` com HTTP 400, sem reclassificar nada; o `desmembrar` usava o mesmo formato (#1051).
+
 ## [1.9.4] - 2026-10-27
 
 Extratos do Banco Inter, continuação da 1.9.2 no uso real: o mês excluído volta a ser importável pela CLI e
