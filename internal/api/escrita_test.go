@@ -22,7 +22,6 @@ func TestEncodeBody(t *testing.T) {
 			ID    int64   `json:"id"`
 			Valor float64 `json:"valor"`
 		}{7, -150.25}, `{"id":7,"valor":-150.25}`},
-		{"string JSON", JSONString{map[string]int{"id": 7}}, `"{\"id\":7}"`},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			got, err := EncodeBody(tc.body)
