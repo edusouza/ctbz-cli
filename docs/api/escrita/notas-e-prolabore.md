@@ -156,8 +156,10 @@ A CLI deve atender só o v2 e recusar o legado.
 **Não há polling.** Depois do POST o front só mostra "processando" e relê a listagem. O estado
 vem da listagem `GET novo-emissor/v2/listagem/notas/filtro?pagina=&limite=&ano=&mes=`, item a
 item:
-`situacaoNota` (ex.: `PROCESSADO_SUCESSO`, `CANCELADA`), `statusNotaFiscal{text, badgeType}`
-(rótulo pronto do servidor), `errosNotaFiscal[{descricao}]` (popover "detalhes" com o erro da
+`situacaoNota` (ex.: `PROCESSADO_SUCESSO`, `CANCELADA`), `statusNotaFiscal{descricao, text, badgeType}`
+(rótulo pronto do servidor; ex.: `{"descricao": "NFS-e processada com sucesso", "text": "Emitida",
+"badgeType": "success"}`, visto numa conta real em 02/11/2026, #1052), `dataEmissao` como array
+`[ano, mês, dia, hora, min, s]`, `errosNotaFiscal[{descricao}]` (popover "detalhes" com o erro da
 prefeitura), `numero` (só aparece com `PROCESSADO_SUCESSO`) e `permiteReplicacao`. O comprovante
 chega por e-mail. Para a CLI: depois de emitir, consultar a listagem do mês em intervalos até
 `numero` aparecer ou `errosNotaFiscal` vir preenchido. O POST não devolve id confiável (incerto),

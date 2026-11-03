@@ -7,6 +7,14 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz notas` volta a listar as notas emitidas: a Contabilizei passou a mandar `statusNotaFiscal`
+  como objeto (`{descricao, text, badgeType}`), e a CLI falhava ao ler a resposta e não listava
+  nada. A coluna `status` mostra o rótulo do painel (`text`, ex.: "Emitida"); o formato antigo,
+  em texto, continua aceito. A coluna `emissao` lê a data que agora vem como array
+  `[ano, mês, dia, hora, min, s]` (#1052).
+
 ## [1.9.4] - 2026-10-27
 
 Extratos do Banco Inter, continuação da 1.9.2 no uso real: o mês excluído volta a ser importável pela CLI e
