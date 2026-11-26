@@ -50,6 +50,7 @@ críticos e cada versão seguinte fecha **um tema** de correção, com os achado
 | **v1.9.2** | Extratos do Banco Inter: OFX e mês preso em processamento | — | 2 | concluída |
 | **v1.9.3** | Correções críticas (planejada como v1.9.1) | [#943](https://github.com/edusouza/ctbz-cli/issues/943) | 16 | concluída |
 | **v1.9.4** | Extratos do Banco Inter: mês excluído e saldo do último dia | [#1034](https://github.com/edusouza/ctbz-cli/issues/1034) | 11 | concluída |
+| **v1.9.5** | Login bloqueado pelo firewall (User-Agent) | — | 1 | concluída |
 | **v1.10** | Saída segura: caracteres de controle, CSV, segredos e dados pessoais | [#944](https://github.com/edusouza/ctbz-cli/issues/944) | 50 | planejada |
 | **v1.11** | Escrita segura e `--dry-run` | [#945](https://github.com/edusouza/ctbz-cli/issues/945) | 78 | planejada |
 | **v1.12** | Depois do envio: releitura, situação e orientação | [#946](https://github.com/edusouza/ctbz-cli/issues/946) | 66 | planejada |
@@ -464,6 +465,16 @@ achados do review adversarial da PR, todos corrigidos nela.
 | ✅ | [#1043](https://github.com/edusouza/ctbz-cli/issues/1043) | `--saldo-final` só substitui saldo lido zero ou ausente (ADR-0024) | bug |
 | ✅ | [#1044](https://github.com/edusouza/ctbz-cli/issues/1044) | resultado com `saldo_lido` e `saldo_divergente` | bug |
 | ✅ | [#1045](https://github.com/edusouza/ctbz-cli/issues/1045) | doc de API do saldo coerente com a regra | documentação |
+
+## v1.9.5 — Login bloqueado pelo firewall (User-Agent)
+
+Correção curta, fora das versões por tema (26/11/2026): o firewall da Contabilizei (Azion) passou a recusar com
+HTTP 403 o `GET /login` com o User-Agent da CLI (`Chrome/128.0`, sem as quatro partes da versão de um navegador
+real), e `ctbz login` falhava no primeiro passo.
+
+| | PR | Correção | Tipo |
+|---|---|---|---|
+| ✅ | [#1056](https://github.com/edusouza/ctbz-cli/pull/1056) | User-Agent `Chrome/141.0.0.0` na CLI e no script de endpoints; 403 do firewall com mensagem própria | bug |
 
 ## v1.10 — Saída segura: caracteres de controle, CSV, segredos e dados pessoais
 

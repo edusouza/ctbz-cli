@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.9.5] - 2026-11-26
+
+Login bloqueado pelo firewall da Contabilizei: `ctbz login` falhava logo na abertura da página de login com
+HTTP 403 por causa do User-Agent.
+
 ### Fixed
 
 - `ctbz login` voltou a funcionar: o firewall da Contabilizei (Azion) passou a recusar com HTTP 403 o
@@ -562,7 +567,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.4...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.5...HEAD
+[1.9.5]: https://github.com/edusouza/ctbz-cli/compare/v1.9.4...v1.9.5
 [1.9.4]: https://github.com/edusouza/ctbz-cli/compare/v1.9.3...v1.9.4
 [1.9.3]: https://github.com/edusouza/ctbz-cli/compare/v1.9.2...v1.9.3
 [1.9.2]: https://github.com/edusouza/ctbz-cli/compare/v1.9.0...v1.9.2
