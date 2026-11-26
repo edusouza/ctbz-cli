@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -119,7 +120,8 @@ func mensalidadeRecord(fat *api.Fatura, m *api.Mensalidade) *output.Record {
 }
 
 // dataDeValor interpreta uma data de formato não verificado: texto ("dd/mm/aaaa",
-// "aaaa-mm-dd"…) ou epoch em milissegundos. Outros valores voltam como texto.
+// "aaaa-mm-dd"…), epoch em milissegundos ou array [ano, mês, dia, …] (LocalDate/LocalDateTime
+// do Java, #1052). Outros valores voltam como texto.
 func dataDeValor(v any) any {
 	switch x := v.(type) {
 	case nil:
@@ -128,6 +130,30 @@ func dataDeValor(v any) any {
 		return dataOuTexto(x)
 	case float64:
 		return dateFromMillis(int64(x))
+	case []any:
+		if d, ok := dataDeArray(x); ok {
+			return d
+		}
 	}
 	return fmt.Sprint(v)
+}
+
+// dataDeArray lê [ano, mês, dia, …] ignorando a hora.
+func dataDeArray(a []any) (output.Date, bool) {
+	if len(a) < 3 {
+		return output.Date{}, false
+	}
+	var p [3]int
+	for i := range p {
+		f, ok := a[i].(float64)
+		if !ok || f != float64(int(f)) {
+			return output.Date{}, false
+		}
+		p[i] = int(f)
+	}
+	t := time.Date(p[0], time.Month(p[1]), p[2], 0, 0, 0, 0, time.Local)
+	if t.Year() != p[0] || int(t.Month()) != p[1] || t.Day() != p[2] {
+		return output.Date{}, false // fora do calendário (ex.: mês 13)
+	}
+	return output.Date{Time: t}, true
 }
