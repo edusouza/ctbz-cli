@@ -157,7 +157,7 @@ func notasList(ns []api.NotaEmitida) (*output.List, float64) {
 			emissao = dataOuTexto(n.DataEmissaoFormatada)
 		}
 		l.Append(idTexto(n.Numero), emissao, n.NomeRazaoTomador, documentoTomador(n.CPFCNPJTomador),
-			moneyOrNil(n.ValorServico), nilIfEmpty(n.StatusNotaFiscal), nilIfEmpty(n.SituacaoNota))
+			moneyOrNil(n.ValorServico), nilIfEmpty(n.StatusNotaFiscal.Rotulo()), nilIfEmpty(n.SituacaoNota))
 	}
 	return l, total
 }

@@ -17,8 +17,10 @@ import (
 )
 
 const (
-	DefaultBaseURL   = "https://app.contabilizei.com.br"
-	defaultUserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36"
+	DefaultBaseURL = "https://app.contabilizei.com.br"
+	// O WAF da Contabilizei (Azion) recusa com 403 um Chrome sem a versão completa
+	// ("Chrome/128.0"): um navegador real sempre manda quatro partes ("Chrome/141.0.0.0").
+	defaultUserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
 )
 
 // ErrUnauthorized indica que a sessão expirou ou é inválida.
@@ -242,6 +244,10 @@ type HTTPError struct {
 }
 
 func (e *HTTPError) Error() string {
+	if e.Status == http.StatusForbidden && bytes.Contains(e.Body, []byte("Azion")) {
+		return fmt.Sprintf("%s: o firewall da Contabilizei (Azion) bloqueou a requisição com HTTP 403; "+
+			"o User-Agent enviado pode ter deixado de ser aceito: abra uma issue em github.com/edusouza/ctbz-cli", e.Step)
+	}
 	snippet := strings.TrimSpace(string(e.Body))
 	if len(snippet) > 200 {
 		snippet = snippet[:200] + "…"

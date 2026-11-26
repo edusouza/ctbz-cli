@@ -33,7 +33,7 @@ import urllib.request
 BASE = "https://app.contabilizei.com.br"
 PAINEL = BASE + "/painel-de-controle/"
 NOTA_ENTRADA = BASE + "/nota-entrada/"
-UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36"
+UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
 
 # Exportações do módulo que cria as instâncias axios (ver docs/frontend).
 INSTANCIAS = {
