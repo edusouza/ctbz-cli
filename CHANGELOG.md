@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+## [1.9.6] - 2026-11-26
+
+`ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da
+resposta, e `ctbz extratos classificar` sempre recebia HTTP 400, porque a CLI enviava o corpo serializado
+duas vezes.
+
 ### Fixed
 
 - `ctbz extratos classificar` e `ctbz extratos desmembrar` enviam o corpo como objeto JSON. Antes
@@ -578,7 +584,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.5...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.6...HEAD
+[1.9.6]: https://github.com/edusouza/ctbz-cli/compare/v1.9.5...v1.9.6
 [1.9.5]: https://github.com/edusouza/ctbz-cli/compare/v1.9.4...v1.9.5
 [1.9.4]: https://github.com/edusouza/ctbz-cli/compare/v1.9.3...v1.9.4
 [1.9.3]: https://github.com/edusouza/ctbz-cli/compare/v1.9.2...v1.9.3

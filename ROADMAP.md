@@ -51,6 +51,7 @@ críticos e cada versão seguinte fecha **um tema** de correção, com os achado
 | **v1.9.3** | Correções críticas (planejada como v1.9.1) | [#943](https://github.com/edusouza/ctbz-cli/issues/943) | 16 | concluída |
 | **v1.9.4** | Extratos do Banco Inter: mês excluído e saldo do último dia | [#1034](https://github.com/edusouza/ctbz-cli/issues/1034) | 11 | concluída |
 | **v1.9.5** | Login bloqueado pelo firewall (User-Agent) | — | 1 | concluída |
+| **v1.9.6** | `ctbz notas` e `extratos classificar` no formato atual | — | 2 | concluída |
 | **v1.10** | Saída segura: caracteres de controle, CSV, segredos e dados pessoais | [#944](https://github.com/edusouza/ctbz-cli/issues/944) | 50 | planejada |
 | **v1.11** | Escrita segura e `--dry-run` | [#945](https://github.com/edusouza/ctbz-cli/issues/945) | 78 | planejada |
 | **v1.12** | Depois do envio: releitura, situação e orientação | [#946](https://github.com/edusouza/ctbz-cli/issues/946) | 66 | planejada |
@@ -475,6 +476,17 @@ real), e `ctbz login` falhava no primeiro passo.
 | | PR | Correção | Tipo |
 |---|---|---|---|
 | ✅ | [#1056](https://github.com/edusouza/ctbz-cli/pull/1056) | User-Agent `Chrome/141.0.0.0` na CLI e no script de endpoints; 403 do firewall com mensagem própria | bug |
+
+## v1.9.6 — `ctbz notas` e `extratos classificar` no formato atual
+
+Correção curta, fora das versões por tema (26/11/2026): `ctbz notas` falhava ao ler `statusNotaFiscal`, que a
+Contabilizei passou a mandar como objeto, e `ctbz extratos classificar` enviava o corpo como string JSON e
+recebia HTTP 400 (o `desmembrar` usava o mesmo formato).
+
+| | PR | Correção | Tipo |
+|---|---|---|---|
+| ✅ | [#1053](https://github.com/edusouza/ctbz-cli/pull/1053) | `statusNotaFiscal` como objeto e `dataEmissao` como array em `ctbz notas` | bug |
+| ✅ | [#1054](https://github.com/edusouza/ctbz-cli/pull/1054) | `extratos classificar` e `desmembrar` enviam o corpo como objeto JSON | bug |
 
 ## v1.10 — Saída segura: caracteres de controle, CSV, segredos e dados pessoais
 
