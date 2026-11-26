@@ -15,6 +15,19 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   em texto, continua aceito. A coluna `emissao` lê a data que agora vem como array
   `[ano, mês, dia, hora, min, s]` (#1052).
 
+## [1.9.5] - 2026-11-26
+
+Login bloqueado pelo firewall da Contabilizei: `ctbz login` falhava logo na abertura da página de login com
+HTTP 403 por causa do User-Agent.
+
+### Fixed
+
+- `ctbz login` voltou a funcionar: o firewall da Contabilizei (Azion) passou a recusar com HTTP 403 o
+  User-Agent da CLI (`Chrome/128.0`, sem a versão completa de um navegador real). A CLI agora envia
+  `Chrome/141.0.0.0`.
+- Um HTTP 403 do firewall na abertura do login deixa de aparecer como "página de login sem token" e
+  passa a dizer que o firewall bloqueou a requisição e que o User-Agent pode ter deixado de ser aceito.
+
 ## [1.9.4] - 2026-10-27
 
 Extratos do Banco Inter, continuação da 1.9.2 no uso real: o mês excluído volta a ser importável pela CLI e
@@ -562,7 +575,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.4...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.5...HEAD
+[1.9.5]: https://github.com/edusouza/ctbz-cli/compare/v1.9.4...v1.9.5
 [1.9.4]: https://github.com/edusouza/ctbz-cli/compare/v1.9.3...v1.9.4
 [1.9.3]: https://github.com/edusouza/ctbz-cli/compare/v1.9.2...v1.9.3
 [1.9.2]: https://github.com/edusouza/ctbz-cli/compare/v1.9.0...v1.9.2

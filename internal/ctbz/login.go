@@ -75,6 +75,9 @@ func (c *Client) StartLogin(ctx context.Context, user, password string) (*LoginS
 	if err != nil {
 		return nil, fmt.Errorf("abrindo página de login: %w", err)
 	}
+	if page.Status != http.StatusOK {
+		return nil, &HTTPError{Step: "abrindo página de login", Status: page.Status, Body: page.Body}
+	}
 	m := reFormToken.FindSubmatch(page.Body)
 	if m == nil {
 		return nil, &HTTPError{Step: "página de login sem token", Status: page.Status, Body: page.Body}
