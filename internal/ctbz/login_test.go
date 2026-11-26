@@ -178,7 +178,7 @@ func TestParseStorageSpecialChars(t *testing.T) {
 }
 
 // O WAF da Contabilizei (Azion) devolve 403 para um User-Agent de Chrome sem a versão completa
-// ("Chrome/128.0"); um navegador real sempre manda quatro partes ("Chrome/128.0.0.0").
+// ("Chrome/128.0"); um navegador real sempre manda quatro partes ("Chrome/141.0.0.0").
 func TestUserAgentPadraoTemVersaoCompletaDeChrome(t *testing.T) {
 	if !regexp.MustCompile(`Chrome/\d+\.\d+\.\d+\.\d+ `).MatchString(defaultUserAgent) {
 		t.Fatalf("User-Agent %q sem versão de Chrome com quatro partes: o WAF recusa o login com 403", defaultUserAgent)
