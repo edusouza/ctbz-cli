@@ -204,14 +204,14 @@ func TestRequisicoesCobertura(t *testing.T) {
 	}
 }
 
-// TestGravacao verifica o próprio gravador: JSON, string JSON, query, DELETE sem corpo e
+// TestGravacao verifica o próprio gravador: JSON, query, DELETE sem corpo e
 // multipart comparado por campo, sem o conteúdo do arquivo.
 func TestGravacao(t *testing.T) {
 	reqs := gravar(t, func(ctx context.Context, s Sender) error {
 		if err := s.Send(ctx, "POST", "caixa/lancamentousuario/novo/?x=1", map[string]any{"valor": -150.25}, nil); err != nil {
 			return err
 		}
-		if err := s.Send(ctx, "PUT", "movimentacao-financeira/classificar", JSONString{map[string]int{"id": 7}}, nil); err != nil {
+		if err := s.Send(ctx, "PUT", "movimentacao-financeira/classificar", map[string]int{"id": 7}, nil); err != nil {
 			return err
 		}
 		if err := s.Send(ctx, "DELETE", "/api/emissor/x/1", nil, nil); err != nil {
@@ -224,7 +224,7 @@ func TestGravacao(t *testing.T) {
 	}, "")
 	got, _ := json.Marshal(reqs)
 	want := `[{"metodo":"POST","caminho":"/api/plataforma/caixa/lancamentousuario/novo/","query":"x=1","content_type":"application/json","corpo":{"valor":-150.25}},` +
-		`{"metodo":"PUT","caminho":"/api/plataforma/movimentacao-financeira/classificar","content_type":"application/json","corpo":"{\"id\":7}"},` +
+		`{"metodo":"PUT","caminho":"/api/plataforma/movimentacao-financeira/classificar","content_type":"application/json","corpo":{"id":7}},` +
 		`{"metodo":"DELETE","caminho":"/api/emissor/x/1"},` +
 		`{"metodo":"POST","caminho":"/api/plataforma/upload","content_type":"multipart/form-data","campos":[{"nome":"competencia","valor":"2026-09"},{"nome":"arquivo","arquivo":"a.pdf","tipo":"application/pdf","tamanho":8}]}]`
 	if string(got) != want {

@@ -29,9 +29,10 @@ func TestExtratosDesmembrar(t *testing.T) {
 	if code != ExitOK || len(f.writes) != 1 {
 		t.Fatalf("código %d, escritas %v\n%s", code, f.writes, stderr)
 	}
-	want := `PUT /api/plataforma/movimentacao-financeira/desmembrar "{\"idLancamentoPai\":1000000000000102,\"lancamentosFilho\":[` +
-		`{\"descricao\":\"Fornecedor\",\"valor\":-1000,\"idContaUsuario\":1000000000000012,\"idVinculo\":null},` +
-		`{\"descricao\":\"Lucros\",\"valor\":-234.56,\"idContaUsuario\":6199733752168448,\"idVinculo\":1000000000000031}]}"`
+	// O corpo é o objeto JSON, não uma string JSON (#1051).
+	want := `PUT /api/plataforma/movimentacao-financeira/desmembrar {"idLancamentoPai":1000000000000102,"lancamentosFilho":[` +
+		`{"descricao":"Fornecedor","valor":-1000,"idContaUsuario":1000000000000012,"idVinculo":null},` +
+		`{"descricao":"Lucros","valor":-234.56,"idContaUsuario":6199733752168448,"idVinculo":1000000000000031}]}`
 	if f.writes[0] != want {
 		t.Errorf("escrita:\n%s\nquero:\n%s", f.writes[0], want)
 	}

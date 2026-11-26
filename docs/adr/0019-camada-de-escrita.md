@@ -12,7 +12,8 @@ poderia duplicar um lançamento ou um aceite.
 
 As escritas do painel (ver [Escrita](../api/escrita/README.md)) usam três formatos de
 corpo: JSON, um objeto serializado como string JSON (`JSON.stringify`) e `multipart/form-data`
-para uploads. Algumas respostas são texto puro. Os erros chegam em formatos variados:
+para uploads. (Correção, #1051: o `JSON.stringify` do front vira o próprio corpo, porque o axios
+envia texto como está; pela rede vai o objeto, não uma string JSON. O `JSONString` foi removido.) Algumas respostas são texto puro. Os erros chegam em formatos variados:
 texto (`400`), `{"message"}` (`403`), HTML (`404` de caminho incompleto),
 `{"detalhes":[{"detalhe"}]}` (`400`, `406`, `560`).
 

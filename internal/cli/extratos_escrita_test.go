@@ -64,7 +64,8 @@ func TestExtratosClassificar(t *testing.T) {
 	if code != ExitOK || len(f.writes) != 1 {
 		t.Fatalf("código %d, escritas %v\n%s", code, f.writes, stderr)
 	}
-	want := `PUT /api/plataforma/movimentacao-financeira/classificar "{\"idLancamentoUsuario\":1000000000000102,\"idContaUsuario\":1000000000000012,\"idSocio\":null}"`
+	// O corpo é o objeto JSON, não uma string JSON: string dá HTTP 400 (#1051).
+	want := `PUT /api/plataforma/movimentacao-financeira/classificar {"idLancamentoUsuario":1000000000000102,"idContaUsuario":1000000000000012,"idSocio":null}`
 	if f.writes[0] != want {
 		t.Errorf("escrita:\n%s\nquero:\n%s", f.writes[0], want)
 	}
@@ -81,7 +82,7 @@ func TestExtratosClassificarSocio(t *testing.T) {
 		t.Errorf("sem sócio: código %d, %s", code, stderr)
 	}
 	_, stderr, code := execCLI(t, "", append(args, "--socio", "1000000000000031")...)
-	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(f.writes[0], `\"idSocio\":1000000000000031`) {
+	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(f.writes[0], `"idSocio":1000000000000031}`) {
 		t.Fatalf("código %d, %v, %s", code, f.writes, stderr)
 	}
 	// O fake não muda a classificação: a CLI avisa.

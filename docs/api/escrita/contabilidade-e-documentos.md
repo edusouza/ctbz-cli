@@ -89,7 +89,10 @@ Convenções:
 - **Chunk/tela:** `detalhes-do-extrato` (modal "ExtratoDetalhesModalEditarLancamento", botão
   "Salvar"). O serviço está em `detalhes-do-extrato~lancamentos-caixa` e em `importar-extrato~movimentacao-financeira`
   (módulo `9fe3`).
-- **Corpo:** uma string JSON já serializada (`JSON.stringify`), com `Content-Type: application/json`:
+- **Corpo:** o objeto JSON, com `Content-Type: application/json`. O front faz `JSON.stringify` e o
+  axios envia o texto como está, então o que vai pela rede é o objeto. Uma string JSON (o objeto
+  serializado duas vezes) é recusada com HTTP 400 (`Cannot construct instance of ClassificacaoDTO`,
+  #1051):
 
 ```json
 { "idLancamentoUsuario": 789, "idContaUsuario": 456, "idSocio": null }
@@ -118,7 +121,8 @@ Convenções:
 
 ### 1.4 `PUT /movimentacao-financeira/desmembrar`: dividir um lançamento de extrato
 
-- **Chunk:** `detalhes-do-extrato` (modal "Desmembrar"). O corpo é uma string JSON:
+- **Chunk:** `detalhes-do-extrato` (modal "Desmembrar"). O corpo é o objeto JSON, montado com
+  `JSON.stringify` como na seção 1.3 (não uma string JSON):
 
 ```json
 {

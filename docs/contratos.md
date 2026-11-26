@@ -78,7 +78,6 @@ da CLI (`api.EncodeBody`/`EncodeMultipart` e `ctbz.Client`), e compara com
 
 - Multipart é comparado por campo: texto com o valor, arquivo com nome, tipo e tamanho
   (sem o conteúdo).
-- Corpos enviados como string JSON aparecem como string no golden.
 - `TestRequisicoesCobertura` quebra se uma escrita não tem golden ou se sobrou golden sem
   escrita.
 - Os goldens são montados a partir do que o front envia (ver [Escrita](api/escrita/README.md)),

@@ -19,7 +19,7 @@ internal/cli/
   docs.go        gerador da referência de comandos (docs/referencia)
 internal/api/
   api.go         Getter/TextGetter, registro de endpoints (Endpoints) para os contratos
-  escrita.go     Sender, codificação de corpos (JSON, string JSON, multipart), Escritas()
+  escrita.go     Sender, codificação de corpos (JSON, multipart), Escritas()
   empresa.go     caminhos, tipos de resposta e BuscarXxx de um contexto
   testdata/      fixtures anonimizadas (go run ./tools/capture)
 internal/contract/

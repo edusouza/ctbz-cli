@@ -9,6 +9,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz extratos classificar` e `ctbz extratos desmembrar` enviam o corpo como objeto JSON. Antes
+  iam como string JSON (o objeto serializado duas vezes), e a Contabilizei recusava o
+  `classificar` com HTTP 400, sem reclassificar nada; o `desmembrar` usava o mesmo formato (#1051).
 - `ctbz notas` volta a listar as notas emitidas: a Contabilizei passou a mandar `statusNotaFiscal`
   como objeto (`{descricao, text, badgeType}`), e a CLI falhava ao ler a resposta e não listava
   nada. A coluna `status` mostra o rótulo do painel (`text`, ex.: "Emitida"); o formato antigo,
