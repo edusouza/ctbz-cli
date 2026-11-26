@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -173,5 +174,34 @@ func TestParseStorageSpecialChars(t *testing.T) {
 	json.Unmarshal(st["e"], &v)
 	if v.RazaoSocial != "AÇÃO & CIA + 100%" {
 		t.Fatalf("decodificado: %q", v.RazaoSocial)
+	}
+}
+
+// O WAF da Contabilizei (Azion) devolve 403 para um User-Agent de Chrome sem a versão completa
+// ("Chrome/128.0"); um navegador real sempre manda quatro partes ("Chrome/141.0.0.0").
+func TestUserAgentPadraoTemVersaoCompletaDeChrome(t *testing.T) {
+	if !regexp.MustCompile(`Chrome/\d+\.\d+\.\d+\.\d+ `).MatchString(defaultUserAgent) {
+		t.Fatalf("User-Agent %q sem versão de Chrome com quatro partes: o WAF recusa o login com 403", defaultUserAgent)
+	}
+}
+
+func TestStartLoginBloqueadoPeloWAF(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+		io.WriteString(w, `<!DOCTYPE html><html><head><title>Azion - Default error page</title></head><body></body></html>`)
+	}))
+	defer srv.Close()
+
+	_, err := NewClient(srv.URL).StartLogin(context.Background(), "fulano", "segredo")
+	if err == nil {
+		t.Fatal("esperava erro com o 403 do WAF")
+	}
+	for _, quer := range []string{"403", "bloqueou", "User-Agent"} {
+		if !strings.Contains(err.Error(), quer) {
+			t.Errorf("erro %q deveria mencionar %q", err, quer)
+		}
+	}
+	if strings.Contains(err.Error(), "sem token") {
+		t.Errorf("erro %q ainda trata o bloqueio como falta de token", err)
 	}
 }

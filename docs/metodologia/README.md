@@ -11,7 +11,7 @@ servidos.
 ## 1. Mapear o login
 
 ```sh
-UA='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36'
+UA='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
 J=cookies.txt
 
 curl -sS --compressed -c $J -b $J -A "$UA" https://app.contabilizei.com.br/login -o login.html
