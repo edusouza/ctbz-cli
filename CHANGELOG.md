@@ -7,6 +7,14 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz login` voltou a funcionar: o firewall da Contabilizei (Azion) passou a recusar com HTTP 403 o
+  User-Agent da CLI (`Chrome/128.0`, sem a versão completa de um navegador real). A CLI agora envia
+  `Chrome/141.0.0.0`.
+- Um HTTP 403 do firewall na abertura do login deixa de aparecer como "página de login sem token" e
+  passa a dizer que o firewall bloqueou a requisição e que o User-Agent pode ter deixado de ser aceito.
+
 ## [1.9.4] - 2026-10-27
 
 Extratos do Banco Inter, continuação da 1.9.2 no uso real: o mês excluído volta a ser importável pela CLI e

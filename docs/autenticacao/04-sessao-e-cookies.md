@@ -44,7 +44,7 @@ O `User-Agent` do `curl` recebe 401, como se a sessão fosse inválida. Para rep
 fora da CLI, mande o cookie `oauth-token` da sessão e um `User-Agent` de navegador:
 
 ```sh
-curl -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36'   -H "Cookie: oauth-token=$TOKEN" https://app.contabilizei.com.br/api/plataforma/dashboard/fatura
+curl -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'   -H "Cookie: oauth-token=$TOKEN" https://app.contabilizei.com.br/api/plataforma/dashboard/fatura
 ```
 
 Na época do teste da tabela anterior, sem `__C` a resposta era 401. Envie os dois cookies, como a
