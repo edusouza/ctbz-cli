@@ -130,10 +130,19 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 				resumo += fmt.Sprintf(": %d parcelas, primeira de %s e demais de %s", opcao.Quantidade,
 					formatarCentavos(centavosPtr(opcao.ValorEntrada)), formatarCentavos(centavosPtr(opcao.ValorDemaisParcelas)))
 			}
+			if sim.CobrarServicoAdicional && sim.ValorServicoAdicional == nil {
+				return errors.New("a simulação indica cobrança de serviço adicional sem informar o valor; contrate pelo painel")
+			}
 			consequencia := avisosParcelamento
-			if sim.CobrarServicoAdicional || sim.ValorEmissaoGuia != nil {
-				consequencia += fmt.Sprintf(" Cobrados na próxima mensalidade: serviço adicional %s; emissão de guia %s.",
-					valorOuNaoInformado(sim.ValorServicoAdicional), valorOuNaoInformado(sim.ValorEmissaoGuia))
+			var custos []string
+			if sim.CobrarServicoAdicional {
+				custos = append(custos, "serviço adicional "+valorOuNaoInformado(sim.ValorServicoAdicional))
+			}
+			if sim.ValorEmissaoGuia != nil { // ausente não é cobrança
+				custos = append(custos, "emissão de guia "+valorOuNaoInformado(sim.ValorEmissaoGuia))
+			}
+			if len(custos) > 0 {
+				consequencia += " Cobrados na próxima mensalidade: " + strings.Join(custos, "; ") + "."
 			}
 			if !strings.HasPrefix(tipo, "pgfn-") {
 				qtd = 0 // só a PGFN envia a quantidade

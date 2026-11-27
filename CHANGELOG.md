@@ -13,6 +13,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   e só da opção escolhida: Simples e especializado (que não enviam `parcelas[]`) e uma outra
   opção incompleta deixam de bloquear a contratação. O resumo do Simples usa o
   `resumoParcelamento` em vez de `parcelas[0]` (#968).
+- `ctbz impostos parcelamento contratar` recusa a contratação (também em `--yes` e `--dry-run`)
+  quando a simulação cobra serviço adicional sem informar o valor, em vez de só mostrar "não
+  informado" (#969).
 
 ## [1.9.6] - 2026-11-26
 
