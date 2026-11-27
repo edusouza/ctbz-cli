@@ -9,6 +9,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz extratos importar` para antes de enviar qualquer coisa quando a resposta de validação da
+  Contabilizei não traz `temLancamentoPendente`, `formatosDisponiveisUpload` ou `statusIntegracao`
+  (antes viravam "sem pendência", "nenhum formato" e "conta não integrada" em silêncio e afrouxavam
+  a validação); banco com lista de formatos vazia ganha mensagem própria (#596).
 - `ctbz documentos enviar` recusa, antes de escrever (também no `--dry-run`), a pendência sem id, sem tipo ou, no extrato de aplicação e no informe de rendimentos de investimentos, sem conta bancária, em vez de enviar `null` ou vazio no corpo (#981).
 - `ctbz prolabore definir` só envia `sairGestaoInteligente: true` quando o sócio está na gestão inteligente e é o último nela; quem está em outro tipo não tira mais a empresa da gestão inteligente do outro sócio, e sem o tipo atual a CLI recusa antes de escrever (#995).
 - `ctbz lucros distribuir` recusa, sem escrever, a distribuição que lista um sócio com id `0`, negativo, fracionário ou texto não numérico (antes ia como `idSocio` na escrita), e `1` e `" 1"` contam como o mesmo sócio (#987).

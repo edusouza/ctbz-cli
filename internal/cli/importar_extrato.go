@@ -662,8 +662,19 @@ func validarContaUpload(ini *api.UploadExtratoInit, idConta int64, formato strin
 			if c.ID != idConta {
 				continue
 			}
+			if !c.StatusInformado {
+				return "", errors.New("a Contabilizei não informou se a conta é integrada (campo statusIntegracao ausente na resposta); " +
+					"nada foi enviado: tente de novo e, se continuar, abra uma issue")
+			}
 			if c.StatusIntegracao == "INTEGRADA" {
 				return "", errors.New("a conta é integrada: a importação é feita automaticamente, não precisa enviar extrato")
+			}
+			if b.FormatosDisponiveisUpload == nil {
+				return "", errors.New("a Contabilizei não informou os formatos que o banco da conta aceita (campo formatosDisponiveisUpload ausente na resposta); " +
+					"nada foi enviado: tente de novo e, se continuar, abra uma issue")
+			}
+			if len(b.FormatosDisponiveisUpload) == 0 && formato != "OFX" {
+				return "", usageError{fmt.Errorf("o banco desta conta não lista nenhum formato de extrato; este arquivo é .%s", strings.ToLower(formato))}
 			}
 			for _, fmtOK := range b.FormatosDisponiveisUpload {
 				if strings.EqualFold(fmtOK, formato) {
@@ -697,7 +708,11 @@ func juntarComOu(itens []string) string {
 func periodoLiberado(p *api.PermiteImportacao, alvo extratoAlvo) error {
 	for _, per := range p.PeriodosDeImportacao {
 		anterior := per.Ano < alvo.ano() || (per.Ano == alvo.ano() && per.Mes < alvo.mesNum())
-		if per.TemLancamentoPendente && anterior {
+		if anterior && per.TemLancamentoPendente == nil {
+			return fmt.Errorf("a Contabilizei não informou se há importação pendente em %02d/%d (campo temLancamentoPendente ausente na resposta); "+
+				"nada foi enviado: tente de novo e, se continuar, abra uma issue", per.Mes, per.Ano)
+		}
+		if anterior && *per.TemLancamentoPendente {
 			msg := per.Mensagem
 			if msg == "" {
 				msg = "importe os períodos anteriores primeiro"
