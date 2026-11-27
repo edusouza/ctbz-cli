@@ -27,7 +27,10 @@ texto (`400`), `{"message"}` (`403`), HTML (`404` de caminho incompleto),
   testes de requisição) envie exatamente os mesmos bytes.
 - **Conferência prévia:** antes de cada escrita, a CLI faz `GET appbar/get` pela camada de
   leitura. Se a sessão expirou, o re-login automático (com `CTBZ_OTP_CMD`) acontece aqui,
-  quando nada foi enviado. Sem re-login possível, a escrita não sai.
+  quando nada foi enviado. Sem re-login possível, a escrita não sai. Nos fluxos com código
+  OTP da conta (`conta alterar`, `conta senha`), a conferência com re-login vale só antes do
+  pedido do código; a do envio final não refaz o login (outro código invalidaria o pedido) e,
+  com a sessão expirada, sai "o código foi pedido, mas a sessão expirou… rode `ctbz login`".
 - **Uma tentativa:** a escrita é enviada uma vez. `401` na escrita vira "a escrita não foi
   aplicada; rode `ctbz login` e repita"; erro de rede vira "pode ou não ter sido aplicada;
   confira antes de repetir"; `5xx` é mostrado como erro. Nada é repetido.
