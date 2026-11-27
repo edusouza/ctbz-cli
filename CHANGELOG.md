@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz balanco reabrir` cita na confirmação de risco alto a cobrança do serviço: o valor, quando a API
+  informa (`valorServicoAdicional`), ou que o painel pode cobrar (#809).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da
