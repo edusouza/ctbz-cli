@@ -57,3 +57,45 @@ func TestEnvioDocumentoCompetenciaInvalida(t *testing.T) {
 		t.Errorf("competência válida: %02d/%d, %v", mes, ano, err)
 	}
 }
+
+// Pendência sem id, tipo vazio ou, nos tipos de investimento, sem conta bancária é erro antes
+// de escrever, nunca null/vazio no corpo (ADR-0021, #981).
+func TestEnvioDocumentoCamposObrigatorios(t *testing.T) {
+	ctx := context.Background()
+	for _, tc := range []struct {
+		nome  string
+		muda  func(*DocumentoPendente)
+		want  string
+		falha bool
+	}{
+		{"conta ausente", func(d *DocumentoPendente) { d.Propriedades.IDContaBancaria = nil }, "conta bancária", true},
+		{"conta nula", func(d *DocumentoPendente) { d.Propriedades.IDContaBancaria = json.RawMessage("null") }, "conta bancária", true},
+		{"conta vazia", func(d *DocumentoPendente) { d.Propriedades.IDContaBancaria = json.RawMessage(`""`) }, "conta bancária", true},
+		{"informe sem conta", func(d *DocumentoPendente) {
+			d.Tipo, d.Propriedades.IDContaBancaria = "INFORME_DE_RENDIMENTO_INVESTIMENTOS", nil
+		}, "conta bancária", true},
+		{"pendência ausente", func(d *DocumentoPendente) { d.Propriedades.IDPendencia = nil }, "sem id", true},
+		{"pendência nula", func(d *DocumentoPendente) { d.Propriedades.IDPendencia = json.RawMessage("null") }, "sem id", true},
+		{"pendência vazia", func(d *DocumentoPendente) { d.Propriedades.IDPendencia = json.RawMessage(`""`) }, "sem id", true},
+		{"tipo vazio", func(d *DocumentoPendente) { d.Tipo = "" }, "sem tipo", true},
+		{"estoque sem conta", func(d *DocumentoPendente) {
+			d.Tipo, d.Propriedades.IDContaBancaria, d.Propriedades.TipoInvestimento = "ESTOQUE", nil, nil
+		}, "", false},
+		{"completo", func(*DocumentoPendente) {}, "", false},
+	} {
+		d := exemploDocumento("1000000000000602", 9)
+		tc.muda(&d)
+		s := &senderContador{}
+		err1 := EnviarDocumento(ctx, s, d, "a.pdf", nil)
+		err2 := EnviarDocumentoConsolidado(ctx, s, []DocumentoPendente{exemploDocumento("1000000000000601", 8), d}, "a.pdf", nil)
+		if !tc.falha {
+			if err1 != nil || err2 != nil || s.n != 2 {
+				t.Errorf("%s: erros %v, %v, %d escritas", tc.nome, err1, err2, s.n)
+			}
+			continue
+		}
+		if err1 == nil || !strings.Contains(err1.Error(), tc.want) || err2 == nil || !strings.Contains(err2.Error(), tc.want) || s.n != 0 {
+			t.Errorf("%s: erros %v, %v, %d escritas (quero %q)", tc.nome, err1, err2, s.n, tc.want)
+		}
+	}
+}

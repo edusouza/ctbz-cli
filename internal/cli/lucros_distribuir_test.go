@@ -133,6 +133,13 @@ func TestLucrosDistribuirRecusas(t *testing.T) {
 		{"sócio com id vazio", strings.Replace(distribuicaoJSON, `{"id":1,`, `{"id":"",`, 1), restricoesOK, []string{"--socio", "2=100%"}, ExitError, "sócio da distribuição sem id"},
 		{"sócio com id objeto", strings.Replace(distribuicaoJSON, `{"id":1,`, `{"id":{"id":1},`, 1), restricoesOK, []string{"--socio", "2=100%"}, ExitError, "sócio da distribuição sem id"},
 		{"id repetido", strings.Replace(distribuicaoJSON, `{"id":2,`, `{"id":1,`, 1), restricoesOK, []string{"--socio", "1=100%"}, ExitError, "a Contabilizei listou o sócio 1 mais de uma vez na distribuição; distribua pelo painel"},
+		// #987: id presente porém inválido (zero, negativo, fracionário, texto) também recusa.
+		{"id zero", strings.Replace(distribuicaoJSON, `{"id":1,`, `{"id":0,`, 1), restricoesOK, []string{"--socio", "2=100%"}, ExitError, "sócio da distribuição sem id"},
+		{"id negativo", strings.Replace(distribuicaoJSON, `{"id":1,`, `{"id":-1,`, 1), restricoesOK, []string{"--socio", "2=100%"}, ExitError, "sócio da distribuição sem id"},
+		{"id fracionário", strings.Replace(distribuicaoJSON, `{"id":1,`, `{"id":1.5,`, 1), restricoesOK, []string{"--socio", "2=100%"}, ExitError, "sócio da distribuição sem id"},
+		{"id texto", strings.Replace(distribuicaoJSON, `{"id":1,`, `{"id":"abc",`, 1), restricoesOK, []string{"--socio", "2=100%"}, ExitError, "sócio da distribuição sem id"},
+		{"id só espaço", strings.Replace(distribuicaoJSON, `{"id":1,`, `{"id":" ",`, 1), restricoesOK, []string{"--socio", "2=100%"}, ExitError, "sócio da distribuição sem id"},
+		{"id repetido com espaço", strings.Replace(distribuicaoJSON, `{"id":2,`, `{"id":" 1",`, 1), restricoesOK, []string{"--socio", "1=100%"}, ExitError, "listou o sócio 1 mais de uma vez"},
 		{"id repetido como texto", strings.Replace(distribuicaoJSON, `{"id":2,`, `{"id":"1",`, 1), restricoesOK, []string{"--socio", "1=100%"}, ExitError, "listou o sócio 1 mais de uma vez"},
 	} {
 		f := distribuirFake(t, tc.distribuicao, tc.restricoes)
