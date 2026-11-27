@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/edusouza/ctbz-cli/internal/api"
 	"github.com/edusouza/ctbz-cli/internal/ctbz"
@@ -23,12 +24,20 @@ type segundaViaFake struct {
 	botao   string // botaoAcao (JSON); padrão: um redirect
 	publica string
 	status  int // status das faturas públicas
-	geradas atomic.Int32
+	// resumo e statusResumo mudam a resposta da v1 (itens e situação) quando preenchidos.
+	resumo       string
+	statusResumo int
+	geradas      atomic.Int32
 }
 
 func newSegundaViaFake(t *testing.T) *segundaViaFake {
 	t.Helper()
-	f := &segundaViaFake{acao: `"request:dashboard/nova-fatura/202610"`, botao: `"redirect:/painel-de-controle/#/pagar-com-cartao"`, publica: fixture(t, "fatura_publica"), status: http.StatusOK}
+	f := &segundaViaFake{acao: `"request:dashboard/nova-fatura/202610"`, botao: `"redirect:/painel-de-controle/#/pagar-com-cartao"`, publica: fixture(t, "fatura_publica"), status: http.StatusOK,
+		resumo: fixture(t, "fatura_publica_resumo")}
+	// A fixture vence em 25/10/2026: fixa "hoje" antes do vencimento.
+	antes := now
+	now = func() time.Time { return time.Date(2026, 10, 20, 12, 0, 0, 0, time.UTC) }
+	t.Cleanup(func() { now = antes })
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/api/plataforma/" + api.PathAppBar:
@@ -46,8 +55,12 @@ func newSegundaViaFake(t *testing.T) *segundaViaFake {
 			w.WriteHeader(f.status)
 			io.WriteString(w, f.publica)
 		case api.PathFaturaPublicaResumo(idFaturaTeste):
-			w.WriteHeader(f.status)
-			io.WriteString(w, fixture(t, "fatura_publica_resumo"))
+			if f.statusResumo != 0 {
+				w.WriteHeader(f.statusResumo)
+			} else {
+				w.WriteHeader(f.status)
+			}
+			io.WriteString(w, f.resumo)
 		default:
 			http.NotFound(w, r)
 		}
@@ -211,5 +224,53 @@ func TestMensalidadeMostraAsAcoesDoCard(t *testing.T) {
 		if code != ExitOK || !strings.Contains(out, want) {
 			t.Errorf("código %d, saída sem %s:\n%s", code, want, out)
 		}
+	}
+}
+
+// --pix e --linha existem para ir direto a um pagamento: o código só sai se a fatura ainda
+// puder ser paga (#931).
+func TestSegundaViaCodigoSoDeFaturaPagavel(t *testing.T) {
+	semTotal := `{"dataVencimento":"2026-10-25","total":null,"meioDePagamento":{"pix":{"textoPagamento":"PIXCOPIA","exibir":true},"boleto":{"textoPagamento":"LINHA","exibir":true}}}`
+	totalZero := strings.Replace(semTotal, `"total":null`, `"total":0`, 1)
+	vencida := strings.Replace(semTotal, `"total":null`, `"total":10`, 1)
+	vencida = strings.Replace(vencida, "2026-10-25", "2026-10-19", 1)
+	for _, c := range []struct{ nome, publica, resumo, want string }{
+		{"paga", "", `{"resumo":{"itens":[]},"status":{"id":"PAGA","descricao":"Paga"}}`, "já foi paga"},
+		{"cancelada", "", `{"resumo":{"itens":[]},"status":{"id":"CANCELADA"}}`, "foi cancelada"},
+		{"total nulo", semTotal, "", "sem valor a pagar"},
+		{"total zero", totalZero, "", "sem valor a pagar"},
+		{"vencimento passado", vencida, "", "venceu em 19/10/2026"},
+	} {
+		for _, flag := range []string{"--pix", "--linha"} {
+			f := newSegundaViaFake(t)
+			if c.publica != "" {
+				f.publica = c.publica
+			}
+			if c.resumo != "" {
+				f.resumo = c.resumo
+			}
+			out, stderr, code := execCLI(t, "", "mensalidade", "segunda-via", flag, "--yes")
+			if code != ExitError || out != "" || !strings.Contains(stderr, c.want) || !strings.Contains(stderr, "/checkout/#/fatura-contabilizei") {
+				t.Errorf("%s %s: código %d, saída %q\n%s", c.nome, flag, code, out, stderr)
+			}
+		}
+	}
+}
+
+// Sem o resumo v1 (que os modos de pipe não precisam), o código que a v2 trouxe ainda sai, com
+// aviso: falhar aqui faria o usuário repetir a escrita e gerar outra segunda via.
+func TestSegundaViaResumoComErroNaoImpedeOCodigo(t *testing.T) {
+	f := newSegundaViaFake(t)
+	f.statusResumo = http.StatusInternalServerError
+	out, stderr, code := execCLI(t, "", "mensalidade", "segunda-via", "--pix", "--yes")
+	if code != ExitOK || !strings.HasPrefix(out, "00020101021226") || strings.Count(out, "\n") != 1 {
+		t.Errorf("--pix: código %d, saída %q\n%s", code, out, stderr)
+	}
+	if !strings.Contains(stderr, "aviso: não foi possível ler a situação da fatura") || strings.Count(stderr, idFaturaTeste) != 1 {
+		t.Errorf("stderr:\n%s", stderr)
+	}
+	out, stderr, code = execCLI(t, "", "mensalidade", "segunda-via", "--yes", "-o", "json")
+	if code != ExitOK || !strings.Contains(out, `"pix_copia_e_cola": "00020101021226`) || !strings.Contains(stderr, "aviso: não foi possível ler a situação da fatura") {
+		t.Errorf("modo completo: código %d\n%s\n%s", code, out, stderr)
 	}
 }

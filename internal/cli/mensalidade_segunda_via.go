@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -27,7 +28,10 @@ dia), o comando para com erro, e só a ação dashboard/nova-fatura/AAAAMM é ac
 ação do card é recusada antes de enviar. Com --competencia, o card precisa oferecer a segunda via
 daquele mês.
 
---pix e --linha imprimem só o código, sem decoração, para usar num pipe:
+--pix e --linha imprimem só o código, sem decoração, para usar num pipe. Como o valor não
+aparece, o código só sai se a fatura ainda puder ser paga: fatura paga ou cancelada, sem valor
+ou já vencida fazem o comando falhar, mostrando o link. Se a leitura da situação falhar, o
+código sai com um aviso no stderr:
 
   inter-pj pix enviar --copia-e-cola "$(ctbz mensalidade segunda-via --pix --yes)"
 
@@ -99,11 +103,22 @@ Pede confirmação (--yes em scripts) e aceita --dry-run, que mostra o GET sem e
 			if err != nil {
 				return falhaLeituraSegundaVia(err, idFatura, nova.URL)
 			}
+			// O resumo v1 (itens e situação) é melhor esforço: se falhar, o código que a v2 já trouxe
+			// ainda sai, porque falhar aqui faria repetir a escrita e gerar outra segunda via.
 			resumo, err := api.BuscarFaturaPublicaResumo(ctx, g, idFatura)
 			if err != nil {
-				return falhaLeituraSegundaVia(err, idFatura, nova.URL)
+				fmt.Fprintf(s.err, "aviso: não foi possível ler a situação da fatura (%s); confira o valor e o vencimento no link: %s\n",
+					strings.Join(strings.Fields(strings.ReplaceAll(err.Error(), idFatura, "***")), " "), nova.URL)
+				resumo = nil
 			}
 			pix, linha := textoPagamento(pub.MeioDePagamento.Pix), textoPagamento(pub.MeioDePagamento.Boleto)
+			if soPix || soLinha {
+				// O código vai direto para um pagamento, sem o usuário ver o valor: só sai se a fatura
+				// ainda puder ser paga.
+				if motivo := faturaImpagavel(pub, resumo, api.DiaEmBrasilia(now())); motivo != "" {
+					return fmt.Errorf("a segunda via foi gerada, mas a fatura %s; o código não foi impresso; %s", motivo, linkOuPainel(nova.URL))
+				}
+			}
 			switch {
 			case soPix && pix == "":
 				return fmt.Errorf("a segunda via foi gerada, mas a fatura não oferece Pix; abra o link para pagar: %s", nova.URL)
@@ -141,6 +156,28 @@ func acaoSegundaVia(fat *api.Fatura) (string, error) {
 	return "", errors.New("o card da mensalidade não oferece segunda via agora (a fatura pode estar em dia; veja ctbz mensalidade)")
 }
 
+// faturaImpagavel diz por que o código de pagamento da fatura não deve ser usado às cegas ("" se
+// puder): fatura paga ou cancelada, sem valor a pagar ou já vencida em hoje (dia de Brasília).
+// Sem o resumo v1 a situação não é conhecida e só valor e vencimento são conferidos.
+func faturaImpagavel(pub *api.FaturaPublica, resumo *api.FaturaPublicaResumo, hoje time.Time) string {
+	if resumo != nil && resumo.Status != nil {
+		id := strings.ToUpper(strings.TrimSpace(resumo.Status.ID))
+		switch {
+		case strings.HasPrefix(id, "PAG"):
+			return "já foi paga"
+		case strings.HasPrefix(id, "CANCEL"):
+			return "foi cancelada"
+		}
+	}
+	if pub.Total == nil || *pub.Total <= 0 {
+		return "está sem valor a pagar"
+	}
+	if d, ok := dataDeValor(pub.DataVencimento).(output.Date); ok && d.Time.Before(hoje) {
+		return "venceu em " + d.Time.Format("02/01/2006")
+	}
+	return ""
+}
+
 // textoPagamento devolve o código de um meio de pagamento exibido ("" se não houver).
 func textoPagamento(m *api.MeioPagamento) string {
 	if m == nil || !m.Exibir {
@@ -163,25 +200,33 @@ func linkOuPainel(link string) string {
 	return "abra o link para pagar: " + link
 }
 
-func segundaViaRecord(id string, ano, mes int, temMes bool, pub *api.FaturaPublica, resumo *api.FaturaPublicaResumo, pix, linha, link string) *output.Record {
-	var competencia, status, codigoBarras any
-	if temMes {
-		competencia = fmt.Sprintf("%02d/%d", mes, ano)
-	}
-	if st := resumo.Status; st != nil {
-		status = nilIfEmpty(st.ID)
-		if st.Descricao != "" {
-			status = st.Descricao
-		}
-	}
-	if b := pub.MeioDePagamento.Boleto; b != nil && b.Exibir {
-		codigoBarras = nilIfEmpty(strings.TrimSpace(b.URLPagamento))
-	}
+func itensFatura(resumo *api.FaturaPublicaResumo) []output.Record {
 	itens := make([]output.Record, 0, len(resumo.Resumo.Itens))
 	for _, it := range resumo.Resumo.Itens {
 		r := output.Record{}
 		r.Add("descricao", "Descrição", semControle(it.Descricao)).Add("valor", "Valor", moneyOrNil(it.Valor))
 		itens = append(itens, r)
+	}
+	return itens
+}
+
+func segundaViaRecord(id string, ano, mes int, temMes bool, pub *api.FaturaPublica, resumo *api.FaturaPublicaResumo, pix, linha, link string) *output.Record {
+	var competencia, status, codigoBarras any
+	if temMes {
+		competencia = fmt.Sprintf("%02d/%d", mes, ano)
+	}
+	var itens any
+	if resumo != nil {
+		if st := resumo.Status; st != nil {
+			status = nilIfEmpty(st.ID)
+			if st.Descricao != "" {
+				status = st.Descricao
+			}
+		}
+		itens = itensFatura(resumo)
+	}
+	if b := pub.MeioDePagamento.Boleto; b != nil && b.Exibir {
+		codigoBarras = nilIfEmpty(strings.TrimSpace(b.URLPagamento))
 	}
 	return resultadoEscrita("segunda-via", "gerada", nilIfEmpty(id)).
 		Add("competencia", "Competência", competencia).

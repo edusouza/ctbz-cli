@@ -9,6 +9,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Corrigido
 
+- `ctbz mensalidade segunda-via --pix` e `--linha` só imprimem o código se a fatura puder ser
+  paga: fatura paga ou cancelada, sem valor ou vencida falham sem imprimir. Se a leitura do resumo
+  v1 falhar, o código ainda sai, com aviso no stderr (#931).
+
 - `ctbz mensalidade segunda-via` só envia a ação `dashboard/nova-fatura/AAAAMM` do card; qualquer
   outra ação `request:` (em `botao_adicional_acao` ou `botao_acao`) para com erro, sem enviar
   nada (#929).
