@@ -11,6 +11,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 - `ctbz razao` mostra cada lançamento no dia certo: a data vem como epoch à meia-noite UTC e a CLI
   a convertia para o fuso local, mostrando um dia antes (#1048).
+- `ctbz balanco reabrir` cita na confirmação de risco alto a cobrança do serviço: o valor, quando a API
+  informa (`valorServicoAdicional`), ou que o painel pode cobrar (#809).
 
 ## [1.9.6] - 2026-11-26
 
