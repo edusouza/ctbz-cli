@@ -133,13 +133,40 @@ func TestParcelamentoContratarOpcaoIncompleta(t *testing.T) {
 	}
 }
 
-// Custo adicional sem valor aparece como "não informado" na confirmação, não como R$ 0,00.
+// Cobrança de serviço adicional sem valor é custo desconhecido (ADR-0021): a contratação é
+// recusada antes de escrever, com --yes e com --dry-run. Valor 0 de verdade passa.
 func TestParcelamentoContratarCustoNaoInformado(t *testing.T) {
-	sim := `{"parcelas":[{"quantidade":12,"valorEntrada":500,"valorDemaisParcelas":250.5}],"cobrarServicoAdicional":true,"valorServicoAdicional":null}`
-	f := newEscritaFake(t, map[string]string{pathSimPGFN: sim})
-	_, stderr, code := execCLI(t, "", "impostos", "parcelamento", "contratar", "pgfn-previdenciario", "--yes")
-	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(stderr, "serviço adicional não informado; emissão de guia não informado") || strings.Contains(stderr, "R$ 0,00") {
-		t.Errorf("código %d, stderr %s", code, stderr)
+	const opcao = `"parcelas":[{"quantidade":12,"valorEntrada":500,"valorDemaisParcelas":250.5}]`
+	for _, tc := range []struct {
+		name, sim string
+		args      []string
+	}{
+		{"valor nulo com --yes", `{` + opcao + `,"cobrarServicoAdicional":true,"valorServicoAdicional":null}`, []string{"--yes"}},
+		{"valor ausente com --yes", `{` + opcao + `,"cobrarServicoAdicional":true}`, []string{"--yes"}},
+		{"valor nulo com --dry-run", `{` + opcao + `,"cobrarServicoAdicional":true,"valorServicoAdicional":null}`, []string{"--dry-run"}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			f := newEscritaFake(t, map[string]string{pathSimPGFN: tc.sim})
+			out, stderr, code := execCLI(t, "", append([]string{"impostos", "parcelamento", "contratar", "pgfn-previdenciario"}, tc.args...)...)
+			if code != ExitError || len(f.writes) != 0 || !strings.Contains(stderr, "serviço adicional") || !strings.Contains(stderr, "contrate pelo painel") {
+				t.Fatalf("código %d, escritas %q, stderr %s", code, f.writes, stderr)
+			}
+			if strings.Contains(out+stderr, "POST") || strings.Contains(stderr, "confissão de dívida") {
+				t.Errorf("mostrou a requisição ou o resumo:\nstdout %s\nstderr %s", out, stderr)
+			}
+		})
+	}
+	// Valor 0 real, e sem cobrança, seguem; valorEmissaoGuia ausente não é cobrança.
+	for name, sim := range map[string]string{
+		"valor zero":   `{` + opcao + `,"cobrarServicoAdicional":true,"valorServicoAdicional":0,"valorEmissaoGuia":15}`,
+		"sem cobrança": `{` + opcao + `,"cobrarServicoAdicional":false}`,
+		"emissão nula": `{` + opcao + `,"cobrarServicoAdicional":true,"valorServicoAdicional":99.9,"valorEmissaoGuia":null}`,
+	} {
+		f := newEscritaFake(t, map[string]string{pathSimPGFN: sim})
+		_, stderr, code := execCLI(t, "", "impostos", "parcelamento", "contratar", "pgfn-previdenciario", "--yes")
+		if code != ExitOK || len(f.writes) != 1 {
+			t.Errorf("%s: código %d, escritas %q, %s", name, code, f.writes, stderr)
+		}
 	}
 }
 

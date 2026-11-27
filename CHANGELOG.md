@@ -13,6 +13,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   e só da opção escolhida: Simples e especializado (que não enviam `parcelas[]`) e uma outra
   opção incompleta deixam de bloquear a contratação. O resumo do Simples usa o
   `resumoParcelamento` em vez de `parcelas[0]` (#968).
+- `ctbz impostos parcelamento contratar` recusa a contratação (também em `--yes` e `--dry-run`)
+  quando a simulação cobra serviço adicional sem informar o valor, em vez de só mostrar "não
+  informado" (#969).
 - `ctbz conta alterar` e `ctbz conta senha` não refazem mais o login se a sessão expirar enquanto
   se espera o código: o envio final falha com "o código foi pedido, mas a sessão expirou… rode
   `ctbz login`", em vez de disparar outro e-mail de código que invalidava o pedido (#835).
