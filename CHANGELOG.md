@@ -7,6 +7,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz prolabore definir` só envia `sairGestaoInteligente: true` quando o sócio está na gestão inteligente e é o último nela; quem está em outro tipo não tira mais a empresa da gestão inteligente do outro sócio, e sem o tipo atual a CLI recusa antes de escrever (#995).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da
