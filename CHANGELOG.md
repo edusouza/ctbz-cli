@@ -7,6 +7,13 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz impostos parcelamento contratar` só confere quantidade e valores de `parcelas[]` na PGFN
+  e só da opção escolhida: Simples e especializado (que não enviam `parcelas[]`) e uma outra
+  opção incompleta deixam de bloquear a contratação. O resumo do Simples usa o
+  `resumoParcelamento` em vez de `parcelas[0]` (#968).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da

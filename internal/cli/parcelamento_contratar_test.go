@@ -105,12 +105,10 @@ func TestParcelamentoContratarOpcaoIncompleta(t *testing.T) {
 		{"sem quantidade com --parcelas", semQtd, []string{"pgfn-previdenciario", "--parcelas", "12", "--yes"}, msgQtd},
 		{"sem quantidade em --dry-run", semQtd, []string{"pgfn-previdenciario", "--dry-run"}, msgQtd},
 		{"quantidade 0", qtdZero, []string{"pgfn-previdenciario", "--yes"}, msgQtd},
-		{"outra opção sem quantidade", umaSemQtd, []string{"pgfn-previdenciario", "--parcelas", "12", "--yes"}, msgQtd},
-		{"simples sem quantidade no resumo", semQtd, []string{"simples-nacional", "--yes"}, msgQtd},
+		{"escolhida sem quantidade (padrão = primeira)", `{"parcelas":[{"valorEntrada":300,"valorDemaisParcelas":140.25},{"quantidade":12,"valorEntrada":500,"valorDemaisParcelas":250.5}]}`, []string{"pgfn-previdenciario", "--yes"}, msgQtd},
 		{"entrada nula", semEntrada, []string{"pgfn-previdenciario", "--yes"}, msgValor},
 		{"entrada nula em --dry-run", semEntrada, []string{"pgfn-previdenciario", "--dry-run"}, msgValor},
 		{"demais ausente", semDemais, []string{"pgfn-previdenciario", "--parcelas", "12", "--yes"}, msgValor},
-		{"simples com entrada nula", semEntrada, []string{"simples-nacional", "--yes"}, msgValor},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			f := newEscritaFake(t, map[string]string{pathSimPGFN: tc.sim, pathSimSN: tc.sim})
@@ -122,6 +120,11 @@ func TestParcelamentoContratarOpcaoIncompleta(t *testing.T) {
 				t.Errorf("mostrou a requisição ou o resumo:\nstdout %s\nstderr %s", out, stderr)
 			}
 		})
+	}
+	// Só a PGFN usa parcelas[], e só a opção escolhida: outra opção incompleta não bloqueia.
+	f2 := newEscritaFake(t, map[string]string{pathSimPGFN: umaSemQtd})
+	if _, stderr, code := execCLI(t, "", "impostos", "parcelamento", "contratar", "pgfn-previdenciario", "--parcelas", "12", "--yes"); code != ExitOK || len(f2.writes) != 1 || !strings.Contains(f2.writes[0], `{"quantidadeParcelas":12}`) {
+		t.Errorf("outra opção incompleta: código %d, escritas %q, %s", code, f2.writes, stderr)
 	}
 	// Só a opção escolhida precisa dos valores: a de 24 está completa.
 	f := newEscritaFake(t, map[string]string{pathSimPGFN: `{"parcelas":[{"quantidade":12,"valorEntrada":null},{"quantidade":24,"valorEntrada":300,"valorDemaisParcelas":140.25}]}`})
@@ -137,5 +140,42 @@ func TestParcelamentoContratarCustoNaoInformado(t *testing.T) {
 	_, stderr, code := execCLI(t, "", "impostos", "parcelamento", "contratar", "pgfn-previdenciario", "--yes")
 	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(stderr, "serviço adicional não informado; emissão de guia não informado") || strings.Contains(stderr, "R$ 0,00") {
 		t.Errorf("código %d, stderr %s", code, stderr)
+	}
+}
+
+// Simples e especializado não enviam parcelas[]: um parcelas[] incompleto não os bloqueia e o
+// corpo não muda. O Simples mostra o resumoParcelamento, não parcelas[0].
+func TestParcelamentoContratarSimplesEspecializadoSemParcelas(t *testing.T) {
+	const (
+		semQtd     = `{"parcelas":[{"valorEntrada":500,"valorDemaisParcelas":250.5}]}`
+		semEntrada = `{"parcelas":[{"quantidade":12,"valorEntrada":null,"valorDemaisParcelas":250.5}]}`
+		vazio      = `{"parcelas":[]}`
+		comResumo  = `{"parcelas":[],"resumoParcelamento":{"quantidadeParcelas":6,"valorEntrada":100,"valorDemaisParcelas":50}}`
+	)
+	const pathSN = "POST /api/plataforma/impostos/parcelamento/negociacao-automatica/simples-nacional/contratar "
+	const pathEsp = `POST /api/plataforma/impostos/parcelamento/negociacao-especializada/contratar {"tipoNegociacao":"VENCIDOS"}`
+	for _, tc := range []struct {
+		name, sim string
+		args      []string
+		escrita   string
+	}{
+		{"simples sem quantidade", semQtd, []string{"simples-nacional"}, pathSN},
+		{"simples com entrada nula", semEntrada, []string{"simples-nacional"}, pathSN},
+		{"simples sem parcelas", vazio, []string{"simples-nacional"}, pathSN},
+		{"especializado sem quantidade", semQtd, []string{"especializado", "--negociacao", "VENCIDOS"}, pathEsp},
+		{"especializado com entrada nula", semEntrada, []string{"especializado", "--negociacao", "VENCIDOS"}, pathEsp},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			f := newEscritaFake(t, map[string]string{pathSimSN: tc.sim, pathSimEsp: tc.sim})
+			_, stderr, code := execCLI(t, "", append([]string{"impostos", "parcelamento", "contratar"}, append(tc.args, "--yes")...)...)
+			if code != ExitOK || len(f.writes) != 1 || !strings.Contains(f.writes[0], tc.escrita) {
+				t.Fatalf("código %d, escritas %q, stderr %s", code, f.writes, stderr)
+			}
+		})
+	}
+	f := newEscritaFake(t, map[string]string{pathSimSN: comResumo})
+	_, stderr, code := execCLI(t, "", "impostos", "parcelamento", "contratar", "simples-nacional", "--yes")
+	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(stderr, "6 parcelas, primeira de R$ 100,00 e demais de R$ 50,00") {
+		t.Errorf("resumo do Simples: código %d, escritas %q, %s", code, f.writes, stderr)
 	}
 }
