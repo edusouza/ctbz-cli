@@ -205,11 +205,16 @@ Pede confirmação (--yes em scripts) e aceita --dry-run (ver docs/guia/escrita.
 			op := operacao{Risco: riscoMedio, Resumo: fmt.Sprintf("Adicionar %s de %s em %s no caixa de %s: %q (%s%s)",
 				ladoCaixa(f.recebimento), formatarCentavos(abs(valor)), dia.Format("02/01/2006"), mes.Format("01/2006"),
 				req.LancamentoUsuario.Descricao, conta.Descricao, sufixoVinculo(nomeVinc))}
+			// Os ids que já existiam: o criado é o que aparece depois do envio e não estava aqui (#351).
+			antes, err := idsCaixa(ctx, sessionGetter{s}, mes)
+			if err != nil {
+				return err
+			}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.SalvarLancamento(ctx, snd, req) })
 			if err != nil || !enviado {
 				return err
 			}
-			l, err := releLancamento(ctx, sessionGetter{s}, mes, func(lc api.LancamentoCaixa) bool {
+			l, err := releNovoLancamento(ctx, sessionGetter{s}, mes, antes, func(lc api.LancamentoCaixa) bool {
 				return lc.Descricao == req.LancamentoUsuario.Descricao && lc.Valor != nil && centavos(*lc.Valor) == valor &&
 					api.DiaEmBrasilia(time.UnixMilli(lc.Data)).Equal(dia)
 			})
@@ -251,6 +256,39 @@ func releLancamento(ctx context.Context, g api.Getter, mes time.Time, achar func
 		if achar(lc) && (achado == nil || lc.ID > achado.ID) {
 			achado = &c.List[i]
 		}
+	}
+	return achado, nil
+}
+
+// idsCaixa devolve os ids dos lançamentos do caixa da competência.
+func idsCaixa(ctx context.Context, g api.Getter, mes time.Time) (map[int64]bool, error) {
+	c, err := api.BuscarCaixa(ctx, g, mes.Year(), int(mes.Month()))
+	if err != nil {
+		return nil, err
+	}
+	ids := make(map[int64]bool, len(c.List))
+	for _, lc := range c.List {
+		ids[lc.ID] = true
+	}
+	return ids, nil
+}
+
+// releNovoLancamento relê o caixa e devolve o lançamento que satisfaz achar e não existia em
+// antes (o recém-criado), ou nil se não houver exatamente um.
+func releNovoLancamento(ctx context.Context, g api.Getter, mes time.Time, antes map[int64]bool, achar func(api.LancamentoCaixa) bool) (*api.LancamentoCaixa, error) {
+	c, err := api.BuscarCaixa(ctx, g, mes.Year(), int(mes.Month()))
+	if err != nil {
+		return nil, err
+	}
+	var achado *api.LancamentoCaixa
+	for i, lc := range c.List {
+		if antes[lc.ID] || !achar(lc) {
+			continue
+		}
+		if achado != nil {
+			return nil, nil // ambíguo: mostra "enviado", sem id
+		}
+		achado = &c.List[i]
 	}
 	return achado, nil
 }

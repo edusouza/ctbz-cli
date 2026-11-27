@@ -9,6 +9,7 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz caixa adicionar` mostra o id do lançamento recém-criado, mesmo havendo um lançamento idêntico anterior, em vez do de maior id (#351).
 - `ctbz caixa adicionar` recusa competência futura sem `--data`, em vez de enviar um lançamento com data futura no dia 1 (#350).
 
 ## [1.9.6] - 2026-11-26
