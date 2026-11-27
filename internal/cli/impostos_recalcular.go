@@ -149,9 +149,14 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 				confirmado = resp.Guia.DataVencimento
 			}
 			situacao := "solicitado"
-			var status any
+			status := []string{}
+			avisos := []string{}
+			avisar := func(msg string) {
+				fmt.Fprintln(s.err, "aviso: "+msg)
+				avisos = append(avisos, msg)
+			}
 			if nova, err := api.BuscarGuia(ctx, g, id); err != nil {
-				fmt.Fprintln(s.err, "aviso: pedido enviado, mas não foi possível reler a guia:", err)
+				avisar(fmt.Sprintf("pedido enviado, mas não foi possível reler a guia: %v", err))
 				situacao = "enviado"
 			} else {
 				status = nonNil(nova.Status)
@@ -159,13 +164,14 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 					confirmado = nova.Vencimento
 				}
 			}
-			var novo any
-			if confirmado != "" {
-				d, _ := output.ParseDate(confirmado)
-				novo = d
-			} else {
-				fmt.Fprintf(s.err, "aviso: o painel não confirmou o novo vencimento; o pedido foi para %s e a guia segue com o vencimento anterior até o recálculo.\n", req.DataVencimento)
+			// "vencimento" mantém o contrato anterior (sempre uma data: a confirmada ou, na falta
+			// dela, a pedida); "vencimento_confirmado" diz qual das duas é.
+			novoVenc := confirmado
+			if novoVenc == "" {
+				novoVenc = req.DataVencimento
+				avisar(fmt.Sprintf("o painel não confirmou o novo vencimento; o pedido foi para %s e a guia segue com o vencimento anterior até o recálculo.", req.DataVencimento))
 			}
+			novo, _ := output.ParseDate(novoVenc)
 			pedido, _ := output.ParseDate(req.DataVencimento)
 			fmt.Fprintln(s.err, "A guia será recalculada em até 3 dias úteis; a Contabilizei avisa por e-mail quando o novo valor estiver disponível.")
 			rec := resultadoEscrita("recalcular", situacao, id).
@@ -173,7 +179,9 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 				Add("status", "Status", status).
 				Add("vencimento_pedido", "Vencimento pedido", pedido).
 				Add("vencimento", "Novo vencimento", novo).
-				Add("cobrado", "Cobrado na mensalidade", boolOrNil(ini.CobrarRecalculo))
+				Add("vencimento_confirmado", "Vencimento confirmado", confirmado != "").
+				Add("cobrado", "Cobrado na mensalidade", boolOrNil(ini.CobrarRecalculo)).
+				Add("avisos", "Avisos", avisos)
 			return output.Write(s.out, f, rec)
 		},
 	}

@@ -54,7 +54,7 @@ Tributo federal pago com atraso tem multa de 0,33% ao dia (até 20%) mais juros 
    `cobrar_recalculo` (se o serviço entra na mensalidade; `null` = o painel não informou, trate como possível cobrança).
 3. Escolhida a data (não passada, fora de `datas_indisponiveis`; sugira `data_recomendada`):
    `ctbz impostos recalcular ID --vencimento AAAA-MM-DD`. **Risco alto**: serviço em geral
-   cobrado e sem cancelamento. A nova guia sai em até 3 dias úteis, avisada por e-mail. Na resposta, `vencimento` só vem se o painel confirmou; `vencimento_pedido` é o pedido e `status` a guia relida.
+   cobrado e sem cancelamento. A nova guia sai em até 3 dias úteis, avisada por e-mail. Na resposta, só trate o `vencimento` como confirmado se `vencimento_confirmado` for true (senão ele repete `vencimento_pedido`); `status` é a guia relida e `avisos` traz o que não foi confirmado (releitura falha = `situacao` "enviado"; não repita o pedido).
 
 ## Explicar o cálculo
 

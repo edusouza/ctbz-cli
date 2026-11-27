@@ -102,7 +102,7 @@ ctbz impostos recalcular 1000000000000001 --vencimento 2026-10-20
 - A guia precisa estar marcada como não paga (`ctbz impostos confirmar ID --nao-paguei`) e o
   painel precisa oferecer o recálculo para ela. Datas indisponíveis e passadas são recusadas.
 - A nova guia fica pronta em até 3 dias úteis; a Contabilizei avisa por e-mail.
-- Depois do pedido a CLI relê a guia: `vencimento` só vem preenchido se o painel confirmou a data; `vencimento_pedido` é o que você pediu e `status` o estado atual da guia.
+- Depois do pedido a CLI relê a guia: `vencimento_confirmado` diz se o painel confirmou a data (se for `false`, `vencimento` repete o pedido); `vencimento_pedido` é o que você pediu, `status` o estado atual da guia e `avisos` o que a CLI não conseguiu confirmar (também sai no stderr).
 
 ## Histórico
 

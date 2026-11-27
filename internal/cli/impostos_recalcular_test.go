@@ -43,7 +43,7 @@ func TestImpostosRecalcular(t *testing.T) {
 			t.Errorf("stderr sem %q: %s", w, stderr)
 		}
 	}
-	if !strings.Contains(out, `"situacao": "solicitado"`) || !strings.Contains(out, `"vencimento": "2026-10-20"`) {
+	if !strings.Contains(out, `"situacao": "solicitado"`) || !strings.Contains(out, `"vencimento": "2026-10-20"`) || !strings.Contains(out, `"vencimento_confirmado": true`) {
 		t.Errorf("saída:\n%s", out)
 	}
 }
@@ -100,12 +100,53 @@ func TestImpostosRecalcularSemConfirmacaoDoVencimento(t *testing.T) {
 	if code != ExitOK || len(f.writes) != 1 {
 		t.Fatalf("código %d, escritas %v\n%s", code, f.writes, stderr)
 	}
-	for _, w := range []string{`"vencimento": null`, `"vencimento_pedido": "2026-10-20"`, `"status": [`, `"RECALCULADA"`} {
+	for _, w := range []string{`"vencimento": "2026-10-20"`, `"vencimento_confirmado": false`, `"vencimento_pedido": "2026-10-20"`, `"status": [`, `"RECALCULADA"`, `"avisos": [`, `não confirmou o novo vencimento`} {
 		if !strings.Contains(out, w) {
 			t.Errorf("saída sem %s:\n%s", w, out)
 		}
 	}
 	if !strings.Contains(stderr, "não confirmou o novo vencimento") {
+		t.Errorf("stderr sem aviso:\n%s", stderr)
+	}
+}
+
+// A releitura traz outro vencimento: ele vale como confirmado, mesmo sem guia na resposta do PUT.
+func TestImpostosRecalcularReleituraConfirmaVencimento(t *testing.T) {
+	f := recalculoFake(t)
+	f.resposta = `{"modalSucessoRecalculo":true}`
+	f.onWrite = func(f *escritaFake) {
+		f.gets[pathGuia1] = strings.Replace(f.gets[pathGuia1], `"vencimento": "06/10/2026"`, `"vencimento": "21/10/2026"`, 1)
+	}
+	out, stderr, code := execCLI(t, "", "impostos", "recalcular", "1000000000000001", "--vencimento", "2026-10-20", "--yes", "-o", "json")
+	if code != ExitOK || len(f.writes) != 1 {
+		t.Fatalf("código %d, escritas %v\n%s", code, f.writes, stderr)
+	}
+	for _, w := range []string{`"situacao": "solicitado"`, `"vencimento": "2026-10-21"`, `"vencimento_confirmado": true`, `"vencimento_pedido": "2026-10-20"`, `"avisos": []`} {
+		if !strings.Contains(out, w) {
+			t.Errorf("saída sem %s:\n%s", w, out)
+		}
+	}
+	if strings.Contains(stderr, "não confirmou") {
+		t.Errorf("não devia avisar:\n%s", stderr)
+	}
+}
+
+// A releitura falha depois do envio: o pedido não se repete, a situação é "enviado" e o aviso
+// chega também à saída de máquina.
+func TestImpostosRecalcularReleituraFalha(t *testing.T) {
+	f := recalculoFake(t)
+	f.resposta = `{"modalSucessoRecalculo":true}`
+	f.onWrite = func(f *escritaFake) { delete(f.gets, pathGuia1) }
+	out, stderr, code := execCLI(t, "", "impostos", "recalcular", "1000000000000001", "--vencimento", "2026-10-20", "--yes", "-o", "json")
+	if code != ExitOK || len(f.writes) != 1 {
+		t.Fatalf("código %d, escritas %v\n%s", code, f.writes, stderr)
+	}
+	for _, w := range []string{`"situacao": "enviado"`, `"vencimento_confirmado": false`, `"status": []`, `não foi possível reler a guia`, `não confirmou o novo vencimento`} {
+		if !strings.Contains(out, w) {
+			t.Errorf("saída sem %s:\n%s", w, out)
+		}
+	}
+	if !strings.Contains(stderr, "não foi possível reler a guia") {
 		t.Errorf("stderr sem aviso:\n%s", stderr)
 	}
 }
