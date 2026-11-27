@@ -8,8 +8,9 @@ import (
 	"testing"
 )
 
+// A página 2 usa uma fixture que é um array vazio: a leitura só termina numa página vazia.
 func TestBuscarLancamentosExtrato(t *testing.T) {
-	ls, err := BuscarLancamentosExtrato(context.Background(), fixtureGetter{PathLancamentosExtrato(7, 2026, 9, 1): "lancamentos_extrato"}, 7, 2026, 9)
+	ls, err := BuscarLancamentosExtrato(context.Background(), fixtureGetter{PathLancamentosExtrato(7, 2026, 9, 1): "lancamentos_extrato", PathLancamentosExtrato(7, 2026, 9, 2): "chamados_em_andamento"}, 7, 2026, 9)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -34,6 +35,7 @@ func TestBuscarLancamentosExtrato(t *testing.T) {
 // página e devolve sempre a primeira; com infinito, nunca termina.
 type paginasGetter struct {
 	total            int
+	tamanho          int // tamanho real da página do servidor; 0 = RegistrosPorPaginaExtrato
 	repete, infinito bool
 	paginasLidas     *int
 }
@@ -47,8 +49,12 @@ func (g paginasGetter) GetJSON(_ context.Context, path string, v any) error {
 	if g.repete {
 		pagina = 1
 	}
+	tam := g.tamanho
+	if tam == 0 {
+		tam = RegistrosPorPaginaExtrato
+	}
 	list := []LancamentoExtrato{}
-	for i := (pagina - 1) * RegistrosPorPaginaExtrato; (g.infinito || i < g.total) && i < pagina*RegistrosPorPaginaExtrato; i++ {
+	for i := (pagina - 1) * tam; (g.infinito || i < g.total) && i < pagina*tam; i++ {
 		list = append(list, LancamentoExtrato{ID: int64(i + 1)})
 	}
 	b, _ := json.Marshal(list)
@@ -68,15 +74,43 @@ func TestBuscarLancamentosExtratoPaginas(t *testing.T) {
 	if err == nil || !strings.Contains(err.Error(), "página 2 de lançamentos do extrato de 09/2026 repete a anterior") || ls != nil || lidas != 2 {
 		t.Errorf("página repetida: %d lançamentos em %d páginas, %v", len(ls), lidas, err)
 	}
-	// Ignorar a página num mês com menos de uma página cheia não é problema: para na primeira.
+	// Ignorar a página também é erro num mês pequeno: só a página vazia encerra a leitura.
 	ls, err = BuscarLancamentosExtrato(context.Background(), paginasGetter{total: 40, repete: true, paginasLidas: &lidas}, 1, 2026, 9)
-	if err != nil || len(ls) != 40 || lidas != 1 {
+	if err == nil || !strings.Contains(err.Error(), "repete a anterior") || ls != nil {
 		t.Errorf("página repetida incompleta: %d lançamentos em %d páginas, %v", len(ls), lidas, err)
+	}
+	// O servidor limita a página abaixo de 100: a leitura segue até a página vazia (#867).
+	ls, err = BuscarLancamentosExtrato(context.Background(), paginasGetter{total: 120, tamanho: 50, paginasLidas: &lidas}, 1, 2026, 9)
+	if err != nil || len(ls) != 120 || lidas != 4 {
+		t.Errorf("página limitada a 50: %d lançamentos em %d páginas, %v", len(ls), lidas, err)
 	}
 	// Páginas cheias sem fim: erro no limite, em vez de laço infinito ou lista truncada.
 	_, err = BuscarLancamentosExtrato(context.Background(), paginasGetter{infinito: true, paginasLidas: &lidas}, 1, 2026, 9)
 	if err == nil || !strings.Contains(err.Error(), "mais de 100 páginas") || lidas != maxPaginasExtrato {
 		t.Errorf("sem fim: %d páginas, %v", lidas, err)
+	}
+}
+
+// semIDGetter devolve n lançamentos sem a chave idLancamentoUsuario.
+type semIDGetter struct{ n int }
+
+func (g semIDGetter) GetJSON(_ context.Context, path string, v any) error {
+	if !strings.HasSuffix(path, "&pagina=1") {
+		return json.Unmarshal([]byte(`[]`), v)
+	}
+	itens := make([]string, g.n)
+	for i := range itens {
+		itens[i] = fmt.Sprintf(`{"data":1789700400000,"descricao":"L%d","valor":10}`, i)
+	}
+	return json.Unmarshal([]byte("["+strings.Join(itens, ",")+"]"), v)
+}
+
+func TestBuscarLancamentosExtratoSemID(t *testing.T) {
+	for _, n := range []int{3, RegistrosPorPaginaExtrato} {
+		ls, err := BuscarLancamentosExtrato(context.Background(), semIDGetter{n: n}, 7, 2026, 9)
+		if err == nil || !strings.Contains(err.Error(), "sem idLancamentoUsuario") || ls != nil {
+			t.Errorf("%d itens sem id: %d lançamentos, %v", n, len(ls), err)
+		}
 	}
 }
 
