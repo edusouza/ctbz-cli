@@ -85,6 +85,9 @@ lançamentos e se o registro de ações (ctbz acoes) não tem uma importação d
 há menos de 30 minutos. Senão, recusa e manda conferir com ctbz extratos.
 CSV, XLS e os outros formatos de importação manual também são recusados sobre um extrato
 importado, para a importação manual não duplicar os lançamentos, e não aceitam --substituir.
+OFX fora da lista do banco também não aceita --substituir (código 2, nada enviado): a exclusão
+do extrato atual vem antes do envio, que a Contabilizei pode recusar; exclua antes com
+ctbz extratos excluir e importe sem --substituir.
 
 OFX e PDF passam pela tela "Importar extrato":
 
@@ -195,14 +198,23 @@ enviar nada.`,
 			if err != nil {
 				return err
 			}
+			if existente != nil && aviso != "" {
+				// A exclusão vem antes do envio, e o aviso admite que a Contabilizei pode recusar o
+				// arquivo: não se arrisca o extrato e as classificações por um envio incerto (#1016).
+				return usageError{fmt.Errorf("--substituir não vale para este arquivo: o banco desta conta não lista OFX entre os formatos aceitos, " +
+					"a Contabilizei pode recusar o envio, e a exclusão do extrato atual (com as classificações) vem antes. " +
+					"Se quer arriscar, exclua antes com `ctbz extratos excluir` e importe o OFX sem --substituir, em dois passos, " +
+					"ou use um formato que o banco liste")}
+			}
 			lista, err := api.BuscarContasBancarias(ctx, g)
 			if err != nil {
 				return err
 			}
-			numeroConta := ""
+			numeroConta, descConta := "", ""
 			for _, cb := range lista.ContasBancarias {
 				if cb.ID == alvo.conta {
 					numeroConta = normalizarConta(cb.ContaCorrente)
+					descConta = descreverConta(semControle(cb.NomeBanco), semControle(cb.Agencia), semControle(cb.ContaCorrente))
 				}
 			}
 			if numeroConta == "" {
@@ -237,8 +249,8 @@ enviar nada.`,
 				if existente.lancamentos != nil {
 					atual = fmt.Sprintf("%d lançamentos", *existente.lancamentos)
 				}
-				op.Resumo = fmt.Sprintf("Substituir o extrato de %s da conta %d (atual: %s) pelo arquivo %s (%s, %s)",
-					mes, alvo.conta, atual, arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)))
+				op.Resumo = fmt.Sprintf("Substituir o extrato de %s da conta %d (%s) (atual: %s) pelo arquivo %s (%s, %s)",
+					mes, alvo.conta, descConta, atual, arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)))
 				// Excluir um extrato vazio não perde nada; com lançamentos, perde as classificações.
 				if !existente.vazio() {
 					op.Risco = riscoAlto
@@ -662,8 +674,19 @@ func validarContaUpload(ini *api.UploadExtratoInit, idConta int64, formato strin
 			if c.ID != idConta {
 				continue
 			}
+			if !c.StatusInformado {
+				return "", errors.New("a Contabilizei não informou se a conta é integrada (campo statusIntegracao ausente na resposta); " +
+					"nada foi enviado: tente de novo e, se continuar, abra uma issue")
+			}
 			if c.StatusIntegracao == "INTEGRADA" {
 				return "", errors.New("a conta é integrada: a importação é feita automaticamente, não precisa enviar extrato")
+			}
+			if b.FormatosDisponiveisUpload == nil {
+				return "", errors.New("a Contabilizei não informou os formatos que o banco da conta aceita (campo formatosDisponiveisUpload ausente na resposta); " +
+					"nada foi enviado: tente de novo e, se continuar, abra uma issue")
+			}
+			if len(b.FormatosDisponiveisUpload) == 0 && formato != "OFX" {
+				return "", usageError{fmt.Errorf("o banco desta conta não lista nenhum formato de extrato; este arquivo é .%s", strings.ToLower(formato))}
 			}
 			for _, fmtOK := range b.FormatosDisponiveisUpload {
 				if strings.EqualFold(fmtOK, formato) {
@@ -697,7 +720,11 @@ func juntarComOu(itens []string) string {
 func periodoLiberado(p *api.PermiteImportacao, alvo extratoAlvo) error {
 	for _, per := range p.PeriodosDeImportacao {
 		anterior := per.Ano < alvo.ano() || (per.Ano == alvo.ano() && per.Mes < alvo.mesNum())
-		if per.TemLancamentoPendente && anterior {
+		if anterior && per.TemLancamentoPendente == nil {
+			return fmt.Errorf("a Contabilizei não informou se há importação pendente em %02d/%d (campo temLancamentoPendente ausente na resposta); "+
+				"nada foi enviado: tente de novo e, se continuar, abra uma issue", per.Mes, per.Ano)
+		}
+		if anterior && *per.TemLancamentoPendente {
 			msg := per.Mensagem
 			if msg == "" {
 				msg = "importe os períodos anteriores primeiro"

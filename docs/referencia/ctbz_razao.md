@@ -6,7 +6,7 @@ Lista os lançamentos do razão de cada conta no período: data, conta, históri
 contrapartida, débito, crédito e o saldo acumulado no exercício depois do lançamento.
 
 O período vai de --de até --ate (meses AAAA-MM; padrão: o mês atual), no máximo 24 meses;
-a API devolve um mês por vez. --conta filtra pelo código da conta (ex.: 1.01.01.01.00) ou
+a API devolve o exercício até o mês pedido, e a CLI filtra o período. --conta filtra pelo código da conta (ex.: 1.01.01.01.00) ou
 por um prefixo dele (ex.: 1.01 para todo o ativo circulante).
 
 ## Uso

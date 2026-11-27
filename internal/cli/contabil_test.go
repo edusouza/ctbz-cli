@@ -3,7 +3,23 @@ package cli
 import (
 	"strings"
 	"testing"
+	"time"
 )
+
+func TestRazaoDataEmMeiaNoiteUTC(t *testing.T) {
+	// #1048: a API manda a data como epoch à meia-noite UTC; num fuso a oeste, o dia local seria o anterior.
+	antes := time.Local
+	time.Local = time.FixedZone("BRT", -3*3600)
+	t.Cleanup(func() { time.Local = antes })
+	fixNow(t, "2026-10-03")
+	julho := `[{"id":"1.01.01.01.00","descricao":"Caixa Geral","nivel":5,"listaLancamento":[
+{"id":1,"data":1784592000000,"descricao":"Capital social","debito":1000,"credito":null,"saldoExercicio":1000,"contaContrapartida":null}]}]`
+	withSession(t, fakeAPI(t, map[string]string{"/api/plataforma/relatorios-ms/gerarrazaotipoa/2026/7": julho}))
+	out, stderr, code := execCLI(t, "", "razao", "--de", "2026-07", "-o", "csv")
+	if code != ExitOK || !strings.Contains(out, "2026-07-21,") {
+		t.Errorf("código %d: %s\n%s", code, stderr, out)
+	}
+}
 
 func TestBalancete(t *testing.T) {
 	withSession(t, fakeAPI(t, map[string]string{
@@ -61,10 +77,55 @@ func TestBalanco(t *testing.T) {
 	}
 }
 
+func TestRazaoSemRepetirMeses(t *testing.T) {
+	// #1047: gerarrazaotipoa/A/M devolve o exercício de janeiro até M; cada lançamento sai uma vez, no período pedido.
+	fixNow(t, "2026-10-03")
+	setembro := `[{"id":"1.01.01.01.00","descricao":"Caixa Geral","nivel":5,"listaLancamento":[
+{"id":1,"data":1784592000000,"descricao":"Capital social","debito":1000,"credito":null,"saldoExercicio":1000,"contaContrapartida":null},
+{"id":2,"data":1787011200000,"descricao":"Pix recebido","debito":50,"credito":null,"saldoExercicio":1050,"contaContrapartida":null},
+{"id":3,"data":1789689600000,"descricao":"Pix enviado","debito":null,"credito":20,"saldoExercicio":1030,"contaContrapartida":null}]}]`
+	withSession(t, fakeAPI(t, map[string]string{"/api/plataforma/relatorios-ms/gerarrazaotipoa/2026/9": setembro}))
+	for _, tc := range []struct {
+		args []string
+		want []string
+	}{
+		{[]string{"--de", "2026-08", "--ate", "2026-09"}, []string{"2026-08-18,", "2026-09-18,"}},
+		{[]string{"--de", "2026-09"}, []string{"2026-09-18,"}},
+		{[]string{"--de", "2026-07", "--ate", "2026-09"}, []string{"2026-07-21,", "2026-08-18,", "2026-09-18,"}},
+	} {
+		out, stderr, code := execCLI(t, "", append([]string{"razao", "-o", "csv"}, tc.args...)...)
+		linhas := strings.Split(strings.TrimSpace(out), "\n")
+		if code != ExitOK || len(linhas) != len(tc.want)+1 {
+			t.Errorf("%v: código %d, %d linhas: %s\n%s", tc.args, code, len(linhas), stderr, out)
+			continue
+		}
+		for i, w := range tc.want {
+			if !strings.HasPrefix(linhas[i+1], w) {
+				t.Errorf("%v linha %d: %q (quero prefixo %q)", tc.args, i+1, linhas[i+1], w)
+			}
+		}
+	}
+}
+
+func TestRazaoPeriodoAtravessaAno(t *testing.T) {
+	// Um exercício por ano: uma chamada para o último mês pedido de cada ano.
+	fixNow(t, "2026-10-03")
+	dez := `[{"id":"1.01","descricao":"Caixa","nivel":2,"listaLancamento":[{"id":1,"data":1765756800000,"descricao":"Dez","debito":1,"credito":null,"saldoExercicio":1,"contaContrapartida":null}]}]`
+	jan := `[{"id":"1.01","descricao":"Caixa","nivel":2,"listaLancamento":[{"id":2,"data":1768435200000,"descricao":"Jan","debito":2,"credito":null,"saldoExercicio":2,"contaContrapartida":null}]}]`
+	withSession(t, fakeAPI(t, map[string]string{
+		"/api/plataforma/relatorios-ms/gerarrazaotipoa/2025/12": dez,
+		"/api/plataforma/relatorios-ms/gerarrazaotipoa/2026/1":  jan,
+	}))
+	out, stderr, code := execCLI(t, "", "razao", "--de", "2025-12", "--ate", "2026-01", "-o", "csv")
+	if code != ExitOK || strings.Count(out, "\n") != 3 {
+		t.Errorf("código %d: %s\n%s", code, stderr, out)
+	}
+}
+
 func TestRazao(t *testing.T) {
 	fixNow(t, "2026-10-03")
 	agosto := `[{"id":"1.01.01.01.00","descricao":"Caixa Geral","nivel":5,"listaLancamento":[
-{"id":1,"data":1784635200000,"descricao":"Capital social","debito":1000,"credito":null,"saldoExercicio":1000,
+{"id":1,"data":1787054400000,"descricao":"Capital social","debito":1000,"credito":null,"saldoExercicio":1000,
  "contaContrapartida":{"id":"2.07.01.01.00","descricao":"Capital Social Realizado no País"}}]},
 {"id":"2.01.01","descricao":"Fornecedores","nivel":3,"listaLancamento":[
 {"id":2,"data":1786536000000,"descricao":"Pagamento","debito":null,"credito":50.5,"saldoExercicio":-50.5,"contaContrapartida":null}]}]`
@@ -77,12 +138,12 @@ func TestRazao(t *testing.T) {
 		t.Fatalf("código %d: %s", code, stderr)
 	}
 	want := "data,conta,conta_descricao,historico,contrapartida,debito,credito,saldo\n" +
-		"2026-07-21,1.01.01.01.00,Caixa Geral,Capital social,2.07.01.01.00 Capital Social Realizado no País,1000.00,,1000.00\n"
+		"2026-08-18,1.01.01.01.00,Caixa Geral,Capital social,2.07.01.01.00 Capital Social Realizado no País,1000.00,,1000.00\n"
 	if out != want {
 		t.Errorf("CSV:\n%s\nesperado:\n%s", out, want)
 	}
 	out, _, code = execCLI(t, "", "razao", "--de", "2026-08", "--ate", "2026-09", "-o", "json")
-	if code != ExitOK || !strings.Contains(out, `"conta": "2.01.01"`) || !strings.Contains(out, "FULANO DE TAL") {
+	if code != ExitOK || !strings.Contains(out, "FULANO DE TAL") {
 		t.Errorf("dois meses (código %d):\n%s", code, out)
 	}
 }
