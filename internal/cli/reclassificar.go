@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
@@ -44,7 +46,7 @@ func conferirPendenciaReclassificacao(p api.PendenciaReclassificacao) error {
 	}
 	var falta string
 	switch {
-	case rawTexto(p.IDPendencia) == nil:
+	case !idPendenciaValido(p.IDPendencia):
 		falta = "sem idPendencia"
 	case p.IDLancamento == 0:
 		falta = "sem idLancamento"
@@ -84,6 +86,26 @@ func idsAusentes(pedidos []string, ps []api.PendenciaReclassificacao) []string {
 		}
 	}
 	return ausentes
+}
+
+// idPendenciaValido aceita só uma string não vazia diferente de "0" ou um inteiro positivo:
+// ausente, null, 0, negativo, booleano, objeto e lista nunca vão no corpo do POST.
+func idPendenciaValido(raw json.RawMessage) bool {
+	var v any
+	dec := json.NewDecoder(bytes.NewReader(raw))
+	dec.UseNumber()
+	if len(raw) == 0 || dec.Decode(&v) != nil {
+		return false
+	}
+	switch x := v.(type) {
+	case string:
+		x = strings.TrimSpace(x)
+		return x != "" && x != "0"
+	case json.Number:
+		n, err := strconv.ParseInt(x.String(), 10, 64)
+		return err == nil && n > 0
+	}
+	return false
 }
 
 // opcoesReclassificacao devolve as opções da pendência que casam com --classificacao, na ordem
