@@ -281,25 +281,21 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			if err != nil {
 				return err
 			}
-			var rotuloTipo string
-			var itens []string
 			if semID > 0 {
-				// Sem o id dos itens não dá para conferir pertencimento nem tipo: segue, avisando, em
-				// vez de bloquear um fluxo que a Contabilizei valida no próprio POST.
-				fmt.Fprintf(s.err, "aviso: %d pendência(s) lida(s) sem id reconhecível (esperado idPendencia ou id); os ids não foram conferidos com as pendências abertas\n", semID)
-				rotuloTipo = "tipo não conferido"
-				if len(tipos) == 1 {
-					rotuloTipo = rotulosTipoConciliacao[tipos[0]]
-				}
-				for _, id := range ids {
-					itens = append(itens, strconv.FormatInt(id, 10))
-				}
-			} else {
-				var tipo string
-				if tipo, itens, err = conferirPendencias(ids, abertas, tipos); err != nil {
-					return err
-				}
+				// Sem o id de alguns itens não dá para provar que um id falta nem o tipo de todos: confere
+				// o que tem id e segue, avisando, em vez de bloquear um fluxo que a Contabilizei valida no
+				// próprio POST.
+				fmt.Fprintf(s.err, "aviso: %d pendência(s) lida(s) sem id reconhecível (esperado idPendencia ou id); os ids não encontrados entre as pendências abertas não foram conferidos\n", semID)
+			}
+			tipo, itens, err := conferirPendencias(ids, abertas, tipos, semID > 0)
+			if err != nil {
+				return err
+			}
+			rotuloTipo := "tipo não conferido"
+			if tipo != "" {
 				rotuloTipo = rotulosTipoConciliacao[tipo]
+			} else if len(tipos) == 1 {
+				rotuloTipo = rotulosTipoConciliacao[tipos[0]]
 			}
 			op := operacao{Risco: riscoAlto, ID: strings.Join(args, ","),
 				Resumo: fmt.Sprintf("Resolver %d pendência(s) de conciliação fiscal (%s) — %s: %s",
@@ -383,8 +379,8 @@ func pendenciasConciliacaoAbertas(ctx context.Context, g api.Getter, tipos []str
 
 // lerPendencia tira o id de um item de pendência e descreve os outros campos simples (data,
 // valor, descrição…) na ordem em que a API os devolveu, sem caracteres de controle. O id é o
-// idPendencia (o nome que o corpo do POST usa) ou, sem ele, o id; se os dois existem e
-// divergem, a leitura falha. Um item sem nenhum dos dois devolve id 0, sem erro: o chamador
+// idPendencia (o nome que o corpo do POST usa) ou, sem ele, o id; se os dois são válidos e
+// divergem, a leitura falha. Um id inválido é ignorado quando há idPendencia válido. Um item sem nenhum dos dois devolve id 0, sem erro: o chamador
 // decide o que fazer com o que não dá para conferir.
 func lerPendencia(item json.RawMessage) (int64, string, error) {
 	v, err := output.FromJSON(item)
@@ -396,6 +392,7 @@ func lerPendencia(item json.RawMessage) (int64, string, error) {
 		return 0, "", nil
 	}
 	var id, idPendencia int64
+	var idInvalido error // o id inválido só derruba a leitura se não houver idPendencia válido
 	var campos []string
 	for _, f := range rec.Fields {
 		var texto string
@@ -412,7 +409,12 @@ func lerPendencia(item json.RawMessage) (int64, string, error) {
 		if f.Key == "id" || f.Key == "idPendencia" {
 			n, err := strconv.ParseInt(strings.TrimSpace(texto), 10, 64)
 			if err != nil || n <= 0 {
-				return 0, "", fmt.Errorf("pendência de conciliação com %s de id numérico inválido (%q) na resposta; resolva pelo painel", f.Key, semControle(texto))
+				erro := fmt.Errorf("pendência de conciliação com %s de id numérico inválido (%q) na resposta; resolva pelo painel", f.Key, semControle(texto))
+				if f.Key == "id" {
+					idInvalido = erro
+					continue
+				}
+				return 0, "", erro
 			}
 			if f.Key == "id" {
 				id = n
@@ -430,13 +432,18 @@ func lerPendencia(item json.RawMessage) (int64, string, error) {
 	}
 	if idPendencia != 0 {
 		id = idPendencia
+	} else if idInvalido != nil {
+		return 0, "", idInvalido
 	}
 	return id, strings.Join(campos, ", "), nil
 }
 
 // conferirPendencias recusa ids que não estão abertos, que aparecem em mais de um tipo ou
 // que misturam tipos, e devolve o tipo e a descrição de cada pendência, na ordem dos ids.
-func conferirPendencias(ids []int64, abertas map[int64][]pendenciaConciliacao, tipos []string) (string, []string, error) {
+// Com incompleto (a leitura trouxe itens sem id), um id que não está entre as abertas pode ser
+// um desses itens: não é recusado, segue sem descrição, e o tipo vem só dos ids encontrados
+// (vazio se nenhum foi).
+func conferirPendencias(ids []int64, abertas map[int64][]pendenciaConciliacao, tipos []string, incompleto bool) (string, []string, error) {
 	var ausentes []int64
 	for _, id := range ids {
 		switch ps := abertas[id]; {
@@ -447,7 +454,7 @@ func conferirPendencias(ids []int64, abertas map[int64][]pendenciaConciliacao, t
 				id, rotulosTipoConciliacao[api.PendenciaNotaSemRecebimento], rotulosTipoConciliacao[api.PendenciaRecebimentoSemNota])}
 		}
 	}
-	if len(ausentes) > 0 {
+	if len(ausentes) > 0 && !incompleto {
 		var rotulos []string
 		for _, t := range tipos {
 			rotulos = append(rotulos, rotulosTipoConciliacao[t])
@@ -465,15 +472,22 @@ func conferirPendencias(ids []int64, abertas map[int64][]pendenciaConciliacao, t
 		return "", nil, usageError{fmt.Errorf("%s %s entre as pendências abertas (%s) dos últimos 12 meses; confira os ids com ctbz pendencias conciliacao --listar %s",
 			juntarIDs(ausentes), verbo, strings.Join(rotulos, " ou "), listar)}
 	}
-	tipo := abertas[ids[0]][0].tipo
+	var tipo string
+	var primeiro int64
 	itens := make([]string, 0, len(ids))
 	for _, id := range ids {
-		p := abertas[id][0]
-		if p.tipo != tipo {
-			return "", nil, usageError{fmt.Errorf("as pendências misturam %s (%d) e %s (%d); resolva cada tipo num pedido separado",
-				rotulosTipoConciliacao[tipo], ids[0], rotulosTipoConciliacao[p.tipo], id)}
-		}
 		item := strconv.FormatInt(id, 10)
+		if ps := abertas[id]; len(ps) == 0 { // só com incompleto
+			itens = append(itens, item)
+			continue
+		}
+		p := abertas[id][0]
+		if tipo == "" {
+			tipo, primeiro = p.tipo, id
+		} else if p.tipo != tipo {
+			return "", nil, usageError{fmt.Errorf("as pendências misturam %s (%d) e %s (%d); resolva cada tipo num pedido separado",
+				rotulosTipoConciliacao[tipo], primeiro, rotulosTipoConciliacao[p.tipo], id)}
+		}
 		if p.descricao != "" {
 			item += " [" + p.descricao + "]"
 		}

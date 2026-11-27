@@ -11,7 +11,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 - `ctbz pendencias conciliacao resolver` lê o id das pendências abertas em `idPendencia` (ou `id`),
   recusa itens em que os dois divergem e, se um item vier sem nenhum dos dois, avisa no stderr e
-  segue sem a conferência em vez de bloquear toda resolução (#1002).
+  segue em vez de bloquear toda resolução (#1002). Um `id` inválido é ignorado quando há
+  `idPendencia` válido, e os itens que têm id continuam conferidos mesmo com um item sem id.
 
 ## [1.9.6] - 2026-11-26
 
