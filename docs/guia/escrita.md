@@ -103,6 +103,20 @@ ctbz acoes --limite 0 -o csv    # todas, para planilha
 
 O arquivo só cresce; apague-o ou arquive-o quando quiser recomeçar.
 
+### Aviso na hora da falha
+
+Quando o resultado é `incerta` ou `sem resposta`, a mensagem de erro (stderr) já diz que **a
+escrita pode ter sido aplicada** e manda conferir o estado e `ctbz acoes` antes de repetir. Com
+`-o json`, a CLI também escreve em stdout (código de saída 1):
+
+```json
+{"resultado": "incerta", "possivelmente_aplicada": true, "status": 504,
+ "aviso": "a escrita pode ter sido aplicada: …", "erro": "POST …"}
+```
+
+Recusas (4xx, 560) não trazem esse aviso nem esse JSON. Em `extratos importar`, que relê o
+extrato e prova que nada entrou, a mensagem diz que é seguro repetir.
+
 ## Códigos de saída
 
 | Código | Quando |

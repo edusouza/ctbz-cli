@@ -55,6 +55,7 @@ func run(ctx context.Context, root *cobra.Command) int {
 		return ExitAttention
 	}
 	fmt.Fprintln(root.ErrOrStderr(), "erro:", err)
+	avisarIncertaEmJSON(root, err)
 	var ue usageError
 	if errors.As(err, &ue) || strings.HasPrefix(err.Error(), "unknown command") {
 		return ExitUsage
