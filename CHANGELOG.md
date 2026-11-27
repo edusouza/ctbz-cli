@@ -9,6 +9,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz extratos importar --substituir` avisa no resumo que a exclusão do extrato vem antes do envio
+  (uma recusa do arquivo ou do saldo deixa o mês sem extrato) e, num OFX com `--saldo-final`,
+  confere antes o saldo do próprio arquivo e recusa sem excluir nada se ele for diferente (#880).
 - `ctbz pendencias conciliacao resolver` lê o id das pendências abertas em `idPendencia` (ou `id`),
   recusa itens em que os dois divergem e, se um item vier sem nenhum dos dois, avisa no stderr e
   segue em vez de bloquear toda resolução (#1002). Um `id` inválido é ignorado quando há

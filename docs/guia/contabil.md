@@ -139,6 +139,10 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
   a exclusão do extrato atual vem antes do envio, que pode ser recusado e deixaria o mês sem
   extrato e sem classificações. Exclua antes com `ctbz extratos excluir` e importe sem
   `--substituir`.
+- **`--substituir` exclui antes de enviar**: o resumo da confirmação avisa que, se a Contabilizei
+  recusar o arquivo ou o saldo, o mês fica sem extrato (e sem as classificações, se havia
+  lançamentos). Com `--saldo-final`, a CLI confere antes o saldo do próprio OFX e recusa (código 2,
+  nada excluído) se ele for diferente.
 - **CSV, XLS e outros formatos que o banco aceita** (fora OFX e PDF) vão pela Central de
   Documentos, como no painel, porque a tela "Importar extrato" só aceita OFX e PDF. É um envio só,
   sem conferência de saldo. A Contabilizei importa o arquivo **manualmente, em até 45 dias**. O
