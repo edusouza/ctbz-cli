@@ -68,6 +68,9 @@ func BuscarLancamentosExtrato(ctx context.Context, g Getter, idContaBancaria int
 		}
 		novos := 0
 		for _, l := range *p {
+			if l.ID == 0 {
+				return nil, fmt.Errorf("lançamento do extrato sem idLancamentoUsuario na página %d de %02d/%d; o formato da resposta mudou", pagina, mes, ano)
+			}
 			if !vistos[l.ID] {
 				vistos[l.ID] = true
 				todos = append(todos, l)

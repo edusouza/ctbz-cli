@@ -80,6 +80,29 @@ func TestBuscarLancamentosExtratoPaginas(t *testing.T) {
 	}
 }
 
+// semIDGetter devolve n lançamentos sem a chave idLancamentoUsuario.
+type semIDGetter struct{ n int }
+
+func (g semIDGetter) GetJSON(_ context.Context, path string, v any) error {
+	if !strings.HasSuffix(path, "&pagina=1") {
+		return json.Unmarshal([]byte(`[]`), v)
+	}
+	itens := make([]string, g.n)
+	for i := range itens {
+		itens[i] = fmt.Sprintf(`{"data":1789700400000,"descricao":"L%d","valor":10}`, i)
+	}
+	return json.Unmarshal([]byte("["+strings.Join(itens, ",")+"]"), v)
+}
+
+func TestBuscarLancamentosExtratoSemID(t *testing.T) {
+	for _, n := range []int{3, RegistrosPorPaginaExtrato} {
+		ls, err := BuscarLancamentosExtrato(context.Background(), semIDGetter{n: n}, 7, 2026, 9)
+		if err == nil || !strings.Contains(err.Error(), "sem idLancamentoUsuario") || ls != nil {
+			t.Errorf("%d itens sem id: %d lançamentos, %v", n, len(ls), err)
+		}
+	}
+}
+
 func TestBuscarLancamentosExtratoObjeto(t *testing.T) {
 	g := fixtureGetter{PathLancamentosExtrato(7, 2026, 9, 1): "extrato_info"} // um objeto, não um array
 	if _, err := BuscarLancamentosExtrato(context.Background(), g, 7, 2026, 9); err == nil {
