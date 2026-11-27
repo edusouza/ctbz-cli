@@ -316,6 +316,24 @@ func exigirAberturaESaldo(temAbertura, temSaldo bool) error {
 		strings.Join(faltam, " nem "), strings.Join(flags, " e "))}
 }
 
+// exigirAgenciaEConta recusa a edição que enviaria agência ou conta vazia (a lista não as
+// trouxe e a flag não foi informada, ou a flag ficou vazia depois de normalizar): a edição
+// reenvia todos os campos e a CLI não apaga o cadastro (#997).
+func exigirAgenciaEConta(agencia, conta string) error {
+	var faltam, flags []string
+	if agencia == "" {
+		faltam, flags = append(faltam, "a agência"), append(flags, "--agencia")
+	}
+	if conta == "" {
+		faltam, flags = append(faltam, "a conta"), append(flags, "--conta")
+	}
+	if len(faltam) == 0 {
+		return nil
+	}
+	return usageError{fmt.Errorf("a edição enviaria %s vazia (a Contabilizei não informou, ou a flag ficou sem valor) e reenvia todos os campos; informe %s",
+		strings.Join(faltam, " e "), strings.Join(flags, " e "))}
+}
+
 func newContasBancariasEditarCmd() *cobra.Command {
 	var f contaBancariaFlags
 	cmd := &cobra.Command{
@@ -324,7 +342,8 @@ func newContasBancariasEditarCmd() *cobra.Command {
 		Long: `Corrige banco, agência, conta, data de abertura ou saldo inicial de uma conta (risco médio:
 dá para editar de novo). Só as flags informadas mudam; como a edição reenvia todos os campos,
 se a Contabilizei não informar a abertura ou o saldo inicial da conta, informe --abertura ou
---saldo-inicial. Se a conta não traz o id do banco e o código e o nome dela não conferem com
+--saldo-inicial; o mesmo vale para agência e conta (--agencia, --conta), que nunca são
+enviadas vazias. Se a conta não traz o id do banco e o código e o nome dela não conferem com
 um único banco da lista, a CLI recusa e pede --banco. O painel pode bloquear a edição (por exemplo, com extratos já classificados);
 nesse caso a CLI mostra o motivo.
 ` + avisoAbertura + `
@@ -380,6 +399,10 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 			}
 			if f.conta != "" {
 				req.ContaCorrente = normalizarConta(f.conta)
+			}
+			req.Agencia = strings.TrimSpace(req.Agencia)
+			if err := exigirAgenciaEConta(req.Agencia, req.ContaCorrente); err != nil {
+				return err
 			}
 			if f.abertura != "" {
 				if req.DataSaldoInicial, err = parseAbertura(f.abertura); err != nil {

@@ -57,7 +57,8 @@ Internacional). Se a CLI disser que o código corresponde a mais de um banco, pe
 passe o **id** em `--banco`.
 A data de abertura define desde quando a Contabilizei pede extratos. Se `editar` recusar
 dizendo que a Contabilizei não informou a abertura ou o saldo inicial da conta, pergunte o
-valor ao usuário e passe `--abertura` ou `--saldo-inicial`; não invente. Atualize o dossiê.
+valor ao usuário e passe `--abertura` ou `--saldo-inicial`; não invente. O mesmo vale para
+agência e conta ausentes na lista (`--agencia`, `--conta`). Atualize o dossiê.
 
 ## Usuários com acesso
 

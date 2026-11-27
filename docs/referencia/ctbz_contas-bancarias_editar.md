@@ -5,7 +5,8 @@ Corrige os dados de uma conta bancária cadastrada
 Corrige banco, agência, conta, data de abertura ou saldo inicial de uma conta (risco médio:
 dá para editar de novo). Só as flags informadas mudam; como a edição reenvia todos os campos,
 se a Contabilizei não informar a abertura ou o saldo inicial da conta, informe --abertura ou
---saldo-inicial. Se a conta não traz o id do banco e o código e o nome dela não conferem com
+--saldo-inicial; o mesmo vale para agência e conta (--agencia, --conta), que nunca são
+enviadas vazias. Se a conta não traz o id do banco e o código e o nome dela não conferem com
 um único banco da lista, a CLI recusa e pede --banco. O painel pode bloquear a edição (por exemplo, com extratos já classificados);
 nesse caso a CLI mostra o motivo.
 A data de abertura define desde quando a Contabilizei vai pedir os extratos desta conta.

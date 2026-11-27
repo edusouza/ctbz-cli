@@ -358,6 +358,9 @@ ctbz contas-bancarias editar 1000000000000001 --abertura 2024-02-01
 - Em `editar` sem `--banco`, se a Contabilizei não informar o id do banco da conta, a CLI só o
   infere quando o código exato e o nome da conta conferem com um único banco da lista; senão
   recusa e pede `--banco`.
+- `editar` reenvia todos os campos: se a lista não trouxer a agência ou a conta (ou a flag
+  ficar vazia, como `--conta "-"`), a CLI recusa sem enviar nada e pede `--agencia` ou
+  `--conta`, também com `--dry-run`.
 - `--declaro-conta-pj` é obrigatório, como o checkbox do painel: a conta é PJ e movimenta só
   este CNPJ.
 - A data de abertura define desde quando a Contabilizei vai pedir os extratos da conta.
