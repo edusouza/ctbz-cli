@@ -90,13 +90,14 @@ func BuscarMenu(ctx context.Context, g Getter) ([]MenuItem, error) {
 // navegador (chave "e"). Não é um endpoint: vem de ctbz.Session.Storage e reflete o
 // momento do login. Tem dados cadastrais que nenhuma leitura da API devolve.
 type EmpresaSessao struct {
-	// ID é o id interno da empresa, quando o login o grava (ausente na captura verificada).
-	ID               any    `json:"id" contract:"optional"`
-	CNPJ             string `json:"cnpj"`
-	RazaoSocial      string `json:"razaoSocial"`
-	NomeFantasia     string `json:"nomeFantasia" contract:"optional"`
-	RegimeTributario string `json:"regimeTributario"`
-	OptanteSimples   bool   `json:"optanteSimples"`
+	// ID é o id interno da empresa, quando o login o grava (ausente na captura verificada). Fica
+	// cru para não perder precisão acima de 2^53 ao ser reenviado (#827).
+	ID               json.RawMessage `json:"id" contract:"optional"`
+	CNPJ             string          `json:"cnpj"`
+	RazaoSocial      string          `json:"razaoSocial"`
+	NomeFantasia     string          `json:"nomeFantasia" contract:"optional"`
+	RegimeTributario string          `json:"regimeTributario"`
+	OptanteSimples   bool            `json:"optanteSimples"`
 	NaturezaJuridica struct {
 		CodReceita string `json:"codReceita"`
 		Descricao  string `json:"descricao"`

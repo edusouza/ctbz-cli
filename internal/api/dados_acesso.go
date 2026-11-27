@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -70,8 +71,10 @@ func BuscarDadosAcesso(ctx context.Context, g Getter) (*DadosAcessoLidos, error)
 }
 
 // NovoFormularioDadosAcesso monta o corpo de AtualizarDadosAcesso como o front: o formulário
-// inteiro como veio, com os campos de mudancas trocados e o id da empresa.
-func NovoFormularioDadosAcesso(bruto json.RawMessage, idEmpresa any, mudancas map[string]string) (json.RawMessage, error) {
+// inteiro como veio, com os campos de mudancas trocados e o id da empresa. idEmpresa (JSON
+// cru, sem passar por float64) só entra se o formulário não trouxer id; vazio ou null conta
+// como ausente.
+func NovoFormularioDadosAcesso(bruto json.RawMessage, idEmpresa json.RawMessage, mudancas map[string]string) (json.RawMessage, error) {
 	campos := map[string]json.RawMessage{}
 	if len(bruto) > 0 && string(bruto) != "null" {
 		if err := json.Unmarshal(bruto, &campos); err != nil {
@@ -86,14 +89,11 @@ func NovoFormularioDadosAcesso(bruto json.RawMessage, idEmpresa any, mudancas ma
 		campos[k] = b
 	}
 	if id, ok := campos["id"]; !ok || string(id) == "null" {
-		if idEmpresa == nil {
+		t := bytes.TrimSpace(idEmpresa)
+		if len(t) == 0 || string(t) == "null" || !json.Valid(t) {
 			return nil, fmt.Errorf("o id da empresa não veio no formulário nem na sessão; atualize pelo painel")
 		}
-		b, err := json.Marshal(idEmpresa)
-		if err != nil {
-			return nil, err
-		}
-		campos["id"] = b
+		campos["id"] = t
 	}
 	return json.Marshal(campos)
 }

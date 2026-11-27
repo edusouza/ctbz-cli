@@ -7,6 +7,13 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Corrigido
+
+- `empresa credenciais atualizar`: o id da empresa tirado da sessão (quando o formulário não
+  traz `id`) vai byte a byte, sem passar por `float64`, que arredondaria ids acima de 2^53; e a
+  falta de id (nem no formulário nem na sessão) é detectada antes de ler o código, o usuário e a
+  senha, sem consumir a entrada padrão (#827).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da
