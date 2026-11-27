@@ -11,6 +11,13 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 - `ctbz rotinas reclassificar` deduplica os ids e recusa, antes de qualquer escrita, ids que a
   Contabilizei não devolveu, em vez de concluir só parte das pendências com código 0 (#427).
+- `ctbz razao` mostra cada lançamento no dia certo: a data vem como epoch à meia-noite UTC e a CLI
+  a convertia para o fuso local, mostrando um dia antes (#1048).
+- `ctbz razao` com período de mais de um mês deixa de repetir lançamentos: a API devolve o exercício
+  desde janeiro até o mês pedido; a CLI agora consulta um mês por ano e filtra para `--de`…`--ate`
+  (também some o que vinha de meses anteriores ao `--de`) (#1047).
+- `ctbz balanco reabrir` cita na confirmação de risco alto a cobrança do serviço: o valor, quando a API
+  informa (`valorServicoAdicional`), ou que o painel pode cobrar (#809).
 
 ## [1.9.6] - 2026-11-26
 
