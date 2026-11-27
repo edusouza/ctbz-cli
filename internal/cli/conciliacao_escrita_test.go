@@ -144,9 +144,15 @@ func TestConciliacaoResolverConfereAsPendencias(t *testing.T) {
 		{"id nos dois tipos", []string{"123", "--motivo", "REEMBOLSO"},
 			map[string]string{pathConcNotas: `{"pagina":[{"id":123,"valor":1}],"totalRegistros":1,"totalPaginas":1}`}, ExitUsage,
 			"123 aparece entre as notas sem recebimento e entre os recebimentos sem nota fiscal"},
-		{"item sem id", []string{"123", "--vincular", "NOTAFISCAL:987"},
-			map[string]string{pathConcRecebimentos: `{"pagina":[{"idPendencia":123,"valor":1}],"totalRegistros":1,"totalPaginas":1}`}, ExitError,
-			"pendência de conciliação sem id numérico na resposta"},
+		{"id e idPendencia divergentes", []string{"123", "--vincular", "NOTAFISCAL:987"},
+			map[string]string{pathConcRecebimentos: `{"pagina":[{"id":900,"idPendencia":123,"valor":1}],"totalRegistros":1,"totalPaginas":1}`}, ExitError,
+			"diverge"},
+		{"id que só existe como id de outra entidade", []string{"900", "--vincular", "NOTAFISCAL:987"},
+			map[string]string{pathConcRecebimentos: `{"pagina":[{"id":900,"idPendencia":123,"valor":1}],"totalRegistros":1,"totalPaginas":1}`}, ExitError,
+			"diverge"},
+		{"idPendencia inválido", []string{"123", "--vincular", "NOTAFISCAL:987"},
+			map[string]string{pathConcRecebimentos: `{"pagina":[{"idPendencia":"abc","valor":1}],"totalRegistros":1,"totalPaginas":1}`}, ExitError,
+			"id numérico inválido"},
 		{"leitura das pendências falha", []string{"123", "--vincular", "NOTAFISCAL:987"},
 			map[string]string{pathConcRecebimentos: `{"pagina":`}, ExitError, ""},
 	} {
@@ -162,6 +168,47 @@ func TestConciliacaoResolverConfereAsPendencias(t *testing.T) {
 				}
 				if len(f.writes) != 0 || out != "" {
 					t.Errorf("nada deveria ser enviado nem impresso: escritas %q, saída %q", f.writes, out)
+				}
+			})
+		}
+	}
+}
+
+// #1002: o id da pendência é o idPendencia (preferido) ou o id; o item que traz o nome real
+// resolve normalmente, e o item sem nenhum dos dois não bloqueia a escrita: avisa e segue sem
+// a conferência de pertencimento.
+func TestConciliacaoResolverNomeDoID(t *testing.T) {
+	pagina := func(itens string) map[string]string {
+		return map[string]string{pathConcRecebimentos: `{"pagina":[` + itens + `],"totalRegistros":1,"totalPaginas":1}`}
+	}
+	corpo := "POST /api/plataforma/conciliacao-fiscal/conciliar/resolver-pendencia " +
+		`{"idPendencia":[123],"contraparte":[],"tipoResolucaoPendencia":"REEMBOLSO"}`
+	for _, tc := range []struct {
+		name, item, aviso string
+	}{
+		{"idPendencia", `{"idPendencia":123,"dataRecebimento":"2026-09-10","valor":100}`, ""},
+		{"idPendencia em texto", `{"idPendencia":"123","valor":100}`, ""},
+		{"id e idPendencia iguais", `{"id":123,"idPendencia":123,"valor":100}`, ""},
+		{"nenhum dos dois", `{"codigo":123,"valor":100}`, "sem id reconhecível"},
+	} {
+		for _, modo := range []string{"--yes", "--dry-run"} {
+			t.Run(tc.name+" "+modo, func(t *testing.T) {
+				f := conciliacaoFake(t)
+				for k, v := range pagina(tc.item) {
+					f.gets[k] = v
+				}
+				out, stderr, code := execCLI(t, "", "pendencias", "conciliacao", "resolver", modo, "123", "--motivo", "REEMBOLSO", "-o", "json")
+				if code != ExitOK {
+					t.Fatalf("código %d: %s", code, stderr)
+				}
+				if modo == "--yes" && (len(f.writes) != 1 || f.writes[0] != corpo) {
+					t.Errorf("escritas %q", f.writes)
+				}
+				if modo == "--dry-run" && !strings.Contains(out, "resolver-pendencia") {
+					t.Errorf("--dry-run não imprimiu a requisição:\n%s", out)
+				}
+				if got := strings.Contains(stderr, "sem id reconhecível"); got != (tc.aviso != "") {
+					t.Errorf("aviso %q: %s", tc.aviso, stderr)
 				}
 			})
 		}

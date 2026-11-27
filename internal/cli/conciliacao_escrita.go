@@ -188,7 +188,10 @@ Antes de pedir a confirmação, a CLI lê as pendências abertas dos últimos 12
 período de --listar) e recusa ids que não estejam entre elas, ids ou contrapartes repetidos,
 NOTAFISCAL e MOVIMENTACAO no mesmo pedido e pendências de tipos diferentes juntas. Com
 --vincular, os ids precisam ser do tipo que a origem concilia. O resumo mostra os campos de
-cada pendência como a API os devolve (data, valor…).
+cada pendência como a API os devolve (data, valor…). O formato dos itens ainda não foi
+verificado com pendências reais: o id lido é o idPendencia ou o id; se os dois existirem e
+divergirem, a CLI recusa. Se algum item vier sem nenhum dos dois, a CLI avisa no stderr e segue
+sem conferir os ids com as pendências abertas (a Contabilizei valida o pedido).
 
 No painel, algumas opções só valem para itens abaixo de R$ 1.000,00; a CLI não conhece a lista
 exata, e a Contabilizei recusa o pedido se a regra não for atendida.
@@ -274,17 +277,33 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			if len(req.Contraparte) > 0 {
 				tipos = []string{tipoPorOrigem[req.Contraparte[0].Origem]}
 			}
-			abertas, err := pendenciasConciliacaoAbertas(ctx, g, tipos)
+			abertas, semID, err := pendenciasConciliacaoAbertas(ctx, g, tipos)
 			if err != nil {
 				return err
 			}
-			tipo, itens, err := conferirPendencias(ids, abertas, tipos)
-			if err != nil {
-				return err
+			var rotuloTipo string
+			var itens []string
+			if semID > 0 {
+				// Sem o id dos itens não dá para conferir pertencimento nem tipo: segue, avisando, em
+				// vez de bloquear um fluxo que a Contabilizei valida no próprio POST.
+				fmt.Fprintf(s.err, "aviso: %d pendência(s) lida(s) sem id reconhecível (esperado idPendencia ou id); os ids não foram conferidos com as pendências abertas\n", semID)
+				rotuloTipo = "tipo não conferido"
+				if len(tipos) == 1 {
+					rotuloTipo = rotulosTipoConciliacao[tipos[0]]
+				}
+				for _, id := range ids {
+					itens = append(itens, strconv.FormatInt(id, 10))
+				}
+			} else {
+				var tipo string
+				if tipo, itens, err = conferirPendencias(ids, abertas, tipos); err != nil {
+					return err
+				}
+				rotuloTipo = rotulosTipoConciliacao[tipo]
 			}
 			op := operacao{Risco: riscoAlto, ID: strings.Join(args, ","),
 				Resumo: fmt.Sprintf("Resolver %d pendência(s) de conciliação fiscal (%s) — %s: %s",
-					len(ids), rotulosTipoConciliacao[tipo], strings.Join(itens, "; "), strings.Join(resumo, "; ")),
+					len(ids), rotuloTipo, strings.Join(itens, "; "), strings.Join(resumo, "; ")),
 				Consequencia: "A resolução define a natureza fiscal do recebimento (receita tributável, empréstimo, capital…). Pode ser refeita, mas não apagada."}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.ResolverConciliacao(ctx, snd, req) })
 			if err != nil || !enviado {
@@ -336,40 +355,47 @@ type pendenciaConciliacao struct {
 
 // pendenciasConciliacaoAbertas lê as pendências abertas dos tipos pedidos, na mesma janela de
 // ctbz pendencias conciliacao --listar, indexadas pelo id. O formato dos itens não foi
-// verificado: o id é o campo "id" (o que --listar mostra) e, sem ele, a leitura falha em vez
-// de deixar passar um id que não dá para conferir.
-func pendenciasConciliacaoAbertas(ctx context.Context, g api.Getter, tipos []string) (map[int64][]pendenciaConciliacao, error) {
+// verificado: o id é o idPendencia ou o id (ver lerPendencia). Também devolve quantos itens
+// vieram sem id reconhecível; com eles a conferência de pertencimento não é confiável.
+func pendenciasConciliacaoAbertas(ctx context.Context, g api.Getter, tipos []string) (map[int64][]pendenciaConciliacao, int, error) {
 	de, ate := janelaConciliacao()
 	abertas := map[int64][]pendenciaConciliacao{}
+	semID := 0
 	for _, tipo := range tipos {
 		itens, err := api.BuscarPendenciasConciliacao(ctx, g, tipo, de, ate)
 		if err != nil {
-			return nil, fmt.Errorf("lendo as pendências de conciliação: %w", err)
+			return nil, 0, fmt.Errorf("lendo as pendências de conciliação: %w", err)
 		}
 		for _, item := range itens {
 			id, descricao, err := lerPendencia(item)
 			if err != nil {
-				return nil, err
+				return nil, 0, err
+			}
+			if id == 0 {
+				semID++
+				continue
 			}
 			abertas[id] = append(abertas[id], pendenciaConciliacao{tipo: tipo, descricao: descricao})
 		}
 	}
-	return abertas, nil
+	return abertas, semID, nil
 }
 
 // lerPendencia tira o id de um item de pendência e descreve os outros campos simples (data,
-// valor, descrição…) na ordem em que a API os devolveu, sem caracteres de controle.
+// valor, descrição…) na ordem em que a API os devolveu, sem caracteres de controle. O id é o
+// idPendencia (o nome que o corpo do POST usa) ou, sem ele, o id; se os dois existem e
+// divergem, a leitura falha. Um item sem nenhum dos dois devolve id 0, sem erro: o chamador
+// decide o que fazer com o que não dá para conferir.
 func lerPendencia(item json.RawMessage) (int64, string, error) {
-	errSemID := errors.New("pendência de conciliação sem id numérico na resposta: o formato não é o esperado; resolva pelo painel")
 	v, err := output.FromJSON(item)
 	if err != nil {
 		return 0, "", fmt.Errorf("lendo uma pendência de conciliação: %w", err)
 	}
 	rec, ok := v.(*output.Record)
 	if !ok {
-		return 0, "", errSemID
+		return 0, "", nil
 	}
-	var id int64
+	var id, idPendencia int64
 	var campos []string
 	for _, f := range rec.Fields {
 		var texto string
@@ -383,9 +409,15 @@ func lerPendencia(item json.RawMessage) (int64, string, error) {
 		default: // nulo, objeto ou lista
 			continue
 		}
-		if f.Key == "id" {
-			if id, err = strconv.ParseInt(texto, 10, 64); err != nil || id <= 0 {
-				return 0, "", errSemID
+		if f.Key == "id" || f.Key == "idPendencia" {
+			n, err := strconv.ParseInt(strings.TrimSpace(texto), 10, 64)
+			if err != nil || n <= 0 {
+				return 0, "", fmt.Errorf("pendência de conciliação com %s de id numérico inválido (%q) na resposta; resolva pelo painel", f.Key, semControle(texto))
+			}
+			if f.Key == "id" {
+				id = n
+			} else {
+				idPendencia = n
 			}
 			continue
 		}
@@ -393,8 +425,11 @@ func lerPendencia(item json.RawMessage) (int64, string, error) {
 			campos = append(campos, semControle(f.Key)+" "+texto)
 		}
 	}
-	if id == 0 {
-		return 0, "", errSemID
+	if id != 0 && idPendencia != 0 && id != idPendencia {
+		return 0, "", fmt.Errorf("pendência de conciliação com id %d que diverge de idPendencia %d na resposta; nada foi enviado, resolva pelo painel", id, idPendencia)
+	}
+	if idPendencia != 0 {
+		id = idPendencia
 	}
 	return id, strings.Join(campos, ", "), nil
 }

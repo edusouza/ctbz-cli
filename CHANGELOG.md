@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz pendencias conciliacao resolver` lê o id das pendências abertas em `idPendencia` (ou `id`),
+  recusa itens em que os dois divergem e, se um item vier sem nenhum dos dois, avisa no stderr e
+  segue sem a conferência em vez de bloquear toda resolução (#1002).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da
