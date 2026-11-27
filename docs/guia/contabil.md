@@ -75,7 +75,9 @@ Data        Conta          Descrição da conta  Histórico       Contrapartida 
 
 - Um lançamento por linha, com a conta de contrapartida e o saldo acumulado da conta no
   exercício depois do lançamento.
-- A API devolve um mês por vez; a CLI consulta cada mês do período (até 24).
+- A API devolve o exercício de janeiro até o mês pedido; a CLI faz uma consulta por ano do período
+  (até 24 meses) e mostra só os lançamentos de `--de` até `--ate`, cada um uma vez.
+- A data é a do lançamento (a API a manda como meia-noite UTC; a CLI não a converte para o fuso local).
 
 ## Caixa do mês
 
