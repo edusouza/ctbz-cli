@@ -9,6 +9,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz extratos importar --substituir` avisa no resumo que a exclusão do extrato vem antes do envio
+  (uma recusa do arquivo ou do saldo deixa o mês sem extrato) e, num OFX com `--saldo-final`,
+  confere antes o saldo do próprio arquivo e recusa sem excluir nada se ele for diferente (#880).
 - `ctbz extratos importar --substituir` recusa (código 2, nada enviado) um OFX fora da lista de
   formatos do banco: o aviso de que a Contabilizei pode recusar o arquivo não protegia o extrato
   e as classificações, já excluídos antes do envio. Exclua antes com `ctbz extratos excluir` (#1016).

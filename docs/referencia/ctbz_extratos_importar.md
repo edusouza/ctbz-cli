@@ -37,7 +37,11 @@ OFX e PDF passam pela tela "Importar extrato":
 O resultado traz saldo_ultimo_dia (o enviado), saldo_lido (o que a Contabilizei leu, nulo se
 não leu) e saldo_divergente (verdadeiro quando foi o de --saldo-final no lugar de um lido
 diferente ou ausente). Com --substituir, o saldo lido só é conhecido depois da exclusão: se
-ele divergir e a importação parar, o extrato antigo já foi excluído.
+ele divergir e a importação parar, o extrato antigo já foi excluído. Por isso, com --substituir e
+--saldo-final, a CLI antes confere o saldo (LEDGERBAL) do próprio OFX: se ele for diferente de
+--saldo-final, recusa (código 2) sem excluir nem enviar nada. A confirmação sempre avisa que a
+exclusão vem antes do envio e que, se o arquivo ou o saldo forem recusados, o mês fica sem
+extrato (e, com lançamentos, sem as classificações).
 
 Os demais formatos que o banco aceita (CSV, XLS…) vão pela Central de Documentos, como no
 painel: um envio só, sem conclusão nem saldo, e a Contabilizei importa o arquivo manualmente,
