@@ -12,6 +12,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `contas-bancarias adicionar` e `editar`: `--banco` que é o id de um banco e o código de outro
   agora dá erro de uso listando os dois, em vez de escolher o do id em silêncio; e `editar` sem
   `--banco` nunca lê o código da conta como id de banco (#870).
+- `contas-bancarias editar` sem `--banco`, para conta sem `bancoId`: só infere o banco se o
+  código exato e o nome da conta conferirem com um único banco da lista (antes aceitava um
+  candidato qualquer ou o primeiro de mesmo código e nome); senão pede `--banco`. O resumo da
+  confirmação mostra o banco inferido (#871).
 
 ## [1.9.6] - 2026-11-26
 

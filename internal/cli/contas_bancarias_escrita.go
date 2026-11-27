@@ -81,27 +81,25 @@ func acharBanco(bancos []api.Banco, v string) (api.Banco, error) {
 		v, len(candidatos), strings.Join(linhas, "\n"))}
 }
 
-// bancoAtual acha o banco de uma conta que não traz o id do banco, só pelo código exato da
-// conta (nunca como id) e, se o código for ambíguo, também pelo nome.
+// bancoAtual acha o banco de uma conta que não traz o id do banco: só pelo código exato da
+// conta (nunca como id nem sem o sufixo) e pelo nome. Se nenhum ou mais de um banco conferir,
+// devolve false e o chamador pede --banco (#871).
 func bancoAtual(bancos []api.Banco, codigo, nome string) (api.Banco, bool) {
 	if codigo == "" {
 		return api.Banco{}, false
 	}
-	var exatos []api.Banco
+	var achado api.Banco
+	n := 0
 	for _, b := range bancos {
-		if b.Codigo == codigo {
-			exatos = append(exatos, b)
+		if b.Codigo == codigo && strings.EqualFold(b.Nome, nome) {
+			achado = b
+			n++
 		}
 	}
-	if len(exatos) == 1 {
-		return exatos[0], true
+	if n != 1 {
+		return api.Banco{}, false
 	}
-	for _, b := range exatos {
-		if strings.EqualFold(b.Nome, nome) {
-			return b, true
-		}
-	}
-	return api.Banco{}, false
+	return achado, true
 }
 
 // nomeBanco mostra o nome do banco com o código, para não confundir bancos de mesmo nome.
@@ -326,7 +324,8 @@ func newContasBancariasEditarCmd() *cobra.Command {
 		Long: `Corrige banco, agência, conta, data de abertura ou saldo inicial de uma conta (risco médio:
 dá para editar de novo). Só as flags informadas mudam; como a edição reenvia todos os campos,
 se a Contabilizei não informar a abertura ou o saldo inicial da conta, informe --abertura ou
---saldo-inicial. O painel pode bloquear a edição (por exemplo, com extratos já classificados);
+--saldo-inicial. Se a conta não traz o id do banco e o código e o nome dela não conferem com
+um único banco da lista, a CLI recusa e pede --banco. O painel pode bloquear a edição (por exemplo, com extratos já classificados);
 nesse caso a CLI mostra o motivo.
 ` + avisoAbertura + `
 
@@ -364,7 +363,7 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 			if atual.BancoID != nil {
 				req.BancoID = *atual.BancoID
 			} else if b, ok := bancoAtual(lista.Bancos, atual.CodigoBanco, atual.NomeBanco); ok {
-				req.BancoID = b.ID
+				req.BancoID, bancoDepois = b.ID, nomeBanco(b)
 			}
 			if f.banco != "" {
 				b, err := acharBanco(lista.Bancos, f.banco)

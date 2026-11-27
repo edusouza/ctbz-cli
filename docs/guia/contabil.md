@@ -355,6 +355,9 @@ ctbz contas-bancarias editar 1000000000000001 --abertura 2024-02-01
   banco (há códigos repetidos na lista), ou se o valor for o id de um banco e o código de outro,
   a CLI lista id, código e nome dos candidatos e pede o id exato. O resumo da
   confirmação e o `--dry-run` mostram o nome e o código do banco escolhido.
+- Em `editar` sem `--banco`, se a Contabilizei não informar o id do banco da conta, a CLI só o
+  infere quando o código exato e o nome da conta conferem com um único banco da lista; senão
+  recusa e pede `--banco`.
 - `--declaro-conta-pj` é obrigatório, como o checkbox do painel: a conta é PJ e movimenta só
   este CNPJ.
 - A data de abertura define desde quando a Contabilizei vai pedir os extratos da conta.

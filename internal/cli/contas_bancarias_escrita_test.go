@@ -166,6 +166,70 @@ func TestContasBancariasEditarColisaoIDCodigo(t *testing.T) {
 	}
 }
 
+func TestBancoAtualExigeCodigoENomeUnicos(t *testing.T) {
+	bancos := []api.Banco{
+		{ID: 11, Codigo: "077-1", Nome: "Banco Exemplo - Internacional"},
+		{ID: 21, Codigo: "341", Nome: "Banco X"},
+		{ID: 22, Codigo: "341", Nome: "Banco X"},
+		{ID: 31, Codigo: "104", Nome: "Banco Y"},
+	}
+	for _, tc := range []struct {
+		nome, codigo, banco string
+		id                  int64
+		ok                  bool
+	}{
+		{"só código sem sufixo na lista", "077", "Banco Exemplo S.A.", 0, false},
+		{"mesmo código e nome em dois bancos", "341", "Banco X", 0, false},
+		{"código único com nome diferente", "104", "Outro Nome", 0, false},
+		{"código vazio", "", "Banco Y", 0, false},
+		{"código e nome conferem com um só banco", "104", "banco y", 31, true},
+		{"código completo com sufixo", "077-1", "Banco Exemplo - Internacional", 11, true},
+	} {
+		t.Run(tc.nome, func(t *testing.T) {
+			if b, ok := bancoAtual(bancos, tc.codigo, tc.banco); ok != tc.ok || b.ID != tc.id {
+				t.Errorf("bancoAtual(%q, %q) = %+v, %v; quero id %d, %v", tc.codigo, tc.banco, b, ok, tc.id, tc.ok)
+			}
+		})
+	}
+}
+
+// Conta sem bancoId e sem um único banco da lista que confira: editar sem --banco recusa em vez
+// de reenviar a conta em outro banco, em --yes e em --dry-run (#871).
+func TestContasBancariasEditarSemBancoIDNaoInferido(t *testing.T) {
+	const conta = `"contasBancarias":[{"id":1000000000000001,"nomeBanco":"Banco Exemplo S.A.","codigoBanco":"077","agencia":"1234","contaCorrente":"12345-6",
+"vlrSaldoInicial":100,"dataSaldoInicial":1704855600000}]`
+	for _, tc := range []struct{ nome, bancos, flag string }{
+		{"só o internacional", `{"id":11,"codigo":"077-1","nome":"Banco Exemplo - Internacional"}`, "11"},
+		{"dois iguais", `{"id":21,"codigo":"077","nome":"Banco Exemplo S.A."},{"id":22,"codigo":"077","nome":"Banco Exemplo S.A."}`, "22"},
+	} {
+		t.Run(tc.nome, func(t *testing.T) {
+			f := contasFake(t)
+			f.gets[pathContasBancarias] = `{"bancos":[` + tc.bancos + `],` + conta + `}`
+			for _, modo := range []string{"--yes", "--dry-run"} {
+				out, stderr, code := execCLI(t, "", "contas-bancarias", "editar", "1000000000000001", "--abertura", "2024-02-01", modo)
+				if code != ExitUsage || len(f.writes) != 0 || out != "" || !strings.Contains(stderr, "informe --banco") {
+					t.Errorf("%s: código %d, escritas %q, saída %q\n%s", modo, code, f.writes, out, stderr)
+				}
+			}
+			// Com --banco explícito, a edição segue.
+			_, stderr, code := execCLI(t, "", "contas-bancarias", "editar", "1000000000000001", "--banco", tc.flag, "--yes")
+			if code != ExitOK || len(f.writes) != 1 {
+				t.Errorf("com --banco: código %d, escritas %q\n%s", code, f.writes, stderr)
+			}
+		})
+	}
+}
+
+func TestContasBancariasEditarSemBancoIDInferidoMostraBancoNoResumo(t *testing.T) {
+	f := contasFake(t)
+	f.gets[pathContasBancarias] = strings.Replace(contasBancariasJSON, `"nomeBanco":"Banco Exemplo","codigoBanco":"341-7"`, `"nomeBanco":"banco exemplo","codigoBanco":"341-7"`, 1)
+	_, stderr, code := execCLI(t, "", "contas-bancarias", "editar", "1000000000000001", "--abertura", "2024-02-01", "--dry-run")
+	// Banco inferido pela lista (código e nome) aparece no resumo com o nome e o código da lista.
+	if code != ExitOK || len(f.writes) != 0 || !strings.Contains(stderr, "→ Banco Exemplo (341-7) agência 1234") {
+		t.Errorf("código %d\n%s", code, stderr)
+	}
+}
+
 func TestContasBancariasAdicionarCodigoExato(t *testing.T) {
 	f := contasFake(t)
 	f.gets[pathContasBancarias] = `{"bancos":[{"id":11,"codigo":"077-1","nome":"Banco Exemplo - Internacional"},{"id":12,"codigo":"077","nome":"Banco Exemplo S.A."},
