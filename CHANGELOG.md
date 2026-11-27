@@ -9,6 +9,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz extratos importar --substituir` mostra banco, agência e conta no resumo da confirmação,
+  e não só o id numérico da conta (#887).
 - `ctbz extratos importar` para antes de enviar qualquer coisa quando a resposta de validação da
   Contabilizei não traz `temLancamentoPendente`, `formatosDisponiveisUpload` ou `statusIntegracao`
   (antes viravam "sem pendência", "nenhum formato" e "conta não integrada" em silêncio e afrouxavam
