@@ -16,6 +16,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz lucros informe aceitar termo-debitos` avisa que a CLI não exibe o texto do termo, mostra
   cada débito como JSON compacto com a marca "formato não confirmado" e recusa o envio quando o
   informe aponta débitos federais mas a API não os lista (#796).
+- `ctbz lucros informe decidir` e `aceitar termo-debitos` relêem as restrições depois do envio
+  (`situacao` `decidida`/`aceita` quando a restrição some; `enviado` com aviso quando ainda
+  aparece ou a releitura falha, sem erro de saída). A confirmação avisa que repetir ou inverter
+  é possível e pode sobrescrever, e a de `--regularizar-pendencia` mostra o fluxo e o custo do
+  serviço adicional (#794). A CLI continua sem bloquear repetição ou inversão: a API não expõe
+  se a decisão já foi registrada.
 
 ## [1.9.6] - 2026-11-26
 

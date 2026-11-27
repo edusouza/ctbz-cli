@@ -152,6 +152,54 @@ func TestInformeDecidir(t *testing.T) {
 	}
 }
 
+const restricoesResolvidas = `{"restricoes":{"debitosFederais":{"possuiPendencia":false},
+"pendenciaDocumental":{"possuiPendencia":false,"fluxoRegularizacao":"NAO_NECESSARIO"}},"processoReabertura":{"status":"NENHUM"}}`
+
+func TestInformeDecidirMostraCustoEAvisaRepeticao(t *testing.T) {
+	// A confirmação mostra o fluxo e o custo, e avisa que repetir ou inverter é possível (#794).
+	informeFake(t, restricoesComTudo)
+	_, stderr, code := execCLI(t, "", "lucros", "informe", "decidir", "--regularizar-pendencia", "--yes")
+	if code != ExitOK || !strings.Contains(stderr, "REABERTURA_BALANCO") || !strings.Contains(stderr, "R$ 300,00") || !strings.Contains(stderr, "pode sobrescrever") {
+		t.Errorf("código %d:\n%s", code, stderr)
+	}
+}
+
+func TestInformeDecidirReleitura(t *testing.T) {
+	for _, tc := range []struct {
+		nome     string
+		onWrite  func(f *escritaFake)
+		situacao string
+		aviso    string
+	}{
+		{"estado mudou", func(f *escritaFake) { f.gets[pathRestricoes] = restricoesResolvidas }, "decidida", ""},
+		{"estado igual", nil, "enviado", "aviso: a pendência documental ainda aparece"},
+		{"releitura falha", func(f *escritaFake) { delete(f.gets, pathRestricoes) }, "enviado", "aviso: decisão enviada, mas não foi possível reler"},
+	} {
+		f := informeFake(t, restricoesComTudo)
+		f.onWrite = tc.onWrite
+		out, stderr, code := execCLI(t, "", "lucros", "informe", "decidir", "--nao-regularizar-pendencia", "--yes", "-o", "csv")
+		want := "acao,situacao,id,decisao\ndecidir," + tc.situacao + ",2025,nao-regularizar-pendencia\n"
+		if code != ExitOK || len(f.writes) != 1 || out != want || (tc.aviso != "" && !strings.Contains(stderr, tc.aviso)) {
+			t.Errorf("%s: código %d, %d escritas, %q\n%s", tc.nome, code, len(f.writes), out, stderr)
+		}
+	}
+}
+
+func TestInformeAceitarTermoDebitosReleitura(t *testing.T) {
+	f := informeFake(t, restricoesComTudo)
+	f.onWrite = func(f *escritaFake) { delete(f.gets, pathRestricoes) }
+	out, stderr, code := execCLI(t, "", "lucros", "informe", "aceitar", "termo-debitos", "--yes", "-o", "csv")
+	if code != ExitOK || len(f.writes) != 1 || out != "acao,situacao,id\naceitar termo-debitos,enviado,2025\n" || !strings.Contains(stderr, "aviso: aceite enviado, mas não foi possível reler") {
+		t.Errorf("releitura com erro: código %d, %d escritas, %q\n%s", code, len(f.writes), out, stderr)
+	}
+	f = informeFake(t, restricoesComTudo)
+	f.onWrite = func(f *escritaFake) { f.gets[pathRestricoes] = restricoesResolvidas }
+	out, _, code = execCLI(t, "", "lucros", "informe", "aceitar", "termo-debitos", "--yes", "-o", "csv")
+	if code != ExitOK || out != "acao,situacao,id\naceitar termo-debitos,aceita,2025\n" {
+		t.Errorf("estado mudou: código %d, %q", code, out)
+	}
+}
+
 func TestInformeDecidirRecusas(t *testing.T) {
 	for _, tc := range []struct {
 		args []string

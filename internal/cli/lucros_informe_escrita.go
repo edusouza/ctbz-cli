@@ -143,19 +143,58 @@ anterior. Aceita --yes e --dry-run.`,
 			}
 			fmt.Fprintln(s.err, "aviso: a CLI não exibe o texto do termo; leia-o no painel antes de confirmar.")
 			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(ano), Resumo: fmt.Sprintf("Declarar ciência dos débitos federais no informe de %d", ano),
-				Consequencia: "Registra que você está ciente dos débitos federais da empresa; não dá para desfazer."}
+				Consequencia: "Registra que você está ciente dos débitos federais da empresa; não dá para desfazer. " + avisoRepeticaoInforme}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
 				return erroAdmin(api.AceitarTermoDebitos(cmd.Context(), snd, ano, api.AceiteTermoPrimeiraVez))
 			})
 			if err != nil || !enviado {
 				return err
 			}
-			return output.Write(s.out, f, resultadoEscrita(acao, "enviado", fmt.Sprint(ano)))
+			situacao := releituraInforme(cmd, g, ano, "aceite enviado", "os débitos federais", "aceita", func(r *api.RestricoesInforme) bool {
+				return r.Restricoes.DebitosFederais.PossuiPendencia
+			})
+			return output.Write(s.out, f, resultadoEscrita(acao, situacao, fmt.Sprint(ano)))
 		},
 	}
 	cmd.Flags().IntVar(&ano, "ano", 0, "ano-calendário (padrão: o ano anterior)")
 	addWriteFlags(cmd)
 	return cmd
+}
+
+// avisoRepeticaoInforme lembra o que a CLI não consegue impedir: a API não diz se o aceite ou a
+// decisão já foi registrado, e não se sabe se um novo envio sobrescreve o anterior.
+const avisoRepeticaoInforme = "A CLI não sabe se isso já foi registrado: repetir ou inverter é possível e pode sobrescrever o anterior."
+
+// releituraInforme relê as restrições depois de um envio e devolve a situação: aceita (a
+// restrição some) ou "enviado", com um aviso, quando ela ainda aparece ou a releitura falha.
+// Nunca falha: o envio já aconteceu e não deve ser repetido.
+func releituraInforme(cmd *cobra.Command, g api.Getter, ano int, o, restricao, ok string, pendente func(*api.RestricoesInforme) bool) string {
+	s := streamsOf(cmd)
+	r, err := api.BuscarRestricoesInforme(cmd.Context(), g, ano)
+	if err != nil {
+		fmt.Fprintf(s.err, "aviso: %s, mas não foi possível reler as restrições: %v\n", o, err)
+		return "enviado"
+	}
+	if pendente(r) {
+		fmt.Fprintf(s.err, "aviso: %s ainda aparece nas restrições; confira com ctbz lucros informe restricoes\n", restricao)
+		return "enviado"
+	}
+	return ok
+}
+
+// consequenciaDecisao completa o texto da decisão com o que a CLI sabe do custo e do fluxo.
+func consequenciaDecisao(d decisaoInforme, r *api.RestricoesInforme) string {
+	c := d.consequencia
+	if d.aceite == api.AceiteRegularizarPendencia {
+		pd := r.Restricoes.PendenciaDocumental
+		if pd.FluxoRegularizacao != "" {
+			c += " Fluxo de regularização: " + pd.FluxoRegularizacao + "."
+		}
+		if pd.ValorServicoAdicional != nil {
+			c += " Serviço adicional: " + output.FormatBRL(*pd.ValorServicoAdicional) + ", que pode ser cobrado."
+		}
+	}
+	return c + " " + avisoRepeticaoInforme
 }
 
 // debitoCompacto mostra um débito (formato nunca capturado) como JSON de uma linha, sem
@@ -237,7 +276,10 @@ func newInformeDecidirCmd() *cobra.Command {
 
 As duas primeiras exigem pendência documental e a última, débitos federais (ver ctbz lucros
 informe restricoes). Risco alto: decide se haverá distribuição de lucros isenta e não dá para
-desfazer. O padrão de --ano é o ano anterior. Aceita --yes e --dry-run.`,
+desfazer. A CLI não sabe se a decisão já foi registrada: repetir ou inverter é possível e pode
+sobrescrever a anterior. Depois do envio relê as restrições (situacao "decidida" quando a
+restrição some, "enviado" com aviso quando ainda aparece). O padrão de --ano é o ano
+anterior. Aceita --yes e --dry-run.`,
 		Example: `  ctbz lucros informe decidir --ano 2025 --regularizar-pendencia`,
 		Args:    exactArgs(0, "nenhum argumento"),
 		RunE: func(cmd *cobra.Command, _ []string) error {
@@ -266,7 +308,7 @@ desfazer. O padrão de --ano é o ano anterior. Aceita --yes e --dry-run.`,
 			if !d.exigeDebitos && !r.Restricoes.PendenciaDocumental.PossuiPendencia {
 				return fmt.Errorf("o informe de %d não tem pendência documental (veja ctbz lucros informe restricoes)", ano)
 			}
-			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(ano), Resumo: fmt.Sprintf("%s no informe de %d", d.resumo, ano), Consequencia: d.consequencia}
+			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(ano), Resumo: fmt.Sprintf("%s no informe de %d", d.resumo, ano), Consequencia: consequenciaDecisao(d, r)}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
 				return erroAdmin(api.RegistrarAceiteInforme(cmd.Context(), snd, ano, d.aceite))
 			})
@@ -276,7 +318,12 @@ desfazer. O padrão de --ano é o ano anterior. Aceita --yes e --dry-run.`,
 			if d.aceite == api.AceiteRegularizarPendencia {
 				fmt.Fprintln(s.err, "Envie os documentos pelo formulário de atendimento: "+api.FormularioRegularizarPendencias)
 			}
-			return output.Write(s.out, f, resultadoEscrita("decidir", "enviado", fmt.Sprint(ano)).Add("decisao", "Decisão", d.flag))
+			restricao, qual := "a pendência documental", func(r *api.RestricoesInforme) bool { return r.Restricoes.PendenciaDocumental.PossuiPendencia }
+			if d.exigeDebitos {
+				restricao, qual = "os débitos federais", func(r *api.RestricoesInforme) bool { return r.Restricoes.DebitosFederais.PossuiPendencia }
+			}
+			situacao := releituraInforme(cmd, sessionGetter{s}, ano, "decisão enviada", restricao, "decidida", qual)
+			return output.Write(s.out, f, resultadoEscrita("decidir", situacao, fmt.Sprint(ano)).Add("decisao", "Decisão", d.flag))
 		},
 	}
 	cmd.Flags().IntVar(&ano, "ano", 0, "ano-calendário (padrão: o ano anterior)")

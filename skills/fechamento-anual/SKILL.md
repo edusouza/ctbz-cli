@@ -49,7 +49,11 @@ ctbz lucros informe aceitar termo-debitos --ano A --dry-run   # só quando há d
 ```
 
 Mostre o texto, explique em duas linhas o que o sócio está declarando e só envie com
-confirmação explícita. `situacao: "enviado"` = já enviado: não repita.
+confirmação explícita. `situacao: "enviado"` = já enviado: não repita. O mesmo vale para `decidir`
+(`situacao` `decidida` ou `enviado`): a CLI não detecta decisão repetida ou oposta e a API pode
+sobrescrever a anterior, então rode `restricoes` antes e nunca decida duas vezes. Se a carta vier
+sem texto ou o termo não listar os débitos, a CLI recusa: mande o usuário ao painel. O texto do
+termo de débitos a CLI não exibe.
 
 A Central de Rotinas tem os seus próprios aceites (`ctbz pendencias termos`, `termo CHAVE`,
 `aceitar CHAVE`), com o mesmo cuidado. O termo de débitos tem aceite tácito
