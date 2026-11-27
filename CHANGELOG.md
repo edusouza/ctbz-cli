@@ -9,6 +9,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Corrigido
 
+- `usuarios desativar` recusa convite pendente (`CONVITE_ENVIADO`), como o `ativar`, em vez de
+  enviar um `PUT` de efeito desconhecido que a CLI não consegue desfazer; ajuda e guia não
+  prometem mais reversibilidade para convites (#819).
 - `empresa credenciais atualizar`: o id da empresa tirado da sessão (quando o formulário não
   traz `id`) vai byte a byte, sem passar por `float64`, que arredondaria ids acima de 2^53; e a
   falta de id (nem no formulário nem na sessão) é detectada antes de ler o código, o usuário e a

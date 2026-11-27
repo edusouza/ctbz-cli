@@ -72,7 +72,8 @@ ctbz usuarios ativar ID               # médio
 Antes de convidar, deixe claro que não há perfil restrito e que o convite não pode ser
 revogado antes do aceite (só desativando depois). Só usuários secundários podem ser
 desativados (o administrador, nunca); usuário sem id, tipo ou status na lista é recusado
-sem escrita: mande o usuário ao painel.
+sem escrita: mande o usuário ao painel. Convite pendente (`CONVITE_ENVIADO`) não se ativa nem
+se desativa: a CLI recusa, e só depois do aceite `desativar` revoga o acesso.
 
 ## Credenciais de órgãos públicos
 

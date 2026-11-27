@@ -4,9 +4,11 @@ Devolve o acesso de um usuário desativado
 
 Devolve o acesso de um usuário desativado. O ID está em ctbz usuarios. Desativar é a única forma de revogar o
 acesso, e só usuários secundários podem ser desativados: o administrador da empresa
-(usuário principal), nunca.
+(usuário principal), nunca. Convites ainda não aceitos (CONVITE_ENVIADO) não se ativam nem
+se desativam: a CLI recusa, porque não há como revogar um convite antes do aceite.
 
-Risco médio: reversível com ativar ou desativar. Aceita --yes e --dry-run.
+Risco médio: entre usuários que já aceitaram, reversível com ativar ou desativar. Aceita
+--yes e --dry-run.
 
 ## Uso
 
