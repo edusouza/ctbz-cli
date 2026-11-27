@@ -52,6 +52,7 @@ críticos e cada versão seguinte fecha **um tema** de correção, com os achado
 | **v1.9.4** | Extratos do Banco Inter: mês excluído e saldo do último dia | [#1034](https://github.com/edusouza/ctbz-cli/issues/1034) | 11 | concluída |
 | **v1.9.5** | Login bloqueado pelo firewall (User-Agent) | — | 1 | concluída |
 | **v1.9.6** | `ctbz notas` e `extratos classificar` no formato atual | — | 2 | concluída |
+| **v1.9.7** | Bugs de criticidade crítica e alta: escritas que recusam ou avisam em vez de enviar errado | — | 36 | concluída |
 | **v1.10** | Saída segura: caracteres de controle, CSV, segredos e dados pessoais | [#944](https://github.com/edusouza/ctbz-cli/issues/944) | 50 | planejada |
 | **v1.11** | Escrita segura e `--dry-run` | [#945](https://github.com/edusouza/ctbz-cli/issues/945) | 78 | planejada |
 | **v1.12** | Depois do envio: releitura, situação e orientação | [#946](https://github.com/edusouza/ctbz-cli/issues/946) | 66 | planejada |
@@ -487,6 +488,10 @@ recebia HTTP 400 (o `desmembrar` usava o mesmo formato).
 |---|---|---|---|
 | ✅ | [#1053](https://github.com/edusouza/ctbz-cli/pull/1053) | `statusNotaFiscal` como objeto e `dataEmissao` como array em `ctbz notas` | bug |
 | ✅ | [#1054](https://github.com/edusouza/ctbz-cli/pull/1054) | `extratos classificar` e `desmembrar` enviam o corpo como objeto JSON | bug |
+
+## v1.9.7 — Bugs de criticidade crítica e alta
+
+Limpeza (27/11/2026) das 36 issues de bug de criticidade crítica e alta, uma por PR pequeno ([#1059](https://github.com/edusouza/ctbz-cli/pull/1059) a [#1095](https://github.com/edusouza/ctbz-cli/pull/1095)). Os detalhes estão no [CHANGELOG](CHANGELOG.md).
 
 ## v1.10 — Saída segura: caracteres de controle, CSV, segredos e dados pessoais
 

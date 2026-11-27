@@ -7,7 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
-### Corrigido
+## [1.9.7] - 2026-11-27
+
+Limpeza das issues de bug de criticidade crítica e alta: 36 correções que fazem a CLI recusar ou avisar, antes de escrever, em casos em que enviava algo errado, repetia uma cobrança ou escondia que a ação podia ter sido aplicada.
+
+### Fixed
 
 - Escrita de resultado incerto (3xx, 5xx ou falha de conexão) avisa na hora da falha que "a
   escrita pode ter sido aplicada" e manda conferir o estado e `ctbz acoes` antes de repetir, no
@@ -40,8 +44,6 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz mensalidade segunda-via` só envia a ação `dashboard/nova-fatura/AAAAMM` do card; qualquer
   outra ação `request:` (em `botao_adicional_acao` ou `botao_acao`) para com erro, sem enviar
   nada (#929).
-### Fixed
-
 - `ctbz impostos recalcular` relê a guia depois do pedido e deixa de apresentar o vencimento
   pedido como confirmado. O registro de resultado ganha `vencimento_pedido` (a data pedida),
   `vencimento_confirmado` (booleano: o painel confirmou a data), `status` (lista, o estado relido
@@ -700,7 +702,8 @@ seguir o SemVer ([ADR-0017](https://github.com/edusouza/ctbz-cli/blob/main/docs/
   categoria, salário-base e data de entrada.
 - `ctbz empresa atividades`: CNAEs da empresa, a principal e os anexos do Simples Nacional.
 
-[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.6...HEAD
+[Unreleased]: https://github.com/edusouza/ctbz-cli/compare/v1.9.7...HEAD
+[1.9.7]: https://github.com/edusouza/ctbz-cli/compare/v1.9.6...v1.9.7
 [1.9.6]: https://github.com/edusouza/ctbz-cli/compare/v1.9.5...v1.9.6
 [1.9.5]: https://github.com/edusouza/ctbz-cli/compare/v1.9.4...v1.9.5
 [1.9.4]: https://github.com/edusouza/ctbz-cli/compare/v1.9.3...v1.9.4
