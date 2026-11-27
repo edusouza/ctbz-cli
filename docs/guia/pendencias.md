@@ -175,6 +175,9 @@ ctbz pendencias conciliacao detalhes --recebimento 123         # como uma pendê
   `NOTAFISCAL` e `MOVIMENTACAO` juntos, pendências de nota e de recebimento no mesmo pedido e,
   com `--vincular`, ids do outro tipo. Uma pendência mais antiga que 12 meses se resolve pelo
   painel.
+- O id de cada pendência lida é o `idPendencia` (ou, sem ele, o `id`). Se os dois existirem e
+  divergirem, a CLI recusa (código 1). Se algum item vier sem nenhum dos dois, a CLI avisa no
+  stderr e segue sem conferir os ids com as pendências abertas: a Contabilizei valida o pedido.
 - Motivos que envolvem sócio (AFAC, empréstimo do sócio, integralização de capital, devolução
   de lucros antecipados) exigem `--socio ID`. Essa lista foi deduzida do painel e pode mudar.
 - No painel, algumas opções só valem para itens abaixo de R$ 1.000,00. A CLI não conhece a lista

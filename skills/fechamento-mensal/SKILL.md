@@ -38,7 +38,7 @@ dispensa importação) cujo mês `M` falta:
    Até lá a competência continua `PENDENTE` em `ctbz extratos`, o que é o esperado: **nunca
    reenvie** um arquivo com `importacao: "manual"` (a fila manual recebe duplicados), nem depois
    de uma falha de conexão; peça ao usuário para conferir na Central de Documentos do painel.
-   CSV/XLS não aceitam `--substituir` e são recusados sobre um extrato já importado.
+   CSV/XLS e OFX fora da lista do banco não aceitam `--substituir` e são recusados sobre um extrato já importado.
 2. Num OFX, leia o saldo final no próprio arquivo (`<LEDGERBAL>` → `<BALAMT>`) e mostre ao
    usuário. Só siga para o `--yes` depois do "ok" dele sobre esse valor: a conferência vem
    antes da importação, não depois.
@@ -55,8 +55,8 @@ dispensa importação) cujo mês `M` falta:
    rodar o comando no terminal dele, sem `--yes`, e confirmar a troca. Sem a flag, com `--yes`
    vai o saldo lido, sem conferência. No JSON, `saldo_divergente: true` diz que foi o da flag no
    lugar de um lido diferente ou ausente (`saldo_lido`): informe ao usuário. Em PDF, omita a
-   flag. Com `--substituir`, a divergência só aparece depois da exclusão do extrato antigo:
-   confira o saldo antes.
+   flag. Com `--substituir`, a divergência com o saldo lido só aparece depois da exclusão do extrato
+   antigo (a CLI só confere antes o saldo do próprio OFX contra `--saldo-final`): confira o saldo antes.
 4. Mensagens de "outro banco", "outra conta", "conta não cadastrada" (cadastre com
    `ctbz contas-bancarias adicionar`, skill `cadastro-e-acessos`) e período anterior pendente
    vêm traduzidas: siga o que dizem.
