@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strconv"
@@ -25,7 +27,7 @@ func opcoesReclassificacaoList(ps []api.PendenciaReclassificacao) *output.List {
 	for _, p := range ps {
 		for _, o := range p.Classificacoes {
 			var socios []string
-			for _, s := range o.Socios {
+			for _, s := range o.ListaSocios() {
 				socios = append(socios, fmt.Sprintf("%d %s", s.IDSocio, s.Nome))
 			}
 			l.Append(p.IDTexto(), output.Text(p.Descricao), moneyOrNil(p.Valor), p.ClassificacaoAtual, o.IDClassificacao, o.Nome, nonNil(socios))
@@ -44,7 +46,7 @@ func conferirPendenciaReclassificacao(p api.PendenciaReclassificacao) error {
 	}
 	var falta string
 	switch {
-	case rawTexto(p.IDPendencia) == nil:
+	case !idPendenciaValido(p.IDPendencia):
 		falta = "sem idPendencia"
 	case p.IDLancamento == 0:
 		falta = "sem idLancamento"
@@ -55,6 +57,55 @@ func conferirPendenciaReclassificacao(p api.PendenciaReclassificacao) error {
 		return fmt.Errorf("lendo a pendência de reclassificação %s: a resposta veio %s; nada foi enviado, conclua a rotina pelo painel", nome, falta)
 	}
 	return nil
+}
+
+// deduplicar tira os valores repetidos de ids, mantendo a ordem da primeira ocorrência.
+func deduplicar(ids []string) []string {
+	vistos := map[string]bool{}
+	out := make([]string, 0, len(ids))
+	for _, id := range ids {
+		if id = strings.TrimSpace(id); !vistos[id] {
+			vistos[id] = true
+			out = append(out, id)
+		}
+	}
+	return out
+}
+
+// idsAusentes devolve os ids pedidos que o init não devolveu: concluir só parte das pendências
+// com código 0 faria um script achar que todas foram resolvidas.
+func idsAusentes(pedidos []string, ps []api.PendenciaReclassificacao) []string {
+	devolvidos := map[string]bool{}
+	for _, p := range ps {
+		devolvidos[p.IDTexto()] = true
+	}
+	var ausentes []string
+	for _, id := range pedidos {
+		if !devolvidos[id] {
+			ausentes = append(ausentes, id)
+		}
+	}
+	return ausentes
+}
+
+// idPendenciaValido aceita só uma string não vazia diferente de "0" ou um inteiro positivo:
+// ausente, null, 0, negativo, booleano, objeto e lista nunca vão no corpo do POST.
+func idPendenciaValido(raw json.RawMessage) bool {
+	var v any
+	dec := json.NewDecoder(bytes.NewReader(raw))
+	dec.UseNumber()
+	if len(raw) == 0 || dec.Decode(&v) != nil {
+		return false
+	}
+	switch x := v.(type) {
+	case string:
+		x = strings.TrimSpace(x)
+		return x != "" && x != "0"
+	case json.Number:
+		n, err := strconv.ParseInt(x.String(), 10, 64)
+		return err == nil && n > 0
+	}
+	return false
 }
 
 // opcoesReclassificacao devolve as opções da pendência que casam com --classificacao, na ordem
@@ -101,6 +152,10 @@ func escolherReclassificacao(p api.PendenciaReclassificacao, classificacao, soci
 	if o.IDClassificacao == 0 {
 		return api.Reclassificacao{}, "", fmt.Errorf("lendo a pendência de reclassificação %s: a opção %q veio sem idClassificacao; nada foi enviado, conclua a rotina pelo painel", p.IDTexto(), o.Nome)
 	}
+	if o.Socios == nil {
+		return api.Reclassificacao{}, "", fmt.Errorf("lendo a pendência de reclassificação %s: a opção %q veio sem a lista socios; nada foi enviado, conclua a rotina pelo painel", p.IDTexto(), o.Nome)
+	}
+	socios := *o.Socios
 	r := api.Reclassificacao{IDPendencia: p.IDPendencia, IDClassificacao: o.IDClassificacao, IDLancamento: p.IDLancamento}
 	escolher := func(s api.SocioReclassificacao) (api.Reclassificacao, string, error) {
 		if s.IDSocio == 0 {
@@ -111,16 +166,16 @@ func escolherReclassificacao(p api.PendenciaReclassificacao, classificacao, soci
 		return r, o.Nome + " / " + s.Nome, nil
 	}
 	switch {
-	case len(o.Socios) == 0 && socio != "":
+	case len(socios) == 0 && socio != "":
 		return r, "", usageError{fmt.Errorf("a classificação %q não usa sócio", o.Nome)}
-	case len(o.Socios) == 0:
+	case len(socios) == 0:
 		return r, o.Nome, nil
-	case socio == "" && len(o.Socios) == 1:
-		return escolher(o.Socios[0])
+	case socio == "" && len(socios) == 1:
+		return escolher(socios[0])
 	case socio == "":
 		return r, "", usageError{fmt.Errorf("a classificação %q exige --socio (veja as opções sem --classificacao)", o.Nome)}
 	}
-	for _, s := range o.Socios {
+	for _, s := range socios {
 		if strconv.FormatInt(s.IDSocio, 10) == socio {
 			return escolher(s)
 		}
@@ -167,12 +222,23 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 			s := streamsOf(cmd)
 			ctx := cmd.Context()
 			g := sessionGetter{s}
+			args = deduplicar(args)
 			ps, err := api.BuscarReclassificacoes(ctx, g, args)
 			if err != nil {
 				return err
 			}
 			if len(ps) == 0 {
 				return fmt.Errorf("nenhuma pendência de reclassificação encontrada para %s", strings.Join(args, ", "))
+			}
+			if classificacao != "" {
+				for _, p := range ps {
+					if err := conferirPendenciaReclassificacao(p); err != nil {
+						return err
+					}
+				}
+			}
+			if ausentes := idsAusentes(args, ps); len(ausentes) > 0 {
+				return fmt.Errorf("a Contabilizei não devolveu a pendência de reclassificação %s; nada foi enviado, confira os ids em ctbz rotinas", strings.Join(ausentes, ", "))
 			}
 			if classificacao == "" {
 				return output.Write(s.out, f, opcoesReclassificacaoList(ps))
@@ -181,9 +247,6 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 			var resumo []string
 			nomes := make([]string, len(ps))
 			for i, p := range ps {
-				if err := conferirPendenciaReclassificacao(p); err != nil {
-					return err
-				}
 				if itens[i], nomes[i], err = escolherReclassificacao(p, classificacao, socio); err != nil {
 					return err
 				}
