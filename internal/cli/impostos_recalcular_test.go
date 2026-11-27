@@ -80,6 +80,17 @@ func TestImpostosRecalcularCobrancaDesconhecida(t *testing.T) {
 	}
 }
 
+// Valor recalculado nulo não pode aparecer como "R$ 0,00" na confirmação (#462).
+func TestImpostosRecalcularValorDesconhecido(t *testing.T) {
+	f := recalculoFake(t)
+	f.resposta = `{"modalSucessoRecalculo":true,"guia":{"dataVencimento":"20/10/2026"}}`
+	f.gets[pathRecalcInit] = strings.Replace(fixture(t, "recalculo_init"), `"valorRecalculo": 1234.56,`, `"valorRecalculo": null,`, 1)
+	_, stderr, code := execCLI(t, "", "impostos", "recalcular", "1000000000000001", "--vencimento", "2026-10-20", "--yes")
+	if code != ExitOK || !strings.Contains(stderr, "valor estimado indisponível") || strings.Contains(stderr, "R$ 0,00") {
+		t.Errorf("código %d\n%s", code, stderr)
+	}
+}
+
 func TestImpostosRecalcularValidacoes(t *testing.T) {
 	for _, tc := range []struct {
 		args []string

@@ -126,13 +126,13 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			if hoje := api.DiaEmBrasilia(now()); dia.Year() > hoje.Year() || dia.Month() != hoje.Month() {
 				consequencia += " Com vencimento no mês seguinte, os juros e a multa ficam maiores."
 			}
-			valor := int64(0)
+			estimado := "indisponível"
 			if ini.ValorRecalculo != nil {
-				valor = centavos(*ini.ValorRecalculo)
+				estimado = formatarCentavos(centavos(*ini.ValorRecalculo))
 			}
 			req := api.PedidoRecalculo{Tipo: guia.Tipo, Origem: origemGuia(guia), DataVencimento: dia.Format("02/01/2006")}
 			op := operacao{Risco: riscoAlto, ID: args[0], Consequencia: consequencia, Resumo: fmt.Sprintf(
-				"Pedir o recálculo de %s com vencimento em %s (valor estimado %s)", nomeGuia(guia), dia.Format("02/01/2006"), formatarCentavos(valor))}
+				"Pedir o recálculo de %s com vencimento em %s (valor estimado %s)", nomeGuia(guia), dia.Format("02/01/2006"), estimado)}
 			var resp *api.RespostaRecalculo
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
 				var err error

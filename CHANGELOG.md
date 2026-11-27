@@ -9,6 +9,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz impostos recalcular` mostra "valor estimado indisponível" na confirmação quando o painel
+  não traz `valorRecalculo`, em vez de "R$ 0,00" (#462).
 - `ctbz impostos recalcular` não afirma mais que o recálculo é gratuito quando a resposta do
   painel não traz `cobrarRecalculo`: `cobrar_recalculo` e `cobrado` saem `null` e a consequência
   avisa que o painel não informou se será cobrado (#463).
