@@ -9,6 +9,7 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz caixa adicionar` mostra o id do lançamento recém-criado, mesmo havendo um lançamento idêntico anterior, em vez do de maior id (#351).
 - `ctbz caixa adicionar` recusa competência futura sem `--data`, em vez de enviar um lançamento com data futura no dia 1 (#350).
 - A leitura dos lançamentos do extrato falha com erro claro quando algum lançamento vem sem `idLancamentoUsuario`, em vez de devolver só o primeiro em silêncio (#866).
 - A leitura dos lançamentos do extrato só termina numa página vazia, então um servidor que limita a página abaixo de 100 itens não trunca mais a lista em silêncio (#867).

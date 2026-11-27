@@ -117,6 +117,20 @@ func TestCaixaAdicionar(t *testing.T) {
 	}
 }
 
+// Com um lançamento idêntico já existente (e de id maior), o id mostrado é o do criado (#351).
+func TestCaixaAdicionarIdenticoPreexistente(t *testing.T) {
+	f := newCaixaFake(t)
+	f.lancs = append(f.lancs, map[string]any{"id": 150, "data": time.Date(2026, 9, 15, 3, 0, 0, 0, time.UTC).UnixMilli(), "descricao": "Teste", "valor": -150.25, "situacao": "PENDENTE"})
+	out, stderr, code := execCLI(t, "", "caixa", "adicionar", "--competencia", "2026-09", "--descricao", "Teste", "--yes", "-o", "json",
+		"--pagamento", "--valor", "150,25", "--conta", "1000000000000012", "--data", "2026-09-15")
+	if code != ExitOK || len(f.writes) != 1 {
+		t.Fatalf("código %d, escritas %v\n%s", code, f.writes, stderr)
+	}
+	if !strings.Contains(out, `"id": 99`) || !strings.Contains(out, `"situacao": "adicionado"`) {
+		t.Errorf("saída:\n%s", out)
+	}
+}
+
 func TestCaixaAdicionarValidacoes(t *testing.T) {
 	base := []string{"caixa", "adicionar", "--competencia", "2026-09", "--descricao", "X", "--yes"}
 	for _, tc := range []struct {
