@@ -10,6 +10,7 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 ### Fixed
 
 - A leitura dos lançamentos do extrato falha com erro claro quando algum lançamento vem sem `idLancamentoUsuario`, em vez de devolver só o primeiro em silêncio (#866).
+- A leitura dos lançamentos do extrato só termina numa página vazia, então um servidor que limita a página abaixo de 100 itens não trunca mais a lista em silêncio (#867).
 
 ## [1.9.6] - 2026-11-26
 
