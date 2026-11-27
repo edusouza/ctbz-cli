@@ -24,8 +24,9 @@ func newContasBancariasBancosCmd() *cobra.Command {
 		Long: `Lista os bancos aceitos no cadastro de contas (id, código e nome); use o id ou o código em --banco.
 
 Alguns códigos se repetem (ex.: dois bancos com 341) ou têm uma versão internacional (077 e
-077-1). --banco escolhe o código exato; se mais de um banco tiver o código, a CLI lista os
-candidatos e pede o id.`,
+077-1). --banco escolhe o id ou o código exato; se o valor corresponder a mais de um banco
+(mesmo código em vários, ou o id de um que é o código de outro), a CLI lista os candidatos e
+pede o id.`,
 		Args: exactArgs(0, "nenhum argumento"),
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			f, err := outputFormat(cmd, "")
@@ -46,28 +47,23 @@ candidatos e pede o id.`,
 	}
 }
 
-// acharBanco resolve --banco pelo id; depois pelo código exato (ex.: 077 ou 341-7); e, só sem
-// código exato, pelo código sem o sufixo (341 → 341-7). Nunca escolhe entre candidatos: há
-// bancos com o mesmo código (ex.: 341) e pares nacional/internacional (077 e 077-1).
+// acharBanco resolve --banco pelo id e pelo código exato (ex.: 077 ou 341-7) ao mesmo tempo; e,
+// só sem nenhum dos dois, pelo código sem o sufixo (341 → 341-7). Nunca escolhe entre
+// candidatos: há bancos com o mesmo código (ex.: 341), pares nacional/internacional (077 e
+// 077-1) e valores que são o id de um banco e o código de outro (#870).
 func acharBanco(bancos []api.Banco, v string) (api.Banco, error) {
 	v = strings.TrimSpace(v)
-	for _, b := range bancos {
-		if strconv.FormatInt(b.ID, 10) == v {
-			return b, nil
-		}
-	}
-	var exatos, semSufixo []api.Banco
+	var diretos, semSufixo []api.Banco // diretos: id igual a v ou código exato igual a v
 	for _, b := range bancos {
 		cod, _, _ := strings.Cut(b.Codigo, "-")
 		switch {
-		case b.Codigo == "":
-		case b.Codigo == v:
-			exatos = append(exatos, b)
-		case cod == v:
+		case strconv.FormatInt(b.ID, 10) == v || (b.Codigo != "" && b.Codigo == v):
+			diretos = append(diretos, b)
+		case b.Codigo != "" && cod == v:
 			semSufixo = append(semSufixo, b)
 		}
 	}
-	candidatos := exatos
+	candidatos := diretos
 	if len(candidatos) == 0 {
 		candidatos = semSufixo
 	}
@@ -81,18 +77,27 @@ func acharBanco(bancos []api.Banco, v string) (api.Banco, error) {
 	for i, b := range candidatos {
 		linhas[i] = fmt.Sprintf("  %d  %s  %s", b.ID, b.Codigo, b.Nome)
 	}
-	return api.Banco{}, usageError{fmt.Errorf("o código %q corresponde a %d bancos; informe o id em --banco:\n%s",
+	return api.Banco{}, usageError{fmt.Errorf("o valor %q corresponde a %d bancos; informe o id em --banco:\n%s",
 		v, len(candidatos), strings.Join(linhas, "\n"))}
 }
 
-// bancoAtual acha o banco de uma conta que não traz o id do banco, pelo código e, se o
-// código for ambíguo, também pelo nome.
+// bancoAtual acha o banco de uma conta que não traz o id do banco, só pelo código exato da
+// conta (nunca como id) e, se o código for ambíguo, também pelo nome.
 func bancoAtual(bancos []api.Banco, codigo, nome string) (api.Banco, bool) {
-	if b, err := acharBanco(bancos, codigo); err == nil {
-		return b, true
+	if codigo == "" {
+		return api.Banco{}, false
 	}
+	var exatos []api.Banco
 	for _, b := range bancos {
-		if codigo != "" && b.Codigo == codigo && strings.EqualFold(b.Nome, nome) {
+		if b.Codigo == codigo {
+			exatos = append(exatos, b)
+		}
+	}
+	if len(exatos) == 1 {
+		return exatos[0], true
+	}
+	for _, b := range exatos {
+		if strings.EqualFold(b.Nome, nome) {
 			return b, true
 		}
 	}

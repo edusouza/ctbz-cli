@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -110,6 +111,58 @@ func TestAcharBanco(t *testing.T) {
 	}
 	if b, ok := bancoAtual(bancosAmbiguos, "341", "banco repetido s.a."); !ok || b.ID != 22 {
 		t.Errorf("banco atual pelo código e nome: %+v %v", b, ok)
+	}
+}
+
+// bancosColisao tem um valor que é id de um banco e código exato de outro (#870).
+var bancosColisao = []api.Banco{
+	{ID: 237, Codigo: "999", Nome: "Banco A"},
+	{ID: 5, Codigo: "237", Nome: "Banco B"},
+	{ID: 104, Codigo: "104", Nome: "Banco C"}, // id e código do mesmo banco não é colisão
+}
+
+func TestAcharBancoColisaoIDCodigo(t *testing.T) {
+	_, err := acharBanco(bancosColisao, "237")
+	if err == nil || !strings.Contains(err.Error(), "corresponde a 2 bancos") ||
+		!strings.Contains(err.Error(), "237  999  Banco A") || !strings.Contains(err.Error(), "5  237  Banco B") {
+		t.Errorf("colisão id/código deve listar os dois bancos: %v", err)
+	}
+	var u usageError
+	if !errors.As(err, &u) {
+		t.Errorf("a colisão deve ser erro de uso: %T", err)
+	}
+	if b, err := acharBanco(bancosColisao, "5"); err != nil || b.ID != 5 {
+		t.Errorf("id inequívoco: %+v, %v", b, err)
+	}
+	if b, err := acharBanco(bancosColisao, "104"); err != nil || b.ID != 104 {
+		t.Errorf("id e código do mesmo banco: %+v, %v", b, err)
+	}
+}
+
+func TestContasBancariasAdicionarColisaoIDCodigo(t *testing.T) {
+	f := contasFake(t)
+	f.gets[pathContasBancarias] = `{"bancos":[{"id":237,"codigo":"999","nome":"Banco A"},{"id":5,"codigo":"237","nome":"Banco B"}],"contasBancarias":[]}`
+	_, stderr, code := execCLI(t, "", "contas-bancarias", "adicionar", "--banco", "237", "--agencia", "1234", "--conta", "12345-6",
+		"--abertura", "2024-01-01", "--declaro-conta-pj", "--yes")
+	if code != ExitUsage || len(f.writes) != 0 || !strings.Contains(stderr, "237  999  Banco A") || !strings.Contains(stderr, "5  237  Banco B") {
+		t.Errorf("código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+}
+
+func TestContasBancariasEditarColisaoIDCodigo(t *testing.T) {
+	f := contasFake(t)
+	f.gets[pathContasBancarias] = `{"bancos":[{"id":237,"codigo":"999","nome":"Banco A"},{"id":5,"codigo":"237","nome":"Banco B"}],
+"contasBancarias":[{"id":1000000000000001,"nomeBanco":"Banco B","codigoBanco":"237","agencia":"1234","contaCorrente":"12345-6",
+"vlrSaldoInicial":100,"dataSaldoInicial":1704855600000}]}`
+	// --banco 237 é ambíguo.
+	_, stderr, code := execCLI(t, "", "contas-bancarias", "editar", "1000000000000001", "--banco", "237", "--yes")
+	if code != ExitUsage || len(f.writes) != 0 || !strings.Contains(stderr, "corresponde a 2 bancos") {
+		t.Errorf("--banco ambíguo: código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+	// Sem --banco, o código da conta (237) nunca é lido como id do Banco A: infere o Banco B (id 5).
+	_, stderr, code = execCLI(t, "", "contas-bancarias", "editar", "1000000000000001", "--abertura", "2024-02-01", "--yes")
+	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(f.writes[0], `"bancoId":5,`) {
+		t.Errorf("banco atual: código %d, %q\n%s", code, f.writes, stderr)
 	}
 }
 
