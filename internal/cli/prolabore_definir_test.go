@@ -109,15 +109,28 @@ func TestProlaboreDefinirSemQtdGestaoInteligente(t *testing.T) {
 	}
 }
 
-// O corpo leva sairGestaoInteligente: true também quando o sócio não está na gestão
-// inteligente (só outro sócio está): o resumo avisa.
-func TestProlaboreDefinirAvisaSaidaGestaoInteligente(t *testing.T) {
+// Sócio que não está na gestão inteligente nunca tira a empresa dela (#995): o corpo leva
+// sairGestaoInteligente: false mesmo com só um sócio (outro) nela, e sem o tipo atual recusa.
+func TestProlaboreDefinirForaDaGestaoInteligente(t *testing.T) {
 	gestao := strings.Replace(fixture(t, "gestao_socio"), `"INTELIGENTE"`, `"SALARIO_MINIMO"`, 1)
 	f := prolaboreFake(t, gestao, "{}")
 	_, stderr, code := execCLI(t, "", "prolabore", "definir", "--socio", "1000000000000001", "--tipo", "teto-inss", "--yes")
-	if code != ExitOK || len(f.writes) != 1 || !strings.HasSuffix(f.writes[0], `"sairGestaoInteligente":true}`) ||
-		!strings.Contains(stderr, "tira a empresa da gestão inteligente") {
+	if code != ExitOK || len(f.writes) != 1 || !strings.HasSuffix(f.writes[0], `"sairGestaoInteligente":false}`) ||
+		strings.Contains(stderr, "tira a empresa da gestão inteligente") {
 		t.Errorf("código %d, %q\n%s", code, f.writes, stderr)
+	}
+	for nome, g := range map[string]string{
+		"ausente": strings.Replace(fixture(t, "gestao_socio"), `"tipoGerenciamentoProlabore": "INTELIGENTE",`, "", 1),
+		"vazio":   strings.Replace(fixture(t, "gestao_socio"), `"INTELIGENTE"`, `""`, 1),
+	} {
+		for _, modo := range []string{"--yes", "--dry-run"} {
+			f := prolaboreFake(t, g, "{}")
+			out, stderr, code := execCLI(t, "", "prolabore", "definir", "--socio", "1000000000000001", "--tipo", "teto-inss", modo)
+			if code != ExitError || len(f.writes) != 0 || strings.Contains(out, "PUT") ||
+				!strings.Contains(stderr, "não informou o tipo de gestão atual") {
+				t.Errorf("%s %s: código %d, %d escritas\n%s\n%s", nome, modo, code, len(f.writes), out, stderr)
+			}
+		}
 	}
 }
 

@@ -44,7 +44,8 @@ distribuição de lucros, sem desfazer pela API. Aceita --yes e --dry-run.`,
 				return err
 			}
 			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(ano), Resumo: fmt.Sprintf("Reabrir o balanço de %d para regularizar a pendência documental", ano),
-				Consequencia: "O informe de rendimentos fica indisponível até a análise da Contabilizei, e a reabertura não dá para desfazer pela CLI."}
+				Consequencia: "O informe de rendimentos fica indisponível até a análise da Contabilizei, e a reabertura não dá para desfazer pela CLI. " +
+					avisoCobrancaReabertura(r.Restricoes.PendenciaDocumental.ValorServicoAdicional)}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
 				return erroAdmin(api.ReabrirBalanco(cmd.Context(), snd, ano))
 			})
@@ -64,6 +65,15 @@ distribuição de lucros, sem desfazer pela API. Aceita --yes e --dry-run.`,
 	cmd.Flags().IntVar(&ano, "ano", 0, "ano do exercício a reabrir")
 	addWriteFlags(cmd)
 	return cmd
+}
+
+// avisoCobrancaReabertura diz o custo do serviço: a doc da API registra que o painel avisa de uma
+// cobrança, e a CLI nunca exercitou esse fluxo numa conta real.
+func avisoCobrancaReabertura(valor *float64) string {
+	if valor != nil {
+		return "O serviço gera uma cobrança de " + output.FormatBRL(*valor) + "."
+	}
+	return "O painel pode cobrar pelo serviço (valor não informado)."
 }
 
 // podeReabrir confere o que o painel confere antes de oferecer a reabertura.
