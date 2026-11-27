@@ -681,7 +681,9 @@ func orientarEnvioIncerto(ctx context.Context, g api.Getter, alvo extratoAlvo, f
 		situacao = "continua " + sit
 	}
 	return fmt.Errorf("%s no envio do arquivo, mas o extrato de %s %s: nada foi importado e é seguro rodar o mesmo comando de novo (%v)",
-		falha, mes, situacao, causa)
+		// O estado foi relido e provou que nada entrou: o aviso genérico de "pode ter sido
+		// aplicada" não vale mais.
+		falha, mes, situacao, strings.TrimSuffix(causa.Error(), "; "+ctbz.AvisoPossivelmenteAplicada))
 }
 
 // validarContaUpload confere se a conta aceita upload no formato do arquivo. OFX fora da lista

@@ -8,9 +8,33 @@ import (
 	"strings"
 	"time"
 
+	"github.com/spf13/cobra"
+
 	"github.com/edusouza/ctbz-cli/internal/api"
 	"github.com/edusouza/ctbz-cli/internal/ctbz"
+	"github.com/edusouza/ctbz-cli/internal/output"
 )
+
+// avisarIncertaEmJSON repete, em stdout e com -o json, o aviso de uma escrita de resultado
+// incerto, para que agentes e scripts que só leem o JSON não tratem a falha como recusa.
+func avisarIncertaEmJSON(root *cobra.Command, err error) {
+	status, ok := falhaIncerta(err)
+	if !ok {
+		return
+	}
+	if f, ferr := outputFormat(root, ""); ferr != nil || f != output.FormatJSON {
+		return
+	}
+	rec := &output.Record{}
+	rec.Add("resultado", "Resultado", ctbz.ResultadoIncerta).
+		Add("possivelmente_aplicada", "Possivelmente aplicada", true).
+		Add("status", "Status", status).
+		Add("aviso", "Aviso", ctbz.AvisoPossivelmenteAplicada).
+		Add("erro", "Erro", err.Error())
+	if werr := output.Write(root.OutOrStdout(), output.FormatJSON, rec); werr != nil {
+		fmt.Fprintln(root.ErrOrStderr(), "aviso: não foi possível escrever o resultado incerto em JSON:", werr)
+	}
+}
 
 // sessionSender implementa api.Sender com a sessão salva: confere a sessão antes e envia
 // cada escrita uma única vez, sem retentativa nem re-login depois do envio (ADR-0018).
@@ -73,7 +97,21 @@ func (w sessionSender) send(ctx context.Context, method, path string, body []byt
 type erroSemResposta struct{ causa error }
 
 func (e *erroSemResposta) Error() string {
-	return "a conexão falhou durante o envio e a escrita pode ou não ter sido aplicada; confira antes de repetir: " + e.causa.Error()
+	return "a conexão falhou durante o envio e a escrita pode ou não ter sido aplicada; confira antes de repetir (`ctbz acoes`): " + e.causa.Error()
+}
+
+// falhaIncerta diz se err é a falha de uma escrita de resultado incerto (sem resposta, 3xx ou
+// 5xx) e devolve o status HTTP (0 sem resposta).
+func falhaIncerta(err error) (status int, ok bool) {
+	var semResposta *erroSemResposta
+	if errors.As(err, &semResposta) {
+		return 0, true
+	}
+	var we *ctbz.WriteError
+	if errors.As(err, &we) && we.Incerta() {
+		return we.Status, true
+	}
+	return 0, false
 }
 
 func (e *erroSemResposta) Unwrap() error { return e.causa }

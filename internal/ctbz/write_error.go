@@ -23,8 +23,19 @@ type WriteError struct {
 	Body []byte
 }
 
+// AvisoPossivelmenteAplicada é o aviso de uma escrita de resultado incerto (3xx, 5xx ou
+// falha de conexão): ela pode ter sido aplicada, então repetir às cegas pode duplicá-la.
+const AvisoPossivelmenteAplicada = "a escrita pode ter sido aplicada: não a repita às cegas; confira o estado e o registro com `ctbz acoes`"
+
+// Incerta diz se a resposta não prova que a escrita foi recusada (ver StatusIncerto).
+func (e *WriteError) Incerta() bool { return StatusIncerto(e.Status) }
+
 func (e *WriteError) Error() string {
-	return fmt.Sprintf("%s %s: %s (HTTP %d)", e.Method, e.Path, e.Message, e.Status)
+	msg := fmt.Sprintf("%s %s: %s (HTTP %d)", e.Method, e.Path, e.Message, e.Status)
+	if e.Incerta() {
+		msg += "; " + AvisoPossivelmenteAplicada
+	}
+	return msg
 }
 
 // NewWriteError traduz uma resposta de erro de escrita numa mensagem em português.

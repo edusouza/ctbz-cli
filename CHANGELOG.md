@@ -9,6 +9,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Corrigido
 
+- Escrita de resultado incerto (3xx, 5xx ou falha de conexão) avisa na hora da falha que "a
+  escrita pode ter sido aplicada" e manda conferir o estado e `ctbz acoes` antes de repetir, no
+  stderr e, com `-o json`, em stdout (`resultado: incerta`, `possivelmente_aplicada`, `status`,
+  `aviso`, `erro`); recusas (4xx, 560) não mudam (#313).
 - `ctbz acoes` registra respostas 3xx e 5xx (502, 504…) como `incerta`, e não mais como `recusada`:
   nelas a escrita pode ter sido aplicada. O guia e `ctbz acoes --help` explicam a diferença (#313).
 - `usuarios desativar` recusa convite pendente (`CONVITE_ENVIADO`), como o `ativar`, em vez de
