@@ -36,6 +36,13 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   nada (#929).
 ### Fixed
 
+- `ctbz impostos recalcular` relê a guia depois do pedido e deixa de apresentar o vencimento
+  pedido como confirmado. O registro de resultado ganha `vencimento_pedido` (a data pedida),
+  `vencimento_confirmado` (booleano: o painel confirmou a data), `status` (lista, o estado relido
+  da guia) e `avisos` (lista); `vencimento` continua sempre uma data, mas agora só vale como
+  confirmada quando `vencimento_confirmado` é true (antes era a pedida sem distinção). Sem
+  confirmação, ou se a releitura falhar (`situacao` "enviado"), o aviso sai no stderr e em
+  `avisos` (#464).
 - `ctbz lucros informe aceitar carta-responsabilidade` recusa o aceite, sem enviar nada, quando a carta
   pendente chega sem texto legível (`html` ausente, vazio ou só tags); antes pedia a confirmação
   sobre um "texto acima" que não existia (#798). Os textos da API também perdem os caracteres de
