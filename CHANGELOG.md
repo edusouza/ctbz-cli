@@ -9,6 +9,7 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz caixa adicionar` recusa competência futura sem `--data`, em vez de enviar um lançamento com data futura no dia 1 (#350).
 - A leitura dos lançamentos do extrato falha com erro claro quando algum lançamento vem sem `idLancamentoUsuario`, em vez de devolver só o primeiro em silêncio (#866).
 - A leitura dos lançamentos do extrato só termina numa página vazia, então um servidor que limita a página abaixo de 100 itens não trunca mais a lista em silêncio (#867).
 - `ctbz rotinas reclassificar` recusa, antes de escrever, uma opção de classificação com `socios`

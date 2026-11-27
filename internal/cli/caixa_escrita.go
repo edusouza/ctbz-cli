@@ -174,6 +174,8 @@ Pede confirmação (--yes em scripts) e aceita --dry-run (ver docs/guia/escrita.
 				if dia, err = parseDiaLancamento(f.data); err != nil {
 					return err
 				}
+			} else if dia.After(api.DiaEmBrasilia(now())) {
+				return usageError{fmt.Errorf("a competência %s é futura: o painel não aceita lançamento com data futura", mes.Format("01/2006"))}
 			}
 			formato, err := outputFormat(cmd, "")
 			if err != nil {
