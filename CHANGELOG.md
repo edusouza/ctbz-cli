@@ -16,6 +16,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz impostos parcelamento contratar` recusa a contratação (também em `--yes` e `--dry-run`)
   quando a simulação cobra serviço adicional sem informar o valor, em vez de só mostrar "não
   informado" (#969).
+- `ctbz impostos parcelamento contratar` não falha mais quando a Contabilizei responde 2xx com um
+  corpo que não é objeto (texto, `true`, lista): a contratação já foi feita, e o erro levava a
+  repetir o pedido. Os tipos automáticos ignoram a resposta e o especializado só lê o idTicket,
+  se houver (#488).
 - `ctbz conta alterar` e `ctbz conta senha` não refazem mais o login se a sessão expirar enquanto
   se espera o código: o envio final falha com "o código foi pedido, mas a sessão expirou… rode
   `ctbz login`", em vez de disparar outro e-mail de código que invalidava o pedido (#835).

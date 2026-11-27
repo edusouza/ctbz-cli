@@ -206,3 +206,21 @@ func TestParcelamentoContratarSimplesEspecializadoSemParcelas(t *testing.T) {
 		t.Errorf("resumo do Simples: código %d, escritas %q, %s", code, f.writes, stderr)
 	}
 }
+
+// A resposta dos tipos automáticos é ignorada pelo painel e não tem formato garantido: um 2xx
+// com corpo que não é objeto não pode virar erro depois da contratação (irreversível), senão
+// quem vê o erro repete o pedido. No especializado, sem idTicket legível, também não falha.
+func TestParcelamentoContratarRespostaNaoObjeto(t *testing.T) {
+	for _, tipo := range [][]string{{"simples-nacional"}, {"pgfn-previdenciario"}, {"especializado", "--negociacao", "VENCIDOS"}} {
+		for _, resposta := range []string{`"ok"`, `true`, `[]`, `texto puro`} {
+			t.Run(tipo[0]+" "+resposta, func(t *testing.T) {
+				f := parcelamentoFake(t)
+				f.resposta = resposta
+				_, stderr, code := execCLI(t, "", append(append([]string{"impostos", "parcelamento", "contratar"}, tipo...), "--yes")...)
+				if code != ExitOK || len(f.writes) != 1 || !strings.Contains(stderr, "Recebemos seu pedido") {
+					t.Fatalf("código %d, escritas %q, stderr %s", code, f.writes, stderr)
+				}
+			})
+		}
+	}
+}
