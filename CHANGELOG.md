@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz conta alterar` e `ctbz conta senha` não refazem mais o login se a sessão expirar enquanto
+  se espera o código: o envio final falha com "o código foi pedido, mas a sessão expirou… rode
+  `ctbz login`", em vez de disparar outro e-mail de código que invalidava o pedido (#835).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da
