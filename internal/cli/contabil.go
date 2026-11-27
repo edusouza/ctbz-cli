@@ -188,7 +188,7 @@ func razaoList(contas []api.ContaRelatorio, prefixo string) *output.List {
 			if cp := lc.ContaContrapartida; cp != nil {
 				contrapartida = nilIfEmpty(strings.TrimSpace(cp.ID + " " + cp.Descricao))
 			}
-			l.Append(dateFromMillis(lc.Data), c.ID, c.Descricao, output.Text(lc.Descricao), contrapartida,
+			l.Append(dateFromMillisUTC(lc.Data), c.ID, c.Descricao, output.Text(lc.Descricao), contrapartida,
 				moneyOrNil(lc.Debito), moneyOrNil(lc.Credito), moneyOrNil(lc.SaldoExercicio))
 		}
 	}
