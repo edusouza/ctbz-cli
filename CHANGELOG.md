@@ -9,6 +9,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz rotinas reclassificar` recusa `idPendencia` `0`, `"0"`, negativo, booleano, objeto ou lista
+  vindo do init (só texto não vazio ou inteiro positivo vai no corpo) (#978).
 - `ctbz rotinas reclassificar` deduplica os ids e recusa, antes de qualquer escrita, ids que a
   Contabilizei não devolveu, em vez de concluir só parte das pendências com código 0 (#427).
 
