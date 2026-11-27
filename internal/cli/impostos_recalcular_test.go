@@ -59,6 +59,38 @@ func TestImpostosRecalcularConfirmoNoTerminal(t *testing.T) {
 	}
 }
 
+// Sem cobrarRecalculo na resposta o formato real é desconhecido: a CLI não pode afirmar que é
+// gratuito (#463).
+func TestImpostosRecalcularCobrancaDesconhecida(t *testing.T) {
+	for _, corpo := range []string{`"cobrarRecalculo": null,`, ``} {
+		f := recalculoFake(t)
+		f.resposta = `{"modalSucessoRecalculo":true,"guia":{"dataVencimento":"20/10/2026"}}`
+		f.gets[pathRecalcInit] = strings.Replace(fixture(t, "recalculo_init"), `"cobrarRecalculo": true,`, corpo, 1)
+		out, _, _ := execCLI(t, "", "impostos", "recalcular", "1000000000000001", "-o", "json")
+		if !strings.Contains(out, `"cobrar_recalculo": null`) {
+			t.Errorf("leitura (%q): cobrar_recalculo deveria ser null:\n%s", corpo, out)
+		}
+		out, stderr, code := execCLI(t, "", "impostos", "recalcular", "1000000000000001", "--vencimento", "2026-10-20", "--yes", "-o", "json")
+		if code != ExitOK || !strings.Contains(stderr, "não informou se será cobrado") || strings.Contains(stderr, "Sem cobrança") {
+			t.Errorf("consequência (%q): código %d\n%s", corpo, code, stderr)
+		}
+		if !strings.Contains(out, `"cobrado": null`) {
+			t.Errorf("resultado (%q): cobrado deveria ser null:\n%s", corpo, out)
+		}
+	}
+}
+
+// Valor recalculado nulo não pode aparecer como "R$ 0,00" na confirmação (#462).
+func TestImpostosRecalcularValorDesconhecido(t *testing.T) {
+	f := recalculoFake(t)
+	f.resposta = `{"modalSucessoRecalculo":true,"guia":{"dataVencimento":"20/10/2026"}}`
+	f.gets[pathRecalcInit] = strings.Replace(fixture(t, "recalculo_init"), `"valorRecalculo": 1234.56,`, `"valorRecalculo": null,`, 1)
+	_, stderr, code := execCLI(t, "", "impostos", "recalcular", "1000000000000001", "--vencimento", "2026-10-20", "--yes")
+	if code != ExitOK || !strings.Contains(stderr, "valor estimado indisponível") || strings.Contains(stderr, "R$ 0,00") {
+		t.Errorf("código %d\n%s", code, stderr)
+	}
+}
+
 func TestImpostosRecalcularValidacoes(t *testing.T) {
 	for _, tc := range []struct {
 		args []string

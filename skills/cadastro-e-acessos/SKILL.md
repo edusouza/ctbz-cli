@@ -134,7 +134,8 @@ ctbz plano proposta --texto          # proposta com a tabela de preços
 `request:`, gere a segunda via (protocolo de escrita, risco médio) e entregue ao usuário o Pix
 copia e cola ou a linha digitável. O pagamento é feito fora da Contabilizei (ex.: pelo app do
 banco, ou `inter-pj pix enviar --copia-e-cola "$(ctbz mensalidade segunda-via --pix --yes)"`
-com a confirmação dele). Não gere outra segunda via sem necessidade: cada uma registra um boleto.
+com a confirmação dele). `--pix` e `--linha` não imprimem o código de fatura paga, cancelada,
+sem valor ou vencida: o comando falha e mostra o link. Não gere outra segunda via sem necessidade: cada uma registra um boleto.
 Depois do pagamento, confirme com `ctbz mensalidade situacao` (`em_dia`). A fatura pública demora
 a dar baixa. O `link` dá acesso à fatura sem login: não o grave no dossiê.
 
