@@ -101,7 +101,7 @@ func TestInformeAceitarTermoDebitos(t *testing.T) {
 	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != `POST /api/plataforma/informerendimento/aceitar-termo-debitos/2025 {"aceite":"PRIMEIRA_VEZ"}` {
 		t.Fatalf("código %d, %q\n%s", code, f.writes, stderr)
 	}
-	if !strings.Contains(stderr, `Débitos federais apontados no informe de 2025: 1`) || !strings.Contains(stderr, `{"descricao":"DARF 2025"}`) {
+	if !strings.Contains(stderr, `Débitos federais apontados no informe de 2025: 1 (formato não confirmado)`) || !strings.Contains(stderr, `{"descricao":"DARF 2025"}`) {
 		t.Errorf("stderr:\n%s", stderr)
 	}
 	f = informeFake(t, fixture(t, "restricoes_informe"))
@@ -111,6 +111,29 @@ func TestInformeAceitarTermoDebitos(t *testing.T) {
 	}
 	if _, _, code := execCLI(t, "", "lucros", "informe", "aceitar", "outro"); code != ExitUsage {
 		t.Errorf("aceite inválido: código %d", code)
+	}
+}
+
+func TestInformeAceitarTermoDebitosAvisos(t *testing.T) {
+	// Sem lista de débitos, o aceite não é enviado (#796).
+	f := informeFake(t, `{"restricoes":{"debitosFederais":{"possuiPendencia":true}}}`)
+	out, stderr, code := execCLI(t, "", "lucros", "informe", "aceitar", "termo-debitos", "--yes")
+	if code != ExitError || len(f.writes) != 0 || out != "" || !strings.Contains(stderr, "não listou os débitos") {
+		t.Errorf("sem débitos listados: código %d, %d escritas, %q\n%s", code, len(f.writes), out, stderr)
+	}
+	// Com débitos: avisa que o texto do termo e o formato não estão disponíveis e limpa os caracteres perigosos.
+	f = informeFake(t, "{\"restricoes\":{\"debitosFederais\":{\"possuiPendencia\":true,\"debitos\":[{\"descricao\":\"DARF\\u001b[31m \\u202e2025\"}]}}}")
+	_, stderr, code = execCLI(t, "", "lucros", "informe", "aceitar", "termo-debitos", "--yes")
+	if code != ExitOK || len(f.writes) != 1 {
+		t.Fatalf("com débitos: código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+	for _, s := range []string{"não exibe o texto do termo", "formato não confirmado", `{"descricao":"DARF\u001b[31m 2025"}`} {
+		if !strings.Contains(stderr, s) {
+			t.Errorf("stderr sem %q:\n%s", s, stderr)
+		}
+	}
+	if strings.ContainsAny(stderr, "\x1b\u202e") {
+		t.Errorf("stderr com caractere de controle ou de direção:\n%q", stderr)
 	}
 }
 

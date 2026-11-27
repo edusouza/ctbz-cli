@@ -13,6 +13,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   pendente chega sem texto legível (`html` ausente, vazio ou só tags); antes pedia a confirmação
   sobre um "texto acima" que não existia (#798). Os textos da API também perdem os caracteres de
   formatação do Unicode (como U+202E), além dos de controle.
+- `ctbz lucros informe aceitar termo-debitos` avisa que a CLI não exibe o texto do termo, mostra
+  cada débito como JSON compacto com a marca "formato não confirmado" e recusa o envio quando o
+  informe aponta débitos federais mas a API não os lista (#796).
 
 ## [1.9.6] - 2026-11-26
 

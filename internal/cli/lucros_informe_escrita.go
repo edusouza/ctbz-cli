@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -133,10 +134,14 @@ anterior. Aceita --yes e --dry-run.`,
 				fmt.Fprintf(s.err, "O informe de %d não aponta débitos federais; não há termo a aceitar.\n", ano)
 				return output.Write(s.out, f, resultadoEscrita(acao, "sem mudança", fmt.Sprint(ano)))
 			}
-			fmt.Fprintf(s.err, "Débitos federais apontados no informe de %d: %d\n", ano, len(df.Debitos))
-			for _, d := range df.Debitos {
-				fmt.Fprintln(s.err, "  "+semControle(string(d)))
+			if len(df.Debitos) == 0 {
+				return fmt.Errorf("o informe de %d aponta débitos federais, mas a API não listou os débitos; nada foi enviado (confira e aceite pelo painel)", ano)
 			}
+			fmt.Fprintf(s.err, "Débitos federais apontados no informe de %d: %d (formato não confirmado)\n", ano, len(df.Debitos))
+			for _, d := range df.Debitos {
+				fmt.Fprintln(s.err, "  "+debitoCompacto(d))
+			}
+			fmt.Fprintln(s.err, "aviso: a CLI não exibe o texto do termo; leia-o no painel antes de confirmar.")
 			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(ano), Resumo: fmt.Sprintf("Declarar ciência dos débitos federais no informe de %d", ano),
 				Consequencia: "Registra que você está ciente dos débitos federais da empresa; não dá para desfazer."}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
@@ -151,6 +156,20 @@ anterior. Aceita --yes e --dry-run.`,
 	cmd.Flags().IntVar(&ano, "ano", 0, "ano-calendário (padrão: o ano anterior)")
 	addWriteFlags(cmd)
 	return cmd
+}
+
+// debitoCompacto mostra um débito (formato nunca capturado) como JSON de uma linha, sem
+// caracteres de controle nem de direção do Unicode.
+func debitoCompacto(d json.RawMessage) string {
+	var v any
+	if err := json.Unmarshal(d, &v); err != nil {
+		return semControle(string(d))
+	}
+	b, err := json.Marshal(v)
+	if err != nil {
+		return semControle(string(d))
+	}
+	return semControle(string(b))
 }
 
 // aceitarCartaInforme mostra a carta, pede confirmação e relê se ela ainda precisa de aceite.
