@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -94,6 +96,7 @@ func newInformeCartaCmd() *cobra.Command {
 
 func newInformeAceitarCmd() *cobra.Command {
 	var ano int
+	var aceitarSemLista bool
 	cmd := &cobra.Command{
 		Use:   "aceitar carta-responsabilidade|termo-debitos",
 		Short: "Aceita a carta de responsabilidade ou o termo de débitos federais do informe",
@@ -103,8 +106,9 @@ func newInformeAceitarCmd() *cobra.Command {
                           confirmação; também em ctbz lucros informe carta)
   termo-debitos           a ciência dos débitos federais da empresa, quando há débitos
 
-Risco alto: são declarações sem desfazer, e a CLI pede "confirmo". O padrão de --ano é o ano
-anterior. Aceita --yes e --dry-run.`,
+Risco alto: são declarações sem desfazer, e a CLI pede "confirmo". Se o informe aponta débitos
+mas a API não os lista, a CLI avisa e pede um segundo "confirmo" (ou --aceitar-sem-lista, que
+é obrigatório com --yes). O padrão de --ano é o ano anterior. Aceita --yes e --dry-run.`,
 		Example: `  ctbz lucros informe aceitar carta-responsabilidade --ano 2025
   ctbz lucros informe aceitar termo-debitos --ano 2025`,
 		Args:      exactArgs(1, "carta-responsabilidade ou termo-debitos"),
@@ -133,24 +137,128 @@ anterior. Aceita --yes e --dry-run.`,
 				fmt.Fprintf(s.err, "O informe de %d não aponta débitos federais; não há termo a aceitar.\n", ano)
 				return output.Write(s.out, f, resultadoEscrita(acao, "sem mudança", fmt.Sprint(ano)))
 			}
-			fmt.Fprintf(s.err, "Débitos federais apontados no informe de %d: %d\n", ano, len(df.Debitos))
-			for _, d := range df.Debitos {
-				fmt.Fprintln(s.err, "  "+semControle(string(d)))
+			semLista := len(df.Debitos) == 0
+			if semLista {
+				if err := confirmarSemLista(cmd, ano); err != nil {
+					return err
+				}
+			} else {
+				fmt.Fprintf(s.err, "Débitos federais apontados no informe de %d: %d (formato não confirmado)\n", ano, len(df.Debitos))
+				for _, d := range df.Debitos {
+					fmt.Fprintln(s.err, "  "+debitoCompacto(d))
+				}
 			}
+			fmt.Fprintln(s.err, "aviso: a CLI não exibe o texto do termo; leia-o no painel antes de confirmar.")
 			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(ano), Resumo: fmt.Sprintf("Declarar ciência dos débitos federais no informe de %d", ano),
-				Consequencia: "Registra que você está ciente dos débitos federais da empresa; não dá para desfazer."}
+				Consequencia: "Registra que você está ciente dos débitos federais da empresa; não dá para desfazer. " + avisoRepeticaoInforme}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
 				return erroAdmin(api.AceitarTermoDebitos(cmd.Context(), snd, ano, api.AceiteTermoPrimeiraVez))
 			})
 			if err != nil || !enviado {
 				return err
 			}
-			return output.Write(s.out, f, resultadoEscrita(acao, "enviado", fmt.Sprint(ano)))
+			situacao, releitura := releituraInforme(cmd, g, ano, "aceite enviado", "os débitos federais", "aceita", func(r *api.RestricoesInforme) bool {
+				return r.Restricoes.DebitosFederais.PossuiPendencia
+			})
+			rec := resultadoEscrita(acao, situacao, fmt.Sprint(ano)).Add("releitura", "Releitura", releitura)
+			if semLista {
+				rec.Add("aviso", "Aviso", avisoSemListaDebitos)
+			}
+			return output.Write(s.out, f, rec)
 		},
 	}
 	cmd.Flags().IntVar(&ano, "ano", 0, "ano-calendário (padrão: o ano anterior)")
+	cmd.Flags().BoolVar(&aceitarSemLista, "aceitar-sem-lista", false, "aceita o termo mesmo que a API não liste os débitos (obrigatório com --yes nesse caso)")
 	addWriteFlags(cmd)
 	return cmd
+}
+
+// avisoRepeticaoInforme lembra o que a CLI não consegue impedir: a API não diz se o aceite ou a
+// decisão já foi registrado, e não se sabe se um novo envio sobrescreve o anterior.
+const avisoRepeticaoInforme = "A CLI não sabe se isso já foi registrado: repetir ou inverter é possível e pode sobrescrever o anterior."
+
+// Valores do campo "releitura" do resultado de decidir e aceitar termo-debitos.
+const (
+	releituraPendenciaPersiste  = "pendencia_persiste"
+	releituraPendenciaResolvida = "pendencia_resolvida"
+	releituraFalhou             = "falhou"
+)
+
+// releituraInforme relê as restrições depois de um envio. Devolve a situação do resultado e o
+// que a releitura mostrou. "enviado" é o resultado normal: o painel segue listando a restrição
+// depois do registro (#794), então ela persistir não é sinal de problema. Se a restrição some,
+// a situação é ok (aceita ou decidida), um sinal fraco: confirme no painel. Nunca falha: o envio
+// já aconteceu e não deve ser repetido.
+func releituraInforme(cmd *cobra.Command, g api.Getter, ano int, o, restricao, ok string, pendente func(*api.RestricoesInforme) bool) (situacao, releitura string) {
+	s := streamsOf(cmd)
+	r, err := api.BuscarRestricoesInforme(cmd.Context(), g, ano)
+	if err != nil {
+		fmt.Fprintf(s.err, "aviso: %s, mas não foi possível reler as restrições para conferir: %v\n", o, err)
+		return "enviado", releituraFalhou
+	}
+	if pendente(r) {
+		fmt.Fprintf(s.err, "%s: %s ainda aparece nas restrições, o que é esperado depois do registro. Não repita o envio.\n", strings.ToUpper(o[:1])+o[1:], restricao)
+		return "enviado", releituraPendenciaPersiste
+	}
+	fmt.Fprintf(s.err, "%s: %s não aparece mais nas restrições (sinal fraco de que foi registrado; confirme no painel).\n", strings.ToUpper(o[:1])+o[1:], restricao)
+	return ok, releituraPendenciaResolvida
+}
+
+// consequenciaDecisao completa o texto da decisão com o que a CLI sabe do custo e do fluxo.
+func consequenciaDecisao(d decisaoInforme, r *api.RestricoesInforme) string {
+	c := d.consequencia
+	if d.aceite == api.AceiteRegularizarPendencia {
+		pd := r.Restricoes.PendenciaDocumental
+		if pd.FluxoRegularizacao != "" {
+			c += " Fluxo de regularização: " + pd.FluxoRegularizacao + "."
+		}
+		if pd.ValorServicoAdicional != nil {
+			c += " Serviço adicional: " + output.FormatBRL(*pd.ValorServicoAdicional) + ", que pode ser cobrado."
+		}
+	}
+	return c + " " + avisoRepeticaoInforme
+}
+
+// avisoSemListaDebitos acompanha o aceite quando a API aponta débitos federais sem listá-los.
+const avisoSemListaDebitos = "a API apontou débitos federais, mas não os listou; o aceite foi enviado sem a CLI mostrar quais são"
+
+// confirmarSemLista trata o caso em que o informe aponta débitos federais e a API não os lista
+// (formato nunca capturado, #796). Em vez de recusar sem saída, avisa e exige uma confirmação
+// a mais, além da do risco alto: --aceitar-sem-lista, ou digitar "confirmo" num terminal.
+// Com --dry-run só avisa.
+func confirmarSemLista(cmd *cobra.Command, ano int) error {
+	s := streamsOf(cmd)
+	fmt.Fprintf(s.err, "aviso: a API apontou débitos federais no informe de %d, mas não os listou; a CLI não consegue mostrar quais são.\n", ano)
+	if dry, _ := cmd.Flags().GetBool("dry-run"); dry {
+		return nil
+	}
+	if ok, _ := cmd.Flags().GetBool("aceitar-sem-lista"); ok {
+		return nil
+	}
+	if !s.interactive {
+		return usageError{fmt.Errorf("o informe de %d aponta débitos federais, mas a API não listou os débitos; confira no painel e, para aceitar assim mesmo, repita com --aceitar-sem-lista", ano)}
+	}
+	fmt.Fprintf(s.err, "Para aceitar sem ver os débitos, digite %q: ", palavraConfirmo)
+	if lerResposta(s) != palavraConfirmo {
+		return errCancelada
+	}
+	return nil
+}
+
+// debitoCompacto mostra um débito (formato nunca capturado) como JSON de uma linha, sem
+// caracteres de controle nem de direção do Unicode.
+func debitoCompacto(d json.RawMessage) string {
+	dec := json.NewDecoder(bytes.NewReader(d))
+	dec.UseNumber() // números grandes ou com casas não passam por float64
+	var v any
+	if err := dec.Decode(&v); err != nil {
+		return semControle(string(d))
+	}
+	b, err := json.Marshal(v)
+	if err != nil {
+		return semControle(string(d))
+	}
+	return semControle(string(b))
 }
 
 // aceitarCartaInforme mostra a carta, pede confirmação e relê se ela ainda precisa de aceite.
@@ -164,7 +272,11 @@ func aceitarCartaInforme(cmd *cobra.Command, f output.Format, g api.Getter, ano 
 		fmt.Fprintf(s.err, "A carta de %d não precisa ser aceita; nada foi enviado.\n", ano)
 		return output.Write(s.out, f, resultadoEscrita(acao, "sem mudança", fmt.Sprint(ano)))
 	}
-	fmt.Fprint(s.err, htmlParaTexto(c.HTML))
+	texto := htmlParaTexto(c.HTML)
+	if strings.TrimSpace(texto) == "" {
+		return fmt.Errorf("a API não trouxe o texto da carta de responsabilidade de %d; nada foi enviado (leia e aceite pelo painel)", ano)
+	}
+	fmt.Fprint(s.err, texto)
 	op := operacao{Risco: riscoAlto, ID: fmt.Sprint(ano), Resumo: fmt.Sprintf("Aceitar a carta de responsabilidade do informe de %d (texto acima)", ano),
 		Consequencia: "É uma declaração legal; não dá para desfazer."}
 	enviado, err := escrever(cmd, op, func(snd api.Sender) error {
@@ -214,7 +326,10 @@ func newInformeDecidirCmd() *cobra.Command {
 
 As duas primeiras exigem pendência documental e a última, débitos federais (ver ctbz lucros
 informe restricoes). Risco alto: decide se haverá distribuição de lucros isenta e não dá para
-desfazer. O padrão de --ano é o ano anterior. Aceita --yes e --dry-run.`,
+desfazer. A CLI não sabe se a decisão já foi registrada: repetir ou inverter é possível e pode
+sobrescrever a anterior. Depois do envio relê as restrições e informa em "releitura": "enviado"
+(restrição ainda listada) é o resultado normal; "decidida" (restrição sumiu) é só um sinal fraco.
+O padrão de --ano é o ano anterior. Aceita --yes e --dry-run.`,
 		Example: `  ctbz lucros informe decidir --ano 2025 --regularizar-pendencia`,
 		Args:    exactArgs(0, "nenhum argumento"),
 		RunE: func(cmd *cobra.Command, _ []string) error {
@@ -243,7 +358,7 @@ desfazer. O padrão de --ano é o ano anterior. Aceita --yes e --dry-run.`,
 			if !d.exigeDebitos && !r.Restricoes.PendenciaDocumental.PossuiPendencia {
 				return fmt.Errorf("o informe de %d não tem pendência documental (veja ctbz lucros informe restricoes)", ano)
 			}
-			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(ano), Resumo: fmt.Sprintf("%s no informe de %d", d.resumo, ano), Consequencia: d.consequencia}
+			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(ano), Resumo: fmt.Sprintf("%s no informe de %d", d.resumo, ano), Consequencia: consequenciaDecisao(d, r)}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
 				return erroAdmin(api.RegistrarAceiteInforme(cmd.Context(), snd, ano, d.aceite))
 			})
@@ -253,7 +368,12 @@ desfazer. O padrão de --ano é o ano anterior. Aceita --yes e --dry-run.`,
 			if d.aceite == api.AceiteRegularizarPendencia {
 				fmt.Fprintln(s.err, "Envie os documentos pelo formulário de atendimento: "+api.FormularioRegularizarPendencias)
 			}
-			return output.Write(s.out, f, resultadoEscrita("decidir", "enviado", fmt.Sprint(ano)).Add("decisao", "Decisão", d.flag))
+			restricao, qual := "a pendência documental", func(r *api.RestricoesInforme) bool { return r.Restricoes.PendenciaDocumental.PossuiPendencia }
+			if d.exigeDebitos {
+				restricao, qual = "os débitos federais", func(r *api.RestricoesInforme) bool { return r.Restricoes.DebitosFederais.PossuiPendencia }
+			}
+			situacao, releitura := releituraInforme(cmd, sessionGetter{s}, ano, "decisão enviada", restricao, "decidida", qual)
+			return output.Write(s.out, f, resultadoEscrita("decidir", situacao, fmt.Sprint(ano)).Add("decisao", "Decisão", d.flag).Add("releitura", "Releitura", releitura))
 		},
 	}
 	cmd.Flags().IntVar(&ano, "ano", 0, "ano-calendário (padrão: o ano anterior)")

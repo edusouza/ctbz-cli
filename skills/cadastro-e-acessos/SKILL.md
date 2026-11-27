@@ -57,7 +57,8 @@ Internacional). Se a CLI disser que o código corresponde a mais de um banco, pe
 passe o **id** em `--banco`.
 A data de abertura define desde quando a Contabilizei pede extratos. Se `editar` recusar
 dizendo que a Contabilizei não informou a abertura ou o saldo inicial da conta, pergunte o
-valor ao usuário e passe `--abertura` ou `--saldo-inicial`; não invente. Atualize o dossiê.
+valor ao usuário e passe `--abertura` ou `--saldo-inicial`; não invente. O mesmo vale para
+agência e conta ausentes na lista (`--agencia`, `--conta`). Atualize o dossiê.
 
 ## Usuários com acesso
 
@@ -71,7 +72,8 @@ ctbz usuarios ativar ID               # médio
 Antes de convidar, deixe claro que não há perfil restrito e que o convite não pode ser
 revogado antes do aceite (só desativando depois). Só usuários secundários podem ser
 desativados (o administrador, nunca); usuário sem id, tipo ou status na lista é recusado
-sem escrita: mande o usuário ao painel.
+sem escrita: mande o usuário ao painel. Convite pendente (`CONVITE_ENVIADO`) não se ativa nem
+se desativa: a CLI recusa, e só depois do aceite `desativar` revoga o acesso.
 
 ## Credenciais de órgãos públicos
 
@@ -134,7 +136,8 @@ ctbz plano proposta --texto          # proposta com a tabela de preços
 `request:`, gere a segunda via (protocolo de escrita, risco médio) e entregue ao usuário o Pix
 copia e cola ou a linha digitável. O pagamento é feito fora da Contabilizei (ex.: pelo app do
 banco, ou `inter-pj pix enviar --copia-e-cola "$(ctbz mensalidade segunda-via --pix --yes)"`
-com a confirmação dele). Não gere outra segunda via sem necessidade: cada uma registra um boleto.
+com a confirmação dele). `--pix` e `--linha` não imprimem o código de fatura paga, cancelada,
+sem valor ou vencida: o comando falha e mostra o link. Não gere outra segunda via sem necessidade: cada uma registra um boleto.
 Depois do pagamento, confirme com `ctbz mensalidade situacao` (`em_dia`). A fatura pública demora
 a dar baixa. O `link` dá acesso à fatura sem login: não o grave no dossiê.
 

@@ -1,10 +1,14 @@
 package cli
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
+	"os"
 	"strings"
 	"testing"
+
+	"github.com/edusouza/ctbz-cli/internal/ctbz"
 )
 
 const pathDadosAcesso = "/api/plataforma/empresa/dadosacesso/init"
@@ -117,6 +121,68 @@ func TestCredenciaisAtualizarValidacoes(t *testing.T) {
 		_, stderr, code := execCLI(t, tc.stdin, append([]string{"empresa", "credenciais", "atualizar", "--yes"}, tc.args...)...)
 		if code != ExitUsage || !strings.Contains(stderr, tc.want) || len(f.writes) != 0 {
 			t.Errorf("%v: código %d, %d escritas, %q (quero %q)", tc.args, code, len(f.writes), stderr, tc.want)
+		}
+	}
+}
+
+// semIDNoFormulario tira o id do formulário de dados de acesso, como se o init não o trouxesse.
+func semIDNoFormulario(t *testing.T) string {
+	t.Helper()
+	dados := strings.Replace(fixture(t, "dados_acesso"), `"id": 1000000000000001,`, "", 1)
+	if strings.Contains(dados, `"id"`) {
+		t.Fatal("o id do formulário não foi removido da fixture")
+	}
+	return dados
+}
+
+// idNaSessao grava o id da empresa (JSON cru) no storage "e" da sessão salva.
+func idNaSessao(t *testing.T, idJSON string) {
+	t.Helper()
+	store := &ctbz.Store{Dir: os.Getenv("CTBZ_HOME")}
+	sess, err := store.LoadSession()
+	if err != nil {
+		t.Fatal(err)
+	}
+	var e map[string]json.RawMessage
+	if err := json.Unmarshal(sess.Storage["e"], &e); err != nil {
+		t.Fatal(err)
+	}
+	e["id"] = json.RawMessage(idJSON)
+	if sess.Storage["e"], err = json.Marshal(e); err != nil {
+		t.Fatal(err)
+	}
+	if err := store.SaveSession(sess); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestCredenciaisAtualizarIDDaSessaoSemPerderPrecisao(t *testing.T) {
+	// Sem id no formulário, o id da sessão vai byte a byte: acima de 2^53 um float64 gravaria
+	// as credenciais em outra empresa (#827).
+	f := credenciaisFake(t, semIDNoFormulario(t))
+	idNaSessao(t, "9007199254740993")
+	_, stderr, code := execCLI(t, "123456789012\n", "empresa", "credenciais", "atualizar", "--codigo-simples", "--yes")
+	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(f.writes[0], `"id":9007199254740993,`) {
+		t.Errorf("código %d, %q\n%s", code, f.writes, stderr)
+	}
+}
+
+func TestCredenciaisAtualizarSemIDNaoLeNada(t *testing.T) {
+	// Sem id no formulário nem na sessão, falha antes de perguntar qualquer segredo (#827).
+	for nome, idSessao := range map[string]string{"sessão sem id": "", "sessão com id nulo": "null"} {
+		f := credenciaisFake(t, semIDNoFormulario(t))
+		if idSessao != "" {
+			idNaSessao(t, idSessao)
+		}
+		stdin := "123456789012\nusuario-prefeitura\nsenha-prefeitura\n"
+		out, stderr, code := execCLI(t, stdin, "empresa", "credenciais", "atualizar", "--codigo-simples", "--prefeitura", "--yes")
+		if code != ExitError || len(f.writes) != 0 || out != "" || !strings.Contains(stderr, "id da empresa") {
+			t.Errorf("%s: código %d, %d escritas, %q\n%s", nome, code, len(f.writes), out, stderr)
+		}
+		for _, pergunta := range []string{"Código de acesso", "Usuário da prefeitura", "Senha da prefeitura"} {
+			if strings.Contains(stderr, pergunta) {
+				t.Errorf("%s: perguntou %q antes de falhar:\n%s", nome, pergunta, stderr)
+			}
 		}
 	}
 }

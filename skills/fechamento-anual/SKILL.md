@@ -46,10 +46,16 @@ contrate pelo painel). Depois de pedida, o informe fica indisponível até a an�
 ctbz lucros informe carta --ano A          # texto completo: mostre ao usuário
 ctbz lucros informe aceitar carta-responsabilidade --ano A --dry-run
 ctbz lucros informe aceitar termo-debitos --ano A --dry-run   # só quando há débitos
+# a CLI não mostra o texto do termo; se a API não listar os débitos, avisa e exige confirmação extra (--aceitar-sem-lista)
 ```
 
 Mostre o texto, explique em duas linhas o que o sócio está declarando e só envie com
-confirmação explícita. `situacao: "enviado"` = já enviado: não repita.
+confirmação explícita. `situacao: "enviado"` = já enviado: não repita; é o resultado normal, não indica problema
+(o painel segue listando a restrição). `decidida`/`aceita` é só um sinal fraco; campo `releitura`
+diz o que a releitura mostrou. O mesmo vale para `decidir`: a CLI não detecta decisão repetida ou oposta e a API pode
+sobrescrever a anterior, então rode `restricoes` antes e nunca decida duas vezes. Se a carta vier
+sem texto, a CLI recusa: mande o usuário ao painel. Se o termo não listar os débitos, a CLI avisa e exige
+confirmação extra (`--aceitar-sem-lista`): só use com o usuário ciente. O texto do termo de débitos a CLI não exibe.
 
 A Central de Rotinas tem os seus próprios aceites (`ctbz pendencias termos`, `termo CHAVE`,
 `aceitar CHAVE`), com o mesmo cuidado. O termo de débitos tem aceite tácito

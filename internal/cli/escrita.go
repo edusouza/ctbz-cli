@@ -18,6 +18,10 @@ import (
 type sessionSender struct {
 	s      streams
 	origem origemEscrita
+	// semRelogin vale para o envio que vem depois de outro já feito no mesmo fluxo (o código
+	// OTP da conta): a conferência da sessão não refaz o login, que mandaria outro código e
+	// invalidaria o que já foi pedido.
+	semRelogin bool
 }
 
 // origemEscrita identifica, no registro de ações, o comando e o objeto de uma escrita.
@@ -54,7 +58,7 @@ func (w sessionSender) SendMultipart(ctx context.Context, method, path string, c
 }
 
 func (w sessionSender) send(ctx context.Context, method, path string, body []byte, contentType string, timeout time.Duration, v any) error {
-	resp, err := sendOnce(ctx, w.s, w.origem, method, path, body, contentType, timeout)
+	resp, err := sendOnceCom(ctx, w.s, w.origem, method, path, body, contentType, timeout, !w.semRelogin)
 	if err != nil {
 		return err
 	}
@@ -77,13 +81,26 @@ func (e *erroSemResposta) Unwrap() error { return e.causa }
 // errExpiredOnSend indica que o servidor recusou a escrita por sessão expirada: nada foi aplicado.
 var errExpiredOnSend = errors.New("a sessão expirou antes do envio e a escrita não foi aplicada; rode `ctbz login` e repita")
 
+// errExpiredAfterCode indica que a sessão expirou depois de a conta já ter pedido o código
+// OTP: não houve novo login (ele mandaria outro código), e nada foi alterado.
+var errExpiredAfterCode = errors.New("o código foi pedido, mas a sessão expirou antes do envio e nada foi alterado; rode `ctbz login` e repita")
+
 // sendOnce confere a sessão com um GET (que pode refazer o login, porque nada foi enviado
 // ainda) e então envia a escrita uma única vez. Respostas HTTP de erro voltam sem erro, para
 // quem chama decidir; erros de rede (*erroSemResposta) avisam que o resultado da escrita é
 // incerto. timeout > 0 troca o prazo do cliente. Todo envio, com ou sem sucesso, é registrado
 // em acoes.jsonl.
 func sendOnce(ctx context.Context, s streams, origem origemEscrita, method, path string, body []byte, contentType string, timeout time.Duration) (*ctbz.Response, error) {
-	if _, err := authedAPI(ctx, s, "GET", api.PathAppBar, nil); err != nil {
+	return sendOnceCom(ctx, s, origem, method, path, body, contentType, timeout, true)
+}
+
+// sendOnceCom é sendOnce com o re-login da conferência opcional. Sem relogar (segundo envio
+// de um fluxo que já pediu um código), a sessão expirada vira errExpiredAfterCode.
+func sendOnceCom(ctx context.Context, s streams, origem origemEscrita, method, path string, body []byte, contentType string, timeout time.Duration, relogar bool) (*ctbz.Response, error) {
+	if _, err := chamarComSessao(ctx, s, "GET", api.PathAppBar, nil, relogar); err != nil {
+		if !relogar && errors.Is(err, ctbz.ErrUnauthorized) {
+			return nil, errExpiredAfterCode
+		}
 		return nil, fmt.Errorf("conferindo a sessão antes de enviar: %w", err)
 	}
 	store, err := ctbz.DefaultStore()

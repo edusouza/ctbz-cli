@@ -36,10 +36,12 @@ ctbz prolabore definir --socio ID --tipo inteligente [--minimo 1518,00]
   vigentes que a Contabilizei informa; `personalizado` aceita qualquer valor a partir do
   salário mínimo; `inteligente` deixa a Contabilizei calcular o valor todo mês, com um piso
   opcional (`--minimo`).
-- Como no painel, ao mudar para outro tipo com no máximo um sócio na gestão inteligente, o
-  pedido tira a empresa dela (mesmo que esse sócio seja outro); com mais sócios nela, a
-  empresa continua. A CLI avisa no resumo. Se a Contabilizei não informar quantos sócios estão
-  na gestão inteligente, a CLI não envia nada: use o painel.
+- Ao mudar de `inteligente` para outro tipo sendo o último sócio na gestão inteligente, o
+  pedido tira a empresa dela; com mais sócios nela, a empresa continua. A CLI avisa no resumo.
+  Quem já está em outro tipo nunca tira a empresa da gestão inteligente: o único sócio nela pode
+  ser outro, e a regra do painel para esse caso não foi confirmada por captura. Se a
+  Contabilizei não informar quantos sócios estão na gestão inteligente nem o tipo atual do sócio,
+  a CLI não envia nada: use o painel.
 - **A partir de quando vale**: a Contabilizei decide pela data (a CLI não manda competência).
   Até o fechamento do mês (em geral o dia 25) a mudança vale para o mês atual; depois, para o
   seguinte. Quando o painel diz que o mês está fechado, a CLI avisa.
@@ -238,16 +240,28 @@ ctbz lucros informe decidir --ano 2025 --regularizar-pendencia
   federais e a pendência documental (com o caminho de regularização e o custo, quando é um
   serviço adicional) e o andamento da reabertura do balanço.
 - `aceitar carta-responsabilidade` mostra a carta inteira antes de pedir `confirmo`; o painel
-  exige esse aceite para ver o informe. Depois do envio, a CLI relê a carta: `aceita` quando
+  exige esse aceite para ver o informe. Se a API devolver a carta sem texto, a CLI dá erro e não
+  envia nada (leia e aceite pelo painel). Depois do envio, a CLI relê a carta: `aceita` quando
   ela não pede mais aceite, `enviado` (com um aviso) quando ainda pede ou a releitura falha;
   nos dois casos o aceite já foi enviado e não deve ser repetido. `aceitar termo-debitos` registra a ciência dos débitos
-  federais e só é enviado quando o informe aponta débitos.
+  federais e só é enviado quando o informe aponta débitos. A CLI não exibe o texto do termo
+  (leia no painel) e mostra cada débito como JSON com a marca "formato não confirmado". Se a API
+  apontar débitos sem listá-los, a CLI avisa e pede uma confirmação a mais: digitar `confirmo` no
+  terminal ou `--aceitar-sem-lista` (obrigatório com `--yes`); o resultado em JSON/CSV traz o campo
+  `aviso`.
 - `decidir` registra a escolha diante das restrições:
   - `--regularizar-pendencia`: a CLI mostra o formulário de atendimento onde enviar os
     documentos;
   - `--nao-regularizar-pendencia`: **não haverá distribuição de lucros** no informe;
   - `--nao-distribuir-lucros`: o informe fica sem distribuição isenta (diante de débitos
     federais).
+- `decidir` e `aceitar termo-debitos` relêem as restrições depois do envio e informam o resultado
+  em `releitura`. `situacao` `enviado` é o normal: o painel continua listando a restrição depois
+  do registro (`releitura` `pendencia_persiste`), sem indicar problema. `decidida`/`aceita`
+  (`pendencia_resolvida`) é só um sinal fraco; confirme no painel. `releitura` `falhou` quer dizer
+  que não deu para conferir, e o envio não deve ser repetido. A confirmação de
+  `--regularizar-pendencia` mostra o fluxo e o custo do serviço adicional.
+  A CLI não bloqueia repetir ou inverter uma decisão (a API não diz se já foi registrada).
 - Todos são de risco alto e **sem desfazer**: não há endpoint para revogar um aceite, e não se
   sabe se um novo aceite substitui o anterior. O padrão de `--ano` é o ano anterior.
 - O termo de débitos vai sempre como aceite "na primeira apresentação" (`PRIMEIRA_VEZ`): a CLI
