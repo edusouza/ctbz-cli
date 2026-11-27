@@ -80,10 +80,15 @@ func TestUsuariosAtivarDesativar(t *testing.T) {
 		t.Errorf("stderr:\n%s\nsaída:\n%s", stderr, out)
 	}
 
-	f = usuariosFake(t, fixture(t, "status_multiusuario"))
-	_, stderr, code = execCLI(t, "", "usuarios", "desativar", "103", "--yes")
-	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(f.writes[0], `"ativo":false`) || !strings.Contains(stderr, "não se sabe se desativar cancela") {
-		t.Errorf("desativar convite: código %d, %q\n%s", code, f.writes, stderr)
+	// Convite pendente não se desativa: o efeito do PUT é desconhecido e a CLI não tem como
+	// desfazê-lo (ativar também recusa convite pendente) (#819).
+	for _, modo := range []string{"--yes", "--dry-run"} {
+		f = usuariosFake(t, fixture(t, "status_multiusuario"))
+		out, stderr, code := execCLI(t, "", "usuarios", "desativar", "103", modo)
+		if code != ExitError || len(f.writes) != 0 || out != "" || !strings.Contains(stderr, "o convite ainda não foi aceito") ||
+			!strings.Contains(stderr, "não se revoga") {
+			t.Errorf("desativar convite %s: código %d, %q, %q\n%s", modo, code, f.writes, out, stderr)
+		}
 	}
 
 	for _, tc := range []struct {

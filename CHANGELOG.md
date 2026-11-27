@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Corrigido
+
+- `usuarios desativar` recusa convite pendente (`CONVITE_ENVIADO`), como o `ativar`, em vez de
+  enviar um `PUT` de efeito desconhecido que a CLI não consegue desfazer; ajuda e guia não
+  prometem mais reversibilidade para convites (#819).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da
