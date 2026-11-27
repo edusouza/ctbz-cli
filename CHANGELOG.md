@@ -14,14 +14,19 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   sobre um "texto acima" que não existia (#798). Os textos da API também perdem os caracteres de
   formatação do Unicode (como U+202E), além dos de controle.
 - `ctbz lucros informe aceitar termo-debitos` avisa que a CLI não exibe o texto do termo, mostra
-  cada débito como JSON compacto com a marca "formato não confirmado" e recusa o envio quando o
-  informe aponta débitos federais mas a API não os lista (#796).
-- `ctbz lucros informe decidir` e `aceitar termo-debitos` relêem as restrições depois do envio
-  (`situacao` `decidida`/`aceita` quando a restrição some; `enviado` com aviso quando ainda
-  aparece ou a releitura falha, sem erro de saída). A confirmação avisa que repetir ou inverter
-  é possível e pode sobrescrever, e a de `--regularizar-pendencia` mostra o fluxo e o custo do
-  serviço adicional (#794). A CLI continua sem bloquear repetição ou inversão: a API não expõe
-  se a decisão já foi registrada.
+  cada débito como JSON compacto (números sem perder precisão) com a marca "formato não
+  confirmado". Quando o informe aponta débitos federais mas a API não os lista, avisa com
+  destaque e exige uma confirmação a mais (digitar `confirmo` ou `--aceitar-sem-lista`, que é
+  obrigatória com `--yes`), em vez de bloquear o aceite sem saída; o resultado em JSON/CSV
+  traz o campo `aviso` (#796).
+- `ctbz lucros informe decidir` e `aceitar termo-debitos` relêem as restrições depois do envio e
+  informam o resultado no campo `releitura` (`pendencia_persiste`, `pendencia_resolvida` ou
+  `falhou`). `situacao` `enviado` é o resultado normal: o painel continua listando a restrição
+  depois do registro, então ela persistir não é problema; `decidida`/`aceita` (a restrição
+  sumiu) é só um sinal fraco, a confirmar no painel. Se a releitura falha, avisa sem erro de
+  saída. A confirmação avisa que repetir ou inverter é possível e pode sobrescrever, e a de
+  `--regularizar-pendencia` mostra o fluxo e o custo do serviço adicional (#794). A CLI continua
+  sem bloquear repetição ou inversão: a API não expõe se a decisão já foi registrada.
 
 ## [1.9.6] - 2026-11-26
 

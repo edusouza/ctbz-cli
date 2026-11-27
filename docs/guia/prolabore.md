@@ -243,17 +243,22 @@ ctbz lucros informe decidir --ano 2025 --regularizar-pendencia
   ela não pede mais aceite, `enviado` (com um aviso) quando ainda pede ou a releitura falha;
   nos dois casos o aceite já foi enviado e não deve ser repetido. `aceitar termo-debitos` registra a ciência dos débitos
   federais e só é enviado quando o informe aponta débitos. A CLI não exibe o texto do termo
-  (leia no painel), mostra cada débito como JSON com a marca "formato não confirmado" e
-  recusa o envio se a API apontar débitos sem listá-los.
+  (leia no painel) e mostra cada débito como JSON com a marca "formato não confirmado". Se a API
+  apontar débitos sem listá-los, a CLI avisa e pede uma confirmação a mais: digitar `confirmo` no
+  terminal ou `--aceitar-sem-lista` (obrigatório com `--yes`); o resultado em JSON/CSV traz o campo
+  `aviso`.
 - `decidir` registra a escolha diante das restrições:
   - `--regularizar-pendencia`: a CLI mostra o formulário de atendimento onde enviar os
     documentos;
   - `--nao-regularizar-pendencia`: **não haverá distribuição de lucros** no informe;
   - `--nao-distribuir-lucros`: o informe fica sem distribuição isenta (diante de débitos
     federais).
-- `decidir` e `aceitar termo-debitos` relêem as restrições depois do envio: `decidida`/`aceita`
-  quando a restrição some, `enviado` (com aviso) quando ainda aparece ou a releitura falha. A
-  confirmação de `--regularizar-pendencia` mostra o fluxo e o custo do serviço adicional.
+- `decidir` e `aceitar termo-debitos` relêem as restrições depois do envio e informam o resultado
+  em `releitura`. `situacao` `enviado` é o normal: o painel continua listando a restrição depois
+  do registro (`releitura` `pendencia_persiste`), sem indicar problema. `decidida`/`aceita`
+  (`pendencia_resolvida`) é só um sinal fraco; confirme no painel. `releitura` `falhou` quer dizer
+  que não deu para conferir, e o envio não deve ser repetido. A confirmação de
+  `--regularizar-pendencia` mostra o fluxo e o custo do serviço adicional.
   A CLI não bloqueia repetir ou inverter uma decisão (a API não diz se já foi registrada).
 - Todos são de risco alto e **sem desfazer**: não há endpoint para revogar um aceite, e não se
   sabe se um novo aceite substitui o anterior. O padrão de `--ano` é o ano anterior.
