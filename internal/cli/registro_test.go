@@ -60,6 +60,35 @@ func TestAcoesRegistraCadaEnvio(t *testing.T) {
 	}
 }
 
+// Só 4xx e o 560 de regra de negócio são "recusada" (nada foi alterado). 3xx e 5xx são
+// resultado incerto: um 502/504 de gateway pode ter vindo depois de a escrita ser aplicada.
+func TestAcoesClassificaStatus(t *testing.T) {
+	status := http.StatusOK
+	writeServer(t, http.StatusOK, func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(status)
+	})
+	snd := sessionSender{s: testSender().s, origem: origemEscrita{comando: "ctbz caixa remover"}}
+	want := map[int]string{
+		200: ctbz.ResultadoEnviada,
+		400: ctbz.ResultadoRecusada,
+		404: ctbz.ResultadoRecusada,
+		560: ctbz.ResultadoRecusada,
+		302: ctbz.ResultadoIncerta,
+		500: ctbz.ResultadoIncerta,
+		502: ctbz.ResultadoIncerta,
+		504: ctbz.ResultadoIncerta,
+	}
+	for st, res := range want {
+		status = st
+		snd.Send(context.Background(), "DELETE", "caixa/x", nil, nil)
+		store, _ := ctbz.DefaultStore()
+		acoes, _, _ := store.LoadAcoes()
+		if got := acoes[len(acoes)-1]; got.Status != st || got.Resultado != res {
+			t.Errorf("HTTP %d registrado como %q, quero %q", st, got.Resultado, res)
+		}
+	}
+}
+
 func TestAcoesSemRespostaEDryRun(t *testing.T) {
 	writeServer(t, http.StatusOK, func(w http.ResponseWriter, _ *http.Request) {
 		conn, _, _ := w.(http.Hijacker).Hijack()

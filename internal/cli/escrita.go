@@ -128,9 +128,13 @@ func registrarAcao(store *ctbz.Store, sess *ctbz.Session, s streams, origem orig
 	}
 	if resp != nil {
 		a.Status = resp.Status
-		a.Resultado = ctbz.ResultadoRecusada
-		if resp.Status >= 200 && resp.Status <= 299 {
+		switch {
+		case resp.Status >= 200 && resp.Status <= 299:
 			a.Resultado = ctbz.ResultadoEnviada
+		case ctbz.StatusIncerto(resp.Status):
+			a.Resultado = ctbz.ResultadoIncerta
+		default:
+			a.Resultado = ctbz.ResultadoRecusada
 		}
 	}
 	if err := store.AppendAcao(a); err != nil {

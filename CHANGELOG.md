@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Corrigido
+
+- `ctbz acoes` registra respostas 3xx e 5xx (502, 504…) como `incerta`, e não mais como `recusada`:
+  nelas a escrita pode ter sido aplicada. O guia e `ctbz acoes --help` explicam a diferença (#313).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da
