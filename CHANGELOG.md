@@ -9,6 +9,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz conta alterar` e `ctbz conta senha` não refazem mais o login se a sessão expirar enquanto
+  se espera o código: o envio final falha com "o código foi pedido, mas a sessão expirou… rode
+  `ctbz login`", em vez de disparar outro e-mail de código que invalidava o pedido (#835).
 - `ctbz extratos importar --substituir` avisa no resumo que a exclusão do extrato vem antes do envio
   (uma recusa do arquivo ou do saldo deixa o mês sem extrato) e, num OFX com `--saldo-final`,
   confere antes o saldo do próprio arquivo e recusa sem excluir nada se ele for diferente (#880).
