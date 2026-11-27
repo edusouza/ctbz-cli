@@ -9,6 +9,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz rotinas reclassificar` recusa, antes de escrever, uma opção de classificação com `socios`
+  ausente ou `null` (só `[]` significa "não usa sócio" e envia `idSocio: null`) (#977).
 - `ctbz rotinas reclassificar` recusa `idPendencia` `0`, `"0"`, negativo, booleano, objeto ou lista
   vindo do init (só texto não vazio ou inteiro positivo vai no corpo) (#978).
 - `ctbz rotinas reclassificar` deduplica os ids e recusa, antes de qualquer escrita, ids que a

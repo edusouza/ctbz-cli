@@ -27,7 +27,7 @@ func opcoesReclassificacaoList(ps []api.PendenciaReclassificacao) *output.List {
 	for _, p := range ps {
 		for _, o := range p.Classificacoes {
 			var socios []string
-			for _, s := range o.Socios {
+			for _, s := range o.ListaSocios() {
 				socios = append(socios, fmt.Sprintf("%d %s", s.IDSocio, s.Nome))
 			}
 			l.Append(p.IDTexto(), output.Text(p.Descricao), moneyOrNil(p.Valor), p.ClassificacaoAtual, o.IDClassificacao, o.Nome, nonNil(socios))
@@ -152,6 +152,10 @@ func escolherReclassificacao(p api.PendenciaReclassificacao, classificacao, soci
 	if o.IDClassificacao == 0 {
 		return api.Reclassificacao{}, "", fmt.Errorf("lendo a pendência de reclassificação %s: a opção %q veio sem idClassificacao; nada foi enviado, conclua a rotina pelo painel", p.IDTexto(), o.Nome)
 	}
+	if o.Socios == nil {
+		return api.Reclassificacao{}, "", fmt.Errorf("lendo a pendência de reclassificação %s: a opção %q veio sem a lista socios; nada foi enviado, conclua a rotina pelo painel", p.IDTexto(), o.Nome)
+	}
+	socios := *o.Socios
 	r := api.Reclassificacao{IDPendencia: p.IDPendencia, IDClassificacao: o.IDClassificacao, IDLancamento: p.IDLancamento}
 	escolher := func(s api.SocioReclassificacao) (api.Reclassificacao, string, error) {
 		if s.IDSocio == 0 {
@@ -162,16 +166,16 @@ func escolherReclassificacao(p api.PendenciaReclassificacao, classificacao, soci
 		return r, o.Nome + " / " + s.Nome, nil
 	}
 	switch {
-	case len(o.Socios) == 0 && socio != "":
+	case len(socios) == 0 && socio != "":
 		return r, "", usageError{fmt.Errorf("a classificação %q não usa sócio", o.Nome)}
-	case len(o.Socios) == 0:
+	case len(socios) == 0:
 		return r, o.Nome, nil
-	case socio == "" && len(o.Socios) == 1:
-		return escolher(o.Socios[0])
+	case socio == "" && len(socios) == 1:
+		return escolher(socios[0])
 	case socio == "":
 		return r, "", usageError{fmt.Errorf("a classificação %q exige --socio (veja as opções sem --classificacao)", o.Nome)}
 	}
-	for _, s := range o.Socios {
+	for _, s := range socios {
 		if strconv.FormatInt(s.IDSocio, 10) == socio {
 			return escolher(s)
 		}
