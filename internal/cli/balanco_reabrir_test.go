@@ -32,6 +32,21 @@ func TestBalancoReabrir(t *testing.T) {
 	}
 }
 
+func TestBalancoReabrirAvisaCobranca(t *testing.T) {
+	// #809: a doc da API diz que o serviço pode gerar cobrança; a confirmação precisa citar.
+	semValor := strings.Replace(restricoesReabertura("REABERTURA_BALANCO", "NENHUM"), `,"valorServicoAdicional":450`, "", 1)
+	for _, tc := range []struct{ nome, restricoes, want string }{
+		{"com valor", restricoesReabertura("REABERTURA_BALANCO", "NENHUM"), "gera uma cobrança de R$ 450,00"},
+		{"sem valor", semValor, "O painel pode cobrar pelo serviço"},
+	} {
+		f := reabrirFake(t, tc.restricoes)
+		_, stderr, code := execCLI(t, "", "balanco", "reabrir", "--ano", "2025", "--yes")
+		if code != ExitOK || len(f.writes) != 1 || !strings.Contains(stderr, tc.want) {
+			t.Errorf("%s: código %d, %d escritas, %q (quero %q)", tc.nome, code, len(f.writes), stderr, tc.want)
+		}
+	}
+}
+
 func TestBalancoReabrirReleituraFalha(t *testing.T) {
 	// O POST já foi aceito: a falha na releitura vira aviso, e a saída diz "enviado" com código 0 (#807).
 	f := reabrirFake(t, restricoesReabertura("REABERTURA_BALANCO", "NENHUM"))

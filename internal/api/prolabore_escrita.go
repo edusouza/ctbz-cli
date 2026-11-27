@@ -51,9 +51,10 @@ type AlteracaoGestao struct {
 
 // NovaAlteracaoGestao monta o corpo como o front: o valor vem do teto do INSS ou do salário
 // mínimo da gestão atual; o personalizado precisa ser pelo menos o salário mínimo; o piso
-// (minimo) só vale na gestão inteligente; e a empresa sai da gestão inteligente quando há no
-// máximo um sócio nela. Sem essa quantidade, recusa: o zero tiraria a empresa da gestão
-// inteligente por engano (ADR-0021).
+// (minimo) só vale na gestão inteligente; e a empresa sai da gestão inteligente quando este
+// sócio está nela e é o último (no máximo um sócio nela). Quem já está em outro tipo nunca a
+// tira: o único na gestão inteligente pode ser outro sócio (#995). Sem a quantidade ou sem o
+// tipo atual, recusa: o zero tiraria a empresa da gestão inteligente por engano (ADR-0021).
 func NovaAlteracaoGestao(g GestaoSocio, tipo string, valor, minimo *float64) (AlteracaoGestao, error) {
 	a := AlteracaoGestao{
 		TipoGerenciamento:      tipo,
@@ -69,7 +70,10 @@ func NovaAlteracaoGestao(g GestaoSocio, tipo string, valor, minimo *float64) (Al
 		if g.QtdSocioGestaoInteligente == nil {
 			return a, errors.New("a Contabilizei não informou quantos sócios estão na gestão inteligente: use o painel")
 		}
-		a.SairGestaoInteligente = *g.QtdSocioGestaoInteligente <= 1
+		if g.TipoGerenciamentoProlabore == "" {
+			return a, errors.New("a Contabilizei não informou o tipo de gestão atual do sócio: use o painel")
+		}
+		a.SairGestaoInteligente = g.TipoGerenciamentoProlabore == GerenciamentoInteligente && *g.QtdSocioGestaoInteligente <= 1
 	}
 	switch tipo {
 	case GerenciamentoTetoINSS:

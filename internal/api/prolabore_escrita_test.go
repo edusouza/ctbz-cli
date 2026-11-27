@@ -6,7 +6,7 @@ import (
 )
 
 func TestNovaAlteracaoGestao(t *testing.T) {
-	atual := GestaoSocio{ValorMaximoProlabore: ptr(8157.41), SalarioMinimo: ptr(1518.0), QtdSocioGestaoInteligente: ptr(2), ElegivelNoMotor: true}
+	atual := GestaoSocio{TipoGerenciamentoProlabore: GerenciamentoInteligente, ValorMaximoProlabore: ptr(8157.41), SalarioMinimo: ptr(1518.0), QtdSocioGestaoInteligente: ptr(2), ElegivelNoMotor: true}
 	a, err := NovaAlteracaoGestao(atual, GerenciamentoTetoINSS, nil, nil)
 	if err != nil || *a.ValorProlabore != 8157.41 || a.SairGestaoInteligente || a.ModoEdicaoProlaboreMin {
 		t.Errorf("teto com outro sócio na GI: %+v, %v", a, err)
@@ -19,6 +19,15 @@ func TestNovaAlteracaoGestao(t *testing.T) {
 	a, err = NovaAlteracaoGestao(atual, GerenciamentoInteligente, nil, nil)
 	if err != nil || a.ValorProlabore != nil || a.ValorProlaboreMinimo != nil || a.SairGestaoInteligente {
 		t.Errorf("inteligente sem piso: %+v, %v", a, err)
+	}
+	// #995: quem não está na gestão inteligente nunca tira a empresa dela, qualquer que seja a
+	// quantidade (o único nela pode ser outro sócio).
+	for _, qtd := range []int{0, 1} {
+		fora := atual
+		fora.TipoGerenciamentoProlabore, fora.QtdSocioGestaoInteligente = GerenciamentoSalarioMinimo, ptr(qtd)
+		if a, err = NovaAlteracaoGestao(fora, GerenciamentoTetoINSS, nil, nil); err != nil || a.SairGestaoInteligente {
+			t.Errorf("sócio fora da GI, qtd %d: %+v, %v", qtd, a, err)
+		}
 	}
 	// Na gestão inteligente sairGestaoInteligente é sempre false: a quantidade não é usada.
 	semQtd := atual
@@ -43,6 +52,8 @@ func TestNovaAlteracaoGestao(t *testing.T) {
 		{GerenciamentoTetoINSS, nil, nil, func(g *GestaoSocio) { g.QtdSocioGestaoInteligente = nil }, "quantos sócios estão na gestão inteligente"},
 		{GerenciamentoSalarioMinimo, nil, nil, func(g *GestaoSocio) { g.QtdSocioGestaoInteligente = nil }, "quantos sócios estão na gestão inteligente"},
 		{GerenciamentoPersonalizado, ptr(3000.0), nil, func(g *GestaoSocio) { g.QtdSocioGestaoInteligente = nil }, "quantos sócios estão na gestão inteligente"},
+		// #995: sem o tipo atual não dá para saber se o sócio está na gestão inteligente.
+		{GerenciamentoTetoINSS, nil, nil, func(g *GestaoSocio) { g.TipoGerenciamentoProlabore = "" }, "não informou o tipo de gestão atual"},
 		{"OUTRO", nil, nil, nil, "desconhecido"},
 	} {
 		g := atual
