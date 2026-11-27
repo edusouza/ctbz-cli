@@ -7,6 +7,13 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz lucros informe aceitar carta-responsabilidade` recusa o aceite, sem enviar nada, quando a carta
+  pendente chega sem texto legível (`html` ausente, vazio ou só tags); antes pedia a confirmação
+  sobre um "texto acima" que não existia (#798). Os textos da API também perdem os caracteres de
+  formatação do Unicode (como U+202E), além dos de controle.
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da

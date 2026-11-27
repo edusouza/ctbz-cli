@@ -164,7 +164,11 @@ func aceitarCartaInforme(cmd *cobra.Command, f output.Format, g api.Getter, ano 
 		fmt.Fprintf(s.err, "A carta de %d não precisa ser aceita; nada foi enviado.\n", ano)
 		return output.Write(s.out, f, resultadoEscrita(acao, "sem mudança", fmt.Sprint(ano)))
 	}
-	fmt.Fprint(s.err, htmlParaTexto(c.HTML))
+	texto := htmlParaTexto(c.HTML)
+	if strings.TrimSpace(texto) == "" {
+		return fmt.Errorf("a API não trouxe o texto da carta de responsabilidade de %d; nada foi enviado (leia e aceite pelo painel)", ano)
+	}
+	fmt.Fprint(s.err, texto)
 	op := operacao{Risco: riscoAlto, ID: fmt.Sprint(ano), Resumo: fmt.Sprintf("Aceitar a carta de responsabilidade do informe de %d (texto acima)", ano),
 		Consequencia: "É uma declaração legal; não dá para desfazer."}
 	enviado, err := escrever(cmd, op, func(snd api.Sender) error {
