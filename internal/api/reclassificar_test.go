@@ -18,7 +18,7 @@ func TestBuscarReclassificacoes(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(ps) != 1 || ps[0].IDTexto() != "1000000000000501" || len(ps[0].Classificacoes) != 3 || len(ps[0].Classificacoes[2].Socios) != 2 {
+	if len(ps) != 1 || ps[0].IDTexto() != "1000000000000501" || len(ps[0].Classificacoes) != 3 || len(ps[0].Classificacoes[2].ListaSocios()) != 2 {
 		t.Errorf("pendências = %+v", ps)
 	}
 }
