@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz razao` mostra cada lançamento no dia certo: a data vem como epoch à meia-noite UTC e a CLI
+  a convertia para o fuso local, mostrando um dia antes (#1048).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da

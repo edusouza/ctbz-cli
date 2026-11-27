@@ -3,7 +3,23 @@ package cli
 import (
 	"strings"
 	"testing"
+	"time"
 )
+
+func TestRazaoDataEmMeiaNoiteUTC(t *testing.T) {
+	// #1048: a API manda a data como epoch à meia-noite UTC; num fuso a oeste, o dia local seria o anterior.
+	antes := time.Local
+	time.Local = time.FixedZone("BRT", -3*3600)
+	t.Cleanup(func() { time.Local = antes })
+	fixNow(t, "2026-10-03")
+	julho := `[{"id":"1.01.01.01.00","descricao":"Caixa Geral","nivel":5,"listaLancamento":[
+{"id":1,"data":1784592000000,"descricao":"Capital social","debito":1000,"credito":null,"saldoExercicio":1000,"contaContrapartida":null}]}]`
+	withSession(t, fakeAPI(t, map[string]string{"/api/plataforma/relatorios-ms/gerarrazaotipoa/2026/7": julho}))
+	out, stderr, code := execCLI(t, "", "razao", "--de", "2026-07", "-o", "csv")
+	if code != ExitOK || !strings.Contains(out, "2026-07-21,") {
+		t.Errorf("código %d: %s\n%s", code, stderr, out)
+	}
+}
 
 func TestBalancete(t *testing.T) {
 	withSession(t, fakeAPI(t, map[string]string{
