@@ -160,9 +160,11 @@ func newUsuariosAtivarCmd(ativar bool) *cobra.Command {
 		Short: short,
 		Long: short + `. O ID está em ctbz usuarios. Desativar é a única forma de revogar o
 acesso, e só usuários secundários podem ser desativados: o administrador da empresa
-(usuário principal), nunca.
+(usuário principal), nunca. Convites ainda não aceitos (CONVITE_ENVIADO) não se ativam nem
+se desativam: a CLI recusa, porque não há como revogar um convite antes do aceite.
 
-Risco médio: reversível com ativar ou desativar. Aceita --yes e --dry-run.`,
+Risco médio: entre usuários que já aceitaram, reversível com ativar ou desativar. Aceita
+--yes e --dry-run.`,
 		Example: "  ctbz usuarios " + acao + " 102",
 		Args:    exactArgs(1, "o ID do usuário (ver ctbz usuarios)"),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -186,15 +188,14 @@ Risco médio: reversível com ativar ou desativar. Aceita --yes e --dry-run.`,
 				return fmt.Errorf("só usuários secundários podem ser desativados, e %s é do tipo %s; use o painel", args[0], u.Tipo)
 			case ativar && u.Status == api.UsuarioConviteEnviado:
 				return errors.New("o convite ainda não foi aceito: não há acesso para ativar")
-			case ativar == (u.Status == api.UsuarioAtivo) && u.Status != api.UsuarioConviteEnviado:
+			case !ativar && u.Status == api.UsuarioConviteEnviado:
+				return errors.New("o convite ainda não foi aceito: o convite não se revoga antes do aceite e não se sabe o efeito de desativá-lo; depois que a pessoa aceitar, desative o usuário")
+			case ativar == (u.Status == api.UsuarioAtivo):
 				fmt.Fprintf(s.err, "O usuário %s já está %s; nada foi enviado.\n", args[0], u.Status)
 				return output.Write(s.out, f, resultadoEscrita(acao, "sem mudança", args[0]))
 			}
 			verbo := map[bool]string{true: "Ativar", false: "Desativar"}[ativar]
 			op := operacao{Risco: riscoMedio, ID: args[0], Resumo: fmt.Sprintf("%s o acesso de %s (%s, %s)", verbo, firstNonEmpty(u.Nome, u.Email), u.Email, u.Status)}
-			if u.Status == api.UsuarioConviteEnviado {
-				op.Resumo += "; não se sabe se desativar cancela um convite ainda não aceito"
-			}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error { return api.AtivarUsuarioEmpresa(cmd.Context(), snd, u.ID, ativar) })
 			if err != nil || !enviado {
 				return err

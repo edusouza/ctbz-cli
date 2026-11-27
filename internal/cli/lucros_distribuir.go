@@ -3,6 +3,7 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"math"
 	"sort"
 	"strconv"
 	"strings"
@@ -90,7 +91,7 @@ enquanto a distribuição puder ser alterada. Aceita --yes e --dry-run.`,
 			valores := map[string]int64{}
 			for _, l := range relida.LucrosSocios {
 				if l.Valor != nil {
-					valores[idTexto(l.ID)] = centavos(*l.Valor)
+					valores[chaveSocio(l.ID)] = centavos(*l.Valor)
 				}
 			}
 			recs := make([]output.Record, len(itens))
@@ -193,7 +194,7 @@ func nomesSocios(cmd *cobra.Command, g api.Getter, d *api.DistribuicaoLucros) (m
 	}
 	for _, l := range d.LucrosSocios {
 		if l.Socio != "" {
-			nomes[idTexto(l.ID)] = l.Socio
+			nomes[chaveSocio(l.ID)] = l.Socio
 		}
 	}
 	return nomes, nil
@@ -212,18 +213,44 @@ func lucroTotal(d *api.DistribuicaoLucros) (int64, error) {
 	return centavos(*d.Saldo) + centavos(*d.TotalDistribuido), nil
 }
 
+// idSocio normaliza o id de um sócio da distribuição: um inteiro positivo, vindo como número
+// ou como texto (com espaços tolerados). Qualquer outra coisa (ausente, 0, negativo,
+// fracionário, texto não numérico) devolve ok falso: o id vai como idSocio na escrita.
+func idSocio(v any) (int64, bool) {
+	var n int64
+	switch x := v.(type) {
+	case float64:
+		if x != math.Trunc(x) || x > 1<<53 {
+			return 0, false
+		}
+		n = int64(x)
+	case string:
+		var err error
+		if n, err = strconv.ParseInt(strings.TrimSpace(x), 10, 64); err != nil {
+			return 0, false
+		}
+	default:
+		return 0, false
+	}
+	return n, n > 0
+}
+
+// chaveSocio é o id normalizado como texto, a chave de nomes, de --socio e das partes; vazio
+// quando o id não é válido (ver idSocio).
+func chaveSocio(v any) string {
+	if n, ok := idSocio(v); ok {
+		return strconv.FormatInt(n, 10)
+	}
+	return ""
+}
+
 // conferirIDsSocios recusa a distribuição cujos sócios não dá para identificar: o id de cada
-// item vai como idSocio na escrita, e um id ausente ou repetido iria nulo ou ambíguo.
+// item vai como idSocio na escrita, e um id inválido ou repetido iria nulo ou ambíguo (#777, #987).
 func conferirIDsSocios(lucros []api.LucroSocio) error {
 	vistos := map[string]bool{}
 	for _, l := range lucros {
-		id := idTexto(l.ID)
-		switch l.ID.(type) {
-		case float64, string:
-		default:
-			id = ""
-		}
-		if strings.TrimSpace(id) == "" {
+		id := chaveSocio(l.ID)
+		if id == "" {
 			return errors.New("a Contabilizei listou um sócio da distribuição sem id; distribua pelo painel")
 		}
 		if vistos[id] {
@@ -244,7 +271,7 @@ func montarDistribuicao(lucros []api.LucroSocio, nomes map[string]string, partes
 	}
 	naDistribuicao := map[string]bool{}
 	for _, l := range lucros {
-		naDistribuicao[idTexto(l.ID)] = true
+		naDistribuicao[chaveSocio(l.ID)] = true
 	}
 	porID := map[string]*parteSocio{}
 	for i := range partes {
@@ -267,7 +294,7 @@ func montarDistribuicao(lucros []api.LucroSocio, nomes map[string]string, partes
 	}
 	cents := make([]int64, len(lucros))
 	for i, l := range lucros {
-		if p, ok := porID[idTexto(l.ID)]; ok {
+		if p, ok := porID[chaveSocio(l.ID)]; ok {
 			cents[i] = p.centavos
 		}
 	}
@@ -275,9 +302,9 @@ func montarDistribuicao(lucros []api.LucroSocio, nomes map[string]string, partes
 	itens := make([]api.DistribuicaoSocio, 0, len(lucros))
 	var resumo []string
 	for i, l := range lucros {
-		id := idTexto(l.ID)
+		id := chaveSocio(l.ID)
 		cent, pct := cents[i], pcts[i]
-		itens = append(itens, api.NovaDistribuicaoSocio(l.ID, cent, pct))
+		itens = append(itens, api.NovaDistribuicaoSocio(idNumero(l.ID), cent, pct))
 		resumo = append(resumo, fmt.Sprintf("%s %s%% (%s)", firstNonEmpty(nomes[id], id), strings.Replace(fmt.Sprintf("%d.%02d", pct/100, pct%100), ".", ",", 1), formatarCentavos(cent)))
 	}
 	return itens, strings.Join(resumo, "; "), nil
@@ -351,7 +378,7 @@ func sociosDaDistribuicao(lucros []api.LucroSocio, nomes map[string]string) stri
 	ids := make([]string, 0, len(lucros))
 	for _, l := range lucros {
 		id := idTexto(l.ID)
-		if n := nomes[id]; n != "" {
+		if n := nomes[chaveSocio(l.ID)]; n != "" {
 			id += " (" + n + ")"
 		}
 		ids = append(ids, id)
@@ -364,4 +391,10 @@ func abs64(v int64) int64 {
 		return -v
 	}
 	return v
+}
+
+// idNumero é o id do sócio como número, o que o painel envia em idSocio (ver idSocio).
+func idNumero(v any) int64 {
+	n, _ := idSocio(v)
+	return n
 }

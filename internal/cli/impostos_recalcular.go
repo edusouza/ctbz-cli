@@ -23,6 +23,14 @@ func permiteRecalculo(g *api.GuiaDetalhe) bool {
 	return false
 }
 
+// boolOrNil devolve nil (null no JSON) quando a API não informou o valor.
+func boolOrNil(b *bool) any {
+	if b == nil {
+		return nil
+	}
+	return *b
+}
+
 func recalculoRecord(id int64, r *api.RecalculoInit) *output.Record {
 	recomendada, _ := output.ParseDate(r.DataRecomendada)
 	venc, _ := output.ParseDate(r.Vencimento)
@@ -34,7 +42,7 @@ func recalculoRecord(id int64, r *api.RecalculoInit) *output.Record {
 		Add("valor_recalculo", "Valor recalculado (estimado)", moneyOrNil(r.ValorRecalculo)).
 		Add("data_recomendada", "Data recomendada", recomendada).
 		Add("datas_indisponiveis", "Datas indisponíveis", nonNil(r.DatasIndisponiveis)).
-		Add("cobrar_recalculo", "Cobrado na mensalidade", r.CobrarRecalculo).
+		Add("cobrar_recalculo", "Cobrado na mensalidade", boolOrNil(r.CobrarRecalculo)).
 		Add("motivo_sem_cobranca", "Motivo sem cobrança", nilIfEmpty(r.MotivoSemCobranca))
 }
 
@@ -106,7 +114,10 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 				return err
 			}
 			consequencia := "O recálculo é um serviço adicional, cobrado na sua próxima mensalidade. Não dá para cancelar o pedido."
-			if !ini.CobrarRecalculo {
+			switch {
+			case ini.CobrarRecalculo == nil:
+				consequencia = "O painel não informou se será cobrado: pode entrar na sua próxima mensalidade. Não dá para cancelar o pedido."
+			case !*ini.CobrarRecalculo:
 				consequencia = "Não dá para cancelar o pedido."
 				if ini.MotivoSemCobranca != "" {
 					consequencia = "Sem cobrança: " + ini.MotivoSemCobranca + ". " + consequencia
@@ -115,13 +126,13 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			if hoje := api.DiaEmBrasilia(now()); dia.Year() > hoje.Year() || dia.Month() != hoje.Month() {
 				consequencia += " Com vencimento no mês seguinte, os juros e a multa ficam maiores."
 			}
-			valor := int64(0)
+			estimado := "indisponível"
 			if ini.ValorRecalculo != nil {
-				valor = centavos(*ini.ValorRecalculo)
+				estimado = formatarCentavos(centavos(*ini.ValorRecalculo))
 			}
 			req := api.PedidoRecalculo{Tipo: guia.Tipo, Origem: origemGuia(guia), DataVencimento: dia.Format("02/01/2006")}
 			op := operacao{Risco: riscoAlto, ID: args[0], Consequencia: consequencia, Resumo: fmt.Sprintf(
-				"Pedir o recálculo de %s com vencimento em %s (valor estimado %s)", nomeGuia(guia), dia.Format("02/01/2006"), formatarCentavos(valor))}
+				"Pedir o recálculo de %s com vencimento em %s (valor estimado %s)", nomeGuia(guia), dia.Format("02/01/2006"), estimado)}
 			var resp *api.RespostaRecalculo
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
 				var err error
@@ -131,16 +142,46 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			if err != nil || !enviado {
 				return err
 			}
-			novo := req.DataVencimento
-			if resp != nil && resp.Guia.DataVencimento != "" {
-				novo = resp.Guia.DataVencimento
+			// O que o painel confirmou (resposta do PUT ou, na falta dela, a guia relida se o
+			// vencimento mudou) fica separado do que foi pedido.
+			confirmado := ""
+			if resp != nil {
+				confirmado = resp.Guia.DataVencimento
 			}
+			situacao := "solicitado"
+			status := []string{}
+			avisos := []string{}
+			avisar := func(msg string) {
+				fmt.Fprintln(s.err, "aviso: "+msg)
+				avisos = append(avisos, msg)
+			}
+			if nova, err := api.BuscarGuia(ctx, g, id); err != nil {
+				avisar(fmt.Sprintf("pedido enviado, mas não foi possível reler a guia: %v", err))
+				situacao = "enviado"
+			} else {
+				status = nonNil(nova.Status)
+				if confirmado == "" && nova.Vencimento != guia.Vencimento {
+					confirmado = nova.Vencimento
+				}
+			}
+			// "vencimento" mantém o contrato anterior (sempre uma data: a confirmada ou, na falta
+			// dela, a pedida); "vencimento_confirmado" diz qual das duas é.
+			novoVenc := confirmado
+			if novoVenc == "" {
+				novoVenc = req.DataVencimento
+				avisar(fmt.Sprintf("o painel não confirmou o novo vencimento; o pedido foi para %s e a guia segue com o vencimento anterior até o recálculo.", req.DataVencimento))
+			}
+			novo, _ := output.ParseDate(novoVenc)
+			pedido, _ := output.ParseDate(req.DataVencimento)
 			fmt.Fprintln(s.err, "A guia será recalculada em até 3 dias úteis; a Contabilizei avisa por e-mail quando o novo valor estiver disponível.")
-			d, _ := output.ParseDate(novo)
-			rec := resultadoEscrita("recalcular", "solicitado", id).
+			rec := resultadoEscrita("recalcular", situacao, id).
 				Add("guia", "Guia", nomeGuia(guia)).
-				Add("vencimento", "Novo vencimento", d).
-				Add("cobrado", "Cobrado na mensalidade", ini.CobrarRecalculo)
+				Add("status", "Status", status).
+				Add("vencimento_pedido", "Vencimento pedido", pedido).
+				Add("vencimento", "Novo vencimento", novo).
+				Add("vencimento_confirmado", "Vencimento confirmado", confirmado != "").
+				Add("cobrado", "Cobrado na mensalidade", boolOrNil(ini.CobrarRecalculo)).
+				Add("avisos", "Avisos", avisos)
 			return output.Write(s.out, f, rec)
 		},
 	}

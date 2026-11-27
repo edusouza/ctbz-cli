@@ -33,9 +33,11 @@ ctbz usuarios ativar 102
   convide pelo painel.
 - `desativar` é a única forma de revogar um acesso; só usuários secundários podem ser
   desativados (o administrador, nunca). `ativar` devolve o acesso. Os dois são de risco médio
-  e reversíveis. Se a lista trouxer o usuário sem id, tipo ou situação, a CLI recusa sem
-  enviar nada; use o painel.
-- Não se sabe se desativar um convite ainda não aceito o cancela; a CLI avisa no resumo.
+  e, entre usuários que já aceitaram o convite, reversíveis. Se a lista trouxer o usuário sem
+  id, tipo ou situação, a CLI recusa sem enviar nada; use o painel.
+- Convite ainda não aceito (`CONVITE_ENVIADO`) não se ativa nem se desativa: a CLI recusa
+  sem enviar nada, porque não há como revogar um convite antes do aceite e não se sabe o
+  efeito de desativá-lo. Depois que a pessoa aceitar, `desativar` revoga o acesso.
 - O e-mail convidado não vai para o registro de ações (`ctbz acoes`), que só guarda o comando
   e o resultado.
 

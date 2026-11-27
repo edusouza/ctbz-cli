@@ -113,6 +113,9 @@ type RespostaContratacao struct {
 
 // ContratarParcelamento contrata o parcelamento. O corpo depende do tipo: nenhum no Simples,
 // {quantidadeParcelas} (positiva) na PGFN e {tipoNegociacao} no especializado. Não dá para desfazer.
+// Depois de um 2xx a contratação foi feita, então nenhuma resposta vira erro: os tipos
+// automáticos ignoram o corpo (o painel também) e o especializado só lê o idTicket, que fica
+// vazio se o corpo não for um objeto.
 func ContratarParcelamento(ctx context.Context, s Sender, tipo string, parcelas int, negociacao string) (*RespostaContratacao, error) {
 	var body any
 	switch {
@@ -124,9 +127,17 @@ func ContratarParcelamento(ctx context.Context, s Sender, tipo string, parcelas 
 		}
 		body = map[string]int{"quantidadeParcelas": parcelas}
 	}
-	var r RespostaContratacao
-	if err := s.Send(ctx, "POST", PathContratarParcelamento(tipo), body, &r); err != nil {
+	if tipo != TipoEspecializado {
+		if err := s.Send(ctx, "POST", PathContratarParcelamento(tipo), body, nil); err != nil {
+			return nil, err
+		}
+		return &RespostaContratacao{}, nil
+	}
+	var texto string
+	if err := s.Send(ctx, "POST", PathContratarParcelamento(tipo), body, &texto); err != nil {
 		return nil, err
 	}
+	var r RespostaContratacao
+	_ = json.Unmarshal([]byte(texto), &r) // corpo que não é objeto: sem idTicket, não é erro
 	return &r, nil
 }

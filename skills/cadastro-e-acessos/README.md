@@ -126,7 +126,7 @@ Tudo com `--dry-run` primeiro e a sua confirmação (protocolo da skill `assesso
 | `contas-bancarias adicionar` / `editar` | agente | médio | editar de novo |
 | `contas-bancarias remover` | agente | **alto** | permanente; vínculos se perdem |
 | `usuarios convidar EMAIL` | agente | **alto** | acesso total, sem revogar antes do aceite |
-| `usuarios desativar` / `ativar` | agente | médio | um desfaz o outro |
+| `usuarios desativar` / `ativar` | agente | médio | um desfaz o outro (convite pendente é recusado) |
 | `pendencias procuracao --ja-criei` | agente | médio | a pendência volta se a procuração não existir |
 | `empresa credenciais confirmar-prefeitura` | agente | médio | — |
 | `correspondencias endereco` / `autorizar off` | agente | médio | regravar / `autorizar on` |
