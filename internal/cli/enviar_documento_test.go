@@ -222,3 +222,21 @@ func TestDocumentosPendenciaRepetida(t *testing.T) {
 		}
 	}
 }
+
+// Extrato de aplicação sem conta bancária (ausente ou null) é erro antes de escrever, com --yes
+// e com --dry-run: a conta nunca vai null no corpo (#981).
+func TestDocumentosEnviarSemConta(t *testing.T) {
+	arq := arquivoPDF(t)
+	const pathInit602 = "/api/plataforma/documentos/envio-documento/init?id=1000000000000602"
+	for nome, conta := range map[string]string{"ausente": "", "nula": `"idContaBancaria":null,`} {
+		init := `{"documentos":[{"tipo":"EXTRATO_APLICACAO_FINANCEIRA","propriedades":{"idPendencia":"1000000000000602",` + conta + `"competencia":{"mes":9,"ano":2026}}}]}`
+		for _, modo := range []string{"--yes", "--dry-run"} {
+			f := documentoFake(t)
+			f.gets[pathInit602] = init
+			out, stderr, code := execCLI(t, "", "documentos", "enviar", arq, "--pendencia", "1000000000000602", modo)
+			if code != ExitError || len(f.writes) != 0 || out != "" || !strings.Contains(stderr, "conta bancária") {
+				t.Errorf("conta %s, %s: código %d, escritas %q\n%s\n%s", nome, modo, code, f.writes, out, stderr)
+			}
+		}
+	}
+}

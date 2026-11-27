@@ -13,6 +13,26 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   Contabilizei não traz `temLancamentoPendente`, `formatosDisponiveisUpload` ou `statusIntegracao`
   (antes viravam "sem pendência", "nenhum formato" e "conta não integrada" em silêncio e afrouxavam
   a validação); banco com lista de formatos vazia ganha mensagem própria (#596).
+- `ctbz documentos enviar` recusa, antes de escrever (também no `--dry-run`), a pendência sem id, sem tipo ou, no extrato de aplicação e no informe de rendimentos de investimentos, sem conta bancária, em vez de enviar `null` ou vazio no corpo (#981).
+- `ctbz prolabore definir` só envia `sairGestaoInteligente: true` quando o sócio está na gestão inteligente e é o último nela; quem está em outro tipo não tira mais a empresa da gestão inteligente do outro sócio, e sem o tipo atual a CLI recusa antes de escrever (#995).
+- `ctbz lucros distribuir` recusa, sem escrever, a distribuição que lista um sócio com id `0`, negativo, fracionário ou texto não numérico (antes ia como `idSocio` na escrita), e `1` e `" 1"` contam como o mesmo sócio (#987).
+- `ctbz caixa adicionar` mostra o id do lançamento recém-criado, mesmo havendo um lançamento idêntico anterior, em vez do de maior id (#351).
+- `ctbz caixa adicionar` recusa competência futura sem `--data`, em vez de enviar um lançamento com data futura no dia 1 (#350).
+- A leitura dos lançamentos do extrato falha com erro claro quando algum lançamento vem sem `idLancamentoUsuario`, em vez de devolver só o primeiro em silêncio (#866).
+- A leitura dos lançamentos do extrato só termina numa página vazia, então um servidor que limita a página abaixo de 100 itens não trunca mais a lista em silêncio (#867).
+- `ctbz rotinas reclassificar` recusa, antes de escrever, uma opção de classificação com `socios`
+  ausente ou `null` (só `[]` significa "não usa sócio" e envia `idSocio: null`) (#977).
+- `ctbz rotinas reclassificar` recusa `idPendencia` `0`, `"0"`, negativo, booleano, objeto ou lista
+  vindo do init (só texto não vazio ou inteiro positivo vai no corpo) (#978).
+- `ctbz rotinas reclassificar` deduplica os ids e recusa, antes de qualquer escrita, ids que a
+  Contabilizei não devolveu, em vez de concluir só parte das pendências com código 0 (#427).
+- `ctbz razao` mostra cada lançamento no dia certo: a data vem como epoch à meia-noite UTC e a CLI
+  a convertia para o fuso local, mostrando um dia antes (#1048).
+- `ctbz razao` com período de mais de um mês deixa de repetir lançamentos: a API devolve o exercício
+  desde janeiro até o mês pedido; a CLI agora consulta um mês por ano e filtra para `--de`…`--ate`
+  (também some o que vinha de meses anteriores ao `--de`) (#1047).
+- `ctbz balanco reabrir` cita na confirmação de risco alto a cobrança do serviço: o valor, quando a API
+  informa (`valorServicoAdicional`), ou que o painel pode cobrar (#809).
 
 ## [1.9.6] - 2026-11-26
 
