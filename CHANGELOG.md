@@ -7,6 +7,13 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz extratos importar` para antes de enviar qualquer coisa quando a resposta de validação da
+  Contabilizei não traz `temLancamentoPendente`, `formatosDisponiveisUpload` ou `statusIntegracao`
+  (antes viravam "sem pendência", "nenhum formato" e "conta não integrada" em silêncio e afrouxavam
+  a validação); banco com lista de formatos vazia ganha mensagem própria (#596).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da
