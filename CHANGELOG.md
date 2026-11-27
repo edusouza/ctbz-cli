@@ -9,6 +9,7 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- A leitura dos lançamentos do extrato falha com erro claro quando algum lançamento vem sem `idLancamentoUsuario`, em vez de devolver só o primeiro em silêncio (#866).
 - `ctbz rotinas reclassificar` recusa, antes de escrever, uma opção de classificação com `socios`
   ausente ou `null` (só `[]` significa "não usa sócio" e envia `idSocio: null`) (#977).
 - `ctbz rotinas reclassificar` recusa `idPendencia` `0`, `"0"`, negativo, booleano, objeto ou lista
