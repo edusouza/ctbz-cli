@@ -87,7 +87,8 @@ func (o *otpOpts) metodo(cmd *cobra.Command, atual string) (string, error) {
 
 // escreverComOTP confirma a escrita e só então pede o código (exceto no app autenticador),
 // obtém o código pelo --otp-cmd ou no terminal e chama enviar com ele. Sem terminal, exige
-// --otp-cmd antes de qualquer envio.
+// --otp-cmd antes de qualquer envio. A sessão é conferida (com re-login, se preciso) só antes
+// do pedido do código: se ela expirar durante a espera, o envio final falha sem novo login.
 func escreverComOTP(cmd *cobra.Command, op operacao, metodo string, o otpOpts, enviar func(snd api.Sender, codigo string) error) (bool, error) {
 	s := streamsOf(cmd)
 	dry, _ := cmd.Flags().GetBool("dry-run")
@@ -100,6 +101,12 @@ func escreverComOTP(cmd *cobra.Command, op operacao, metodo string, o otpOpts, e
 			if _, err := api.EnviarOTPConta(cmd.Context(), snd, metodo); err != nil {
 				return erroEnvioOTP(err)
 			}
+		}
+		// O pedido do código já saiu: a sessão foi conferida (com re-login, se preciso) uma única
+		// vez, antes dele. Daqui em diante a conferência não refaz o login (#835).
+		if ss, ok := snd.(sessionSender); ok && metodo != api.MetodoOTPApp {
+			ss.semRelogin = true
+			snd = ss
 		}
 		codigo := "000000" // no --dry-run não há código; aparece como ***
 		if !dry {

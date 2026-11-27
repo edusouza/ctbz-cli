@@ -23,6 +23,14 @@ func permiteRecalculo(g *api.GuiaDetalhe) bool {
 	return false
 }
 
+// boolOrNil devolve nil (null no JSON) quando a API não informou o valor.
+func boolOrNil(b *bool) any {
+	if b == nil {
+		return nil
+	}
+	return *b
+}
+
 func recalculoRecord(id int64, r *api.RecalculoInit) *output.Record {
 	recomendada, _ := output.ParseDate(r.DataRecomendada)
 	venc, _ := output.ParseDate(r.Vencimento)
@@ -34,7 +42,7 @@ func recalculoRecord(id int64, r *api.RecalculoInit) *output.Record {
 		Add("valor_recalculo", "Valor recalculado (estimado)", moneyOrNil(r.ValorRecalculo)).
 		Add("data_recomendada", "Data recomendada", recomendada).
 		Add("datas_indisponiveis", "Datas indisponíveis", nonNil(r.DatasIndisponiveis)).
-		Add("cobrar_recalculo", "Cobrado na mensalidade", r.CobrarRecalculo).
+		Add("cobrar_recalculo", "Cobrado na mensalidade", boolOrNil(r.CobrarRecalculo)).
 		Add("motivo_sem_cobranca", "Motivo sem cobrança", nilIfEmpty(r.MotivoSemCobranca))
 }
 
@@ -106,7 +114,10 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 				return err
 			}
 			consequencia := "O recálculo é um serviço adicional, cobrado na sua próxima mensalidade. Não dá para cancelar o pedido."
-			if !ini.CobrarRecalculo {
+			switch {
+			case ini.CobrarRecalculo == nil:
+				consequencia = "O painel não informou se será cobrado: pode entrar na sua próxima mensalidade. Não dá para cancelar o pedido."
+			case !*ini.CobrarRecalculo:
 				consequencia = "Não dá para cancelar o pedido."
 				if ini.MotivoSemCobranca != "" {
 					consequencia = "Sem cobrança: " + ini.MotivoSemCobranca + ". " + consequencia
@@ -115,13 +126,13 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			if hoje := api.DiaEmBrasilia(now()); dia.Year() > hoje.Year() || dia.Month() != hoje.Month() {
 				consequencia += " Com vencimento no mês seguinte, os juros e a multa ficam maiores."
 			}
-			valor := int64(0)
+			estimado := "indisponível"
 			if ini.ValorRecalculo != nil {
-				valor = centavos(*ini.ValorRecalculo)
+				estimado = formatarCentavos(centavos(*ini.ValorRecalculo))
 			}
 			req := api.PedidoRecalculo{Tipo: guia.Tipo, Origem: origemGuia(guia), DataVencimento: dia.Format("02/01/2006")}
 			op := operacao{Risco: riscoAlto, ID: args[0], Consequencia: consequencia, Resumo: fmt.Sprintf(
-				"Pedir o recálculo de %s com vencimento em %s (valor estimado %s)", nomeGuia(guia), dia.Format("02/01/2006"), formatarCentavos(valor))}
+				"Pedir o recálculo de %s com vencimento em %s (valor estimado %s)", nomeGuia(guia), dia.Format("02/01/2006"), estimado)}
 			var resp *api.RespostaRecalculo
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
 				var err error
@@ -140,7 +151,7 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			rec := resultadoEscrita("recalcular", "solicitado", id).
 				Add("guia", "Guia", nomeGuia(guia)).
 				Add("vencimento", "Novo vencimento", d).
-				Add("cobrado", "Cobrado na mensalidade", ini.CobrarRecalculo)
+				Add("cobrado", "Cobrado na mensalidade", boolOrNil(ini.CobrarRecalculo))
 			return output.Write(s.out, f, rec)
 		},
 	}

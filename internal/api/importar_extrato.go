@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"path/filepath"
@@ -25,7 +26,7 @@ type PeriodoImportacao struct {
 	Ano                   int    `json:"ano"`
 	Mes                   int    `json:"mes"`
 	Mensagem              string `json:"mensagem" contract:"optional"`
-	TemLancamentoPendente bool   `json:"temLancamentoPendente"`
+	TemLancamentoPendente *bool  `json:"temLancamentoPendente"` // nil: ausente na resposta (não vale como false)
 	TeveLancamento        bool   `json:"teveLancamento" contract:"optional"`
 }
 
@@ -46,13 +47,32 @@ const PathUploadExtratoInit = "upload-documentos/extrato/v2/init"
 type ContaUpload struct {
 	ID               int64  `json:"id"`
 	StatusIntegracao string `json:"statusIntegracao" contract:"optional"`
+	// StatusInformado diz se a chave statusIntegracao veio na resposta (null conta como
+	// informado: conta não integrada). Ausente, não dá para dizer se a conta é integrada (#596).
+	StatusInformado bool `json:"-"`
+}
+
+// UnmarshalJSON registra se statusIntegracao veio na resposta.
+func (c *ContaUpload) UnmarshalJSON(b []byte) error {
+	type bruto ContaUpload
+	var v bruto
+	if err := json.Unmarshal(b, &v); err != nil {
+		return err
+	}
+	var chaves map[string]json.RawMessage
+	if err := json.Unmarshal(b, &chaves); err != nil {
+		return err
+	}
+	_, v.StatusInformado = chaves["statusIntegracao"]
+	*c = ContaUpload(v)
+	return nil
 }
 
 // BancoUpload é um banco em PathUploadExtratoInit, com os formatos que ele aceita.
 type BancoUpload struct {
 	ID                        int64         `json:"id"`
 	Codigo                    string        `json:"codigo" contract:"optional"`
-	FormatosDisponiveisUpload []string      `json:"formatosDisponiveisUpload"`
+	FormatosDisponiveisUpload []string      `json:"formatosDisponiveisUpload"` // nil: ausente (ou null); [] é um banco sem formatos
 	ContasBancarias           []ContaUpload `json:"contasBancarias"`
 }
 

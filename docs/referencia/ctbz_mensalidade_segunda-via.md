@@ -8,10 +8,14 @@ cola, linha digitável, código de barras e o link do checkout.
 
 Risco médio: registra um boleto novo, com vencimento novo, mas não cobra nada. O caminho vem
 da ação do card (ctbz mensalidade -o json, botao_adicional_acao); sem ela (ex.: fatura em
-dia), o comando para com erro. Com --competencia, o card precisa oferecer a segunda via
+dia), o comando para com erro, e só a ação dashboard/nova-fatura/AAAAMM é aceita: qualquer outra
+ação do card é recusada antes de enviar. Com --competencia, o card precisa oferecer a segunda via
 daquele mês.
 
---pix e --linha imprimem só o código, sem decoração, para usar num pipe:
+--pix e --linha imprimem só o código, sem decoração, para usar num pipe. Como o valor não
+aparece, o código só sai se a fatura ainda puder ser paga: fatura paga ou cancelada, sem valor
+ou já vencida fazem o comando falhar, mostrando o link. Se a leitura da situação falhar, o
+código sai com um aviso no stderr:
 
   inter-pj pix enviar --copia-e-cola "$(ctbz mensalidade segunda-via --pix --yes)"
 
