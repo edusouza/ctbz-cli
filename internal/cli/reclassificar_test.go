@@ -140,6 +140,8 @@ func TestRotinasReclassificarPendenciaIncompleta(t *testing.T) {
 		{"sem opções", map[string]string{"classificacoes": "[]"}, nil, "sem opções de classificação"},
 		{"opções nulas", map[string]string{"classificacoes": "null"}, nil, "sem opções de classificação"},
 		{"opção sem id", map[string]string{"classificacoes": `[{"idClassificacao": null, "nome": "Aporte de Capital"}]`}, nil, "sem idClassificacao"},
+		{"opção sem socios", map[string]string{"classificacoes": `[{"idClassificacao": 1000000000000042, "nome": "Aporte de Capital"}]`}, nil, "sem a lista socios"},
+		{"opção com socios nulo", map[string]string{"classificacoes": `[{"idClassificacao": 1000000000000042, "nome": "Aporte de Capital", "socios": null}]`}, nil, "sem a lista socios"},
 		{"sócio sem id", map[string]string{"classificacoes": `[{"idClassificacao": 1000000000000042, "nome": "Aporte de Capital", "socios": [{"idSocio": null, "nome": "FULANO DE TAL"}]}]`}, nil, "sem idSocio"},
 	} {
 		for _, modo := range []string{"--yes", "--dry-run"} {
@@ -205,11 +207,11 @@ func TestRotinasReclassificarIDsAusentesOuRepetidos(t *testing.T) {
 // #435: um nome que casa com mais de uma opção é erro de uso; o id ou o nome escrito
 // exatamente como na lista escolhe sem ambiguidade.
 func TestRotinasReclassificarNomeAmbiguo(t *testing.T) {
-	opcoes := map[string]string{"classificacoes": `[{"idClassificacao": 1000000000000041, "nome": "Aporte de Capital"},
-{"idClassificacao": 1000000000000042, "nome": "APORTE DE CAPITAL"},
-{"idClassificacao": 1000000000000043, "nome": "Mútuo"},
-{"idClassificacao": 1000000000000044, "nome": "Mútuo"},
-{"idClassificacao": 1000000000000045, "nome": "1000000000000041"}]`}
+	opcoes := map[string]string{"classificacoes": `[{"idClassificacao": 1000000000000041, "nome": "Aporte de Capital", "socios": []},
+{"idClassificacao": 1000000000000042, "nome": "APORTE DE CAPITAL", "socios": []},
+{"idClassificacao": 1000000000000043, "nome": "Mútuo", "socios": []},
+{"idClassificacao": 1000000000000044, "nome": "Mútuo", "socios": []},
+{"idClassificacao": 1000000000000045, "nome": "1000000000000041", "socios": []}]`}
 	for _, tc := range []struct {
 		classificacao string
 		corpo         string // vazio: recusa por ambiguidade
