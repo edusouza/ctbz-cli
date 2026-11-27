@@ -9,6 +9,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz pendencias conciliacao resolver` lê o id das pendências abertas em `idPendencia` (ou `id`),
+  recusa itens em que os dois divergem e, se um item vier sem nenhum dos dois, avisa no stderr e
+  segue em vez de bloquear toda resolução (#1002). Um `id` inválido é ignorado quando há
+  `idPendencia` válido, e os itens que têm id continuam conferidos mesmo com um item sem id.
 - `ctbz extratos importar --substituir` recusa (código 2, nada enviado) um OFX fora da lista de
   formatos do banco: o aviso de que a Contabilizei pode recusar o arquivo não protegia o extrato
   e as classificações, já excluídos antes do envio. Exclua antes com `ctbz extratos excluir` (#1016).
