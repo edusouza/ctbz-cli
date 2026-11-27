@@ -521,7 +521,10 @@ ctbz rotinas reclassificar <idPendencia>… --classificacao <id> [--socio <id>]
   - `tipoDocumento`: o tipo da pendência (lista abaixo);
   - `competencia`: JSON `{"mes":1,"ano":2026}`;
   - `metadados`: JSON `{"valor", "idPendencia", "periodo", "idContaBancaria", "tipoInvestimento"}` (campos
-    nulos quando não se aplicam);
+    nulos quando não se aplicam). A CLI só aceita `null` em `valor`, `periodo` e, fora dos tipos de
+    investimento (`EXTRATO_APLICACAO_FINANCEIRA`, `INFORME_DE_RENDIMENTO_INVESTIMENTOS`),
+    `idContaBancaria` e `tipoInvestimento`; `idPendencia`, `tipoDocumento` e a competência ausentes
+    são recusados antes de enviar (#981);
   - `ordemArquivoCompetencia`: número da ordem do arquivo, ou a string `"null"` (FormData de `null`).
 
 **`POST documentos/envio-documento/enviar/consolidado`** (um arquivo para várias competências,

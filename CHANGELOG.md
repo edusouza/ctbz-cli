@@ -9,6 +9,7 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz documentos enviar` recusa, antes de escrever (também no `--dry-run`), a pendência sem id, sem tipo ou, no extrato de aplicação e no informe de rendimentos de investimentos, sem conta bancária, em vez de enviar `null` ou vazio no corpo (#981).
 - `ctbz prolabore definir` só envia `sairGestaoInteligente: true` quando o sócio está na gestão inteligente e é o último nela; quem está em outro tipo não tira mais a empresa da gestão inteligente do outro sócio, e sem o tipo atual a CLI recusa antes de escrever (#995).
 - `ctbz lucros distribuir` recusa, sem escrever, a distribuição que lista um sócio com id `0`, negativo, fracionário ou texto não numérico (antes ia como `idSocio` na escrita), e `1` e `" 1"` contam como o mesmo sócio (#987).
 - `ctbz caixa adicionar` mostra o id do lançamento recém-criado, mesmo havendo um lançamento idêntico anterior, em vez do de maior id (#351).
