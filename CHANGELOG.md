@@ -16,6 +16,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   código exato e o nome da conta conferirem com um único banco da lista (antes aceitava um
   candidato qualquer ou o primeiro de mesmo código e nome); senão pede `--banco`. O resumo da
   confirmação mostra o banco inferido (#871).
+- `contas-bancarias editar` recusa (código 2, sem escrita, também em `--dry-run`) quando a
+  agência ou a conta da lista vier nula ou vazia sem `--agencia`/`--conta`, ou quando a flag
+  ficar vazia depois de normalizar (`--conta "-"`, `--agencia " "`), em vez de apagar o
+  cadastro (#997).
 - `ctbz mensalidade segunda-via --pix` e `--linha` só imprimem o código se a fatura puder ser
   paga: fatura paga ou cancelada, sem valor ou vencida falham sem imprimir. Se a leitura do resumo
   v1 falhar, o código ainda sai, com aviso no stderr (#931).

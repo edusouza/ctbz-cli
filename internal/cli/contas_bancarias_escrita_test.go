@@ -193,6 +193,49 @@ func TestBancoAtualExigeCodigoENomeUnicos(t *testing.T) {
 	}
 }
 
+// A edição reenvia agência e conta: sem elas na lista (ausente, null ou "") e sem a flag, ou com
+// uma flag que fica vazia depois de normalizar, recusa em vez de apagar o cadastro (#997).
+func TestContasBancariasEditarAgenciaOuContaVazia(t *testing.T) {
+	const agencia, conta = `"agencia":"1234",`, `"contaCorrente":"12345-6",`
+	for _, tc := range []struct {
+		nome, de, para string
+		args           []string
+		quer           string
+	}{
+		{"agência nula", agencia, `"agencia":null,`, nil, "informe --agencia"},
+		{"agência vazia", agencia, `"agencia":"",`, nil, "informe --agencia"},
+		{"agência em branco", agencia, `"agencia":"  ",`, nil, "informe --agencia"},
+		{"agência ausente", agencia, ``, nil, "informe --agencia"},
+		{"conta nula", conta, `"contaCorrente":null,`, nil, "informe --conta"},
+		{"conta vazia", conta, `"contaCorrente":"",`, nil, "informe --conta"},
+		{"conta só com hífen", conta, `"contaCorrente":"-",`, nil, "informe --conta"},
+		{"conta ausente", conta, ``, nil, "informe --conta"},
+		{"flag --conta só hífen", ``, ``, []string{"--conta", "-"}, "informe --conta"},
+		{"flag --agencia em branco", ``, ``, []string{"--agencia", " "}, "informe --agencia"},
+	} {
+		t.Run(tc.nome, func(t *testing.T) {
+			f := contasFake(t)
+			f.gets[pathContasBancarias] = strings.Replace(contasBancariasJSON, tc.de, tc.para, 1)
+			for _, modo := range []string{"--yes", "--dry-run"} {
+				args := append([]string{"contas-bancarias", "editar", "1000000000000001", "--abertura", "2024-02-01", modo}, tc.args...)
+				out, stderr, code := execCLI(t, "", args...)
+				if code != ExitUsage || len(f.writes) != 0 || out != "" || !strings.Contains(stderr, tc.quer) {
+					t.Errorf("%s: código %d, escritas %q, saída %q\n%s", modo, code, f.writes, out, stderr)
+				}
+			}
+		})
+	}
+
+	// Com a flag, envia o valor novo e o resto como veio; saldo 0 na lista continua aceito.
+	f := contasFake(t)
+	f.gets[pathContasBancarias] = strings.NewReplacer(`"agencia":"1234",`, `"agencia":null,`, `"vlrSaldoInicial":100`, `"vlrSaldoInicial":0`).Replace(contasBancariasJSON)
+	_, stderr, code := execCLI(t, "", "contas-bancarias", "editar", "1000000000000001", "--agencia", " 9 ", "--yes")
+	want := `POST /api/plataforma/contabancaria/salvar {"id":1000000000000001,"bancoId":33,"agencia":"9","contaCorrente":"123456","dataSaldoInicial":"2024-01-10","vlrSaldoInicial":0}`
+	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != want {
+		t.Errorf("com --agencia: código %d, %q\n%s", code, f.writes, stderr)
+	}
+}
+
 // Conta sem bancoId e sem um único banco da lista que confira: editar sem --banco recusa em vez
 // de reenviar a conta em outro banco, em --yes e em --dry-run (#871).
 func TestContasBancariasEditarSemBancoIDNaoInferido(t *testing.T) {
