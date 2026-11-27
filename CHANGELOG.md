@@ -9,6 +9,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz impostos recalcular` não afirma mais que o recálculo é gratuito quando a resposta do
+  painel não traz `cobrarRecalculo`: `cobrar_recalculo` e `cobrado` saem `null` e a consequência
+  avisa que o painel não informou se será cobrado (#463).
 - `ctbz impostos parcelamento contratar` só confere quantidade e valores de `parcelas[]` na PGFN
   e só da opção escolhida: Simples e especializado (que não enviam `parcelas[]`) e uma outra
   opção incompleta deixam de bloquear a contratação. O resumo do Simples usa o
