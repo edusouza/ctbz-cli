@@ -78,6 +78,23 @@ func TestInformeAceitarCartaReleitura(t *testing.T) {
 	}
 }
 
+func TestInformeAceitarCartaSemTexto(t *testing.T) {
+	// Carta pendente sem texto legível: erro e nenhum POST, mesmo com --yes (#798).
+	for nome, corpo := range map[string]string{
+		"html vazio":   `{"deveAssinarCartaResponsabilidade":true,"html":""}`,
+		"html ausente": `{"deveAssinarCartaResponsabilidade":true}`,
+		"só tags":      `{"deveAssinarCartaResponsabilidade":true,"html":"<html><head><style>p{}</style></head><body><p> </p></body></html>"}`,
+		"só controle":  `{"deveAssinarCartaResponsabilidade":true,"html":"<p>\u001b‮</p>"}`,
+	} {
+		f := informeFake(t, restricoesComTudo)
+		f.gets[pathCartaInforme] = corpo
+		out, stderr, code := execCLI(t, "", "lucros", "informe", "aceitar", "carta-responsabilidade", "--yes")
+		if code != ExitError || len(f.writes) != 0 || out != "" || !strings.Contains(stderr, "não trouxe o texto da carta") {
+			t.Errorf("%s: código %d, %d escritas, %q\n%s", nome, code, len(f.writes), out, stderr)
+		}
+	}
+}
+
 func TestInformeAceitarTermoDebitos(t *testing.T) {
 	f := informeFake(t, restricoesComTudo)
 	_, stderr, code := execCLI(t, "", "lucros", "informe", "aceitar", "termo-debitos", "--yes")

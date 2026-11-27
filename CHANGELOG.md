@@ -9,6 +9,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz lucros informe aceitar carta-responsabilidade` recusa o aceite, sem enviar nada, quando a carta
+  pendente chega sem texto legível (`html` ausente, vazio ou só tags); antes pedia a confirmação
+  sobre um "texto acima" que não existia (#798). Os textos da API também perdem os caracteres de
+  formatação do Unicode (como U+202E), além dos de controle.
 - `ctbz impostos recalcular` mostra "valor estimado indisponível" na confirmação quando o painel
   não traz `valorRecalculo`, em vez de "R$ 0,00" (#462).
 - `ctbz impostos recalcular` não afirma mais que o recálculo é gratuito quando a resposta do

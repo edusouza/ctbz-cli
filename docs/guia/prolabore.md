@@ -240,7 +240,8 @@ ctbz lucros informe decidir --ano 2025 --regularizar-pendencia
   federais e a pendência documental (com o caminho de regularização e o custo, quando é um
   serviço adicional) e o andamento da reabertura do balanço.
 - `aceitar carta-responsabilidade` mostra a carta inteira antes de pedir `confirmo`; o painel
-  exige esse aceite para ver o informe. Depois do envio, a CLI relê a carta: `aceita` quando
+  exige esse aceite para ver o informe. Se a API devolver a carta sem texto, a CLI dá erro e não
+  envia nada (leia e aceite pelo painel). Depois do envio, a CLI relê a carta: `aceita` quando
   ela não pede mais aceite, `enviado` (com um aviso) quando ainda pede ou a releitura falha;
   nos dois casos o aceite já foi enviado e não deve ser repetido. `aceitar termo-debitos` registra a ciência dos débitos
   federais e só é enviado quando o informe aponta débitos.
