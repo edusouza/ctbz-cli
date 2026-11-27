@@ -185,6 +185,8 @@ ctbz impostos parcelamento contratar especializado --negociacao VENCIDOS
 - Se a simulação indicar cobrança de serviço adicional sem informar o valor, a CLI não contrata
   (nem com `--yes` ou `--dry-run`) e pede para contratar pelo painel. Valor 0 informado passa;
   a emissão de guia só aparece entre os custos quando a simulação traz o valor.
+- Depois de qualquer resposta 2xx o pedido foi feito: a CLI não trata o formato da resposta
+  como erro (não repita o comando).
 - O especializado vira um pedido de atendimento: a saída traz o `id` (idTicket) e o detalhe
   do pedido.
 - Depois de contratar, acompanhe com `ctbz impostos parcelamentos`.

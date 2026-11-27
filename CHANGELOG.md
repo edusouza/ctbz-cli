@@ -16,6 +16,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `ctbz impostos parcelamento contratar` recusa a contratação (também em `--yes` e `--dry-run`)
   quando a simulação cobra serviço adicional sem informar o valor, em vez de só mostrar "não
   informado" (#969).
+- `ctbz impostos parcelamento contratar` não falha mais quando a Contabilizei responde 2xx com um
+  corpo que não é objeto (texto, `true`, lista): a contratação já foi feita, e o erro levava a
+  repetir o pedido. Os tipos automáticos ignoram a resposta e o especializado só lê o idTicket,
+  se houver (#488).
 
 ## [1.9.6] - 2026-11-26
 
