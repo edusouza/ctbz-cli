@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"encoding/json"
+	"io"
 	"strings"
 	"testing"
 )
@@ -115,12 +117,38 @@ func TestInformeAceitarTermoDebitos(t *testing.T) {
 }
 
 func TestInformeAceitarTermoDebitosAvisos(t *testing.T) {
-	// Sem lista de débitos, o aceite não é enviado (#796).
-	f := informeFake(t, `{"restricoes":{"debitosFederais":{"possuiPendencia":true}}}`)
+	// Sem lista de débitos (formato nunca capturado): aviso forte e confirmação extra, sem recusa fatal (#796).
+	const semLista = `{"restricoes":{"debitosFederais":{"possuiPendencia":true}}}`
+	f := informeFake(t, semLista)
 	out, stderr, code := execCLI(t, "", "lucros", "informe", "aceitar", "termo-debitos", "--yes")
-	if code != ExitError || len(f.writes) != 0 || out != "" || !strings.Contains(stderr, "não listou os débitos") {
-		t.Errorf("sem débitos listados: código %d, %d escritas, %q\n%s", code, len(f.writes), out, stderr)
+	if code != ExitUsage || len(f.writes) != 0 || out != "" || !strings.Contains(stderr, "não listou os débitos") || !strings.Contains(stderr, "--aceitar-sem-lista") {
+		t.Errorf("sem lista e sem flag: código %d, %d escritas, %q\n%s", code, len(f.writes), out, stderr)
 	}
+	f = informeFake(t, semLista)
+	out, stderr, code = execCLI(t, "", "lucros", "informe", "aceitar", "termo-debitos", "--yes", "--aceitar-sem-lista", "-o", "json")
+	if code != ExitOK || len(f.writes) != 1 || !strings.Contains(stderr, "mas não os listou") || !strings.Contains(out, `"aviso": "a API apontou débitos federais, mas não os listou`) {
+		t.Errorf("sem lista com flag: código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+	f = informeFake(t, semLista)
+	_, stderr, code = execCLI(t, "", "lucros", "informe", "aceitar", "termo-debitos", "--dry-run")
+	if code != ExitOK || len(f.writes) != 0 || !strings.Contains(stderr, "não os listou") {
+		t.Errorf("sem lista em dry-run: código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+	// Num terminal: o "confirmo" extra é uma pergunta própria, além da confirmação do risco alto.
+	old := isTerminal
+	isTerminal = func(io.Reader) bool { return true }
+	t.Cleanup(func() { isTerminal = old })
+	f = informeFake(t, semLista)
+	_, stderr, code = execCLI(t, "confirmo\nnao\n", "lucros", "informe", "aceitar", "termo-debitos")
+	if code != ExitError || len(f.writes) != 0 {
+		t.Errorf("confirmação extra recusada: código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+	f = informeFake(t, semLista)
+	_, stderr, code = execCLI(t, "confirmo\nconfirmo\n", "lucros", "informe", "aceitar", "termo-debitos")
+	if code != ExitOK || len(f.writes) != 1 {
+		t.Errorf("confirmação extra dada: código %d, %d escritas\n%s", code, len(f.writes), stderr)
+	}
+	isTerminal = old
 	// Com débitos: avisa que o texto do termo e o formato não estão disponíveis e limpa os caracteres perigosos.
 	f = informeFake(t, "{\"restricoes\":{\"debitosFederais\":{\"possuiPendencia\":true,\"debitos\":[{\"descricao\":\"DARF\\u001b[31m \\u202e2025\"}]}}}")
 	_, stderr, code = execCLI(t, "", "lucros", "informe", "aceitar", "termo-debitos", "--yes")
@@ -177,5 +205,12 @@ func TestInformeAceiteAdministrador(t *testing.T) {
 	_, stderr, code := execCLI(t, "", "lucros", "informe", "decidir", "--nao-regularizar-pendencia", "--yes")
 	if code != ExitError || !strings.Contains(stderr, "sessão é de administrador") {
 		t.Errorf("código %d: %s", code, stderr)
+	}
+}
+
+func TestDebitoCompactoPreservaNumeros(t *testing.T) {
+	got := debitoCompacto(json.RawMessage(`{"codigo": 12345678901234567890, "valor": 1.10, "nome": "DARF"}`))
+	if got != `{"codigo":12345678901234567890,"nome":"DARF","valor":1.10}` {
+		t.Errorf("debitoCompacto perdeu precisão ou formato: %s", got)
 	}
 }

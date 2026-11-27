@@ -243,8 +243,10 @@ ctbz lucros informe decidir --ano 2025 --regularizar-pendencia
   ela não pede mais aceite, `enviado` (com um aviso) quando ainda pede ou a releitura falha;
   nos dois casos o aceite já foi enviado e não deve ser repetido. `aceitar termo-debitos` registra a ciência dos débitos
   federais e só é enviado quando o informe aponta débitos. A CLI não exibe o texto do termo
-  (leia no painel), mostra cada débito como JSON com a marca "formato não confirmado" e
-  recusa o envio se a API apontar débitos sem listá-los.
+  (leia no painel) e mostra cada débito como JSON com a marca "formato não confirmado". Se a API
+  apontar débitos sem listá-los, a CLI avisa e pede uma confirmação a mais: digitar `confirmo` no
+  terminal ou `--aceitar-sem-lista` (obrigatório com `--yes`); o resultado em JSON/CSV traz o campo
+  `aviso`.
 - `decidir` registra a escolha diante das restrições:
   - `--regularizar-pendencia`: a CLI mostra o formulário de atendimento onde enviar os
     documentos;
