@@ -36,10 +36,12 @@ ctbz prolabore definir --socio ID --tipo inteligente [--minimo 1518,00]
   vigentes que a Contabilizei informa; `personalizado` aceita qualquer valor a partir do
   salário mínimo; `inteligente` deixa a Contabilizei calcular o valor todo mês, com um piso
   opcional (`--minimo`).
-- Como no painel, ao mudar para outro tipo com no máximo um sócio na gestão inteligente, o
-  pedido tira a empresa dela (mesmo que esse sócio seja outro); com mais sócios nela, a
-  empresa continua. A CLI avisa no resumo. Se a Contabilizei não informar quantos sócios estão
-  na gestão inteligente, a CLI não envia nada: use o painel.
+- Ao mudar de `inteligente` para outro tipo sendo o último sócio na gestão inteligente, o
+  pedido tira a empresa dela; com mais sócios nela, a empresa continua. A CLI avisa no resumo.
+  Quem já está em outro tipo nunca tira a empresa da gestão inteligente: o único sócio nela pode
+  ser outro, e a regra do painel para esse caso não foi confirmada por captura. Se a
+  Contabilizei não informar quantos sócios estão na gestão inteligente nem o tipo atual do sócio,
+  a CLI não envia nada: use o painel.
 - **A partir de quando vale**: a Contabilizei decide pela data (a CLI não manda competência).
   Até o fechamento do mês (em geral o dia 25) a mudança vale para o mês atual; depois, para o
   seguinte. Quando o painel diz que o mês está fechado, a CLI avisa.

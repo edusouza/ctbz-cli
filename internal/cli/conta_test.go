@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
+
+	"github.com/edusouza/ctbz-cli/internal/api"
 )
 
 const pathDadosLogin = "/api/plataforma/conta-usuario/init"
@@ -163,5 +167,49 @@ func TestContaOTPDesdeOPedido(t *testing.T) {
 	want := fmt.Sprint(now().Add(-folgaOTPConta).Unix())
 	if code != ExitOK || err != nil || strings.TrimSpace(string(b)) != want {
 		t.Errorf("código %d, since %q (quero %s), %v\n%s", code, b, want, err, stderr)
+	}
+}
+
+// A sessão que expira durante a espera do código não pode disparar um novo login (e outro
+// e-mail de código) depois de o pedido da conta já ter sido feito (#835).
+func TestContaSessaoExpiraEntreOsEnvios(t *testing.T) {
+	var expirada atomic.Bool
+	var writes []string
+	var mu sync.Mutex
+	dados := fixture(t, "dados_login")
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		mu.Lock()
+		defer mu.Unlock()
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/plataforma/"+api.PathAppBar:
+			if expirada.Load() {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			io.WriteString(w, "{}")
+		case r.Method == http.MethodGet && r.URL.Path == pathDadosLogin:
+			io.WriteString(w, dados)
+		case r.Method == http.MethodGet:
+			http.NotFound(w, r)
+		default:
+			body, _ := io.ReadAll(r.Body)
+			writes = append(writes, r.Method+" "+r.URL.Path+" "+string(body))
+			expirada.Store(true) // a sessão vence logo depois do pedido do código
+			io.WriteString(w, `{"tempo":60}`)
+		}
+	}))
+	t.Cleanup(srv.Close)
+	withSession(t, srv)
+	t.Setenv("CTBZ_OTP_CMD", "echo 999999") // um re-login seria tentado com ele
+
+	_, stderr, code := execCLI(t, "", "conta", "alterar", "--email", "a@example.com", "--telefone", "11987654321", "--otp-cmd", "echo 111111", "--yes")
+	if code != ExitError || len(writes) != 1 {
+		t.Fatalf("código %d, %q\n%s", code, writes, stderr)
+	}
+	if strings.Contains(stderr, "refazendo login") {
+		t.Errorf("refez o login no meio do fluxo:\n%s", stderr)
+	}
+	if !strings.Contains(stderr, "o código foi pedido, mas a sessão expirou") || !strings.Contains(stderr, "ctbz login") {
+		t.Errorf("erro sem orientação:\n%s", stderr)
 	}
 }
