@@ -164,6 +164,38 @@ func TestRotinasReclassificarValorNulo(t *testing.T) {
 	}
 }
 
+// #427: um id pedido que o init não devolve é erro antes de qualquer escrita, em vez de concluir
+// só parte das pendências com código 0; ids repetidos viram um só.
+func TestRotinasReclassificarIDsAusentesOuRepetidos(t *testing.T) {
+	const pathDois = "/api/plataforma/documentos/reclassificar/init?id=1000000000000501&id=1000000000000999"
+	for _, modo := range []string{"--yes", "--dry-run"} {
+		t.Run("ausente "+modo, func(t *testing.T) {
+			f := newEscritaFake(t, map[string]string{pathDois: pendenciaReclass(t, nil)})
+			_, stderr, code := execCLI(t, "", "rotinas", "reclassificar", "1000000000000501", "1000000000000999",
+				"--classificacao", "Aporte de Capital", modo)
+			if code != ExitError || len(f.writes) != 0 || !strings.Contains(stderr, "1000000000000999") || !strings.Contains(stderr, "nada foi enviado") {
+				t.Errorf("código %d, escritas %v, %q", code, f.writes, stderr)
+			}
+		})
+	}
+	t.Run("ausente sem --classificacao", func(t *testing.T) {
+		f := newEscritaFake(t, map[string]string{pathDois: pendenciaReclass(t, nil)})
+		out, stderr, code := execCLI(t, "", "rotinas", "reclassificar", "1000000000000501", "1000000000000999")
+		if code != ExitError || out != "" || !strings.Contains(stderr, "1000000000000999") || len(f.writes) != 0 {
+			t.Errorf("código %d, %q, %q", code, out, stderr)
+		}
+	})
+	t.Run("repetido", func(t *testing.T) {
+		f := newEscritaFake(t, map[string]string{pathReclassInit: pendenciaReclass(t, nil),
+			"/api/plataforma/dashboard/v2/central-rotinas": `{"pendencias":{},"rotinas":[],"rotinasContabilizei":[]}`})
+		_, stderr, code := execCLI(t, "", "rotinas", "reclassificar", "1000000000000501", "1000000000000501",
+			"--classificacao", "Aporte de Capital", "--yes")
+		if code != ExitOK || len(f.writes) != 1 || strings.Count(f.writes[0], `"idPendencia"`) != 1 {
+			t.Errorf("código %d, escritas %v, %s", code, f.writes, stderr)
+		}
+	})
+}
+
 // #435: um nome que casa com mais de uma opção é erro de uso; o id ou o nome escrito
 // exatamente como na lista escolhe sem ambiguidade.
 func TestRotinasReclassificarNomeAmbiguo(t *testing.T) {

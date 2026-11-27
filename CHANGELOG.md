@@ -9,6 +9,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz rotinas reclassificar` deduplica os ids e recusa, antes de qualquer escrita, ids que a
+  Contabilizei não devolveu, em vez de concluir só parte das pendências com código 0 (#427).
 - `ctbz razao` mostra cada lançamento no dia certo: a data vem como epoch à meia-noite UTC e a CLI
   a convertia para o fuso local, mostrando um dia antes (#1048).
 - `ctbz razao` com período de mais de um mês deixa de repetir lançamentos: a API devolve o exercício
