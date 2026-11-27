@@ -97,7 +97,8 @@ ctbz acoes --limite 0 -o csv    # todas, para planilha
 | Resultado | Significado |
 |---|---|
 | `enviada` | a Contabilizei aceitou (HTTP 2xx) |
-| `recusada` | a Contabilizei respondeu com erro; nada foi alterado |
+| `recusada` | a Contabilizei recusou (HTTP 4xx, ou 560 de regra de negócio); nada foi alterado |
+| `incerta` | a resposta foi 3xx ou 5xx (502, 504…): a escrita pode ter sido aplicada; confira antes de repetir |
 | `sem resposta` | a conexão falhou: a escrita pode ou não ter sido aplicada |
 
 O arquivo só cresce; apague-o ou arquive-o quando quiser recomeçar.

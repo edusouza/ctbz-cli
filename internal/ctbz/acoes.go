@@ -14,9 +14,17 @@ import (
 // Resultados possíveis de uma escrita registrada.
 const (
 	ResultadoEnviada     = "enviada"      // HTTP 2xx
-	ResultadoRecusada    = "recusada"     // resposta HTTP de erro
+	ResultadoRecusada    = "recusada"     // resposta HTTP 4xx (ou 560): nada foi alterado
+	ResultadoIncerta     = "incerta"      // resposta 3xx ou 5xx: a escrita pode ter sido aplicada
 	ResultadoSemResposta = "sem resposta" // falha de conexão: resultado incerto
 )
+
+// StatusIncerto diz se uma resposta HTTP de erro não prova que a escrita foi recusada: 3xx
+// (redirecionamento) e 5xx (erro de servidor ou gateway, como 502 e 504) podem vir depois de
+// a escrita ser aplicada. O 560 é a recusa pela regra de negócio da Contabilizei.
+func StatusIncerto(status int) bool {
+	return (status >= 300 && status < 400) || (status >= 500 && status != 560)
+}
 
 // Acao é uma escrita enviada à Contabilizei, como registrada em acoes.jsonl. Não guarda
 // corpo de requisição nem de resposta, que podem ter dados pessoais ou senhas.

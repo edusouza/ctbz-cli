@@ -9,6 +9,8 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Corrigido
 
+- `ctbz acoes` registra respostas 3xx e 5xx (502, 504…) como `incerta`, e não mais como `recusada`:
+  nelas a escrita pode ter sido aplicada. O guia e `ctbz acoes --help` explicam a diferença (#313).
 - `usuarios desativar` recusa convite pendente (`CONVITE_ENVIADO`), como o `ativar`, em vez de
   enviar um `PUT` de efeito desconhecido que a CLI não consegue desfazer; ajuda e guia não
   prometem mais reversibilidade para convites (#819).

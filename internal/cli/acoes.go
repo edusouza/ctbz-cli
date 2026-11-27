@@ -24,8 +24,9 @@ O registro fica em $CTBZ_HOME/acoes.jsonl (permissão 0600), uma linha JSON por 
 enviada, inclusive as que falharam. Simulações (--dry-run) não entram. Corpos de
 requisição e de resposta nunca são gravados, nem o conteúdo dos arquivos.
 
-Resultado: "enviada" (HTTP 2xx), "recusada" (resposta de erro) ou "sem resposta" (falha de
-conexão: a escrita pode ou não ter sido aplicada).`,
+Resultado: "enviada" (HTTP 2xx), "recusada" (HTTP 4xx ou 560: nada foi alterado), "incerta"
+(HTTP 3xx ou 5xx, como 502 e 504: a escrita pode ter sido aplicada) ou "sem resposta" (falha de
+conexão: a escrita pode ou não ter sido aplicada). Confira antes de repetir uma escrita incerta.`,
 		Example: `  ctbz acoes
   ctbz acoes --desde 2026-10-01
   ctbz acoes --limite 0 -o csv > acoes.csv`,
