@@ -7,6 +7,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz documentos enviar` recusa, antes de escrever (também no `--dry-run`), a pendência sem id, sem tipo ou, no extrato de aplicação e no informe de rendimentos de investimentos, sem conta bancária, em vez de enviar `null` ou vazio no corpo (#981).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da
