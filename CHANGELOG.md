@@ -9,6 +9,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Corrigido
 
+- `empresa credenciais atualizar`: o id da empresa tirado da sessão (quando o formulário não
+  traz `id`) vai byte a byte, sem passar por `float64`, que arredondaria ids acima de 2^53; e a
+  falta de id (nem no formulário nem na sessão) é detectada antes de ler o código, o usuário e a
+  senha, sem consumir a entrada padrão (#827).
 - `contas-bancarias adicionar` e `editar`: `--banco` que é o id de um banco e o código de outro
   agora dá erro de uso listando os dois, em vez de escolher o do id em silêncio; e `editar` sem
   `--banco` nunca lê o código da conta como id de banco (#870).
