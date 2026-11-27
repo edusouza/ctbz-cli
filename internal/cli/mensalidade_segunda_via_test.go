@@ -20,6 +20,7 @@ const idFaturaTeste = "0f8fad5b-d9cb-469f-a165-70867728950e"
 // faturas públicas do checkout. publica muda a resposta da v2.
 type segundaViaFake struct {
 	acao    string // botaoAdicionalAcao (JSON: "null" ou "\"request:…\"")
+	botao   string // botaoAcao (JSON); padrão: um redirect
 	publica string
 	status  int // status das faturas públicas
 	geradas atomic.Int32
@@ -27,14 +28,14 @@ type segundaViaFake struct {
 
 func newSegundaViaFake(t *testing.T) *segundaViaFake {
 	t.Helper()
-	f := &segundaViaFake{acao: `"request:dashboard/nova-fatura/202610"`, publica: fixture(t, "fatura_publica"), status: http.StatusOK}
+	f := &segundaViaFake{acao: `"request:dashboard/nova-fatura/202610"`, botao: `"redirect:/painel-de-controle/#/pagar-com-cartao"`, publica: fixture(t, "fatura_publica"), status: http.StatusOK}
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case "/api/plataforma/" + api.PathAppBar:
 			io.WriteString(w, "{}")
 		case "/api/plataforma/dashboard/fatura":
 			io.WriteString(w, `{"total":1234.56,"competencia":"Outubro, 2026","status":"Vencida","vencimento":null,"mensagemAdicional":"",`+
-				`"possuiCartaoPrincipal":false,"botaoTitulo":"Pagar com cartão","botaoAcao":"redirect:/painel-de-controle/#/pagar-com-cartao",`+
+				`"possuiCartaoPrincipal":false,"botaoTitulo":"Pagar com cartão","botaoAcao":`+f.botao+`,`+
 				`"botaoAdicionalTitulo":"Gerar segunda via s/ juros","botaoAdicionalAcao":`+f.acao+`}`)
 		case "/api/plataforma/dashboard/v1/mensalidade":
 			io.WriteString(w, fixture(t, "mensalidade"))
@@ -133,18 +134,41 @@ func TestSegundaViaDryRunEConfirmacao(t *testing.T) {
 }
 
 func TestSegundaViaSemAcaoNoCard(t *testing.T) {
-	for _, c := range []struct{ acao, want string }{
-		{"null", "o card da mensalidade não oferece segunda via agora (a fatura pode estar em dia; veja ctbz mensalidade)"},
-		{`"redirect:/painel-de-controle/#/x"`, "o card da mensalidade não oferece segunda via agora"},
-		{`"request:https://example.com/x"`, "o card da mensalidade pediu um caminho inesperado"},
-		{`"request:dashboard/../conta"`, "o card da mensalidade pediu um caminho inesperado"},
+	const naoOferece = "o card da mensalidade não oferece segunda via agora"
+	const inesperado = "o card da mensalidade pediu um caminho inesperado"
+	for _, c := range []struct{ acao, botao, want string }{
+		{"null", "", naoOferece + " (a fatura pode estar em dia; veja ctbz mensalidade)"},
+		{`"redirect:/painel-de-controle/#/x"`, "", naoOferece},
+		{`"request:https://example.com/x"`, "", inesperado},
+		{`"request:dashboard/../conta"`, "", inesperado},
+		// Outra operação do BFF não pode ser enviada sob o resumo de segunda via (#929).
+		{`"request:dashboard/conta"`, "", inesperado},
+		{`"request:dashboard/pagar-com-cartao"`, "", inesperado},
+		{"null", `"request:dashboard/pagar-com-cartao"`, inesperado},
+		{"null", `"request:dashboard/conta"`, inesperado},
+		// Sem o mês no caminho o ID e o rótulo do resumo ficariam desconhecidos.
+		{`"request:dashboard/nova-fatura"`, "", inesperado},
+		{`"request:dashboard/nova-fatura/202613"`, "", inesperado},
 	} {
 		f := newSegundaViaFake(t)
 		f.acao = c.acao
+		if c.botao != "" {
+			f.botao = c.botao
+		}
 		_, stderr, code := execCLI(t, "", "mensalidade", "segunda-via", "--yes")
 		if code != ExitError || f.geradas.Load() != 0 || !strings.Contains(stderr, c.want) {
-			t.Errorf("%s: código %d, %d geradas\n%s", c.acao, code, f.geradas.Load(), stderr)
+			t.Errorf("%s / %s: código %d, %d geradas\n%s", c.acao, c.botao, code, f.geradas.Load(), stderr)
 		}
+	}
+}
+
+// Com a fatura em dia só o botaoAcao traz uma ação; se for a segunda via legítima, vale.
+func TestSegundaViaAceitaABotaoAcaoComOMes(t *testing.T) {
+	f := newSegundaViaFake(t)
+	f.acao, f.botao = "null", `"request:dashboard/nova-fatura/202610"`
+	_, stderr, code := execCLI(t, "", "mensalidade", "segunda-via", "--yes")
+	if code != ExitOK || f.geradas.Load() != 1 {
+		t.Errorf("código %d, %d geradas\n%s", code, f.geradas.Load(), stderr)
 	}
 }
 
