@@ -20,6 +20,9 @@ lançamentos e se o registro de ações (ctbz acoes) não tem uma importação d
 há menos de 30 minutos. Senão, recusa e manda conferir com ctbz extratos.
 CSV, XLS e os outros formatos de importação manual também são recusados sobre um extrato
 importado, para a importação manual não duplicar os lançamentos, e não aceitam --substituir.
+OFX fora da lista do banco também não aceita --substituir (código 2, nada enviado): a exclusão
+do extrato atual vem antes do envio, que a Contabilizei pode recusar; exclua antes com
+ctbz extratos excluir e importe sem --substituir.
 
 OFX e PDF passam pela tela "Importar extrato":
 
@@ -34,7 +37,11 @@ OFX e PDF passam pela tela "Importar extrato":
 O resultado traz saldo_ultimo_dia (o enviado), saldo_lido (o que a Contabilizei leu, nulo se
 não leu) e saldo_divergente (verdadeiro quando foi o de --saldo-final no lugar de um lido
 diferente ou ausente). Com --substituir, o saldo lido só é conhecido depois da exclusão: se
-ele divergir e a importação parar, o extrato antigo já foi excluído.
+ele divergir e a importação parar, o extrato antigo já foi excluído. Por isso, com --substituir e
+--saldo-final, a CLI antes confere o saldo (LEDGERBAL) do próprio OFX: se ele for diferente de
+--saldo-final, recusa (código 2) sem excluir nem enviar nada. A confirmação sempre avisa que a
+exclusão vem antes do envio e que, se o arquivo ou o saldo forem recusados, o mês fica sem
+extrato (e, com lançamentos, sem as classificações).
 
 Os demais formatos que o banco aceita (CSV, XLS…) vão pela Central de Documentos, como no
 painel: um envio só, sem conclusão nem saldo, e a Contabilizei importa o arquivo manualmente,

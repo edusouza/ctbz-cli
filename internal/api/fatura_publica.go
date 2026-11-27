@@ -30,13 +30,18 @@ func ParseAcaoCard(s string) (AcaoCard, bool) {
 	return AcaoCard{Tipo: tipo, Valor: valor}, true
 }
 
-// caminhoSegundaVia aceita só um caminho relativo do BFF, sem esquema, query nem "..": é o
-// servidor que o escolhe, e a CLI não deve seguir para outro lugar.
-var caminhoSegundaVia = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9/_-]*$`)
+// caminhoSegundaVia é o único caminho aceito: "dashboard/nova-fatura/AAAAMM". O servidor o
+// escolhe, e a CLI não deve enviar outra operação do BFF sob o resumo "gerar segunda via"
+// (ADR-0018: o resumo confirmado descreve o que é enviado).
+var caminhoSegundaVia = regexp.MustCompile(`^dashboard/nova-fatura/\d{6}$`)
 
-// CaminhoSegundaVia valida o valor de uma ação "request:" do card.
+// CaminhoSegundaVia valida o valor de uma ação "request:" do card: só a segunda via, sempre
+// com um mês válido, que dá o ID e o rótulo do resumo.
 func CaminhoSegundaVia(valor string) (string, error) {
-	if !caminhoSegundaVia.MatchString(valor) || strings.Contains(valor, "..") || strings.Contains(valor, "//") {
+	if !caminhoSegundaVia.MatchString(valor) {
+		return "", fmt.Errorf("o card da mensalidade pediu um caminho inesperado: %q", valor)
+	}
+	if _, _, ok := CompetenciaSegundaVia(valor); !ok {
 		return "", fmt.Errorf("o card da mensalidade pediu um caminho inesperado: %q", valor)
 	}
 	return valor, nil

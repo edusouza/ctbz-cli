@@ -44,10 +44,12 @@ func htmlParaTexto(doc string) string {
 }
 
 // semControle tira caracteres de controle (exceto quebra de linha e tabulação), para que um
-// texto vindo da API não mande sequências de escape ao terminal.
+// texto vindo da API não mande sequências de escape ao terminal. Também tira os caracteres de
+// formatação do Unicode (categoria Cf, como os de direção U+202E e U+2066), que podem
+// reordenar ou esconder o que o usuário lê antes de confirmar.
 func semControle(s string) string {
 	return strings.Map(func(r rune) rune {
-		if r == '\n' || r == '\t' || !unicode.IsControl(r) {
+		if r == '\n' || r == '\t' || !(unicode.IsControl(r) || unicode.Is(unicode.Cf, r)) {
 			return r
 		}
 		return -1

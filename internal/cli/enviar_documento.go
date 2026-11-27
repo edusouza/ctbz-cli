@@ -222,7 +222,7 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 				return usageError{errors.New("extrato de movimentação se envia com ctbz extratos importar")}
 			}
 			for _, d := range ds {
-				if _, _, err := d.MesAno(); err != nil {
+				if err := d.Validar(); err != nil {
 					return err
 				}
 			}

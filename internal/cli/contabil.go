@@ -136,7 +136,7 @@ func newRazaoCmd() *cobra.Command {
 contrapartida, débito, crédito e o saldo acumulado no exercício depois do lançamento.
 
 O período vai de --de até --ate (meses AAAA-MM; padrão: o mês atual), no máximo 24 meses;
-a API devolve um mês por vez. --conta filtra pelo código da conta (ex.: 1.01.01.01.00) ou
+a API devolve o exercício até o mês pedido, e a CLI filtra o período. --conta filtra pelo código da conta (ex.: 1.01.01.01.00) ou
 por um prefixo dele (ex.: 1.01 para todo o ativo circulante).`,
 		Example: `  ctbz razao --de 2026-01 --ate 2026-09
   ctbz razao --conta 1.01.01.01.00 --de 2026-07 -o csv`,
@@ -151,15 +151,21 @@ por um prefixo dele (ex.: 1.01 para todo o ativo circulante).`,
 				return err
 			}
 			s := streamsOf(cmd)
+			// A API devolve o exercício de janeiro até o mês pedido: uma chamada por ano, no último
+			// mês do período naquele ano, e os lançamentos são filtrados para o período.
+			ini, fim := meses[0], meses[len(meses)-1].AddDate(0, 1, 0)
 			var contas []api.ContaRelatorio
-			for _, m := range meses {
+			for i, m := range meses {
+				if i+1 < len(meses) && meses[i+1].Year() == m.Year() {
+					continue
+				}
 				cs, err := api.BuscarRelatorio(cmd.Context(), sessionGetter{s}, api.PathRazao(m.Year(), int(m.Month())))
 				if err != nil {
 					return err
 				}
 				contas = append(contas, cs...)
 			}
-			return output.Write(s.out, f, razaoList(contas, conta))
+			return output.Write(s.out, f, razaoList(contas, conta, ini, fim))
 		},
 	}
 	cmd.Flags().StringVar(&de, "de", "", "primeiro mês, AAAA-MM (padrão: o mês atual)")
@@ -168,7 +174,8 @@ por um prefixo dele (ex.: 1.01 para todo o ativo circulante).`,
 	return cmd
 }
 
-func razaoList(contas []api.ContaRelatorio, prefixo string) *output.List {
+// razaoList lista os lançamentos com data em [ini, fim) (UTC), das contas com o prefixo.
+func razaoList(contas []api.ContaRelatorio, prefixo string, ini, fim time.Time) *output.List {
 	l := &output.List{Columns: []output.Column{
 		{Key: "data", Header: "Data"},
 		{Key: "conta", Header: "Conta"},
@@ -184,11 +191,14 @@ func razaoList(contas []api.ContaRelatorio, prefixo string) *output.List {
 			continue
 		}
 		for _, lc := range c.ListaLancamento {
+			if d := time.UnixMilli(lc.Data); d.Before(ini) || !d.Before(fim) {
+				continue
+			}
 			var contrapartida any
 			if cp := lc.ContaContrapartida; cp != nil {
 				contrapartida = nilIfEmpty(strings.TrimSpace(cp.ID + " " + cp.Descricao))
 			}
-			l.Append(dateFromMillis(lc.Data), c.ID, c.Descricao, output.Text(lc.Descricao), contrapartida,
+			l.Append(dateFromMillisUTC(lc.Data), c.ID, c.Descricao, output.Text(lc.Descricao), contrapartida,
 				moneyOrNil(lc.Debito), moneyOrNil(lc.Credito), moneyOrNil(lc.SaldoExercicio))
 		}
 	}
