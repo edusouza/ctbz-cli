@@ -9,6 +9,9 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz extratos importar --substituir` recusa (código 2, nada enviado) um OFX fora da lista de
+  formatos do banco: o aviso de que a Contabilizei pode recusar o arquivo não protegia o extrato
+  e as classificações, já excluídos antes do envio. Exclua antes com `ctbz extratos excluir` (#1016).
 - `ctbz extratos importar --substituir` mostra banco, agência e conta no resumo da confirmação,
   e não só o id numérico da conta (#887).
 - `ctbz extratos importar` para antes de enviar qualquer coisa quando a resposta de validação da

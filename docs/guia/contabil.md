@@ -131,7 +131,10 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
 - **OFX fora da lista do banco** passa com um aviso no stderr, porque a tela "Importar extrato"
   do painel aceita OFX de qualquer banco. O Banco Inter, por exemplo, lista só PDF, XLS e CSV, e
   o painel importou o OFX dele (26/10/2026). Se o arquivo não servir, a recusa vem da
-  Contabilizei no envio, com o motivo.
+  Contabilizei no envio, com o motivo. **Não vale com `--substituir`** (código 2, nada enviado):
+  a exclusão do extrato atual vem antes do envio, que pode ser recusado e deixaria o mês sem
+  extrato e sem classificações. Exclua antes com `ctbz extratos excluir` e importe sem
+  `--substituir`.
 - **CSV, XLS e outros formatos que o banco aceita** (fora OFX e PDF) vão pela Central de
   Documentos, como no painel, porque a tela "Importar extrato" só aceita OFX e PDF. É um envio só,
   sem conferência de saldo. A Contabilizei importa o arquivo **manualmente, em até 45 dias**. O

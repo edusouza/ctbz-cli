@@ -38,7 +38,7 @@ dispensa importação) cujo mês `M` falta:
    Até lá a competência continua `PENDENTE` em `ctbz extratos`, o que é o esperado: **nunca
    reenvie** um arquivo com `importacao: "manual"` (a fila manual recebe duplicados), nem depois
    de uma falha de conexão; peça ao usuário para conferir na Central de Documentos do painel.
-   CSV/XLS não aceitam `--substituir` e são recusados sobre um extrato já importado.
+   CSV/XLS e OFX fora da lista do banco não aceitam `--substituir` e são recusados sobre um extrato já importado.
 2. Num OFX, leia o saldo final no próprio arquivo (`<LEDGERBAL>` → `<BALAMT>`) e mostre ao
    usuário. Só siga para o `--yes` depois do "ok" dele sobre esse valor: a conferência vem
    antes da importação, não depois.

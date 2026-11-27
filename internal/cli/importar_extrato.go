@@ -85,6 +85,9 @@ lançamentos e se o registro de ações (ctbz acoes) não tem uma importação d
 há menos de 30 minutos. Senão, recusa e manda conferir com ctbz extratos.
 CSV, XLS e os outros formatos de importação manual também são recusados sobre um extrato
 importado, para a importação manual não duplicar os lançamentos, e não aceitam --substituir.
+OFX fora da lista do banco também não aceita --substituir (código 2, nada enviado): a exclusão
+do extrato atual vem antes do envio, que a Contabilizei pode recusar; exclua antes com
+ctbz extratos excluir e importe sem --substituir.
 
 OFX e PDF passam pela tela "Importar extrato":
 
@@ -194,6 +197,14 @@ enviar nada.`,
 			existente, aguardando, err := competenciaImportavel(ctx, s, g, alvo, substituir, manual)
 			if err != nil {
 				return err
+			}
+			if existente != nil && aviso != "" {
+				// A exclusão vem antes do envio, e o aviso admite que a Contabilizei pode recusar o
+				// arquivo: não se arrisca o extrato e as classificações por um envio incerto (#1016).
+				return usageError{fmt.Errorf("--substituir não vale para este arquivo: o banco desta conta não lista OFX entre os formatos aceitos, "+
+					"a Contabilizei pode recusar o envio, e a exclusão do extrato atual (com as classificações) vem antes. "+
+					"Se quer arriscar, exclua antes com `ctbz extratos excluir` e importe o OFX sem --substituir, em dois passos, "+
+					"ou use um formato que o banco liste")}
 			}
 			lista, err := api.BuscarContasBancarias(ctx, g)
 			if err != nil {
