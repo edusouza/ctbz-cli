@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Corrigido
+
+- `contas-bancarias adicionar` e `editar`: `--banco` que é o id de um banco e o código de outro
+  agora dá erro de uso listando os dois, em vez de escolher o do id em silêncio; e `editar` sem
+  `--banco` nunca lê o código da conta como id de banco (#870).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da

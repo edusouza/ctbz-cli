@@ -5,8 +5,9 @@ Lista os bancos aceitos no cadastro de contas bancárias
 Lista os bancos aceitos no cadastro de contas (id, código e nome); use o id ou o código em --banco.
 
 Alguns códigos se repetem (ex.: dois bancos com 341) ou têm uma versão internacional (077 e
-077-1). --banco escolhe o código exato; se mais de um banco tiver o código, a CLI lista os
-candidatos e pede o id.
+077-1). --banco escolhe o id ou o código exato; se o valor corresponder a mais de um banco
+(mesmo código em vários, ou o id de um que é o código de outro), a CLI lista os candidatos e
+pede o id.
 
 ## Uso
 
