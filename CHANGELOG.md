@@ -9,6 +9,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz impostos parcelamento contratar` só confere quantidade e valores de `parcelas[]` na PGFN
+  e só da opção escolhida: Simples e especializado (que não enviam `parcelas[]`) e uma outra
+  opção incompleta deixam de bloquear a contratação. O resumo do Simples usa o
+  `resumoParcelamento` em vez de `parcelas[0]` (#968).
 - `ctbz conta alterar` e `ctbz conta senha` não refazem mais o login se a sessão expirar enquanto
   se espera o código: o envio final falha com "o código foi pedido, mas a sessão expirou… rode
   `ctbz login`", em vez de disparar outro e-mail de código que invalidava o pedido (#835).
