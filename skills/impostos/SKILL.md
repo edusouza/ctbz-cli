@@ -51,10 +51,10 @@ Tributo federal pago com atraso tem multa de 0,33% ao dia (até 20%) mais juros 
 1. Se ela estiver "a confirmar", marque como não paga: `ctbz impostos confirmar ID --nao-paguei`.
 2. Veja o recálculo, sem enviar nada: `ctbz impostos recalcular ID -o json`. Mostre
    `valor_original`, `valor_recalculo` (estimado), `data_recomendada`, `datas_indisponiveis` e
-   `cobrar_recalculo` (se o serviço entra na mensalidade).
+   `cobrar_recalculo` (se o serviço entra na mensalidade; `null` = o painel não informou, trate como possível cobrança).
 3. Escolhida a data (não passada, fora de `datas_indisponiveis`; sugira `data_recomendada`):
    `ctbz impostos recalcular ID --vencimento AAAA-MM-DD`. **Risco alto**: serviço em geral
-   cobrado e sem cancelamento. A nova guia sai em até 3 dias úteis, avisada por e-mail.
+   cobrado e sem cancelamento. A nova guia sai em até 3 dias úteis, avisada por e-mail. Na resposta, `vencimento` só vem se o painel confirmou; `vencimento_pedido` é o pedido e `status` a guia relida.
 
 ## Explicar o cálculo
 

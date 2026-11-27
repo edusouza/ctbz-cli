@@ -91,6 +91,25 @@ func TestImpostosRecalcularValorDesconhecido(t *testing.T) {
 	}
 }
 
+// Sem confirmação do novo vencimento na resposta, a CLI não pode apresentar a data pedida como
+// se fosse a do painel: relê a guia e separa o que foi pedido do que foi confirmado (#464).
+func TestImpostosRecalcularSemConfirmacaoDoVencimento(t *testing.T) {
+	f := recalculoFake(t)
+	f.resposta = `{"modalSucessoRecalculo":true}`
+	out, stderr, code := execCLI(t, "", "impostos", "recalcular", "1000000000000001", "--vencimento", "2026-10-20", "--yes", "-o", "json")
+	if code != ExitOK || len(f.writes) != 1 {
+		t.Fatalf("código %d, escritas %v\n%s", code, f.writes, stderr)
+	}
+	for _, w := range []string{`"vencimento": null`, `"vencimento_pedido": "2026-10-20"`, `"status": [`, `"RECALCULADA"`} {
+		if !strings.Contains(out, w) {
+			t.Errorf("saída sem %s:\n%s", w, out)
+		}
+	}
+	if !strings.Contains(stderr, "não confirmou o novo vencimento") {
+		t.Errorf("stderr sem aviso:\n%s", stderr)
+	}
+}
+
 func TestImpostosRecalcularValidacoes(t *testing.T) {
 	for _, tc := range []struct {
 		args []string

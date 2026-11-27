@@ -9,6 +9,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ### Fixed
 
+- `ctbz impostos recalcular` relê a guia depois do pedido e deixa de apresentar o vencimento
+  pedido como confirmado: `vencimento` (novo vencimento) só sai preenchido se o painel o
+  confirmou, `vencimento_pedido` traz a data pedida e `status` o estado relido da guia; sem
+  confirmação, um aviso no stderr explica (#464).
 - `ctbz impostos recalcular` mostra "valor estimado indisponível" na confirmação quando o painel
   não traz `valorRecalculo`, em vez de "R$ 0,00" (#462).
 - `ctbz impostos recalcular` não afirma mais que o recálculo é gratuito quando a resposta do

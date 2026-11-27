@@ -142,15 +142,37 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			if err != nil || !enviado {
 				return err
 			}
-			novo := req.DataVencimento
-			if resp != nil && resp.Guia.DataVencimento != "" {
-				novo = resp.Guia.DataVencimento
+			// O que o painel confirmou (resposta do PUT ou, na falta dela, a guia relida se o
+			// vencimento mudou) fica separado do que foi pedido.
+			confirmado := ""
+			if resp != nil {
+				confirmado = resp.Guia.DataVencimento
 			}
+			situacao := "solicitado"
+			var status any
+			if nova, err := api.BuscarGuia(ctx, g, id); err != nil {
+				fmt.Fprintln(s.err, "aviso: pedido enviado, mas não foi possível reler a guia:", err)
+				situacao = "enviado"
+			} else {
+				status = nonNil(nova.Status)
+				if confirmado == "" && nova.Vencimento != guia.Vencimento {
+					confirmado = nova.Vencimento
+				}
+			}
+			var novo any
+			if confirmado != "" {
+				d, _ := output.ParseDate(confirmado)
+				novo = d
+			} else {
+				fmt.Fprintf(s.err, "aviso: o painel não confirmou o novo vencimento; o pedido foi para %s e a guia segue com o vencimento anterior até o recálculo.\n", req.DataVencimento)
+			}
+			pedido, _ := output.ParseDate(req.DataVencimento)
 			fmt.Fprintln(s.err, "A guia será recalculada em até 3 dias úteis; a Contabilizei avisa por e-mail quando o novo valor estiver disponível.")
-			d, _ := output.ParseDate(novo)
-			rec := resultadoEscrita("recalcular", "solicitado", id).
+			rec := resultadoEscrita("recalcular", situacao, id).
 				Add("guia", "Guia", nomeGuia(guia)).
-				Add("vencimento", "Novo vencimento", d).
+				Add("status", "Status", status).
+				Add("vencimento_pedido", "Vencimento pedido", pedido).
+				Add("vencimento", "Novo vencimento", novo).
 				Add("cobrado", "Cobrado na mensalidade", boolOrNil(ini.CobrarRecalculo))
 			return output.Write(s.out, f, rec)
 		},
