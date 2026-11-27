@@ -7,6 +7,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz lucros distribuir` recusa, sem escrever, a distribuição que lista um sócio com id `0`, negativo, fracionário ou texto não numérico (antes ia como `idSocio` na escrita), e `1` e `" 1"` contam como o mesmo sócio (#987).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da
