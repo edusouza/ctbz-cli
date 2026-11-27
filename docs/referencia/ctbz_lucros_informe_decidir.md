@@ -11,7 +11,10 @@ Registra a decisão que o painel pede diante das restrições do informe de rend
 
 As duas primeiras exigem pendência documental e a última, débitos federais (ver ctbz lucros
 informe restricoes). Risco alto: decide se haverá distribuição de lucros isenta e não dá para
-desfazer. O padrão de --ano é o ano anterior. Aceita --yes e --dry-run.
+desfazer. A CLI não sabe se a decisão já foi registrada: repetir ou inverter é possível e pode
+sobrescrever a anterior. Depois do envio relê as restrições e informa em "releitura": "enviado"
+(restrição ainda listada) é o resultado normal; "decidida" (restrição sumiu) é só um sinal fraco.
+O padrão de --ano é o ano anterior. Aceita --yes e --dry-run.
 
 ## Uso
 

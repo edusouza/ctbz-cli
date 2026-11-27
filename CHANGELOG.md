@@ -53,6 +53,14 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   destaque e exige uma confirmação a mais (digitar `confirmo` ou `--aceitar-sem-lista`, que é
   obrigatória com `--yes`), em vez de bloquear o aceite sem saída; o resultado em JSON/CSV
   traz o campo `aviso` (#796).
+- `ctbz lucros informe decidir` e `aceitar termo-debitos` relêem as restrições depois do envio e
+  informam o resultado no campo `releitura` (`pendencia_persiste`, `pendencia_resolvida` ou
+  `falhou`). `situacao` `enviado` é o resultado normal: o painel continua listando a restrição
+  depois do registro, então ela persistir não é problema; `decidida`/`aceita` (a restrição
+  sumiu) é só um sinal fraco, a confirmar no painel. Se a releitura falha, avisa sem erro de
+  saída. A confirmação avisa que repetir ou inverter é possível e pode sobrescrever, e a de
+  `--regularizar-pendencia` mostra o fluxo e o custo do serviço adicional (#794). A CLI continua
+  sem bloquear repetição ou inversão: a API não expõe se a decisão já foi registrada.
 - `ctbz impostos recalcular` mostra "valor estimado indisponível" na confirmação quando o painel
   não traz `valorRecalculo`, em vez de "R$ 0,00" (#462).
 - `ctbz impostos recalcular` não afirma mais que o recálculo é gratuito quando a resposta do

@@ -171,12 +171,62 @@ func TestInformeDecidir(t *testing.T) {
 	if code != ExitOK || len(f.writes) != 1 || f.writes[0] != `POST /api/plataforma/informerendimento/aceite/2025 {"tipoAceite":"REGULARIZAR_PENDENCIA_DOCUMENTAL"}` {
 		t.Fatalf("código %d, %q\n%s", code, f.writes, stderr)
 	}
-	if !strings.Contains(stderr, "ticket_form_id=360000562139") || out != "acao,situacao,id,decisao\ndecidir,enviado,2025,regularizar-pendencia\n" {
+	if !strings.Contains(stderr, "ticket_form_id=360000562139") || out != "acao,situacao,id,decisao,releitura\ndecidir,enviado,2025,regularizar-pendencia,pendencia_persiste\n" {
 		t.Errorf("stderr:\n%s\nsaída:\n%s", stderr, out)
 	}
 	_, stderr, code = execCLI(t, "", "lucros", "informe", "decidir", "--nao-distribuir-lucros", "--yes")
 	if code != ExitOK || len(f.writes) != 2 || !strings.Contains(f.writes[1], `"IR_NAO_DISTRIBUIR_LUCROS"`) || !strings.Contains(stderr, "sem distribuição de lucros isenta") {
 		t.Errorf("não distribuir: código %d, %q\n%s", code, f.writes, stderr)
+	}
+}
+
+const restricoesResolvidas = `{"restricoes":{"debitosFederais":{"possuiPendencia":false},
+"pendenciaDocumental":{"possuiPendencia":false,"fluxoRegularizacao":"NAO_NECESSARIO"}},"processoReabertura":{"status":"NENHUM"}}`
+
+func TestInformeDecidirMostraCustoEAvisaRepeticao(t *testing.T) {
+	// A confirmação mostra o fluxo e o custo, e avisa que repetir ou inverter é possível (#794).
+	informeFake(t, restricoesComTudo)
+	_, stderr, code := execCLI(t, "", "lucros", "informe", "decidir", "--regularizar-pendencia", "--yes")
+	if code != ExitOK || !strings.Contains(stderr, "REABERTURA_BALANCO") || !strings.Contains(stderr, "R$ 300,00") || !strings.Contains(stderr, "pode sobrescrever") {
+		t.Errorf("código %d:\n%s", code, stderr)
+	}
+}
+
+func TestInformeDecidirReleitura(t *testing.T) {
+	for _, tc := range []struct {
+		nome      string
+		onWrite   func(f *escritaFake)
+		situacao  string
+		releitura string
+		msg       string
+	}{
+		// A restrição sumir é sinal fraco; o normal (#794) é ela continuar listada.
+		{"estado mudou", func(f *escritaFake) { f.gets[pathRestricoes] = restricoesResolvidas }, "decidida", "pendencia_resolvida", "sinal fraco"},
+		{"estado igual", nil, "enviado", "pendencia_persiste", "o que é esperado"},
+		{"releitura falha", func(f *escritaFake) { delete(f.gets, pathRestricoes) }, "enviado", "falhou", "aviso: decisão enviada, mas não foi possível reler"},
+	} {
+		f := informeFake(t, restricoesComTudo)
+		f.onWrite = tc.onWrite
+		out, stderr, code := execCLI(t, "", "lucros", "informe", "decidir", "--nao-regularizar-pendencia", "--yes", "-o", "csv")
+		want := "acao,situacao,id,decisao,releitura\ndecidir," + tc.situacao + ",2025,nao-regularizar-pendencia," + tc.releitura + "\n"
+		if code != ExitOK || len(f.writes) != 1 || out != want || !strings.Contains(stderr, tc.msg) {
+			t.Errorf("%s: código %d, %d escritas, %q\n%s", tc.nome, code, len(f.writes), out, stderr)
+		}
+	}
+}
+
+func TestInformeAceitarTermoDebitosReleitura(t *testing.T) {
+	f := informeFake(t, restricoesComTudo)
+	f.onWrite = func(f *escritaFake) { delete(f.gets, pathRestricoes) }
+	out, stderr, code := execCLI(t, "", "lucros", "informe", "aceitar", "termo-debitos", "--yes", "-o", "csv")
+	if code != ExitOK || len(f.writes) != 1 || out != "acao,situacao,id,releitura\naceitar termo-debitos,enviado,2025,falhou\n" || !strings.Contains(stderr, "aviso: aceite enviado, mas não foi possível reler") {
+		t.Errorf("releitura com erro: código %d, %d escritas, %q\n%s", code, len(f.writes), out, stderr)
+	}
+	f = informeFake(t, restricoesComTudo)
+	f.onWrite = func(f *escritaFake) { f.gets[pathRestricoes] = restricoesResolvidas }
+	out, _, code = execCLI(t, "", "lucros", "informe", "aceitar", "termo-debitos", "--yes", "-o", "csv")
+	if code != ExitOK || out != "acao,situacao,id,releitura\naceitar termo-debitos,aceita,2025,pendencia_resolvida\n" {
+		t.Errorf("estado mudou: código %d, %q", code, out)
 	}
 }
 
