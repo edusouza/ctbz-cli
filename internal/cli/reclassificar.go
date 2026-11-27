@@ -57,6 +57,35 @@ func conferirPendenciaReclassificacao(p api.PendenciaReclassificacao) error {
 	return nil
 }
 
+// deduplicar tira os valores repetidos de ids, mantendo a ordem da primeira ocorrência.
+func deduplicar(ids []string) []string {
+	vistos := map[string]bool{}
+	out := make([]string, 0, len(ids))
+	for _, id := range ids {
+		if id = strings.TrimSpace(id); !vistos[id] {
+			vistos[id] = true
+			out = append(out, id)
+		}
+	}
+	return out
+}
+
+// idsAusentes devolve os ids pedidos que o init não devolveu: concluir só parte das pendências
+// com código 0 faria um script achar que todas foram resolvidas.
+func idsAusentes(pedidos []string, ps []api.PendenciaReclassificacao) []string {
+	devolvidos := map[string]bool{}
+	for _, p := range ps {
+		devolvidos[p.IDTexto()] = true
+	}
+	var ausentes []string
+	for _, id := range pedidos {
+		if !devolvidos[id] {
+			ausentes = append(ausentes, id)
+		}
+	}
+	return ausentes
+}
+
 // opcoesReclassificacao devolve as opções da pendência que casam com --classificacao, na ordem
 // de precedência: o id; senão o nome exato; senão o nome sem diferenciar maiúsculas. Um id
 // sempre escolhe uma só opção, mesmo que outra se chame assim.
@@ -167,12 +196,23 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 			s := streamsOf(cmd)
 			ctx := cmd.Context()
 			g := sessionGetter{s}
+			args = deduplicar(args)
 			ps, err := api.BuscarReclassificacoes(ctx, g, args)
 			if err != nil {
 				return err
 			}
 			if len(ps) == 0 {
 				return fmt.Errorf("nenhuma pendência de reclassificação encontrada para %s", strings.Join(args, ", "))
+			}
+			if classificacao != "" {
+				for _, p := range ps {
+					if err := conferirPendenciaReclassificacao(p); err != nil {
+						return err
+					}
+				}
+			}
+			if ausentes := idsAusentes(args, ps); len(ausentes) > 0 {
+				return fmt.Errorf("a Contabilizei não devolveu a pendência de reclassificação %s; nada foi enviado, confira os ids em ctbz rotinas", strings.Join(ausentes, ", "))
 			}
 			if classificacao == "" {
 				return output.Write(s.out, f, opcoesReclassificacaoList(ps))
@@ -181,9 +221,6 @@ Pede confirmação (--yes em scripts) e aceita --dry-run.`,
 			var resumo []string
 			nomes := make([]string, len(ps))
 			for i, p := range ps {
-				if err := conferirPendenciaReclassificacao(p); err != nil {
-					return err
-				}
 				if itens[i], nomes[i], err = escolherReclassificacao(p, classificacao, socio); err != nil {
 					return err
 				}

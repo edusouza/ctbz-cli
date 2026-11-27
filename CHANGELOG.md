@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz rotinas reclassificar` deduplica os ids e recusa, antes de qualquer escrita, ids que a
+  Contabilizei não devolveu, em vez de concluir só parte das pendências com código 0 (#427).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da
