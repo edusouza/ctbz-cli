@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"strings"
@@ -113,9 +114,42 @@ func (d DocumentoPendente) MesAno() (mes, ano int, err error) {
 	return c.Mes, c.Ano, nil
 }
 
+// TipoInformeRendimentosInvestimentos é, com o extrato de aplicação, o documento que só se
+// envia dizendo de qual conta bancária ele é.
+const TipoInformeRendimentosInvestimentos = "INFORME_DE_RENDIMENTO_INVESTIMENTOS"
+
+// vazioJSON diz se um id do init veio ausente, null ou texto vazio.
+func vazioJSON(r json.RawMessage) bool {
+	t := strings.TrimSpace(string(r))
+	return t == "" || t == "null" || t == `""`
+}
+
+// Validar recusa a pendência que viraria um corpo com id, tipo, competência ou conta nulos:
+// campo ausente vira erro de leitura, não escrita (ADR-0021). Os tipos de investimento exigem
+// a conta bancária; os demais (ex.: ESTOQUE) seguem sem ela.
+func (d DocumentoPendente) Validar() error {
+	p := d.Propriedades
+	if vazioJSON(p.IDPendencia) {
+		return errors.New("a Contabilizei listou uma pendência de documento sem id; use o painel")
+	}
+	if strings.TrimSpace(d.Tipo) == "" {
+		return fmt.Errorf("a pendência %s veio sem tipo de documento; use o painel", p.IDTexto())
+	}
+	if _, _, err := d.MesAno(); err != nil {
+		return err
+	}
+	if (d.Tipo == TipoExtratoAplicacao || d.Tipo == TipoInformeRendimentosInvestimentos) && vazioJSON(p.IDContaBancaria) {
+		return fmt.Errorf("a pendência %s veio sem conta bancária; use o painel", p.IDTexto())
+	}
+	return nil
+}
+
 func competencia(d DocumentoPendente) (competenciaJSON, error) {
-	mes, ano, err := d.MesAno()
-	return competenciaJSON{Mes: mes, Ano: ano}, err
+	if err := d.Validar(); err != nil {
+		return competenciaJSON{}, err
+	}
+	mes, ano, _ := d.MesAno()
+	return competenciaJSON{Mes: mes, Ano: ano}, nil
 }
 
 func jsonTexto(v any) string {
