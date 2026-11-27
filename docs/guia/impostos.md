@@ -97,7 +97,7 @@ ctbz impostos recalcular 1000000000000001 --vencimento 2026-10-20
 ```
 
 - **Risco alto:** o recálculo é um serviço adicional, em geral cobrado na próxima
-  mensalidade (a saída mostra `cobrar_recalculo`), e não dá para cancelar o pedido. No
+  mensalidade (a saída mostra `cobrar_recalculo`; `null` quer dizer que o painel não informou, e a CLI trata como possível cobrança), e não dá para cancelar o pedido. No
   terminal, a CLI pede para digitar `confirmo`.
 - A guia precisa estar marcada como não paga (`ctbz impostos confirmar ID --nao-paguei`) e o
   painel precisa oferecer o recálculo para ela. Datas indisponíveis e passadas são recusadas.

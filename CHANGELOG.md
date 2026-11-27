@@ -7,6 +7,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Fixed
+
+- `ctbz impostos recalcular` não afirma mais que o recálculo é gratuito quando a resposta do
+  painel não traz `cobrarRecalculo`: `cobrar_recalculo` e `cobrado` saem `null` e a consequência
+  avisa que o painel não informou se será cobrado (#463).
+
 ## [1.9.6] - 2026-11-26
 
 `ctbz notas` falhava assim que o período tinha uma nota, porque a Contabilizei mudou o formato da
