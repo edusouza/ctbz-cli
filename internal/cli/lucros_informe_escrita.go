@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -94,6 +96,7 @@ func newInformeCartaCmd() *cobra.Command {
 
 func newInformeAceitarCmd() *cobra.Command {
 	var ano int
+	var aceitarSemLista bool
 	cmd := &cobra.Command{
 		Use:   "aceitar carta-responsabilidade|termo-debitos",
 		Short: "Aceita a carta de responsabilidade ou o termo de débitos federais do informe",
@@ -103,8 +106,9 @@ func newInformeAceitarCmd() *cobra.Command {
                           confirmação; também em ctbz lucros informe carta)
   termo-debitos           a ciência dos débitos federais da empresa, quando há débitos
 
-Risco alto: são declarações sem desfazer, e a CLI pede "confirmo". O padrão de --ano é o ano
-anterior. Aceita --yes e --dry-run.`,
+Risco alto: são declarações sem desfazer, e a CLI pede "confirmo". Se o informe aponta débitos
+mas a API não os lista, a CLI avisa e pede um segundo "confirmo" (ou --aceitar-sem-lista, que
+é obrigatório com --yes). O padrão de --ano é o ano anterior. Aceita --yes e --dry-run.`,
 		Example: `  ctbz lucros informe aceitar carta-responsabilidade --ano 2025
   ctbz lucros informe aceitar termo-debitos --ano 2025`,
 		Args:      exactArgs(1, "carta-responsabilidade ou termo-debitos"),
@@ -133,10 +137,18 @@ anterior. Aceita --yes e --dry-run.`,
 				fmt.Fprintf(s.err, "O informe de %d não aponta débitos federais; não há termo a aceitar.\n", ano)
 				return output.Write(s.out, f, resultadoEscrita(acao, "sem mudança", fmt.Sprint(ano)))
 			}
-			fmt.Fprintf(s.err, "Débitos federais apontados no informe de %d: %d\n", ano, len(df.Debitos))
-			for _, d := range df.Debitos {
-				fmt.Fprintln(s.err, "  "+semControle(string(d)))
+			semLista := len(df.Debitos) == 0
+			if semLista {
+				if err := confirmarSemLista(cmd, ano); err != nil {
+					return err
+				}
+			} else {
+				fmt.Fprintf(s.err, "Débitos federais apontados no informe de %d: %d (formato não confirmado)\n", ano, len(df.Debitos))
+				for _, d := range df.Debitos {
+					fmt.Fprintln(s.err, "  "+debitoCompacto(d))
+				}
 			}
+			fmt.Fprintln(s.err, "aviso: a CLI não exibe o texto do termo; leia-o no painel antes de confirmar.")
 			op := operacao{Risco: riscoAlto, ID: fmt.Sprint(ano), Resumo: fmt.Sprintf("Declarar ciência dos débitos federais no informe de %d", ano),
 				Consequencia: "Registra que você está ciente dos débitos federais da empresa; não dá para desfazer."}
 			enviado, err := escrever(cmd, op, func(snd api.Sender) error {
@@ -145,12 +157,59 @@ anterior. Aceita --yes e --dry-run.`,
 			if err != nil || !enviado {
 				return err
 			}
-			return output.Write(s.out, f, resultadoEscrita(acao, "enviado", fmt.Sprint(ano)))
+			rec := resultadoEscrita(acao, "enviado", fmt.Sprint(ano))
+			if semLista {
+				rec.Add("aviso", "Aviso", avisoSemListaDebitos)
+			}
+			return output.Write(s.out, f, rec)
 		},
 	}
 	cmd.Flags().IntVar(&ano, "ano", 0, "ano-calendário (padrão: o ano anterior)")
+	cmd.Flags().BoolVar(&aceitarSemLista, "aceitar-sem-lista", false, "aceita o termo mesmo que a API não liste os débitos (obrigatório com --yes nesse caso)")
 	addWriteFlags(cmd)
 	return cmd
+}
+
+// avisoSemListaDebitos acompanha o aceite quando a API aponta débitos federais sem listá-los.
+const avisoSemListaDebitos = "a API apontou débitos federais, mas não os listou; o aceite foi enviado sem a CLI mostrar quais são"
+
+// confirmarSemLista trata o caso em que o informe aponta débitos federais e a API não os lista
+// (formato nunca capturado, #796). Em vez de recusar sem saída, avisa e exige uma confirmação
+// a mais, além da do risco alto: --aceitar-sem-lista, ou digitar "confirmo" num terminal.
+// Com --dry-run só avisa.
+func confirmarSemLista(cmd *cobra.Command, ano int) error {
+	s := streamsOf(cmd)
+	fmt.Fprintf(s.err, "aviso: a API apontou débitos federais no informe de %d, mas não os listou; a CLI não consegue mostrar quais são.\n", ano)
+	if dry, _ := cmd.Flags().GetBool("dry-run"); dry {
+		return nil
+	}
+	if ok, _ := cmd.Flags().GetBool("aceitar-sem-lista"); ok {
+		return nil
+	}
+	if !s.interactive {
+		return usageError{fmt.Errorf("o informe de %d aponta débitos federais, mas a API não listou os débitos; confira no painel e, para aceitar assim mesmo, repita com --aceitar-sem-lista", ano)}
+	}
+	fmt.Fprintf(s.err, "Para aceitar sem ver os débitos, digite %q: ", palavraConfirmo)
+	if lerResposta(s) != palavraConfirmo {
+		return errCancelada
+	}
+	return nil
+}
+
+// debitoCompacto mostra um débito (formato nunca capturado) como JSON de uma linha, sem
+// caracteres de controle nem de direção do Unicode.
+func debitoCompacto(d json.RawMessage) string {
+	dec := json.NewDecoder(bytes.NewReader(d))
+	dec.UseNumber() // números grandes ou com casas não passam por float64
+	var v any
+	if err := dec.Decode(&v); err != nil {
+		return semControle(string(d))
+	}
+	b, err := json.Marshal(v)
+	if err != nil {
+		return semControle(string(d))
+	}
+	return semControle(string(b))
 }
 
 // aceitarCartaInforme mostra a carta, pede confirmação e relê se ela ainda precisa de aceite.

@@ -13,6 +13,12 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   pendente chega sem texto legível (`html` ausente, vazio ou só tags); antes pedia a confirmação
   sobre um "texto acima" que não existia (#798). Os textos da API também perdem os caracteres de
   formatação do Unicode (como U+202E), além dos de controle.
+- `ctbz lucros informe aceitar termo-debitos` avisa que a CLI não exibe o texto do termo, mostra
+  cada débito como JSON compacto (números sem perder precisão) com a marca "formato não
+  confirmado". Quando o informe aponta débitos federais mas a API não os lista, avisa com
+  destaque e exige uma confirmação a mais (digitar `confirmo` ou `--aceitar-sem-lista`, que é
+  obrigatória com `--yes`), em vez de bloquear o aceite sem saída; o resultado em JSON/CSV
+  traz o campo `aviso` (#796).
 - `ctbz impostos recalcular` mostra "valor estimado indisponível" na confirmação quando o painel
   não traz `valorRecalculo`, em vez de "R$ 0,00" (#462).
 - `ctbz impostos recalcular` não afirma mais que o recálculo é gratuito quando a resposta do
