@@ -48,7 +48,7 @@ func TestExtratosImportarSubstituirVazio(t *testing.T) {
 	if f.writes[0] != "DELETE "+pathExcluirExtrato9+" " || !strings.Contains(f.writes[1], "enviar/bucket") || !strings.Contains(f.writes[2], "eventoUploadExtrato") {
 		t.Errorf("ordem das escritas: excluir, enviar, concluir:\n%q", f.writes)
 	}
-	if !strings.Contains(stderr, "Substituir o extrato de 09/2026 da conta 7 (atual: 0 lançamentos) pelo arquivo extrato.pdf (PDF, 13 bytes) (risco médio)") {
+	if !strings.Contains(stderr, "Substituir o extrato de 09/2026 da conta 7 (Banco agência 1 conta 12345-6) (atual: 0 lançamentos) pelo arquivo extrato.pdf (PDF, 13 bytes) (risco médio)") {
 		t.Errorf("resumo:\n%s", stderr)
 	}
 	if !strings.Contains(out, `"substituiu_extrato": true`) || !strings.Contains(out, `"quantidade_lancamentos": 3`) || !strings.Contains(out, `"situacao_extrato": "IMPORTADO"`) {

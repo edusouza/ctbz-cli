@@ -199,10 +199,11 @@ enviar nada.`,
 			if err != nil {
 				return err
 			}
-			numeroConta := ""
+			numeroConta, descConta := "", ""
 			for _, cb := range lista.ContasBancarias {
 				if cb.ID == alvo.conta {
 					numeroConta = normalizarConta(cb.ContaCorrente)
+					descConta = descreverConta(semControle(cb.NomeBanco), semControle(cb.Agencia), semControle(cb.ContaCorrente))
 				}
 			}
 			if numeroConta == "" {
@@ -237,8 +238,8 @@ enviar nada.`,
 				if existente.lancamentos != nil {
 					atual = fmt.Sprintf("%d lançamentos", *existente.lancamentos)
 				}
-				op.Resumo = fmt.Sprintf("Substituir o extrato de %s da conta %d (atual: %s) pelo arquivo %s (%s, %s)",
-					mes, alvo.conta, atual, arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)))
+				op.Resumo = fmt.Sprintf("Substituir o extrato de %s da conta %d (%s) (atual: %s) pelo arquivo %s (%s, %s)",
+					mes, alvo.conta, descConta, atual, arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)))
 				// Excluir um extrato vazio não perde nada; com lançamentos, perde as classificações.
 				if !existente.vazio() {
 					op.Risco = riscoAlto
