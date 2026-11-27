@@ -20,6 +20,16 @@ func dateFromMillis(ms int64) output.Date {
 	return output.DateFromMillis(ms)
 }
 
+// dateFromMillisUTC é para campos que representam só uma data e vêm como epoch à meia-noite UTC
+// (ex.: lançamentos do razão): o dia é o do instante em UTC, sem converter para o fuso local.
+func dateFromMillisUTC(ms int64) output.Date {
+	if ms == 0 {
+		return output.Date{}
+	}
+	t := time.UnixMilli(ms).UTC()
+	return output.Date{Time: time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.Local)}
+}
+
 // diasEntre conta dias de calendário de a até b (negativo se b já passou).
 func diasEntre(a, b time.Time) int {
 	da := time.Date(a.Year(), a.Month(), a.Day(), 0, 0, 0, 0, time.UTC)

@@ -23,11 +23,21 @@ type SocioReclassificacao struct {
 	Nome    string `json:"nome"`
 }
 
-// OpcaoReclassificacao é uma classificação aceita para o lançamento da pendência.
+// OpcaoReclassificacao é uma classificação aceita para o lançamento da pendência. Socios é
+// ponteiro para distinguir a lista vazia (a opção não usa sócio) da chave ausente ou nula (o
+// formato mudou), que não pode virar um idSocio nulo no corpo (ADR-0021).
 type OpcaoReclassificacao struct {
-	IDClassificacao int64                  `json:"idClassificacao"`
-	Nome            string                 `json:"nome"`
-	Socios          []SocioReclassificacao `json:"socios" contract:"optional"`
+	IDClassificacao int64                   `json:"idClassificacao"`
+	Nome            string                  `json:"nome"`
+	Socios          *[]SocioReclassificacao `json:"socios" contract:"optional"`
+}
+
+// ListaSocios devolve os sócios da opção; vazia quando a lista está ausente ou nula.
+func (o OpcaoReclassificacao) ListaSocios() []SocioReclassificacao {
+	if o.Socios == nil {
+		return nil
+	}
+	return *o.Socios
 }
 
 // PendenciaReclassificacao é um item de PathReclassificarInit (ADR-0021).
