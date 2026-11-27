@@ -201,9 +201,9 @@ enviar nada.`,
 			if existente != nil && aviso != "" {
 				// A exclusão vem antes do envio, e o aviso admite que a Contabilizei pode recusar o
 				// arquivo: não se arrisca o extrato e as classificações por um envio incerto (#1016).
-				return usageError{fmt.Errorf("--substituir não vale para este arquivo: o banco desta conta não lista OFX entre os formatos aceitos, "+
-					"a Contabilizei pode recusar o envio, e a exclusão do extrato atual (com as classificações) vem antes. "+
-					"Se quer arriscar, exclua antes com `ctbz extratos excluir` e importe o OFX sem --substituir, em dois passos, "+
+				return usageError{fmt.Errorf("--substituir não vale para este arquivo: o banco desta conta não lista OFX entre os formatos aceitos, " +
+					"a Contabilizei pode recusar o envio, e a exclusão do extrato atual (com as classificações) vem antes. " +
+					"Se quer arriscar, exclua antes com `ctbz extratos excluir` e importe o OFX sem --substituir, em dois passos, " +
 					"ou use um formato que o banco liste")}
 			}
 			lista, err := api.BuscarContasBancarias(ctx, g)
