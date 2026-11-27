@@ -85,6 +85,9 @@ lançamentos e se o registro de ações (ctbz acoes) não tem uma importação d
 há menos de 30 minutos. Senão, recusa e manda conferir com ctbz extratos.
 CSV, XLS e os outros formatos de importação manual também são recusados sobre um extrato
 importado, para a importação manual não duplicar os lançamentos, e não aceitam --substituir.
+OFX fora da lista do banco também não aceita --substituir (código 2, nada enviado): a exclusão
+do extrato atual vem antes do envio, que a Contabilizei pode recusar; exclua antes com
+ctbz extratos excluir e importe sem --substituir.
 
 OFX e PDF passam pela tela "Importar extrato":
 
@@ -99,7 +102,11 @@ OFX e PDF passam pela tela "Importar extrato":
 O resultado traz saldo_ultimo_dia (o enviado), saldo_lido (o que a Contabilizei leu, nulo se
 não leu) e saldo_divergente (verdadeiro quando foi o de --saldo-final no lugar de um lido
 diferente ou ausente). Com --substituir, o saldo lido só é conhecido depois da exclusão: se
-ele divergir e a importação parar, o extrato antigo já foi excluído.
+ele divergir e a importação parar, o extrato antigo já foi excluído. Por isso, com --substituir e
+--saldo-final, a CLI antes confere o saldo (LEDGERBAL) do próprio OFX: se ele for diferente de
+--saldo-final, recusa (código 2) sem excluir nem enviar nada. A confirmação sempre avisa que a
+exclusão vem antes do envio e que, se o arquivo ou o saldo forem recusados, o mês fica sem
+extrato (e, com lançamentos, sem as classificações).
 
 Os demais formatos que o banco aceita (CSV, XLS…) vão pela Central de Documentos, como no
 painel: um envio só, sem conclusão nem saldo, e a Contabilizei importa o arquivo manualmente,
@@ -195,14 +202,23 @@ enviar nada.`,
 			if err != nil {
 				return err
 			}
+			if existente != nil && aviso != "" {
+				// A exclusão vem antes do envio, e o aviso admite que a Contabilizei pode recusar o
+				// arquivo: não se arrisca o extrato e as classificações por um envio incerto (#1016).
+				return usageError{fmt.Errorf("--substituir não vale para este arquivo: o banco desta conta não lista OFX entre os formatos aceitos, " +
+					"a Contabilizei pode recusar o envio, e a exclusão do extrato atual (com as classificações) vem antes. " +
+					"Se quer arriscar, exclua antes com `ctbz extratos excluir` e importe o OFX sem --substituir, em dois passos, " +
+					"ou use um formato que o banco liste")}
+			}
 			lista, err := api.BuscarContasBancarias(ctx, g)
 			if err != nil {
 				return err
 			}
-			numeroConta := ""
+			numeroConta, descConta := "", ""
 			for _, cb := range lista.ContasBancarias {
 				if cb.ID == alvo.conta {
 					numeroConta = normalizarConta(cb.ContaCorrente)
+					descConta = descreverConta(semControle(cb.NomeBanco), semControle(cb.Agencia), semControle(cb.ContaCorrente))
 				}
 			}
 			if numeroConta == "" {
@@ -211,6 +227,15 @@ enviar nada.`,
 			conteudo, err := os.ReadFile(args[0])
 			if err != nil {
 				return err
+			}
+			if existente != nil && formatoArq == "OFX" && saldoEsperado != nil {
+				// A divergência com o saldo lido pela Contabilizei só aparece depois do DELETE: o que o
+				// próprio arquivo diz dá para conferir antes, sem perder nada (#880).
+				if local, ok := saldoLocalOFX(conteudo); ok && local != 0 && local != *saldoEsperado {
+					return usageError{fmt.Errorf("o saldo do arquivo (%s) é diferente de --saldo-final (%s); nada foi excluído nem enviado. "+
+						"Confira o --saldo-final ou, se o certo é ele, exclua antes com `ctbz extratos excluir` e importe sem --substituir",
+						formatarCentavos(local), formatarCentavos(*saldoEsperado))}
+				}
 			}
 			store, err := ctbz.DefaultStore()
 			if err != nil {
@@ -237,8 +262,8 @@ enviar nada.`,
 				if existente.lancamentos != nil {
 					atual = fmt.Sprintf("%d lançamentos", *existente.lancamentos)
 				}
-				op.Resumo = fmt.Sprintf("Substituir o extrato de %s da conta %d (atual: %s) pelo arquivo %s (%s, %s)",
-					mes, alvo.conta, atual, arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)))
+				op.Resumo = fmt.Sprintf("Substituir o extrato de %s da conta %d (%s) (atual: %s) pelo arquivo %s (%s, %s)",
+					mes, alvo.conta, descConta, atual, arquivo.Arquivo, formatoArq, tamanhoArquivo(len(conteudo)))
 				// Excluir um extrato vazio não perde nada; com lançamentos, perde as classificações.
 				if !existente.vazio() {
 					op.Risco = riscoAlto
@@ -247,10 +272,16 @@ enviar nada.`,
 			}
 			if saldoEsperado != nil {
 				op.Resumo += fmt.Sprintf(", com saldo do último dia %s (--saldo-final)", formatarCentavos(*saldoEsperado))
-				if existente != nil && op.Risco == riscoAlto {
+				if existente != nil {
 					op.Consequencia += " O saldo lido pela Contabilizei só é conhecido depois da exclusão: se ele for diferente de --saldo-final e " +
 						"não zero, a importação para com o extrato atual já excluído."
 				}
+			}
+			if existente != nil {
+				// Uma confirmação cobre duas escritas: a exclusão não espera o novo arquivo ser aceito (#880).
+				// Vai no resumo, que aparece em qualquer risco, com --yes e no --dry-run.
+				op.Resumo += "; a exclusão vem antes do envio: se a Contabilizei recusar o arquivo ou o saldo não for confirmado, " +
+					"o mês fica sem extrato até um novo arquivo entrar"
 			}
 			if aguardando {
 				// O resumo é o que a confirmação sempre mostra, inclusive com --yes.
@@ -662,8 +693,19 @@ func validarContaUpload(ini *api.UploadExtratoInit, idConta int64, formato strin
 			if c.ID != idConta {
 				continue
 			}
+			if !c.StatusInformado {
+				return "", errors.New("a Contabilizei não informou se a conta é integrada (campo statusIntegracao ausente na resposta); " +
+					"nada foi enviado: tente de novo e, se continuar, abra uma issue")
+			}
 			if c.StatusIntegracao == "INTEGRADA" {
 				return "", errors.New("a conta é integrada: a importação é feita automaticamente, não precisa enviar extrato")
+			}
+			if b.FormatosDisponiveisUpload == nil {
+				return "", errors.New("a Contabilizei não informou os formatos que o banco da conta aceita (campo formatosDisponiveisUpload ausente na resposta); " +
+					"nada foi enviado: tente de novo e, se continuar, abra uma issue")
+			}
+			if len(b.FormatosDisponiveisUpload) == 0 && formato != "OFX" {
+				return "", usageError{fmt.Errorf("o banco desta conta não lista nenhum formato de extrato; este arquivo é .%s", strings.ToLower(formato))}
 			}
 			for _, fmtOK := range b.FormatosDisponiveisUpload {
 				if strings.EqualFold(fmtOK, formato) {
@@ -697,7 +739,11 @@ func juntarComOu(itens []string) string {
 func periodoLiberado(p *api.PermiteImportacao, alvo extratoAlvo) error {
 	for _, per := range p.PeriodosDeImportacao {
 		anterior := per.Ano < alvo.ano() || (per.Ano == alvo.ano() && per.Mes < alvo.mesNum())
-		if per.TemLancamentoPendente && anterior {
+		if anterior && per.TemLancamentoPendente == nil {
+			return fmt.Errorf("a Contabilizei não informou se há importação pendente em %02d/%d (campo temLancamentoPendente ausente na resposta); "+
+				"nada foi enviado: tente de novo e, se continuar, abra uma issue", per.Mes, per.Ano)
+		}
+		if anterior && *per.TemLancamentoPendente {
 			msg := per.Mensagem
 			if msg == "" {
 				msg = "importe os períodos anteriores primeiro"
@@ -775,6 +821,31 @@ func saldoConfirmado(ctx context.Context, snd api.Sender, s streams, g api.Gette
 		return saldoEnviado{}, errors.New("saldo não confirmado (o arquivo foi enviado, mas a importação não foi concluída)")
 	}
 	return saldoEnviado{valor: *lido, lido: lido}, nil
+}
+
+// saldoLocalOFX lê o saldo final do próprio OFX (LEDGERBAL/BALAMT), em centavos. Só serve para
+// recusar cedo um --saldo-final que contradiz o arquivo: false se o arquivo não traz um saldo
+// legível, e aí nada é concluído por ele.
+func saldoLocalOFX(ofx []byte) (int64, bool) {
+	s := string(ofx)
+	i := strings.Index(strings.ToUpper(s), "<LEDGERBAL>")
+	if i < 0 {
+		return 0, false
+	}
+	resto := s[i:]
+	j := strings.Index(strings.ToUpper(resto), "<BALAMT>")
+	if j < 0 {
+		return 0, false
+	}
+	resto = resto[j+len("<BALAMT>"):]
+	if k := strings.IndexAny(resto, "<\r\n"); k >= 0 {
+		resto = resto[:k]
+	}
+	c, err := parseValor(resto)
+	if err != nil {
+		return 0, false
+	}
+	return c, true
 }
 
 // saldoValor é o saldo enviado na conclusão (nil se nenhum foi enviado: PDF ou envio manual).

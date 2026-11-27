@@ -74,7 +74,7 @@ type RecalculoInit struct {
 	ValorRecalculo     *float64 `json:"valorRecalculo"`
 	DataRecomendada    string   `json:"dataRecomendada"` // AAAA-MM-DD
 	DatasIndisponiveis []string `json:"datasIndisponiveis" contract:"optional"`
-	CobrarRecalculo    bool     `json:"cobrarRecalculo"`
+	CobrarRecalculo    *bool    `json:"cobrarRecalculo" contract:"optional"` // nil = a resposta não informou
 	MotivoSemCobranca  string   `json:"motivoSemCobranca" contract:"optional"`
 }
 

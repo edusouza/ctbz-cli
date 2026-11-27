@@ -46,6 +46,7 @@ contrate pelo painel). Depois de pedida, o informe fica indisponível até a an�
 ctbz lucros informe carta --ano A          # texto completo: mostre ao usuário
 ctbz lucros informe aceitar carta-responsabilidade --ano A --dry-run
 ctbz lucros informe aceitar termo-debitos --ano A --dry-run   # só quando há débitos
+# a CLI não mostra o texto do termo; se a API não listar os débitos, avisa e exige confirmação extra (--aceitar-sem-lista)
 ```
 
 Mostre o texto, explique em duas linhas o que o sócio está declarando e só envie com

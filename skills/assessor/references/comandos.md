@@ -423,7 +423,7 @@ Campos do JSON de cada comando: [campos-json.md](campos-json.md).
 `ctbz lucros informe aceitar carta-responsabilidade|termo-debitos [flags]`: Aceita a carta de responsabilidade ou o termo de débitos federais do informe
 
 ```text
---ano int   ano-calendário (padrão: o ano anterior)
+--ano int             ano-calendário (padrão: o ano anterior)
 ```
 
 `ctbz lucros informe carta [flags]`: Mostra a carta de responsabilidade do informe de rendimentos de um ano
