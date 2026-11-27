@@ -128,6 +128,7 @@ func TestCaixaAdicionarValidacoes(t *testing.T) {
 		{[]string{"--pagamento", "--valor", "0", "--conta", "1000000000000012"}, "maior que zero"},
 		{[]string{"--pagamento", "--valor", "-5", "--conta", "1000000000000012"}, "maior que zero"},
 		{[]string{"--pagamento", "--valor", "10", "--conta", "1000000000000012", "--data", "2026-10-05"}, "futura"},
+		{[]string{"--pagamento", "--valor", "10", "--conta", "1000000000000012", "--competencia", "2026-11"}, "futura"}, // dia padrão futuro (#350)
 		{[]string{"--pagamento", "--valor", "10", "--conta", "1000000000000011"}, "não aceita para pagamento"},
 		{[]string{"--pagamento", "--valor", "10", "--conta", "1000000000000015"}, "não aceita"},    // exibir=false
 		{[]string{"--pagamento", "--valor", "10", "--conta", "5981343255101440"}, "não aceita"},    // vetada para pagamento
