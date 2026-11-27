@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"regexp"
@@ -107,6 +108,15 @@ Risco alto: credencial errada faz falhar a entrega de declarações (multas e ju
 			if err != nil {
 				return erroCredenciais(err)
 			}
+			// Resolve o id da empresa antes de ler qualquer segredo: sem id (nem no formulário
+			// nem na sessão) falha agora, sem consumir a entrada (#827).
+			var idEmpresa json.RawMessage
+			if e, err := empresaDaSessao(); err == nil {
+				idEmpresa = e.ID
+			}
+			if _, err := api.NovoFormularioDadosAcesso(d.FormularioBruto, idEmpresa, nil); err != nil {
+				return err
+			}
 			mudancas := map[string]string{}
 			var nomes []string
 			if simples {
@@ -147,10 +157,6 @@ Risco alto: credencial errada faz falhar a entrega de declarações (multas e ju
 				}
 				mudancas[c.campoUsuario], mudancas[c.campoSenha] = usuario, senha
 				nomes = append(nomes, "usuário e senha "+c.orgao)
-			}
-			var idEmpresa any
-			if e, err := empresaDaSessao(); err == nil {
-				idEmpresa = e.ID
 			}
 			corpo, err := api.NovoFormularioDadosAcesso(d.FormularioBruto, idEmpresa, mudancas)
 			if err != nil {

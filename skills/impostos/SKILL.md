@@ -113,7 +113,7 @@ Contratar (`ctbz impostos parcelamento contratar TIPO [--parcelas N]`) é **risc
 confissão de dívida, as parcelas são corrigidas pela Selic + 1% ao mês, o parcelamento cai se
 a 1ª parcela não for paga e não há como desfazer. Só com confirmação explícita, depois de
 mostrar a simulação escolhida. Acompanhe com `ctbz impostos parcelamentos`. Se a CLI recusar
-porque a simulação veio sem quantidade ou sem valores ("contrate pelo painel"), não insista:
+porque, na PGFN, a opção escolhida veio sem quantidade ou sem valores, ou porque a simulação cobra serviço adicional sem informar o valor ("contrate pelo painel"), não insista:
 oriente o usuário a contratar pelo painel.
 
 ## Pagamento recorrente

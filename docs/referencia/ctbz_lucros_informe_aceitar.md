@@ -8,8 +8,9 @@ Dá os aceites que o painel pede para liberar o informe de rendimentos de um ano
                           confirmação; também em ctbz lucros informe carta)
   termo-debitos           a ciência dos débitos federais da empresa, quando há débitos
 
-Risco alto: são declarações sem desfazer, e a CLI pede "confirmo". O padrão de --ano é o ano
-anterior. Aceita --yes e --dry-run.
+Risco alto: são declarações sem desfazer, e a CLI pede "confirmo". Se o informe aponta débitos
+mas a API não os lista, a CLI avisa e pede um segundo "confirmo" (ou --aceitar-sem-lista, que
+é obrigatório com --yes). O padrão de --ano é o ano anterior. Aceita --yes e --dry-run.
 
 ## Uso
 
@@ -27,9 +28,10 @@ ctbz lucros informe aceitar carta-responsabilidade|termo-debitos [flags]
 ## Flags
 
 ```
-      --ano int   ano-calendário (padrão: o ano anterior)
-      --dry-run   mostra a requisição que seria enviada, sem enviar
-  -y, --yes       envia sem pedir confirmação (obrigatório sem terminal)
+      --aceitar-sem-lista   aceita o termo mesmo que a API não liste os débitos (obrigatório com --yes nesse caso)
+      --ano int             ano-calendário (padrão: o ano anterior)
+      --dry-run             mostra a requisição que seria enviada, sem enviar
+  -y, --yes                 envia sem pedir confirmação (obrigatório sem terminal)
 ```
 
 ## Flags globais
