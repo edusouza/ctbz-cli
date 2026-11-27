@@ -12,6 +12,10 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 - `contas-bancarias adicionar` e `editar`: `--banco` que é o id de um banco e o código de outro
   agora dá erro de uso listando os dois, em vez de escolher o do id em silêncio; e `editar` sem
   `--banco` nunca lê o código da conta como id de banco (#870).
+- `contas-bancarias editar` sem `--banco`, para conta sem `bancoId`: só infere o banco se o
+  código exato e o nome da conta conferirem com um único banco da lista (antes aceitava um
+  candidato qualquer ou o primeiro de mesmo código e nome); senão pede `--banco`. O resumo da
+  confirmação mostra o banco inferido (#871).
 - `ctbz mensalidade segunda-via --pix` e `--linha` só imprimem o código se a fatura puder ser
   paga: fatura paga ou cancelada, sem valor ou vencida falham sem imprimir. Se a leitura do resumo
   v1 falhar, o código ainda sai, com aviso no stderr (#931).
