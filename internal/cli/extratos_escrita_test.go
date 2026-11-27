@@ -8,14 +8,17 @@ import (
 
 const (
 	pathLancsExtrato = "/api/plataforma/movimentacao-financeira/lancamento-usuario/paginado?idContaBancaria=7&ano=2026&mes=9&registroPorPagina=100&pagina=1"
-	pathInfoExtrato  = "/api/plataforma/movimentacao-financeira/extrato/info?idContaBancaria=7&ano=2026&mes=9"
+	// a leitura só termina numa página vazia (#867)
+	pathLancsExtrato2 = "/api/plataforma/movimentacao-financeira/lancamento-usuario/paginado?idContaBancaria=7&ano=2026&mes=9&registroPorPagina=100&pagina=2"
+	pathInfoExtrato   = "/api/plataforma/movimentacao-financeira/extrato/info?idContaBancaria=7&ano=2026&mes=9"
 )
 
 func extratoFake(t *testing.T) *escritaFake {
 	t.Helper()
 	return newEscritaFake(t, map[string]string{
-		pathLancsExtrato: fixture(t, "lancamentos_extrato"),
-		pathInfoExtrato:  fixture(t, "extrato_info"),
+		pathLancsExtrato:  fixture(t, "lancamentos_extrato"),
+		pathLancsExtrato2: "[]",
+		pathInfoExtrato:   fixture(t, "extrato_info"),
 		"/api/plataforma/movimentacao-financeira/contas-usuario/2026/9?origem=EXTRATO": fixture(t, "contas_usuario_competencia"),
 		"/api/plataforma/movimentacao-financeira/contasUsuario": `[{"id":1000000000000011,"descricao":"Receita de Serviços"},
 {"id":1000000000000012,"descricao":"Pagamento de Fornecedores"},{"id":6199733752168448,"descricao":"Distribuição de lucros"}]`,

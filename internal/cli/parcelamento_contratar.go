@@ -18,36 +18,54 @@ const avisosParcelamento = "Contratar é uma confissão de dívida perante a Rec
 	"Não dá para desfazer pela CLI nem pelo painel."
 
 // opcaoEscolhida acha a opção de parcelas: --parcelas (validado) ou a primeira, como o painel.
-// Uma opção sem quantidade, ou a escolhida sem os valores do resumo, é erro de leitura
-// (ADR-0021): a contratação não vai com quantidade 0 nem com valores desconhecidos.
-func opcaoEscolhida(sim *api.SimulacaoParcelamento, parcelas int) (*api.OpcaoParcelas, error) {
-	if len(sim.Parcelas) == 0 {
+// Só os tipos pgfn-* usam parcelas[] (é deles a quantidade enviada): nos demais não há opção e
+// parcelas[] incompleto não bloqueia. Na PGFN, só a opção escolhida precisa de quantidade e dos
+// valores do resumo; faltando, é erro de leitura (ADR-0021) e nada é contratado com quantidade
+// 0 nem com valores desconhecidos. As outras opções só entram na lista das aceitas.
+func opcaoEscolhida(sim *api.SimulacaoParcelamento, tipo string, parcelas int) (*api.OpcaoParcelas, error) {
+	if !strings.HasPrefix(tipo, "pgfn-") || len(sim.Parcelas) == 0 {
 		return nil, nil
 	}
+	const semQtd = "a simulação trouxe uma opção sem a quantidade de parcelas; contrate pelo painel"
 	var aceitas []string
 	for _, p := range sim.Parcelas {
-		if p.Quantidade <= 0 {
-			return nil, errors.New("a simulação trouxe uma opção sem a quantidade de parcelas; contrate pelo painel")
+		if p.Quantidade > 0 {
+			aceitas = append(aceitas, fmt.Sprint(p.Quantidade))
 		}
-		aceitas = append(aceitas, fmt.Sprint(p.Quantidade))
 	}
 	opcao := &sim.Parcelas[0]
 	if parcelas != 0 {
 		opcao = nil
 		for i, p := range sim.Parcelas {
-			if p.Quantidade == parcelas {
+			if p.Quantidade > 0 && p.Quantidade == parcelas {
 				opcao = &sim.Parcelas[i]
 				break
 			}
 		}
 		if opcao == nil {
+			if len(aceitas) == 0 {
+				return nil, errors.New(semQtd)
+			}
 			return nil, usageError{fmt.Errorf("%d parcelas não é uma opção; use %s (ver ctbz impostos parcelamento simular)", parcelas, strings.Join(aceitas, ", "))}
 		}
+	}
+	if opcao.Quantidade <= 0 {
+		return nil, errors.New(semQtd)
 	}
 	if opcao.ValorEntrada == nil || opcao.ValorDemaisParcelas == nil {
 		return nil, fmt.Errorf("a simulação não trouxe o valor das parcelas da opção de %d parcelas; contrate pelo painel", opcao.Quantidade)
 	}
 	return opcao, nil
+}
+
+// resumoSimples é o que o Simples contrata, segundo resumoParcelamento (não parcelas[0], que
+// não vai no pedido); nil se a simulação não trouxe o resumo completo.
+func resumoSimples(sim *api.SimulacaoParcelamento) *api.OpcaoParcelas {
+	r := sim.ResumoParcelamento
+	if r == nil || r.QuantidadeParcelas <= 0 || r.ValorEntrada == nil || r.ValorDemaisParcelas == nil {
+		return nil
+	}
+	return &api.OpcaoParcelas{Quantidade: r.QuantidadeParcelas, ValorEntrada: r.ValorEntrada, ValorDemaisParcelas: r.ValorDemaisParcelas}
 }
 
 func newParcelamentoContratarCmd() *cobra.Command {
@@ -91,7 +109,7 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			if sim == nil {
 				return errors.New("nenhum débito para parcelar")
 			}
-			opcao, err := opcaoEscolhida(sim, parcelas)
+			opcao, err := opcaoEscolhida(sim, tipo, parcelas)
 			if err != nil {
 				return err
 			}
@@ -105,13 +123,26 @@ Pede "confirmo" no terminal (--yes em scripts) e aceita --dry-run.`,
 			var qtd int
 			if opcao != nil {
 				qtd = opcao.Quantidade
+			} else if tipo == "simples-nacional" {
+				opcao = resumoSimples(sim) // só para mostrar: o pedido do Simples vai sem corpo
+			}
+			if opcao != nil {
 				resumo += fmt.Sprintf(": %d parcelas, primeira de %s e demais de %s", opcao.Quantidade,
 					formatarCentavos(centavosPtr(opcao.ValorEntrada)), formatarCentavos(centavosPtr(opcao.ValorDemaisParcelas)))
 			}
+			if sim.CobrarServicoAdicional && sim.ValorServicoAdicional == nil {
+				return errors.New("a simulação indica cobrança de serviço adicional sem informar o valor; contrate pelo painel")
+			}
 			consequencia := avisosParcelamento
-			if sim.CobrarServicoAdicional || sim.ValorEmissaoGuia != nil {
-				consequencia += fmt.Sprintf(" Cobrados na próxima mensalidade: serviço adicional %s; emissão de guia %s.",
-					valorOuNaoInformado(sim.ValorServicoAdicional), valorOuNaoInformado(sim.ValorEmissaoGuia))
+			var custos []string
+			if sim.CobrarServicoAdicional {
+				custos = append(custos, "serviço adicional "+valorOuNaoInformado(sim.ValorServicoAdicional))
+			}
+			if sim.ValorEmissaoGuia != nil { // ausente não é cobrança
+				custos = append(custos, "emissão de guia "+valorOuNaoInformado(sim.ValorEmissaoGuia))
+			}
+			if len(custos) > 0 {
+				consequencia += " Cobrados na próxima mensalidade: " + strings.Join(custos, "; ") + "."
 			}
 			if !strings.HasPrefix(tipo, "pgfn-") {
 				qtd = 0 // só a PGFN envia a quantidade

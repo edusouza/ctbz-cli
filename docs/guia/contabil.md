@@ -52,6 +52,8 @@ ctbz balanco reabrir --ano 2025
   a reabertura do balanço (`REABERTURA_BALANCO`) e não há outra reabertura em andamento.
 - Quando o período já foi fechado e a regularização é um **serviço adicional pago**, a CLI
   recusa e mostra o custo: contrate pelo painel.
+- A confirmação cita a cobrança do serviço (o valor, quando a API informa; senão, que o painel
+  pode cobrar). A CLI nunca exercitou esse envio numa conta real, então não sabe se o fluxo cobra.
 - Risco alto e **sem desfazer**: o informe de rendimentos fica indisponível até a análise da
   Contabilizei, e a distribuição de lucros do ano depende dela. Uma sessão de administrador é
   recusada pela Contabilizei.
@@ -75,7 +77,9 @@ Data        Conta          Descrição da conta  Histórico       Contrapartida 
 
 - Um lançamento por linha, com a conta de contrapartida e o saldo acumulado da conta no
   exercício depois do lançamento.
-- A API devolve um mês por vez; a CLI consulta cada mês do período (até 24).
+- A API devolve o exercício de janeiro até o mês pedido; a CLI faz uma consulta por ano do período
+  (até 24 meses) e mostra só os lançamentos de `--de` até `--ate`, cada um uma vez.
+- A data é a do lançamento (a API a manda como meia-noite UTC; a CLI não a converte para o fuso local).
 
 ## Caixa do mês
 
@@ -131,7 +135,14 @@ Saldo do último dia lido pela Contabilizei: R$ 1.234,56. Confere com o extrato?
 - **OFX fora da lista do banco** passa com um aviso no stderr, porque a tela "Importar extrato"
   do painel aceita OFX de qualquer banco. O Banco Inter, por exemplo, lista só PDF, XLS e CSV, e
   o painel importou o OFX dele (26/10/2026). Se o arquivo não servir, a recusa vem da
-  Contabilizei no envio, com o motivo.
+  Contabilizei no envio, com o motivo. **Não vale com `--substituir`** (código 2, nada enviado):
+  a exclusão do extrato atual vem antes do envio, que pode ser recusado e deixaria o mês sem
+  extrato e sem classificações. Exclua antes com `ctbz extratos excluir` e importe sem
+  `--substituir`.
+- **`--substituir` exclui antes de enviar**: o resumo da confirmação avisa que, se a Contabilizei
+  recusar o arquivo ou o saldo, o mês fica sem extrato (e sem as classificações, se havia
+  lançamentos). Com `--saldo-final`, a CLI confere antes o saldo do próprio OFX e recusa (código 2,
+  nada excluído) se ele for diferente.
 - **CSV, XLS e outros formatos que o banco aceita** (fora OFX e PDF) vão pela Central de
   Documentos, como no painel, porque a tela "Importar extrato" só aceita OFX e PDF. É um envio só,
   sem conferência de saldo. A Contabilizei importa o arquivo **manualmente, em até 45 dias**. O

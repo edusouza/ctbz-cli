@@ -20,6 +20,80 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
   agência ou a conta da lista vier nula ou vazia sem `--agencia`/`--conta`, ou quando a flag
   ficar vazia depois de normalizar (`--conta "-"`, `--agencia " "`), em vez de apagar o
   cadastro (#997).
+- `ctbz mensalidade segunda-via --pix` e `--linha` só imprimem o código se a fatura puder ser
+  paga: fatura paga ou cancelada, sem valor ou vencida falham sem imprimir. Se a leitura do resumo
+  v1 falhar, o código ainda sai, com aviso no stderr (#931).
+
+- `ctbz mensalidade segunda-via` só envia a ação `dashboard/nova-fatura/AAAAMM` do card; qualquer
+  outra ação `request:` (em `botao_adicional_acao` ou `botao_acao`) para com erro, sem enviar
+  nada (#929).
+### Fixed
+
+- `ctbz lucros informe aceitar carta-responsabilidade` recusa o aceite, sem enviar nada, quando a carta
+  pendente chega sem texto legível (`html` ausente, vazio ou só tags); antes pedia a confirmação
+  sobre um "texto acima" que não existia (#798). Os textos da API também perdem os caracteres de
+  formatação do Unicode (como U+202E), além dos de controle.
+- `ctbz lucros informe aceitar termo-debitos` avisa que a CLI não exibe o texto do termo, mostra
+  cada débito como JSON compacto (números sem perder precisão) com a marca "formato não
+  confirmado". Quando o informe aponta débitos federais mas a API não os lista, avisa com
+  destaque e exige uma confirmação a mais (digitar `confirmo` ou `--aceitar-sem-lista`, que é
+  obrigatória com `--yes`), em vez de bloquear o aceite sem saída; o resultado em JSON/CSV
+  traz o campo `aviso` (#796).
+- `ctbz impostos recalcular` mostra "valor estimado indisponível" na confirmação quando o painel
+  não traz `valorRecalculo`, em vez de "R$ 0,00" (#462).
+- `ctbz impostos recalcular` não afirma mais que o recálculo é gratuito quando a resposta do
+  painel não traz `cobrarRecalculo`: `cobrar_recalculo` e `cobrado` saem `null` e a consequência
+  avisa que o painel não informou se será cobrado (#463).
+- `ctbz impostos parcelamento contratar` só confere quantidade e valores de `parcelas[]` na PGFN
+  e só da opção escolhida: Simples e especializado (que não enviam `parcelas[]`) e uma outra
+  opção incompleta deixam de bloquear a contratação. O resumo do Simples usa o
+  `resumoParcelamento` em vez de `parcelas[0]` (#968).
+- `ctbz impostos parcelamento contratar` recusa a contratação (também em `--yes` e `--dry-run`)
+  quando a simulação cobra serviço adicional sem informar o valor, em vez de só mostrar "não
+  informado" (#969).
+- `ctbz impostos parcelamento contratar` não falha mais quando a Contabilizei responde 2xx com um
+  corpo que não é objeto (texto, `true`, lista): a contratação já foi feita, e o erro levava a
+  repetir o pedido. Os tipos automáticos ignoram a resposta e o especializado só lê o idTicket,
+  se houver (#488).
+- `ctbz conta alterar` e `ctbz conta senha` não refazem mais o login se a sessão expirar enquanto
+  se espera o código: o envio final falha com "o código foi pedido, mas a sessão expirou… rode
+  `ctbz login`", em vez de disparar outro e-mail de código que invalidava o pedido (#835).
+- `ctbz extratos importar --substituir` avisa no resumo que a exclusão do extrato vem antes do envio
+  (uma recusa do arquivo ou do saldo deixa o mês sem extrato) e, num OFX com `--saldo-final`,
+  confere antes o saldo do próprio arquivo e recusa sem excluir nada se ele for diferente (#880).
+- `ctbz pendencias conciliacao resolver` lê o id das pendências abertas em `idPendencia` (ou `id`),
+  recusa itens em que os dois divergem e, se um item vier sem nenhum dos dois, avisa no stderr e
+  segue em vez de bloquear toda resolução (#1002). Um `id` inválido é ignorado quando há
+  `idPendencia` válido, e os itens que têm id continuam conferidos mesmo com um item sem id.
+- `ctbz extratos importar --substituir` recusa (código 2, nada enviado) um OFX fora da lista de
+  formatos do banco: o aviso de que a Contabilizei pode recusar o arquivo não protegia o extrato
+  e as classificações, já excluídos antes do envio. Exclua antes com `ctbz extratos excluir` (#1016).
+- `ctbz extratos importar --substituir` mostra banco, agência e conta no resumo da confirmação,
+  e não só o id numérico da conta (#887).
+- `ctbz extratos importar` para antes de enviar qualquer coisa quando a resposta de validação da
+  Contabilizei não traz `temLancamentoPendente`, `formatosDisponiveisUpload` ou `statusIntegracao`
+  (antes viravam "sem pendência", "nenhum formato" e "conta não integrada" em silêncio e afrouxavam
+  a validação); banco com lista de formatos vazia ganha mensagem própria (#596).
+- `ctbz documentos enviar` recusa, antes de escrever (também no `--dry-run`), a pendência sem id, sem tipo ou, no extrato de aplicação e no informe de rendimentos de investimentos, sem conta bancária, em vez de enviar `null` ou vazio no corpo (#981).
+- `ctbz prolabore definir` só envia `sairGestaoInteligente: true` quando o sócio está na gestão inteligente e é o último nela; quem está em outro tipo não tira mais a empresa da gestão inteligente do outro sócio, e sem o tipo atual a CLI recusa antes de escrever (#995).
+- `ctbz lucros distribuir` recusa, sem escrever, a distribuição que lista um sócio com id `0`, negativo, fracionário ou texto não numérico (antes ia como `idSocio` na escrita), e `1` e `" 1"` contam como o mesmo sócio (#987).
+- `ctbz caixa adicionar` mostra o id do lançamento recém-criado, mesmo havendo um lançamento idêntico anterior, em vez do de maior id (#351).
+- `ctbz caixa adicionar` recusa competência futura sem `--data`, em vez de enviar um lançamento com data futura no dia 1 (#350).
+- A leitura dos lançamentos do extrato falha com erro claro quando algum lançamento vem sem `idLancamentoUsuario`, em vez de devolver só o primeiro em silêncio (#866).
+- A leitura dos lançamentos do extrato só termina numa página vazia, então um servidor que limita a página abaixo de 100 itens não trunca mais a lista em silêncio (#867).
+- `ctbz rotinas reclassificar` recusa, antes de escrever, uma opção de classificação com `socios`
+  ausente ou `null` (só `[]` significa "não usa sócio" e envia `idSocio: null`) (#977).
+- `ctbz rotinas reclassificar` recusa `idPendencia` `0`, `"0"`, negativo, booleano, objeto ou lista
+  vindo do init (só texto não vazio ou inteiro positivo vai no corpo) (#978).
+- `ctbz rotinas reclassificar` deduplica os ids e recusa, antes de qualquer escrita, ids que a
+  Contabilizei não devolveu, em vez de concluir só parte das pendências com código 0 (#427).
+- `ctbz razao` mostra cada lançamento no dia certo: a data vem como epoch à meia-noite UTC e a CLI
+  a convertia para o fuso local, mostrando um dia antes (#1048).
+- `ctbz razao` com período de mais de um mês deixa de repetir lançamentos: a API devolve o exercício
+  desde janeiro até o mês pedido; a CLI agora consulta um mês por ano e filtra para `--de`…`--ate`
+  (também some o que vinha de meses anteriores ao `--de`) (#1047).
+- `ctbz balanco reabrir` cita na confirmação de risco alto a cobrança do serviço: o valor, quando a API
+  informa (`valorServicoAdicional`), ou que o painel pode cobrar (#809).
 
 ## [1.9.6] - 2026-11-26
 

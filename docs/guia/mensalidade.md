@@ -43,7 +43,10 @@ checkout.
 - O caminho vem da ação do card (`ctbz mensalidade -o json`, `botao_adicional_acao`). Com a
   fatura em dia, o card não oferece segunda via e o comando para com erro.
 - `--competencia AAAA-MM` confere se a segunda via oferecida é do mês esperado.
-- `--pix` e `--linha` imprimem só o código, para usar num pipe:
+- `--pix` e `--linha` imprimem só o código, para usar num pipe. Como o valor não aparece, o
+  código só sai se a fatura ainda puder ser paga: fatura paga ou cancelada, sem valor a pagar ou
+  já vencida fazem o comando parar com erro (e o link, sem imprimir o código). Se a leitura da
+  situação falhar, o código sai mesmo assim, com um aviso no stderr:
 
 ```sh
 inter-pj pix enviar --copia-e-cola "$(ctbz mensalidade segunda-via --pix --yes)"

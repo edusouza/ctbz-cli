@@ -97,7 +97,7 @@ ctbz impostos recalcular 1000000000000001 --vencimento 2026-10-20
 ```
 
 - **Risco alto:** o recálculo é um serviço adicional, em geral cobrado na próxima
-  mensalidade (a saída mostra `cobrar_recalculo`), e não dá para cancelar o pedido. No
+  mensalidade (a saída mostra `cobrar_recalculo`; `null` quer dizer que o painel não informou, e a CLI trata como possível cobrança), e não dá para cancelar o pedido. No
   terminal, a CLI pede para digitar `confirmo`.
 - A guia precisa estar marcada como não paga (`ctbz impostos confirmar ID --nao-paguei`) e o
   painel precisa oferecer o recálculo para ela. Datas indisponíveis e passadas são recusadas.
@@ -178,8 +178,15 @@ ctbz impostos parcelamento contratar especializado --negociacao VENCIDOS
   mensalidade e, no terminal, pede para digitar `confirmo`.
 - A CLI sempre roda a simulação antes. Na PGFN, `--parcelas` escolhe uma das opções da
   simulação (padrão: a primeira, como no painel). No Simples, a quantidade não é escolhida aqui.
-- Se a simulação vier sem a quantidade de parcelas ou sem o valor das parcelas da opção
-  escolhida, a CLI não contrata (nem com `--yes`) e pede para contratar pelo painel.
+- Na PGFN, se a opção escolhida vier sem a quantidade de parcelas ou sem o valor das
+  parcelas, a CLI não contrata (nem com `--yes`) e pede para contratar pelo painel; as outras
+  opções incompletas não bloqueiam. Simples e especializado não enviam `parcelas[]`, então um
+  `parcelas[]` incompleto não os impede (o Simples mostra o `resumoParcelamento`).
+- Se a simulação indicar cobrança de serviço adicional sem informar o valor, a CLI não contrata
+  (nem com `--yes` ou `--dry-run`) e pede para contratar pelo painel. Valor 0 informado passa;
+  a emissão de guia só aparece entre os custos quando a simulação traz o valor.
+- Depois de qualquer resposta 2xx o pedido foi feito: a CLI não trata o formato da resposta
+  como erro (não repita o comando).
 - O especializado vira um pedido de atendimento: a saída traz o `id` (idTicket) e o detalhe
   do pedido.
 - Depois de contratar, acompanhe com `ctbz impostos parcelamentos`.
