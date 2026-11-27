@@ -43,3 +43,45 @@ func TestAcoes(t *testing.T) {
 		}
 	}
 }
+
+func TestLoadAcoesLongLineAndEmptyObjects(t *testing.T) {
+	s := &Store{Dir: t.TempDir()}
+	good := Acao{
+		Data:      time.Date(2026, 10, 5, 12, 0, 0, 0, time.UTC),
+		Comando:   "ctbz api",
+		Metodo:    "POST",
+		Caminho:   "/api/plataforma/z",
+		Resultado: ResultadoEnviada,
+	}
+	if err := s.AppendAcao(good); err != nil {
+		t.Fatal(err)
+	}
+	f, err := os.OpenFile(s.acoesPath(), os.O_APPEND|os.O_WRONLY, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Linha > 1 MiB sem quebrar o load inteiro (issue #319).
+	long := make([]byte, (1<<20)+64)
+	for i := range long {
+		long[i] = 'x'
+	}
+	f.Write(long)
+	f.Write([]byte("\n"))
+	f.WriteString("null\n{}\n{\"metodo\":\"GET\"}\n{\"caminho\":\"/x\"}\nnot-json\n")
+	f.Close()
+
+	acoes, invalidas, err := s.LoadAcoes()
+	if err != nil {
+		t.Fatalf("load com linha longa: %v", err)
+	}
+	if len(acoes) != 1 {
+		t.Fatalf("ações = %+v, quero só a válida", acoes)
+	}
+	if acoes[0].Metodo != "POST" || acoes[0].Caminho != "/api/plataforma/z" {
+		t.Errorf("ação inesperada: %+v", acoes[0])
+	}
+	// long + null + {} + só metodo + só caminho + not-json
+	if invalidas != 6 {
+		t.Errorf("invalidas = %d, quero 6", invalidas)
+	}
+}
