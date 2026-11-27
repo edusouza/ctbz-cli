@@ -52,6 +52,8 @@ ctbz balanco reabrir --ano 2025
   a reabertura do balanço (`REABERTURA_BALANCO`) e não há outra reabertura em andamento.
 - Quando o período já foi fechado e a regularização é um **serviço adicional pago**, a CLI
   recusa e mostra o custo: contrate pelo painel.
+- A confirmação cita a cobrança do serviço (o valor, quando a API informa; senão, que o painel
+  pode cobrar). A CLI nunca exercitou esse envio numa conta real, então não sabe se o fluxo cobra.
 - Risco alto e **sem desfazer**: o informe de rendimentos fica indisponível até a análise da
   Contabilizei, e a distribuição de lucros do ano depende dela. Uma sessão de administrador é
   recusada pela Contabilizei.
@@ -75,7 +77,9 @@ Data        Conta          Descrição da conta  Histórico       Contrapartida 
 
 - Um lançamento por linha, com a conta de contrapartida e o saldo acumulado da conta no
   exercício depois do lançamento.
-- A API devolve um mês por vez; a CLI consulta cada mês do período (até 24).
+- A API devolve o exercício de janeiro até o mês pedido; a CLI faz uma consulta por ano do período
+  (até 24 meses) e mostra só os lançamentos de `--de` até `--ate`, cada um uma vez.
+- A data é a do lançamento (a API a manda como meia-noite UTC; a CLI não a converte para o fuso local).
 
 ## Caixa do mês
 
