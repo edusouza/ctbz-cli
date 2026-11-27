@@ -7,6 +7,11 @@ usa [Versionamento Semântico](https://semver.org/lang/pt-BR/).
 
 ## [Unreleased]
 
+### Corrigido
+
+- `ctbz mensalidade segunda-via` só envia a ação `dashboard/nova-fatura/AAAAMM` do card; qualquer
+  outra ação `request:` (em `botao_adicional_acao` ou `botao_acao`) para com erro, sem enviar
+  nada (#929).
 ### Fixed
 
 - `ctbz lucros informe aceitar carta-responsabilidade` recusa o aceite, sem enviar nada, quando a carta
